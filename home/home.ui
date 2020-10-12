@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1056</width>
-    <height>594</height>
+    <width>1024</width>
+    <height>646</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>640</width>
+    <width>1024</width>
     <height>480</height>
    </size>
   </property>
@@ -78,7 +78,7 @@ QPushButton:pressed{
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>1038</width>
+        <width>1006</width>
         <height>100</height>
        </rect>
       </property>
@@ -219,8 +219,11 @@ QPushButton:pressed{
     <layout class="QHBoxLayout" name="MainBlock">
      <item>
       <layout class="QVBoxLayout" name="SortingBlock">
+       <property name="spacing">
+        <number>0</number>
+       </property>
        <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
+        <enum>QLayout::SetFixedSize</enum>
        </property>
        <item>
         <widget class="QTreeWidget" name="SortingBlockTree">
@@ -317,7 +320,8 @@ border: 1px solid black;
 margin: 0;
 text-align: right;
 font-family: arial;
-font-size: 12px; }</string>
+font-size: 12px; }
+QTableView::item { padding: 0px }</string>
          </property>
          <property name="showDropIndicator" stdset="0">
           <bool>false</bool>
@@ -343,11 +347,14 @@ font-size: 12px; }</string>
          <property name="cornerButtonEnabled">
           <bool>true</bool>
          </property>
-         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+         <attribute name="horizontalHeaderCascadingSectionResizes">
           <bool>false</bool>
          </attribute>
-         <attribute name="horizontalHeaderStretchLastSection">
+         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
           <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderVisible">
           <bool>false</bool>
@@ -371,8 +378,10 @@ font-size: 12px; }</string>
           <property name="text">
            <string>1</string>
           </property>
-          <property name="textAlignment">
-           <set>AlignCenter</set>
+         </row>
+         <row>
+          <property name="text">
+           <string>2</string>
           </property>
          </row>
          <column>
@@ -395,14 +404,35 @@ font-size: 12px; }</string>
            <string>Tags</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>Modified</string>
+          </property>
+         </column>
          <item row="0" column="0">
           <property name="text">
            <string>aa</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignLeading|AlignVCenter</set>
+          </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsEnabled</set>
           </property>
          </item>
          <item row="0" column="1">
           <property name="text">
            <string>bb</string>
+          </property>
+         </item>
+         <item row="1" column="0">
+          <property name="text">
+           <string>ccc</string>
+          </property>
+         </item>
+         <item row="1" column="1">
+          <property name="text">
+           <string>ddd</string>
           </property>
          </item>
         </widget>
@@ -418,11 +448,23 @@ font-size: 12px; }</string>
         <enum>QLayout::SetMaximumSize</enum>
        </property>
        <item>
-        <widget class="QGraphicsView" name="graphicsView">
-         <property name="maximumSize">
+        <widget class="QPushButton" name="InfoBlockCover">
+         <property name="minimumSize">
           <size>
-           <width>200</width>
-           <height>200</height>
+           <width>0</width>
+           <height>160</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background: transparent !important;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>160</width>
+           <height>160</height>
           </size>
          </property>
         </widget>

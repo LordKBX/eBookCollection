@@ -4,6 +4,7 @@ import os
 import shutil
 import subprocess
 import traceback
+import json
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
@@ -15,11 +16,14 @@ from PyQt5.uic import *
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common import *
 from lang import *
+from booksTools import *
 import bdd
 
 
 class HomeWindow(QWidget):
     def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict):
+        self.appDir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        self.currentBook = ''
         self.BDD = database
         self.lang = translation
         self.tools = env_vars['tools']
@@ -36,7 +40,33 @@ class HomeWindow(QWidget):
         self.HeaderBlockBtnAddBook.clicked.connect(self.HeaderBlockBtnAddBookClicked)
         self.HeaderBlockBtnSettings.clicked.connect(self.HeaderBlockBtnSettingsClicked)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.CentralBlockTableGetCollumnWidth)
+        self.timer.start(500)
+        self.old_sizes = ''
+
         self.show() # Show the GUI
+
+    def CentralBlockTableGetCollumnWidth(self):
+        try:
+            sizes = [
+                self.CentralBlockTable.columnWidth(0),
+                self.CentralBlockTable.columnWidth(1),
+                self.CentralBlockTable.columnWidth(2),
+                self.CentralBlockTable.columnWidth(3),
+                self.CentralBlockTable.columnWidth(4)
+            ]
+            nsize = json.dumps(sizes)
+            if self.old_sizes != nsize:
+                self.old_sizes = nsize
+                print("--------------------------------")
+                print('home_central_table_header_WIDTH')
+                print('new size = {}'.format(nsize))
+                self.env_vars['home_central_table_header_sizes'] = nsize
+                print('old size = {}'.format(self.BDD.getParam('home_central_table_header_sizes')))
+                self.BDD.setParam('home_central_table_header_sizes', nsize)
+
+        except Exception: {}
 
     def CentralBlockTableNewSelection(self, currentRow, currentColumn, previousRow, previousColumn):
         """
@@ -51,7 +81,12 @@ class HomeWindow(QWidget):
         print("--------------------------------")
         print("new position : {}x{}".format(currentRow, currentColumn))
         print("old position : {}x{}".format(previousRow, previousColumn))
-        print("tag line : {}".format(self.CentralBlockTable.item(currentRow, currentColumn).data(1)))
+        guid_book = self.CentralBlockTable.item(currentRow, currentColumn).data(99)
+        print("Book GUID : {}".format(guid_book))
+        if self.currentBook != guid_book:
+            self.currentBook = guid_book
+            self.setInfoPanel(self.BDD.getBooks(guid_book)[0])
+
 
     def CentralBlockTableItemChanged(self, newItem):
         """
@@ -64,6 +99,8 @@ class HomeWindow(QWidget):
         print("Row = {}".format(newItem.row()))
         print("Column = {}".format(newItem.column()))
         print(newItem.text())
+        guid_book = newItem.data(99)
+        self.setInfoPanel(self.BDD.getBooks(guid_book)[0])
 
     def HeaderBlockBtnAddBookClicked(self):
         """
@@ -73,8 +110,8 @@ class HomeWindow(QWidget):
         """
         try:
             # load parameters for file import
-            file_name_template = self.bdd.getParam('import_file_template')
-            file_name_separator = self.bdd.getParam('import_file_separator')
+            file_name_template = self.BDD.getParam('import_file_template')
+            file_name_separator = self.BDD.getParam('import_file_separator')
             # test parameters for file import and assign default value if not set
             if file_name_template is None:
                 file_name_template = self.env_vars['import_file_template']['default']
@@ -88,57 +125,12 @@ class HomeWindow(QWidget):
                 "Ebook (*.epub *.epub2 *.epub3 *.cbz *.cbr *.pdf *.mobi);;Texte (*.txt *.doc *.docx *.rtf)",
                 options=options
             )
-            print(files)
             if len(files) > 0:
                 for file in files:
-                    if os.path.isfile(file) is True:
-                        # list of var for future injection into database
-                        tmp_guid = ''
-                        tmp_cover = ''
-                        tmp_title = ''
-                        tmp_serie = ''
-                        tmp_authors = ''
-                        tmp_tags = ''
-                        tmp_size = ''
-                        tmp_format = ''
+                    # Call booksTools.insertBook
+                    insertBook(self.tools, self.BDD, file_name_template, file_name_separator, file)
 
-                        filepath, ext = os.path.splitext(file)  # Get file path and extension
-                        tmp_format = ext[1:].upper()  # assign file type into var for future injection into database
-                        t = filepath.split('/')  # explode file path into a list
-                        filename = t[len(t) - 1]  # get file name without extension
-                        tmpdir = 'tmp/'+filename.replace(' ', '_')  # create var for temporary file extraction
-                        print('filename = '+filename)
-                        print('ext = '+tmp_format)
-                        if os.path.isdir(tmpdir) is True: shutil.rmtree(tmpdir)  # delete temp dir if already exist
-                        os.makedirs(tmpdir)  # make temp dir
-
-                        tab_mask = file_name_template.split(file_name_separator)
-                        tab_file = filename.split(file_name_separator)
-                        i = 0
-                        while i < len(tab_file):
-                            if tab_mask[i] == '%title%': tmp_title = tab_file[i]
-                            if tab_mask[i] == '%authors%': tmp_authors = tab_file[i]
-                            if tab_mask[i] == '%serie%': tmp_serie = tab_file[i]
-                            if tab_mask[i] == '%tags%': tmp_tags = tab_file[i]
-                            i += 1
-
-                        if ext in ['.epub', '.epub2', '.epub3']:  # section for EPUB files
-                            {}
-                        if ext in ['.cbz', '.cbr']:  # section for CBZ and CBR files
-                            tmp_guid = uid()  # assign random guid for CBZ and CBR books
-                            list_args = list()  # create list argument for external command execution
-                            list_args.append(self.tools['7zip'][os.name]['path'])  # insert executable path
-                            temp_args = self.tools['7zip'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
-                            for var in temp_args:  # parse table of raw command arguments
-                                # insert parsed param
-                                list_args.append(var.replace('%input%', file).replace('%output%', tmpdir))
-                            print(list_args)
-                            ret = subprocess.check_output(list_args, universal_newlines=True)  # execute the command
-                            print(ret)
-                            tmp_cover = listDir(tmpdir)[0]  # get path of the first image into temp dir
-
-                        #shutil.rmtree(tmpdir)  # delete temp dir
-                {}
+                self.loadooks(self.BDD.getBooks())
         except Exception:
             traceback.print_exc()
 
@@ -170,6 +162,7 @@ class HomeWindow(QWidget):
         self.CentralBlockTable.horizontalHeaderItem(1).setText(self.lang['Home']['CentralBlockTableAuthors'])
         self.CentralBlockTable.horizontalHeaderItem(2).setText(self.lang['Home']['CentralBlockTableSeries'])
         self.CentralBlockTable.horizontalHeaderItem(3).setText(self.lang['Home']['CentralBlockTableTags'])
+        self.CentralBlockTable.horizontalHeaderItem(4).setText(self.lang['Home']['CentralBlockTableModified'])
         # Panneau de droite
         self.InfoBlockTitleLabel.setText(self.lang['Home']['InfoBlockTitleLabel'])
         self.InfoBlockSerieLabel.setText(self.lang['Home']['InfoBlockSerieLabel'])
@@ -185,19 +178,39 @@ class HomeWindow(QWidget):
         :param book: dict of the spécified book
         :return: void
         """
+        print('setInfoPanel')
+        # print(book)
         passed = True
         if book is None: passed = False
         else:
-            if not is_in(book, ['title', 'serie', 'authors', 'formats', 'size', 'synopsis']):
+            if not is_in(book, ['title', 'serie', 'authors', 'format', 'size', 'synopsis']):
                 passed = False
 
         if passed is True:
             self.InfoBlockTitleValue.setText(book['title'])
             self.InfoBlockSerieValue.setText(book['serie'])
             self.InfoBlockAuthorsValue.setText(book['authors'])
-            self.InfoBlockFileFormatsValue.setText(book['formats'])
+            self.InfoBlockFileFormatsValue.setText(book['format'])
             self.InfoBlockSizeValue.setText(book['size'])
             self.InfoBlockSynopsisValue.setText(book['synopsis'])
+            try:
+                icon = QtGui.QIcon()
+                tbimg = book['cover'].split(',')
+                by = QtCore.QByteArray()
+                by.fromBase64(tbimg[1].encode('utf-8'))
+                image = QtGui.QPixmap()
+                image.loadFromData(base64.b64decode(tbimg[1]))
+                """
+                if tbimg[0] == 'data:image/jpeg;base64':
+                    image.loadFromData(by, "JPG")
+                if tbimg[0] == 'data:image/png;base64':
+                    image.loadFromData(by, "PNG")
+                """
+                icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                self.InfoBlockCover.setIcon(icon)
+                self.InfoBlockCover.setIconSize(QtCore.QSize(160, 160))
+            except Exception:
+                traceback.print_exc()
         else:
             self.InfoBlockTitleValue.setText("")
             self.InfoBlockSerieValue.setText("")
@@ -206,16 +219,29 @@ class HomeWindow(QWidget):
             self.InfoBlockSizeValue.setText("")
             self.InfoBlockSynopsisValue.setText("")
 
-    def newBookTableItem(self, guid: str, value: str):
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap(self.appDir+'/icons/white_book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.InfoBlockCover.setIcon(icon)
+            self.InfoBlockCover.setIconSize(QtCore.QSize(130, 130))
+
+
+    def newBookTableItem(self, guid: str, type: str, value: str, editable: bool = True):
         """
         Create item for the Central Block Table Widget
 
         :param guid: guid book
+        :param type: case item type
         :param value: case item value
         :return: QTableWidgetItem
         """
         item = QtWidgets.QTableWidgetItem()
-        item.setData(1, guid)
+        if editable is True:
+            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+        else:
+            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+        item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
+        item.setData(99, guid)
+        item.setData(100, type)
         item.setText(value)
         item.setToolTip(value)
         return item
@@ -228,6 +254,23 @@ class HomeWindow(QWidget):
         :return: void
         """
         self.CentralBlockTable.clearContents()
+        header_size_policy = self.env_vars['home_central_table_header_size_policy']
+        if header_size_policy in ['ResizeToContents', 'ResizeToContentsAndInteractive']:
+            self.CentralBlockTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        if header_size_policy == 'Stretch':
+            self.CentralBlockTable.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        if header_size_policy == 'UserDefined':
+            sizes = []
+            try:
+                sizes = json.loads(self.env_vars['home_central_table_header_sizes'])
+                self.CentralBlockTable.setColumnWidth(0, sizes[0])
+                self.CentralBlockTable.setColumnWidth(1, sizes[1])
+                self.CentralBlockTable.setColumnWidth(2, sizes[2])
+                self.CentralBlockTable.setColumnWidth(3, sizes[3])
+                self.CentralBlockTable.setColumnWidth(4, sizes[4])
+            except Exception:
+                traceback.print_exc()
+            self.CentralBlockTable.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
         # self.CentralBlockTable.setCornerButtonEnabled(False)
         line = 0
         self.CentralBlockTable.setRowCount(len(books))
@@ -238,12 +281,33 @@ class HomeWindow(QWidget):
             self.CentralBlockTable.setVerticalHeaderItem(line, item)
             """
             # Title
-            self.CentralBlockTable.setItem(line, 0, self.newBookTableItem(book['guid'], book['title']))
+            self.CentralBlockTable.setItem(line, 0, self.newBookTableItem(book['guid'], 'title', book['title']))
             # authors
-            self.CentralBlockTable.setItem(line, 1, self.newBookTableItem(book['guid'], book['authors']))
+            self.CentralBlockTable.setItem(line, 1, self.newBookTableItem(book['guid'], 'authors', book['authors']))
             # serie
-            self.CentralBlockTable.setItem(line, 2, self.newBookTableItem(book['guid'], book['serie']))
+            self.CentralBlockTable.setItem(line, 2, self.newBookTableItem(book['guid'], 'serie', book['serie']))
             # tags
-            self.CentralBlockTable.setItem(line, 3, self.newBookTableItem(book['guid'], book['tags']))
+            self.CentralBlockTable.setItem(line, 3, self.newBookTableItem(book['guid'], 'tags', book['tags']))
+            # Modified
+            self.CentralBlockTable.setItem(line, 4,
+                self.newBookTableItem(
+                    book['guid'],
+                    'modified',
+                    unixtimeToString(
+                        float(book['last_update_date']),
+                        self.lang['Time']['template']['textual_date'],
+                        self.lang['Time']['months_short']
+                    ),
+                    False
+                )
+            )
 
             line += 1
+
+        if header_size_policy == 'ResizeToContentsAndInteractive':
+            timer = QtCore.QTimer()
+            timer.singleShot(500, self.delayedTableHeaderInteractiveMode)
+
+    def delayedTableHeaderInteractiveMode(self):
+        self.CentralBlockTable.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+

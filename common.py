@@ -1,5 +1,7 @@
 import uuid
 import os
+import time
+import datetime
 
 
 def is_in(objet: dict, indexes: list):
@@ -41,3 +43,10 @@ def listDir(dirName):
         if os.path.isdir(fullPath): allFiles = allFiles + listDir(fullPath)
         else: allFiles.append(fullPath)
     return allFiles
+
+def unixtimeToString(value: float, template: str = '%Y-%m-%d %H:%M:%S', months: list = list()):
+    value = int(value)
+    if '$month' in template:
+        amonth = months[int(float(datetime.datetime.utcfromtimestamp(value).strftime('%m'))) - 1]
+        template = template.replace('$month', amonth)
+    return datetime.datetime.utcfromtimestamp(value).strftime(template)

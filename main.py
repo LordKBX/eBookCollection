@@ -34,9 +34,16 @@ if __name__ == "__main__":
                 'title_authors_tags': '%title% - %authors% - %tags%',
                 'serie_title_authors_tags': '%serie% - %title% - %authors% - %tags%'
             },
-            'import_file_separator': ' - '
+            'import_file_separator': ' - ',
+            'home_central_table_header_size_policy': 'UserDefined',  # ResizeToContents, ResizeToContentsAndInteractive, Stretch, UserDefined
+            'home_central_table_header_sizes': '[100, 100, 100, 100, 100]'  # list of collumns size
         }
     }
+    ret = bdd.getParam('home_central_table_header_size_policy')
+    if ret is not None: env_vars['vars']['home_central_table_header_size_policy'] = ret
+    ret = bdd.getParam('home_central_table_header_sizes')
+    if ret is not None: env_vars['vars']['home_central_table_header_sizes'] = ret
+
     Home = HomeWindow(bdd, translation, env_vars)
     Home.show()
     sys.exit(app.exec_())

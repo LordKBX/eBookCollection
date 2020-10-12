@@ -33,12 +33,23 @@ class Lang:
             'CentralBlockTableAuthors': 'Auteur',
             'CentralBlockTableSeries': 'Série',
             'CentralBlockTableTags': 'Étiquettes',
+            'CentralBlockTableModified': 'Modifié le',
             'InfoBlockTitleLabel': 'Titre',
             'InfoBlockSerieLabel': 'Série',
             'InfoBlockAuthorsLabel': 'Auteur(s)',
             'InfoBlockFileFormatsLabel': 'Format(s)',
             'InfoBlockSizeLabel': 'Taille',
             'InfoBlockSynopsisLabel': 'Synopsis'
+        }),
+        'Time': Dictionary({
+            'template': Dictionary({
+                'numeric_date': '%d/%m/%Y',
+                'numeric_datetime': '%d/%m/%Y %H:%M',
+                'textual_date': '%d $month %Y',
+                'textual_datetime': '%d $month %Y à %H:%M'
+            }),
+            'months_short': ['janv.', 'fev.', 'mars', 'avril', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'],
+            'months_full': ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
         })
     }
 
@@ -55,12 +66,23 @@ class Lang:
             'CentralBlockTableAuthors': 'Author',
             'CentralBlockTableSeries': 'Serie',
             'CentralBlockTableTags': 'Tags',
+            'CentralBlockTableModified': 'Modified',
             'InfoBlockTitleLabel': 'Title',
             'InfoBlockSerieLabel': 'Serie',
             'InfoBlockAuthorsLabel': 'Author(s)',
             'InfoBlockFileFormatsLabel': 'Format(s)',
             'InfoBlockSizeLabel': 'Size',
             'InfoBlockSynopsisLabel': 'Synopsis'
+        }),
+        'Time': Dictionary({
+            'template': Dictionary({
+                'numeric_date': '%m/%d/%Y',
+                'numeric_datetime': '%m/%d/%Y %H:%M',
+                'textual_date': '$month %d %Y',
+                'textual_datetime': '$month %d %Y at %H:%M'
+            }),
+            'months_short': ['jan.', 'feb.', 'march', 'april', 'may', 'june', 'july.', 'aug.', 'sept.', 'oct.', 'nov.', 'dec.'],
+            'months_full': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
         })
     }
 

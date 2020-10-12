@@ -1,6 +1,8 @@
 # This Python file uses the following encoding: utf-8
 import sys
 import os
+import traceback
+import time
 import sqlite3
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common import *
@@ -32,7 +34,7 @@ class BDD:
             self.cursor.execute('''CREATE TABLE books('guid' TEXT PRIMARY KEY NOT NULL, 'title' TEXT NOT NULL, 
             'authors' TEXT, 'serie' TEXT, 'size' TEXT NOT NULL, 'format' TEXT NOT NULL, 'link' TEXT NOT NULL, 
             'import_date' TEXT NOT NULL, 'last_update_date' TEXT NOT NULL, 'last_read_date' TEXT NOT NULL, 
-            'bookmark' TEXT, 'tags' TEXT, 
+            'bookmark' TEXT, 'tags' TEXT, 'synopsis' TEXT,
             'cover' TEXT NOT NULL)''')
 
         self.cursor.execute('''PRAGMA table_info('settings')''')
@@ -50,9 +52,12 @@ class BDD:
         :return: string|None
         """
         try:
-            self.cursor.execute('''SELECT value FROM settings WHERE name = ?''', (name))
-            return self.cursor.fetchone()
+            self.cursor.execute("SELECT value FROM settings WHERE name = \"{}\"".format(name))
+            ret = self.cursor.fetchone()
+            if ret is not None: return ret['value']
+            else: return None
         except Exception:
+            traceback.print_exc()
             return None
 
     def setParam(self, name: str, value: str):
@@ -63,11 +68,40 @@ class BDD:
         :param value: param value
         :return:
         """
-        if self.getParam(name) is None:
-            self.cursor.execute('''INSERT INTO settings('name','value') VALUES(?, ?)''', (name, value))
-        else:
-            self.cursor.execute('''UPDATE settings SET value = ? WHERE name = ?''', (value, name))
-        self.connexion.commit()
+        try:
+            if self.getParam(name) is None:
+                self.cursor.execute('''INSERT INTO settings('name','value') VALUES(?, ?)''', (name, value))
+            else:
+                self.cursor.execute('''UPDATE settings SET value = ? WHERE name = ?''', (value, name))
+            self.connexion.commit()
+        except Exception:
+            traceback.print_exc()
+
+    def getAuthors(self):
+        """
+        get Authors in database
+
+        :return: list(str)
+        """
+        ret = []
+        self.cursor.execute('''SELECT authors FROM books''')
+        re = self.cursor.fetchall()
+        for row in re:
+            ret.append(row['authors'])
+        return ret
+
+    def getSeries(self):
+        """
+        get Series in database
+
+        :return: list(str)
+        """
+        ret = []
+        self.cursor.execute('''SELECT serie FROM books''')
+        re = self.cursor.fetchall()
+        for row in re:
+            ret.append(row['authors'])
+        return ret
 
     def getBooks(self, guid: str = None, search: str = None):
         """
@@ -81,4 +115,31 @@ class BDD:
         if guid is None and search is None:
             self.cursor.execute('''SELECT * FROM books''')
             ret = self.cursor.fetchall()
+        else:
+            if guid is not None:
+                self.cursor.execute("SELECT * FROM books WHERE guid = '"+guid+"'")
+                ret = self.cursor.fetchall()
         return ret
+
+    def insertBook(self, guid: str, title: str, serie: str, authors: str, tags: str, size: str, format: str, link: str, cover: str):
+        """
+
+        :param guid:
+        :param title:
+        :param serie:
+        :param authors:
+        :param tags:
+        :param size:
+        :param format:
+        :param link:
+        :param cover:
+        :return:
+        """
+        dt = time.time()
+        self.cursor.execute('''INSERT INTO books(
+                'guid','title','serie','authors','tags','size','format','link','cover','bookmark',
+                'import_date','last_update_date','last_read_date') 
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (guid, title, serie, authors, tags, size, format, link, cover, '', dt, dt, dt)
+            )
+        self.connexion.commit()
