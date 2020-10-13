@@ -32,10 +32,22 @@ class BDD:
         ret = self.cursor.fetchone()
         if ret is None:
             self.cursor.execute('''CREATE TABLE books('guid' TEXT PRIMARY KEY NOT NULL, 'title' TEXT NOT NULL, 
-            'authors' TEXT, 'serie' TEXT, 'size' TEXT NOT NULL, 'format' TEXT NOT NULL, 'link' TEXT NOT NULL, 
-            'import_date' TEXT NOT NULL, 'last_update_date' TEXT NOT NULL, 'last_read_date' TEXT NOT NULL, 
-            'bookmark' TEXT, 'tags' TEXT, 'synopsis' TEXT,
-            'cover' TEXT NOT NULL)''')
+            'authors' TEXT, 'serie' TEXT, 'import_date' TEXT NOT NULL, 'last_update_date' TEXT NOT NULL, 
+            'tags' TEXT, 'synopsis' TEXT, 'cover' TEXT NOT NULL)''')
+
+        self.cursor.execute('''PRAGMA table_info('files')''')
+        ret = self.cursor.fetchone()
+        if ret is None:
+            self.cursor.execute('''CREATE TABLE files(
+            'guid_file' TEXT PRIMARY KEY NOT NULL, 
+            'book_id' TEXT NOT NULL, 
+            'size' TEXT NOT NULL, 
+            'format' TEXT NOT NULL, 
+            'link' TEXT NOT NULL, 
+            'file_import_date' TEXT NOT NULL, 
+            'file_last_update_date' TEXT NOT NULL, 
+            'file_last_read_date' TEXT NOT NULL, 
+            'bookmark' TEXT)''')
 
         self.cursor.execute('''PRAGMA table_info('settings')''')
         ret = self.cursor.fetchone()
@@ -111,15 +123,44 @@ class BDD:
         :param search: research patern
         :return: list(dict)
         """
-        ret = []
+        retList = []
+        ret = None
         if guid is None and search is None:
-            self.cursor.execute('''SELECT * FROM books''')
+            self.cursor.execute('''SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid)''')
             ret = self.cursor.fetchall()
         else:
             if guid is not None:
-                self.cursor.execute("SELECT * FROM books WHERE guid = '"+guid+"'")
+                self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE guid = '"+guid+"'")
                 ret = self.cursor.fetchall()
-        return ret
+        if ret is not None:
+            prev_guid = ''
+            for row in ret:
+                if prev_guid != row['guid']:
+                    prev_guid = row['guid']
+                    retList.append({
+                        'guid': row['guid'],
+                        'title': row['title'],
+                        'authors': row['authors'],
+                        'serie': row['serie'],
+                        'import_date': row['import_date'],
+                        'last_update_date': row['last_update_date'],
+                        'tags': row['tags'],
+                        'synopsis': row['synopsis'],
+                        'cover': row['cover'],
+                        'files': []
+                    })
+                retList[len(retList) - 1]['files'].append({
+                    'guid': row['guid_file'],
+                    'size': row['size'],
+                    'format': row['format'],
+                    'link': row['link'],
+                    'import_date': row['file_import_date'],
+                    'last_update_date': row['file_last_update_date'],
+                    'last_read_date': row['file_last_read_date'],
+                    'bookmark': row['bookmark']
+                })
+
+        return retList
 
     def insertBook(self, guid: str, title: str, serie: str, authors: str, tags: str, size: str, format: str, link: str, cover: str):
         """
@@ -137,9 +178,36 @@ class BDD:
         """
         dt = time.time()
         self.cursor.execute('''INSERT INTO books(
-                'guid','title','serie','authors','tags','size','format','link','cover','bookmark',
-                'import_date','last_update_date','last_read_date') 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                (guid, title, serie, authors, tags, size, format, link, cover, '', dt, dt, dt)
+                'guid','title','serie','authors','tags','cover',
+                'import_date','last_update_date') 
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?)''',
+                (guid, title, serie, authors, tags, cover, dt, dt)
+            )
+        self.cursor.execute('''INSERT INTO files(
+                'guid_file','book_id','size','format','link','file_import_date',
+                'file_last_update_date','file_last_read_date','bookmark') 
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (uid(), guid, size, format, link, dt, dt, dt, None)
             )
         self.connexion.commit()
+
+    def updateBook(self, guid: str, col: str, value: str, file_guid: str = None):
+        """
+
+        :param guid:
+        :param col:
+        :param value:
+        :param file_guid:
+        :return:
+        """
+        try:
+            dt = time.time()
+            if file_guid is None:
+                self.cursor.execute('UPDATE books SET `'+col+'` = ?, last_update_date = ? WHERE guid = ?', (value, dt, guid))
+            else:
+                self.cursor.execute('UPDATE files SET `'+col+'` = ?, file_last_update_date = ? WHERE book_id = ? AND guid_file = ?',
+                                    (value, dt, guid, file_guid)
+                                    )
+            self.connexion.commit()
+        except Exception:
+            traceback.print_exc()

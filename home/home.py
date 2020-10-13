@@ -19,8 +19,11 @@ from lang import *
 from booksTools import *
 import bdd
 
+from home.CentralBlockTable import *
+from home.InfoPanel import *
 
-class HomeWindow(QWidget):
+
+class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel):
     def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict):
         self.appDir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.currentBook = ''
@@ -34,73 +37,17 @@ class HomeWindow(QWidget):
         self.setInfoPanel()
         self.loadooks(self.BDD.getBooks())
 
-        self.CentralBlockTable.currentCellChanged.connect(self.CentralBlockTableNewSelection)
-        self.CentralBlockTable.itemChanged.connect(self.CentralBlockTableItemChanged)
-
         self.HeaderBlockBtnAddBook.clicked.connect(self.HeaderBlockBtnAddBookClicked)
         self.HeaderBlockBtnSettings.clicked.connect(self.HeaderBlockBtnSettingsClicked)
 
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.CentralBlockTableGetCollumnWidth)
-        self.timer.start(500)
-        self.old_sizes = ''
+        self.CentralBlockTableDefineSlots()
+
+        while self.SortingBlockTree.topLevelItem(1).childCount() > 0:
+            self.SortingBlockTree.topLevelItem(1).removeChild(self.SortingBlockTree.topLevelItem(1).child(0))
+        while self.SortingBlockTree.topLevelItem(2).childCount() > 0:
+            self.SortingBlockTree.topLevelItem(2).removeChild(self.SortingBlockTree.topLevelItem(2).child(0))
 
         self.show() # Show the GUI
-
-    def CentralBlockTableGetCollumnWidth(self):
-        try:
-            sizes = [
-                self.CentralBlockTable.columnWidth(0),
-                self.CentralBlockTable.columnWidth(1),
-                self.CentralBlockTable.columnWidth(2),
-                self.CentralBlockTable.columnWidth(3),
-                self.CentralBlockTable.columnWidth(4)
-            ]
-            nsize = json.dumps(sizes)
-            if self.old_sizes != nsize:
-                self.old_sizes = nsize
-                print("--------------------------------")
-                print('home_central_table_header_WIDTH')
-                print('new size = {}'.format(nsize))
-                self.env_vars['home_central_table_header_sizes'] = nsize
-                print('old size = {}'.format(self.BDD.getParam('home_central_table_header_sizes')))
-                self.BDD.setParam('home_central_table_header_sizes', nsize)
-
-        except Exception: {}
-
-    def CentralBlockTableNewSelection(self, currentRow, currentColumn, previousRow, previousColumn):
-        """
-        Slot for new selection on the Central Block Table Widget
-
-        :param currentRow:
-        :param currentColumn:
-        :param previousRow:
-        :param previousColumn:
-        :return: void
-        """
-        print("--------------------------------")
-        print("new position : {}x{}".format(currentRow, currentColumn))
-        print("old position : {}x{}".format(previousRow, previousColumn))
-        guid_book = self.CentralBlockTable.item(currentRow, currentColumn).data(99)
-        print("Book GUID : {}".format(guid_book))
-        if self.currentBook != guid_book:
-            self.currentBook = guid_book
-            self.setInfoPanel(self.BDD.getBooks(guid_book)[0])
-
-
-    def CentralBlockTableItemChanged(self, newItem):
-        """
-        Slot for new item content on the Central Block Table Widget
-
-        :param newItem: the modified QTableWidgetItem
-        :return: void
-        """
-        print("--------------------------------")
-        print("Row = {}".format(newItem.row()))
-        print("Column = {}".format(newItem.column()))
-        print(newItem.text())
-        guid_book = newItem.data(99)
-        self.setInfoPanel(self.BDD.getBooks(guid_book)[0])
 
     def HeaderBlockBtnAddBookClicked(self):
         """
@@ -171,58 +118,6 @@ class HomeWindow(QWidget):
         self.InfoBlockSizeLabel.setText(self.lang['Home']['InfoBlockSizeLabel'])
         self.InfoBlockSynopsisLabel.setText(self.lang['Home']['InfoBlockSynopsisLabel'])
 
-    def setInfoPanel(self, book: dict = None):
-        """
-        Insert into the info pannel the details values of the book
-
-        :param book: dict of the spécified book
-        :return: void
-        """
-        print('setInfoPanel')
-        # print(book)
-        passed = True
-        if book is None: passed = False
-        else:
-            if not is_in(book, ['title', 'serie', 'authors', 'format', 'size', 'synopsis']):
-                passed = False
-
-        if passed is True:
-            self.InfoBlockTitleValue.setText(book['title'])
-            self.InfoBlockSerieValue.setText(book['serie'])
-            self.InfoBlockAuthorsValue.setText(book['authors'])
-            self.InfoBlockFileFormatsValue.setText(book['format'])
-            self.InfoBlockSizeValue.setText(book['size'])
-            self.InfoBlockSynopsisValue.setText(book['synopsis'])
-            try:
-                icon = QtGui.QIcon()
-                tbimg = book['cover'].split(',')
-                by = QtCore.QByteArray()
-                by.fromBase64(tbimg[1].encode('utf-8'))
-                image = QtGui.QPixmap()
-                image.loadFromData(base64.b64decode(tbimg[1]))
-                """
-                if tbimg[0] == 'data:image/jpeg;base64':
-                    image.loadFromData(by, "JPG")
-                if tbimg[0] == 'data:image/png;base64':
-                    image.loadFromData(by, "PNG")
-                """
-                icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
-                self.InfoBlockCover.setIcon(icon)
-                self.InfoBlockCover.setIconSize(QtCore.QSize(160, 160))
-            except Exception:
-                traceback.print_exc()
-        else:
-            self.InfoBlockTitleValue.setText("")
-            self.InfoBlockSerieValue.setText("")
-            self.InfoBlockAuthorsValue.setText("")
-            self.InfoBlockFileFormatsValue.setText("")
-            self.InfoBlockSizeValue.setText("")
-            self.InfoBlockSynopsisValue.setText("")
-
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(self.appDir+'/icons/white_book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.InfoBlockCover.setIcon(icon)
-            self.InfoBlockCover.setIconSize(QtCore.QSize(130, 130))
 
 
     def newBookTableItem(self, guid: str, type: str, value: str, editable: bool = True):

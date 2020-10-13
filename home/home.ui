@@ -47,7 +47,8 @@ QPushButton:hover{
 }
 QPushButton:pressed{
 	background-color:rgb(75, 75, 75);
-}</string>
+}
+QLabel * {color: rgb(255, 255, 255) !important;}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -654,8 +655,19 @@ QTableView::item { padding: 0px }</string>
              <height>20</height>
             </size>
            </property>
+           <property name="styleSheet">
+            <string notr="true">QLabel{
+color: rgb(255, 255, 255);
+}
+QLabel *{
+color: rgb(255, 255, 255);
+}
+QLabel:*{
+color: rgb(255, 255, 255);
+}</string>
+           </property>
            <property name="text">
-            <string>TextLabel</string>
+            <string>&lt;a href=&quot;test&quot;&gt;test&lt;/a&gt;</string>
            </property>
           </widget>
          </item>

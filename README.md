@@ -3,10 +3,10 @@ This application is designed for managing ebooks
 
 ## Features
 - add Ebook in database
-## Planed Features
-- modify Ebook data
-- modify Ebook storage dir if metadata updated
 - open ebook
+- modify Ebook data(support for title, serie and authors)
+## Planed Features
+- modify Ebook storage dir if metadata updated
 - synchronize ebook library with mobile terminal
     - incompatible terminal software would only have the ebook file copied
     - compatible terminal software would have

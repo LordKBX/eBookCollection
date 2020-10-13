@@ -24,6 +24,7 @@ if __name__ == "__main__":
                     'params_zip': 'a -tzip %input% %output%',
                     'params_deflate': 'x %input% -o%output%'
                 }
+                # linux = p7zip, macos = keka
             }
         },
         'vars': {

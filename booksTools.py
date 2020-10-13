@@ -28,7 +28,8 @@ def create_thumbnail(path: str):
     img = img.resize(tuple(size), Image.ANTIALIAS)
     buffer = io.BytesIO()
     img.save(buffer, 'jpeg')
-    return base64.b64encode(buffer.getvalue()).decode()
+    return 'data:image/jpeg;base64,'+base64.b64encode(buffer.getvalue()).decode()
+
 
 def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_name_separator: str, file: str):
     if os.path.isfile(file) is True:
@@ -39,9 +40,6 @@ def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_nam
         tmp_serie = ''
         tmp_authors = ''
         tmp_tags = ''
-        tmp_size = ''
-        tmp_link = ''
-        tmp_format = ''
 
         filepath, ext = os.path.splitext(file)  # Get file path and extension
         tmp_format = ext[1:].upper()  # assign file type into var for future injection into database
@@ -87,4 +85,4 @@ def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_nam
             os.makedirs(end_file)
         end_file += tmp_title + ext
         shutil.copyfile(file, end_file)
-        database.insertBook(tmp_guid, tmp_title, tmp_serie, tmp_authors, tmp_tags, tmp_size, tmp_format, tmp_link, tmp_cover)
+        database.insertBook(tmp_guid, tmp_title, tmp_serie, tmp_authors, tmp_tags, get_file_size(end_file), tmp_format, end_file, tmp_cover)
