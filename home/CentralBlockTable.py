@@ -104,8 +104,8 @@ class HomeWindowCentralBlock:
         print("Column = {}".format(newItem.column()))
         print(newItem.text())
         guid_book = newItem.data(99)
-        book = self.BDD.getBooks(guid_book)[0]
         col_type = newItem.data(100)
+        book = self.BDD.getBooks(guid_book)[0]
         book[col_type] = newItem.text()
         self.BDD.updateBook(guid_book, col_type, newItem.text())
 
