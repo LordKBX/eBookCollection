@@ -47,8 +47,7 @@ QPushButton:hover{
 }
 QPushButton:pressed{
 	background-color:rgb(75, 75, 75);
-}
-QLabel * {color: rgb(255, 255, 255) !important;}</string>
+}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -323,6 +322,9 @@ text-align: right;
 font-family: arial;
 font-size: 12px; }
 QTableView::item { padding: 0px }</string>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
          </property>
          <property name="showDropIndicator" stdset="0">
           <bool>false</bool>
@@ -656,15 +658,7 @@ QTableView::item { padding: 0px }</string>
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">QLabel{
-color: rgb(255, 255, 255);
-}
-QLabel *{
-color: rgb(255, 255, 255);
-}
-QLabel:*{
-color: rgb(255, 255, 255);
-}</string>
+            <string notr="true"/>
            </property>
            <property name="text">
             <string>&lt;a href=&quot;test&quot;&gt;test&lt;/a&gt;</string>

@@ -21,9 +21,10 @@ import bdd
 
 from home.CentralBlockTable import *
 from home.InfoPanel import *
+from home.SortingBlockTree import *
 
 
-class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel):
+class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
     def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict):
         self.appDir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.currentBook = ''
@@ -41,11 +42,7 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel):
         self.HeaderBlockBtnSettings.clicked.connect(self.HeaderBlockBtnSettingsClicked)
 
         self.CentralBlockTableDefineSlots()
-
-        while self.SortingBlockTree.topLevelItem(1).childCount() > 0:
-            self.SortingBlockTree.topLevelItem(1).removeChild(self.SortingBlockTree.topLevelItem(1).child(0))
-        while self.SortingBlockTree.topLevelItem(2).childCount() > 0:
-            self.SortingBlockTree.topLevelItem(2).removeChild(self.SortingBlockTree.topLevelItem(2).child(0))
+        self.SortingBlockTreeInit()
 
         self.show() # Show the GUI
 
@@ -131,9 +128,9 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel):
         """
         item = QtWidgets.QTableWidgetItem()
         if editable is True:
-            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsEnabled)
         else:
-            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsUserCheckable|QtCore.Qt.ItemIsEnabled)
+            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEnabled)
         item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
         item.setData(99, guid)
         item.setData(100, type)

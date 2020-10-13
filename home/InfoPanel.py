@@ -61,6 +61,7 @@ class HomeWindowInfoPanel:
                 icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
                 self.InfoBlockCover.setIcon(icon)
                 self.InfoBlockCover.setIconSize(QtCore.QSize(160, 160))
+                self.InfoBlockCover.setToolTip("<img src='{}'/>".format(book['cover']))
             except Exception:
                 traceback.print_exc()
         else:

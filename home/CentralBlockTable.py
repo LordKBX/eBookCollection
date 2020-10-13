@@ -74,7 +74,9 @@ class HomeWindowCentralBlock:
         """
         print("--------------------------------")
         print("CentralBlockTableCellDoubleClicked")
-        guid_book = self.CentralBlockTable.item(currentRow, currentColumn).data(99)
+        self.CentralBlockTable.item(currentRow, currentColumn)
+        item = self.CentralBlockTable.item(currentRow, currentColumn)
+        guid_book = item.data(99)
         print("Book GUID : {}".format(guid_book))
         if self.currentBook != guid_book:
             self.currentBook = guid_book
@@ -102,7 +104,9 @@ class HomeWindowCentralBlock:
         print("Column = {}".format(newItem.column()))
         print(newItem.text())
         guid_book = newItem.data(99)
+        book = self.BDD.getBooks(guid_book)[0]
         col_type = newItem.data(100)
+        book[col_type] = newItem.text()
         self.BDD.updateBook(guid_book, col_type, newItem.text())
 
-        self.setInfoPanel(self.BDD.getBooks(guid_book)[0])
+        self.setInfoPanel(book)
