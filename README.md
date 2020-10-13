@@ -5,6 +5,7 @@ This application is designed for managing ebooks
 - add Ebook in database
 - open ebook
 - modify Ebook data(support for title, serie and authors)
+
 ## Planed Features
 - modify Ebook storage dir if metadata updated
 - synchronize ebook library with mobile terminal
@@ -16,7 +17,7 @@ This application is designed for managing ebooks
         - tags
 
 
-### Prerequisites
+## Prerequisites
 
 Require Python >= 3.5.x
 Require the followin complements:
@@ -28,11 +29,11 @@ Require the followin complements:
 - Beautifulsoup4
 - pywin32(optional on windows)
 
-### Installation
-#### Windows installer: 
+## Installation
+### Windows installer: 
 nothing for the moment
 
-#### Manualy
+### Manualy
 #### On Windows and Mac
 1. Install Python >=3.5.x which you can find [here](https://www.python.org/downloads/ "Python Download Link"). Do not forget the PATH inclusion(checked by default)
 2. Run
@@ -49,7 +50,7 @@ sudo apt-get install python3
 sudo pip3 install -r [path of the application files]requirements.txt
 ```
 
-### Usage
+## Usage
 Use the start.bat file. 
 ```
 [path of the application files]start.bat
