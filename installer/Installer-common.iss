@@ -1,6 +1,6 @@
 
 #define MyAppName "EbookCollection"
-#define MyAppVersion "1.0"
+#define MyAppVersion "0.1_alpha001"
 #define MyAppPublisher "Future Code Technologies"
 #define MyAppURL "https://github.com/LordKBX/EbookCollection"
 

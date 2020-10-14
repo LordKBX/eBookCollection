@@ -31,7 +31,9 @@ Require the followin complements:
 
 ## Installation
 ### Windows installer: 
-nothing for the moment
+Go to the Release page [Here](https://github.com/LordKBX/EbookCollection/releases), contains:
+- executable with all dependancies (full version) 
+- executable without dependancies (light version)
 
 ### Manualy
 #### On Windows and Mac
