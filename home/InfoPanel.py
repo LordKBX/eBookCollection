@@ -19,10 +19,11 @@ class HomeWindowInfoPanel:
         passed = True
         if book is None: passed = False
         else:
-            if not is_in(book, ['title', 'serie', 'authors', 'files', 'synopsis']):
+            if not is_in(book, ['title', 'serie', 'authors', 'files']):
                 passed = False
 
         if passed is True:
+            self.currentBook = book['guid']
             self.InfoBlockTitleValue.setText(book['title'])
             self.InfoBlockSerieValue.setText(book['serie'])
             self.InfoBlockAuthorsValue.setText(book['authors'])
@@ -44,7 +45,6 @@ class HomeWindowInfoPanel:
             self.InfoBlockFileFormatsValue.setText(formats)
             self.InfoBlockFileFormatsValue.setOpenExternalLinks(True)
             self.InfoBlockSizeValue.setText(sizes)
-            self.InfoBlockSynopsisValue.setText(book['synopsis'])
             try:
                 icon = QtGui.QIcon()
                 tbimg = book['cover'].split(',')
@@ -64,15 +64,18 @@ class HomeWindowInfoPanel:
                 self.InfoBlockCover.setToolTip("<img src='{}'/>".format(book['cover']))
             except Exception:
                 traceback.print_exc()
+                icon = QtGui.QIcon()
+                icon.addPixmap(QtGui.QPixmap(self.appDir + '/icons/white/book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                self.InfoBlockCover.setIcon(icon)
+                self.InfoBlockCover.setIconSize(QtCore.QSize(130, 130))
         else:
             self.InfoBlockTitleValue.setText("")
             self.InfoBlockSerieValue.setText("")
             self.InfoBlockAuthorsValue.setText("")
             self.InfoBlockFileFormatsValue.setText("")
             self.InfoBlockSizeValue.setText("")
-            self.InfoBlockSynopsisValue.setText("")
 
             icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(self.appDir+'/icons/white_book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon.addPixmap(QtGui.QPixmap(self.appDir+'/icons/white/book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.InfoBlockCover.setIcon(icon)
             self.InfoBlockCover.setIconSize(QtCore.QSize(130, 130))

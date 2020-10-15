@@ -1,6 +1,6 @@
 
 #define MyAppName "EbookCollection"
-#define MyAppVersion "0.1_alpha001"
+#define MyAppVersion "0.1_alpha002"
 #define MyAppPublisher "Future Code Technologies"
 #define MyAppURL "https://github.com/LordKBX/EbookCollection"
 
@@ -35,9 +35,12 @@ Source: "D:\CODES\Python\EbookCollection\*.py"; DestDir: "{app}"; Flags: ignorev
 Source: "D:\CODES\Python\EbookCollection\*.bat"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\CODES\Python\EbookCollection\*.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\CODES\Python\EbookCollection\home\*.py"; DestDir: "{app}\home"; Flags: ignoreversion
-Source: "D:\CODES\Python\EbookCollection\home\*.ui"; DestDir: "{app}\home"; Flags: ignoreversion
-Source: "D:\CODES\Python\EbookCollection\icons\*.png"; DestDir: "{app}\icons"; Flags: ignoreversion
-Source: "D:\CODES\Python\EbookCollection\icons\*.ico"; DestDir: "{app}\icons"; Flags: ignoreversion
+Source: "D:\CODES\Python\EbookCollection\home\*.ui"; DestDir: "{app}\home"; Flags: ignoreversion 
+Source: "D:\CODES\Python\EbookCollection\reader\*.py"; DestDir: "{app}\reader"; Flags: ignoreversion
+Source: "D:\CODES\Python\EbookCollection\icons\*.ico"; DestDir: "{app}\icons"; Flags: ignoreversion  
+Source: "D:\CODES\Python\EbookCollection\icons\*.png"; DestDir: "{app}\icons"; Flags: ignoreversion     
+Source: "D:\CODES\Python\EbookCollection\icons\black\*.png"; DestDir: "{app}\icons\black"; Flags: ignoreversion
+Source: "D:\CODES\Python\EbookCollection\icons\white\*.png"; DestDir: "{app}\icons\white"; Flags: ignoreversion
 Source: "D:\CODES\Python\EbookCollection\tools\7zip\*"; DestDir: "{app}\tools\7zip"; Flags: ignoreversion
 Source: "D:\CODES\Python\EbookCollection\tools\poppler\*"; DestDir: "{app}\tools\poppler"; Flags: ignoreversion
 
@@ -51,7 +54,8 @@ Name: "{commondesktop}\{#MyAppName}"; Filename: "python {app}\main.py"; WorkingD
 
 [UninstallDelete]
 Type: files; Name: "{app}\__pycache__\*" 
-Type: files; Name: "{app}\home\__pycache__\*"
+Type: files; Name: "{app}\home\__pycache__\*"   
+Type: files; Name: "{app}\reader\__pycache__\*"
 Type: files; Name: "{app}\data\*"
 Type: files; Name: "{app}\icons\*"
 Type: files; Name: "{app}\tmp\*"

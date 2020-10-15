@@ -101,3 +101,22 @@ def unixtimeToString(value: float, template: str = '%Y-%m-%d %H:%M:%S', months: 
         amonth = months[int(float(datetime.datetime.utcfromtimestamp(value).strftime('%m'))) - 1]
         template = template.replace('$month', amonth)
     return datetime.datetime.utcfromtimestamp(value).strftime(template)
+
+
+def cleanDir(src_dir: str):
+    for dirpath, _, _ in os.walk(src_dir, topdown=False):  # Listing the files
+        if dirpath == src_dir: break
+        try:
+            os.rmdir(dirpath)
+        except Exception:
+            {}
+
+def cleanStringForUrl(string: str):
+    return string\
+        .replace(':', '_')\
+        .replace(';', '_')\
+        .replace('\\', '_')\
+        .replace('/', '_')\
+        .replace('"', '_')\
+        .replace(',', '_')\
+        .replace('?', '_')

@@ -3,6 +3,7 @@ import sys
 import os
 import traceback
 import time
+import re
 import sqlite3
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common import *
@@ -96,10 +97,11 @@ class BDD:
         :return: list(str)
         """
         ret = []
-        self.cursor.execute('''SELECT authors FROM books''')
+        self.cursor.execute('''SELECT authors FROM books GROUP BY authors ORDER BY authors ASC''')
         re = self.cursor.fetchall()
-        for row in re:
-            ret.append(row['authors'])
+        if re is not None:
+            for row in re:
+                ret.append(row['authors'])
         return ret
 
     def getSeries(self):
@@ -109,10 +111,11 @@ class BDD:
         :return: list(str)
         """
         ret = []
-        self.cursor.execute('''SELECT serie FROM books''')
+        self.cursor.execute('''SELECT serie FROM books GROUP BY serie ORDER BY serie ASC''')
         re = self.cursor.fetchall()
-        for row in re:
-            ret.append(row['authors'])
+        if re is not None:
+            for row in re:
+                ret.append(row['serie'])
         return ret
 
     def getBooks(self, guid: str = None, search: str = None):
@@ -126,12 +129,17 @@ class BDD:
         retList = []
         ret = None
         if guid is None and search is None:
-            self.cursor.execute('''SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid)''')
+            self.cursor.execute('''SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) ORDER BY title ASC''')
             ret = self.cursor.fetchall()
         else:
             if guid is not None:
                 self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE guid = '"+guid+"'")
                 ret = self.cursor.fetchall()
+            elif search is not None:
+                if re.search("^authors:", search) or re.search("^serie:", search):
+                    tab = search.split(':')
+                    self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE " + tab[0] + " = '" + tab[1] + "'")
+                    ret = self.cursor.fetchall()
         if ret is not None:
             prev_guid = ''
             for row in ret:
@@ -208,6 +216,24 @@ class BDD:
                 self.cursor.execute('UPDATE files SET `'+col+'` = ?, file_last_update_date = ? WHERE book_id = ? AND guid_file = ?',
                                     (value, dt, guid, file_guid)
                                     )
+            self.connexion.commit()
+        except Exception:
+            traceback.print_exc()
+
+    def deleteBook(self, guid: str, file_guid: str = None):
+        """
+
+        :param guid:
+        :param file_guid:
+        :return:
+        """
+        try:
+            dt = time.time()
+            if file_guid is None:
+                self.cursor.execute('DELETE FROM books WHERE guid = \'{}\''.format(guid))
+                self.cursor.execute('DELETE FROM files WHERE book_id = \'{}\''.format(guid))
+            else:
+                self.cursor.execute('DELETE FROM files WHERE book_id = ? AND guid_file = ?', (guid, file_guid))
             self.connexion.commit()
         except Exception:
             traceback.print_exc()
