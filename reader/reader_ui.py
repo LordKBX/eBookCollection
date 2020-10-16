@@ -14,46 +14,114 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ReaderWindow(object):
     def setupUi(self, ReaderWindow):
         ReaderWindow.setObjectName("ReaderWindow")
-        ReaderWindow.resize(600, 600)
-        ReaderWindow.setMinimumSize(QtCore.QSize(600, 600))
-        self.horizontalLayout_6 = QtWidgets.QHBoxLayout(ReaderWindow)
-        self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_6.setSpacing(0)
-        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
-        self.verticalLayout = QtWidgets.QVBoxLayout()
-        self.verticalLayout.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.treeWidget = QtWidgets.QTreeWidget(ReaderWindow)
-        self.treeWidget.setMaximumSize(QtCore.QSize(200, 16777215))
-        self.treeWidget.setObjectName("treeWidget")
-        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
-        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
-        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
-        item_0 = QtWidgets.QTreeWidgetItem(self.treeWidget)
-        self.treeWidget.header().setVisible(False)
-        self.verticalLayout.addWidget(self.treeWidget)
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.pushButton_2 = QtWidgets.QPushButton(ReaderWindow)
-        self.pushButton_2.setObjectName("pushButton_2")
-        self.horizontalLayout.addWidget(self.pushButton_2)
-        self.pushButton = QtWidgets.QPushButton(ReaderWindow)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        self.horizontalLayout_6.addLayout(self.verticalLayout)
-        self.webView = QtWebKitWidgets.QWebView(ReaderWindow)
+        ReaderWindow.resize(732, 720)
+        ReaderWindow.setMinimumSize(QtCore.QSize(500, 600))
+        ReaderWindow.setStyleSheet("QWidget{\n"
+"    background-color: rgb(62, 62, 62);\n"
+"    color: rgb(255, 255, 255);\n"
+"}\n"
+"\n"
+"QToolTip   {\n"
+"    border: 1px solid black;\n"
+"    background-color: rgb(255, 213, 61);\n"
+"    color: rgb(0, 0, 0);\n"
+"}\n"
+"QPushButton{\n"
+"    background:transparent;\n"
+"}\n"
+"QPushButton:hover{\n"
+"    background-color:rgb(120, 120, 120);\n"
+"}\n"
+"QPushButton:pressed{\n"
+"    background-color:rgb(120, 120, 120);\n"
+"}\n"
+"QPushButton:checked{\n"
+"    background-color:rgb(150, 150, 150);\n"
+"}\n"
+"QFrame{\n"
+"    border-color: #828790;\n"
+"}\n"
+"QTableWidget{\n"
+"    border-color: #828790;\n"
+"}\n"
+"QTreeWidget{\n"
+"    border-color: #828790;\n"
+"}\n"
+"QLineEdit{\n"
+"    border-color: #828790;\n"
+"}")
+        self.windowLayout = QtWidgets.QHBoxLayout(ReaderWindow)
+        self.windowLayout.setContentsMargins(0, 0, 0, 0)
+        self.windowLayout.setSpacing(0)
+        self.windowLayout.setObjectName("windowLayout")
+        self.buttonBoxLayout = QtWidgets.QVBoxLayout()
+        self.buttonBoxLayout.setSpacing(0)
+        self.buttonBoxLayout.setObjectName("buttonBoxLayout")
+        self.buttonInfo = QtWidgets.QPushButton(ReaderWindow)
+        self.buttonInfo.setMinimumSize(QtCore.QSize(50, 50))
+        self.buttonInfo.setMaximumSize(QtCore.QSize(50, 50))
+        self.buttonInfo.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.buttonInfo.setText("")
+        self.buttonInfo.setIconSize(QtCore.QSize(30, 30))
+        self.buttonInfo.setCheckable(False)
+        self.buttonInfo.setDefault(False)
+        self.buttonInfo.setFlat(False)
+        self.buttonInfo.setObjectName("buttonInfo")
+        self.buttonBoxLayout.addWidget(self.buttonInfo)
+        self.buttonContentTable = QtWidgets.QPushButton(ReaderWindow)
+        self.buttonContentTable.setMinimumSize(QtCore.QSize(50, 50))
+        self.buttonContentTable.setMaximumSize(QtCore.QSize(50, 50))
+        self.buttonContentTable.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.buttonContentTable.setText("")
+        self.buttonContentTable.setIconSize(QtCore.QSize(30, 30))
+        self.buttonContentTable.setCheckable(True)
+        self.buttonContentTable.setChecked(True)
+        self.buttonContentTable.setFlat(False)
+        self.buttonContentTable.setObjectName("buttonContentTable")
+        self.buttonBoxLayout.addWidget(self.buttonContentTable)
+        self.buttonFullScreen = QtWidgets.QPushButton(ReaderWindow)
+        self.buttonFullScreen.setMinimumSize(QtCore.QSize(50, 50))
+        self.buttonFullScreen.setMaximumSize(QtCore.QSize(50, 50))
+        self.buttonFullScreen.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.buttonFullScreen.setText("")
+        self.buttonFullScreen.setIconSize(QtCore.QSize(30, 30))
+        self.buttonFullScreen.setCheckable(False)
+        self.buttonFullScreen.setFlat(False)
+        self.buttonFullScreen.setObjectName("buttonFullScreen")
+        self.buttonBoxLayout.addWidget(self.buttonFullScreen)
+        spacerItem = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+        self.buttonBoxLayout.addItem(spacerItem)
+        self.windowLayout.addLayout(self.buttonBoxLayout)
+        self.treeContentTable = QtWidgets.QTreeWidget(ReaderWindow)
+        self.treeContentTable.setMinimumSize(QtCore.QSize(180, 0))
+        self.treeContentTable.setMaximumSize(QtCore.QSize(180, 16777215))
+        self.treeContentTable.setStyleSheet("::section{\n"
+"background-color:#4B4B4B;\n"
+"}")
+        self.treeContentTable.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        self.treeContentTable.setProperty("showDropIndicator", False)
+        self.treeContentTable.setObjectName("treeContentTable")
+        self.treeContentTable.headerItem().setTextAlignment(0, QtCore.Qt.AlignCenter)
+        item_0 = QtWidgets.QTreeWidgetItem(self.treeContentTable)
+        item_0 = QtWidgets.QTreeWidgetItem(self.treeContentTable)
+        item_0 = QtWidgets.QTreeWidgetItem(self.treeContentTable)
+        item_0 = QtWidgets.QTreeWidgetItem(self.treeContentTable)
+        self.treeContentTable.header().setVisible(True)
+        self.treeContentTable.header().setCascadingSectionResizes(False)
+        self.treeContentTable.header().setSortIndicatorShown(False)
+        self.windowLayout.addWidget(self.treeContentTable)
+        self.webView = CustomQWebView(ReaderWindow)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.webView.sizePolicy().hasHeightForWidth())
         self.webView.setSizePolicy(sizePolicy)
-        self.webView.setMinimumSize(QtCore.QSize(400, 720))
+        self.webView.setMinimumSize(QtCore.QSize(500, 720))
         self.webView.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.webView.setStyleSheet("background-color: rgb(230, 230, 230);")
         self.webView.setProperty("url", QtCore.QUrl("about:blank"))
         self.webView.setObjectName("webView")
-        self.horizontalLayout_6.addWidget(self.webView)
+        self.windowLayout.addWidget(self.webView)
 
         self.retranslateUi(ReaderWindow)
         QtCore.QMetaObject.connectSlotsByName(ReaderWindow)
@@ -61,17 +129,15 @@ class Ui_ReaderWindow(object):
     def retranslateUi(self, ReaderWindow):
         _translate = QtCore.QCoreApplication.translate
         ReaderWindow.setWindowTitle(_translate("ReaderWindow", "Ebook Collection - Reader"))
-        self.treeWidget.headerItem().setText(0, _translate("ReaderWindow", "1"))
-        __sortingEnabled = self.treeWidget.isSortingEnabled()
-        self.treeWidget.setSortingEnabled(False)
-        self.treeWidget.topLevelItem(0).setText(0, _translate("ReaderWindow", "Cover"))
-        self.treeWidget.topLevelItem(1).setText(0, _translate("ReaderWindow", "Index"))
-        self.treeWidget.topLevelItem(2).setText(0, _translate("ReaderWindow", "Chapter 1"))
-        self.treeWidget.topLevelItem(3).setText(0, _translate("ReaderWindow", "Chapter 2"))
-        self.treeWidget.setSortingEnabled(__sortingEnabled)
-        self.pushButton_2.setText(_translate("ReaderWindow", "PushButton"))
-        self.pushButton.setText(_translate("ReaderWindow", "PushButton"))
-from PyQt5 import QtWebKitWidgets
+        self.treeContentTable.headerItem().setText(0, _translate("ReaderWindow", "1"))
+        __sortingEnabled = self.treeContentTable.isSortingEnabled()
+        self.treeContentTable.setSortingEnabled(False)
+        self.treeContentTable.topLevelItem(0).setText(0, _translate("ReaderWindow", "Cover"))
+        self.treeContentTable.topLevelItem(1).setText(0, _translate("ReaderWindow", "Index"))
+        self.treeContentTable.topLevelItem(2).setText(0, _translate("ReaderWindow", "Chapter 1"))
+        self.treeContentTable.topLevelItem(3).setText(0, _translate("ReaderWindow", "Chapter 2"))
+        self.treeContentTable.setSortingEnabled(__sortingEnabled)
+from CustomQWebView import CustomQWebView
 
 
 if __name__ == "__main__":

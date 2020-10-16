@@ -48,6 +48,20 @@ class Lang:
             'DialogConfirmDeleteBookBtnYes': 'Oui',
             'DialogConfirmDeleteBookBtnNo': 'Non'
         }),
+        'Generic': Dictionary({
+            'DialogBtnOk': 'Compris'
+        }),
+        'Reader': Dictionary({
+            'WindowTitle': 'EbookCollection - Gestionnaire de livre numérique',
+            'DialogInfoNoFileWindowTitle': 'Erreur Fichier',
+            'DialogInfoNoFileWindowText': 'Vous n\'avez pas fournis d\'adresse fichier',
+            'DialogInfoBadFileWindowTitle': 'Erreur Fichier',
+            'DialogInfoBadFileWindowText': 'Format de fichier invalide',
+            'ContentTableHeader': 'Table des Matières',
+            'ContentTableTxtCover': 'Couverture',
+            'ContentTableTxtEnd': 'Fin',
+            'ContentTableTxtPageX': 'Page {}'
+        }),
         'Time': Dictionary({
             'template': Dictionary({
                 'numeric_date': '%d/%m/%Y',
@@ -87,6 +101,20 @@ class Lang:
             'DialogConfirmDeleteBookWindowText': 'Confirmez vous la suppression des Ebook sélectionnés ?',
             'DialogConfirmDeleteBookBtnYes': 'Yes',
             'DialogConfirmDeleteBookBtnNo': 'No'
+        }),
+        'Generic': Dictionary({
+            'DialogBtnOk': 'Compris'
+        }),
+        'Reader': Dictionary({
+            'WindowTitle': 'EbookCollection - Gestionnaire de livre numérique',
+            'DialogInfoNoFileWindowTitle': 'Erreur Fichier',
+            'DialogInfoNoFileWindowText': 'Vous n\'avez pas fournis d\'adresse fichier',
+            'DialogInfoBadFileWindowTitle': 'Erreur Fichier',
+            'DialogInfoBadFileWindowText': 'Format de fichier invalide',
+            'ContentTableHeader': 'Content Table',
+            'ContentTableTxtCover': 'Cover',
+            'ContentTableTxtEnd': 'End',
+            'ContentTableTxtPageX': 'Page {}'
         }),
         'Time': Dictionary({
             'template': Dictionary({

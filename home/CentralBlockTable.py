@@ -126,9 +126,15 @@ class HomeWindowCentralBlock:
         # print("Book GUID : {}".format(guid_book))
         if self.currentBook != guid_book:
             self.currentBook = guid_book
-        file = '"' + self.BDD.getBooks(guid_book)[0]['files'][0]['link'] + '"'
-        print(file)
-        try: retcode = subprocess.call(file, shell=True)
+        args = list()
+        if self.BDD.getBooks(guid_book)[0]['files'][0]['format'] in ['CBZ', 'CBR']:
+            args.append('python')
+            args.append(self.appDir + '/reader/main.py'.replace('/', os.sep))
+            args.append(self.appDir + os.sep + self.BDD.getBooks(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
+        else:
+            args.append(self.BDD.getBooks(guid_book)[0]['files'][0]['link'])
+        print(args)
+        try: retcode = subprocess.call(args, shell=True)
         except Exception:
             traceback.print_exc()
 

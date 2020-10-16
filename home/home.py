@@ -15,6 +15,7 @@ from PyQt5.uic import *
 
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common import *
+from dialog import *
 from lang import *
 from booksTools import *
 import bdd
@@ -100,34 +101,15 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
         try:
             print("Bouton Delete book clické")
             if len(self.CentralBlockTable.selectedItems()) > 0:
-                msgBox = QtWidgets.QMessageBox()
-                msgBox.setStyleSheet("""
-                    QMessageBox {
-                        background-color: rgb(62, 62, 62); color: rgb(255, 255, 255);
-                        /*
-                        dialogbuttonbox-buttons-have-icons: true;
-                        dialog-ok-icon: url(ok.svg);
-                        dialog-cancel-icon: url(cancel.png),
-                                            url(grayed_cancel.png) disabled;
-                        */
-                        dialog-ok-background:rgb(234, 86, 86);
-                    }
-                    QWidget{ background-color: rgb(62, 62, 62); color: rgb(255, 255, 255); }
-                    QPushButton{ height:30px; }
-                """)
-                msgBox.setWindowTitle(self.lang['Home']['DialogConfirmDeleteBookWindowTitle'])
-                msgBox.setText(self.lang['Home']['DialogConfirmDeleteBookWindowText'])
-                msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-                msgBox.button(QtWidgets.QMessageBox.Yes).setText(self.lang['Home']['DialogConfirmDeleteBookBtnYes'])
-                msgBox.button(QtWidgets.QMessageBox.Yes).setStyleSheet('background-color: rgb(234, 86, 86); color: rgb(255, 255, 255);')
-                msgBox.button(QtWidgets.QMessageBox.Yes).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-                msgBox.button(QtWidgets.QMessageBox.No).setText(self.lang['Home']['DialogConfirmDeleteBookBtnNo'])
-                msgBox.button(QtWidgets.QMessageBox.No).setStyleSheet('background-color: rgb(0, 153, 15); color: rgb(255, 255, 255);')
-                msgBox.button(QtWidgets.QMessageBox.No).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-                msgBox.setDefaultButton(QtWidgets.QMessageBox.Cancel)
-                msgBox.setIcon(QMessageBox.Warning)
-                ret = msgBox.exec()
-                if ret == QtWidgets.QMessageBox.Yes:
+                ret = WarnDialogConfirm(
+                    self.lang['Home']['DialogConfirmDeleteBookWindowTitle'],
+                    self.lang['Home']['DialogConfirmDeleteBookWindowText'],
+                    self.lang['Home']['DialogConfirmDeleteBookBtnYes'],
+                    self.lang['Home']['DialogConfirmDeleteBookBtnNo'],
+                    self
+                )
+
+                if ret is True:
                     items = self.CentralBlockTable.selectedItems()
                     self.CentralBlockTable.clearSelection()
                     for item in items:

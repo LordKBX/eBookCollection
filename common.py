@@ -1,5 +1,7 @@
 import uuid
 import os
+import shutil
+import re
 import time
 import datetime
 import enum
@@ -71,22 +73,6 @@ def uid():
     return uuid.uuid1().urn.replace('urn:uuid:', '')
 
 
-def listDir(dirName):
-    """
-    Recursive function for listing files in a folder and his sub folders
-
-    :param dirName: path of the parsed dir
-    :return: list(str)
-    """
-    listOfFile = os.listdir(dirName)
-    allFiles = list()
-    for entry in listOfFile:
-        fullPath = os.path.join(dirName, entry)
-        if os.path.isdir(fullPath): allFiles = allFiles + listDir(fullPath)
-        else: allFiles.append(fullPath)
-    return allFiles
-
-
 def unixtimeToString(value: float, template: str = '%Y-%m-%d %H:%M:%S', months: list = list()):
     """
     translate unix timestamp into human readable string
@@ -103,6 +89,26 @@ def unixtimeToString(value: float, template: str = '%Y-%m-%d %H:%M:%S', months: 
     return datetime.datetime.utcfromtimestamp(value).strftime(template)
 
 
+def listDir(dirName: str, ext: str = None):
+    """
+    Recursive function for listing files in a folder and his sub folders
+
+    :param dirName: path of the parsed dir
+    :return: list(str)
+    """
+    listOfFile = os.listdir(dirName)
+    allFiles = list()
+    for entry in listOfFile:
+        fullPath = os.path.join(dirName, entry)
+        if ext is not None and os.path.isfile(fullPath):
+            if re.search("\\.({})$".format(ext), entry) is None: continue
+        if os.path.isdir(fullPath):
+            allFiles = allFiles + listDir(fullPath, ext)
+        else:
+            allFiles.append(fullPath)
+    return allFiles
+
+
 def cleanDir(src_dir: str):
     for dirpath, _, _ in os.walk(src_dir, topdown=False):  # Listing the files
         if dirpath == src_dir: break
@@ -110,6 +116,11 @@ def cleanDir(src_dir: str):
             os.rmdir(dirpath)
         except Exception:
             {}
+
+
+def rmDir(src_dir: str):
+    shutil.rmtree(src_dir, ignore_errors=True)
+
 
 def cleanStringForUrl(string: str):
     return string\

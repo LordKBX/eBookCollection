@@ -66,8 +66,7 @@ def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_nam
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
             list_args = list()  # create list argument for external command execution
             list_args.append(tools['7zip'][os.name]['path'])  # insert executable path
-            temp_args = tools['7zip'][os.name]['params_deflate'].split(
-                ' ')  # create table of raw command arguments
+            temp_args = tools['7zip'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
             for var in temp_args:  # parse table of raw command arguments
                 # insert parsed param
                 list_args.append(var.replace('%input%', file).replace('%output%', tmpdir))
@@ -116,8 +115,7 @@ def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_nam
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
             list_args = list()  # create list argument for external command execution
             list_args.append(tools['7zip'][os.name]['path'])  # insert executable path
-            temp_args = tools['7zip'][os.name]['params_deflate'].split(
-                ' ')  # create table of raw command arguments
+            temp_args = tools['7zip'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
             for var in temp_args:  # parse table of raw command arguments
                 # insert parsed param
                 list_args.append(var.replace('%input%', file).replace('%output%', tmpdir))
