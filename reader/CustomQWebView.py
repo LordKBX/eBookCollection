@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5 import QtWebKitWidgets
 import traceback
 from enum import Enum
+import pyperclip
 
 
 class QwwMode(Enum):
@@ -18,10 +19,14 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 		self.mode = QwwMode.CBZ
 		self.ctrlOn = False
 		self.initialized = False
+		self.eventHandler = None
 
 	def setMode(self, mode: QwwMode):
 		self.mode = mode
 		self.initialized = True
+
+	def setEventHandler(self, handler: any):
+		self.eventHandler = handler
 
 	# def mouseReleaseEvent(self, event):
 	# 	print('mouseReleaseEvent')
@@ -55,6 +60,7 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 					elif event.angleDelta().y() > 0: passed = -1
 					self.updatePositionCbz(passed)
 				else:
+					self.updatePositionEpub(event.angleDelta().y() * -1)
 					event.ignore()
 		except Exception:
 			traceback.print_exc()
@@ -63,16 +69,23 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 	# 	print('mouseMoveEvent')
 
 	def keyPressEvent(self, event: QtGui.QKeyEvent):
-		try:
-			if event.type() == QtCore.QEvent.KeyPress:
-				if event.key() == QtCore.Qt.Key_Control:
-					self.ctrlOn = True
-					return
-				if self.ctrlOn is True:
-					print('KeyPress + Ctrl')
+		if event.type() != QtCore.QEvent.KeyPress: event.ignore()
+		else:
+			if self.mode.value == QwwMode.EPUB.value:
+				event.ignore()
+			if event.key() == QtCore.Qt.Key_Control:
+				self.ctrlOn = True
+				return
+			if self.ctrlOn is True:
+				print('KeyPress + Ctrl')
+				if self.mode.value == QwwMode.CBZ.value:
 					if event.key() in [QtCore.Qt.Key_0, QtCore.Qt.Key_Escape]:
 						super().page().mainFrame().setZoomFactor(1)
-				else:
+				elif self.mode.value == QwwMode.EPUB.value:
+					if event.key() in [QtCore.Qt.Key_C]:
+						pyperclip.copy(super().page().selectedText())
+			else:
+				try:
 					if self.mode.value == QwwMode.CBZ.value:
 						zoom = super().page().mainFrame().zoomFactor()
 						if zoom != 1:
@@ -93,8 +106,8 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 						if event.key() in [QtCore.Qt.Key_Left, QtCore.Qt.Key_Up, QtCore.Qt.Key_PageUp]: passed = -1
 						elif event.key() in [QtCore.Qt.Key_Right, QtCore.Qt.Key_Down, QtCore.Qt.Key_PageDown]: passed = 1
 						self.updatePositionCbz(passed)
-		except Exception:
-			traceback.print_exc()
+				except Exception:
+					traceback.print_exc()
 
 	def keyReleaseEvent(self, event: QtGui.QKeyEvent):
 		try:
@@ -106,19 +119,47 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 	def resizeEvent(self, event: QtGui.QResizeEvent):
 		super().resizeEvent(event)
 		try:
-			self.updatePositionCbz(0)
-			if self.initialized is True:
-				super().page().currentFrame().evaluateJavaScript("imgResize();")
+			if self.mode.value == QwwMode.CBZ.value:
+				self.updatePositionCbz(0)
+				if self.initialized is True:
+					super().page().currentFrame().evaluateJavaScript("imgResize();")
 		except Exception:
 			traceback.print_exc()
+
+	def updatePositionEpub(self, delta: int):
+		pos = super().page().mainFrame().scrollPosition()
+		calc = pos.y() + delta
+		if (super().page().mainFrame().contentsSize().height() - super().height()) >= calc >= 0:
+			super().page().mainFrame().setScrollPosition( QtCore.QPoint(pos.x(), calc) )
+			self.eventHandler({
+				'type': 'scroll',
+				'value': (calc > 0)
+			})
+		else:
+			if self.eventHandler is not None:
+				if delta < 0:
+					super().page().mainFrame().setScrollPosition(QtCore.QPoint(pos.x(), 0))
+					self.eventHandler({
+						'type': 'chapterChange',
+						'value': 'prev'
+					})
+				else:
+					super().page().mainFrame().setScrollPosition(QtCore.QPoint(pos.x(), super().page().mainFrame().contentsSize().height() - super().height()))
+					self.eventHandler({
+						'type': 'chapterChange',
+						'value': 'next'
+					})
+
 
 	def updatePositionCbz(self, passed: int):
 		if self.nbpage + passed >= 0:
 			if (self.nbpage + passed) * super().height() >= super().page().mainFrame().contentsSize().height(): return
 			self.nbpage = self.nbpage + passed
-		super().page().mainFrame().setScrollPosition(
-			QtCore.QPoint(0, self.nbpage * super().height())
-		)
+			super().page().mainFrame().setScrollPosition(
+				QtCore.QPoint(0, self.nbpage * super().height())
+			)
+			if passed > 0: self.eventHandler({ 'type': 'pageChange', 'value': 'next', 'index': self.nbpage })
+			else: self.eventHandler({ 'type': 'pageChange', 'value': 'prev', 'index': self.nbpage })
 
 	def updatePositionCbzByPage(self, page_index: int):
 		max = int(super().page().mainFrame().contentsSize().height() / super().height())

@@ -5,11 +5,14 @@ import subprocess
 import shutil
 import traceback
 from xml.dom import minidom
+from bs4 import BeautifulSoup
 import bdd
 from common import *
+from vars import *
 import PIL
 from PIL import Image
 import base64
+import zipfile
 
 
 def create_thumbnail(path: str):
@@ -30,6 +33,100 @@ def create_thumbnail(path: str):
     buffer = io.BytesIO()
     img.save(buffer, 'jpeg')
     return 'data:image/jpeg;base64,'+base64.b64encode(buffer.getvalue()).decode()
+
+
+def getEpubIfo(path: str):
+    ret = {
+        'guid': None,
+        'title': None,
+        'authors': None,
+        'serie': None,
+        'tags': None,
+        'cover': None,
+        'toc': None,
+        'chapters': list()
+    }
+    try:
+        if os.path.isfile(path) is True:
+            myzip = zipfile.ZipFile(path, 'r')
+
+            myfile = myzip.open('META-INF/container.xml')
+            mydoc = minidom.parseString(myfile.read())
+            item = mydoc.getElementsByTagName('rootfile')[0]
+            file2 = item.attributes['full-path'].value
+            myfile.close()
+
+            base = ''
+            if '/' in file2:
+                tab = file2.split('/')
+                base = ''
+                i = 0
+                while i < len(tab) - 1:
+                    if i > 0: base += '/'
+                    base += tab[i]
+                    i+=1
+                base += '/'
+            myfile = myzip.open(file2)
+            mydoc = minidom.parseString(myfile.read())
+
+            try: ret['guid'] = mydoc.getElementsByTagName('dc:identifier')[0].firstChild.data
+            except Exception: {}
+            try: ret['title'] = mydoc.getElementsByTagName('dc:title')[0].firstChild.data
+            except Exception: {}
+            try: ret['authors'] = mydoc.getElementsByTagName('dc:creator')[0].firstChild.data
+            except Exception: {}
+            try: ret['serie'] = mydoc.getElementsByTagName('dc:subject')[0].firstChild.data
+            except Exception: {}
+
+            metas = mydoc.getElementsByTagName('meta')
+            cov_id = ''
+            for meta in metas:
+                if meta.attributes['name'].value == 'cover': cov_id = meta.attributes['content'].value
+                if meta.attributes['name'].value == 'calibre:series': ret['serie'] = meta.attributes['content'].value
+
+            items = mydoc.getElementsByTagName('item')
+            spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
+
+            for itm in items:
+                if itm.attributes['id'].value == spine:
+                    ret['toc'] = itm.attributes['href'].value
+                if cov_id != '':
+                    if itm.attributes['id'].value == cov_id:
+                        filepath, ext = os.path.splitext(itm.attributes['href'].value)
+                        tmpdir = appDir + '/tmp'  # create var for temporary file extraction
+                        if os.path.isdir(tmpdir) is False:
+                            os.makedirs(tmpdir)
+                        mfile = myzip.extract(base+itm.attributes['href'].value, tmpdir)
+                        ret['cover'] = create_thumbnail(mfile)
+                        break
+                else:
+                    if itm.attributes['media-type'].value in ['image/jpeg', 'image/png']:
+                        filepath, ext = os.path.splitext(itm.attributes['href'].value)
+                        tmpdir = appDir + '/tmp'  # create var for temporary file extraction
+                        if os.path.isdir(tmpdir) is False:
+                            os.makedirs(tmpdir)
+                        mfile = myzip.extract(base+itm.attributes['href'].value, tmpdir)
+                        ret['cover'] = create_thumbnail(mfile)
+                        break
+            myfile.close()
+
+            myfile = myzip.open(base+ret['toc'])
+            mydoc = minidom.parseString(myfile.read())
+            itemrefs = mydoc.getElementsByTagName('navPoint')
+            for ref in itemrefs:
+                id = ref.attributes['id'].value
+                ret['chapters'].append({
+                    'id': ref.attributes['id'].value,
+                    'name': ref.getElementsByTagName('text')[0].firstChild.data,
+                    'src': base+ref.getElementsByTagName('content')[0].attributes['src'].value
+                })
+            myfile.close()
+
+            myzip.close()
+            return ret
+    except Exception:
+        traceback.print_exc()
+    return None
 
 
 def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_name_separator: str, file: str):
@@ -64,49 +161,13 @@ def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_nam
 
         if ext in ['.epub', '.epub2', '.epub3']:  # section for EPUB files
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
-            list_args = list()  # create list argument for external command execution
-            list_args.append(tools['7zip'][os.name]['path'])  # insert executable path
-            temp_args = tools['7zip'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
-            for var in temp_args:  # parse table of raw command arguments
-                # insert parsed param
-                list_args.append(var.replace('%input%', file).replace('%output%', tmpdir))
-            print(list_args)
-            process = subprocess.Popen(list_args, shell=False)  # execute the command
-            process.wait()
-            # print(process.returncode)
-
-            try:
-                metainfo_file = tmpdir + '/META-INF/container.xml'
-                mydoc = minidom.parse(metainfo_file)
-                item = mydoc.getElementsByTagName('rootfile')[0]
-                print( item.attributes['full-path'].value )
-
-                metadata_file = tmpdir + '/' + item.attributes['full-path'].value
-                mydoc = minidom.parse(metadata_file)
-                try: tmp_guid = mydoc.getElementsByTagName('dc:identifier')[0].firstChild.data
-                except Exception: {}
-                try: tmp_title = mydoc.getElementsByTagName('dc:title')[0].firstChild.data
-                except Exception: {}
-                try: tmp_authors = mydoc.getElementsByTagName('dc:creator')[0].firstChild.data
-                except Exception: {}
-                try: tmp_serie = mydoc.getElementsByTagName('dc:subject')[0].firstChild.data
-                except Exception: {}
-                metas = mydoc.getElementsByTagName('meta')
-                cov_id = ''
-                for meta in metas:
-                    if meta.attributes['name'].value == 'cover':
-                        cov_id = meta.attributes['content'].value
-                    if meta.attributes['name'].value == 'calibre:series':
-                        tmp_serie = meta.attributes['content'].value
-                print("cov_id = ".format(cov_id))
-
-                items = mydoc.getElementsByTagName('item')
-                for itm in items:
-                    if itm.attributes['id'].value == cov_id:
-                        print('cover = {}'.format(itm.attributes['href'].value))
-                        tmp_cover = create_thumbnail(tmpdir + '/' + itm.attributes['href'].value)
-            except Exception:
-                traceback.print_exc()
+            infos = getEpubIfo(file)
+            print(infos)
+            if infos['guid'] is not None: tmp_guid = infos['guid']
+            tmp_title = infos['title']
+            tmp_authors = infos['authors']
+            tmp_serie = infos['serie']
+            tmp_cover = infos['cover']
 
             if len(database.getBooks(tmp_guid)) > 0:
                 tmp_guid = uid()

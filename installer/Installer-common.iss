@@ -1,6 +1,6 @@
 
 #define MyAppName "EbookCollection"
-#define MyAppVersion "0.1_alpha002"
+#define MyAppVersion "0.1_alpha004"
 #define MyAppPublisher "Future Code Technologies"
 #define MyAppURL "https://github.com/LordKBX/EbookCollection"
 
@@ -37,6 +37,7 @@ Source: "D:\CODES\Python\EbookCollection\*.txt"; DestDir: "{app}"; Flags: ignore
 Source: "D:\CODES\Python\EbookCollection\home\*.py"; DestDir: "{app}\home"; Flags: ignoreversion
 Source: "D:\CODES\Python\EbookCollection\home\*.ui"; DestDir: "{app}\home"; Flags: ignoreversion 
 Source: "D:\CODES\Python\EbookCollection\reader\*.py"; DestDir: "{app}\reader"; Flags: ignoreversion
+Source: "D:\CODES\Python\EbookCollection\editor\*.py"; DestDir: "{app}\editor"; Flags: ignoreversion
 Source: "D:\CODES\Python\EbookCollection\icons\*.ico"; DestDir: "{app}\icons"; Flags: ignoreversion  
 Source: "D:\CODES\Python\EbookCollection\icons\*.png"; DestDir: "{app}\icons"; Flags: ignoreversion     
 Source: "D:\CODES\Python\EbookCollection\icons\black\*.png"; DestDir: "{app}\icons\black"; Flags: ignoreversion

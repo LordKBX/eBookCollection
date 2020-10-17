@@ -1,6 +1,8 @@
 import os
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 appDir = os.path.dirname(os.path.realpath(__file__))
+
 env_vars = {
         'tools': {
             'poppler': {

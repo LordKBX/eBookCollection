@@ -55,6 +55,7 @@ pip install python/Pillow-7.2.0-cp38-cp38-win_amd64.whl
 pip install python/PyQt5-5.15.1-5.15.1-cp35.cp36.cp37.cp38.cp39-none-win_amd64.whl
 pip install python/PyQtWebKit-5.13.1-cp38-none-win_amd64.whl
 pip install python/pysqlite3-0.4.3.tar.gz
+pip install python/pyperclip-1.8.1.tar.gz
 
 rmdir "python" /Q
 

@@ -7,6 +7,7 @@ import re
 import sqlite3
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common import *
+from vars import *
 
 
 def dict_factory(cursor, row):
@@ -25,7 +26,7 @@ def dict_factory(cursor, row):
 
 class BDD:
     def __init__(self):
-        self.connexion = sqlite3.connect('database.db')
+        self.connexion = sqlite3.connect(appDir + os.sep + 'database.db')
         self.connexion.row_factory = dict_factory
         self.cursor = self.connexion.cursor()
 

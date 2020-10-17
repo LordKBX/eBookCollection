@@ -15,7 +15,7 @@ class Ui_ReaderWindow(object):
     def setupUi(self, ReaderWindow):
         ReaderWindow.setObjectName("ReaderWindow")
         ReaderWindow.resize(732, 720)
-        ReaderWindow.setMinimumSize(QtCore.QSize(500, 600))
+        ReaderWindow.setMinimumSize(QtCore.QSize(720, 600))
         ReaderWindow.setStyleSheet("QWidget{\n"
 "    background-color: rgb(62, 62, 62);\n"
 "    color: rgb(255, 255, 255);\n"
@@ -97,9 +97,25 @@ class Ui_ReaderWindow(object):
         self.treeContentTable.setMaximumSize(QtCore.QSize(180, 16777215))
         self.treeContentTable.setStyleSheet("::section{\n"
 "background-color:#4B4B4B;\n"
+"}\n"
+"QTreeWidget::item { \n"
+"    padding-left:2px;\n"
+"}\n"
+"QTreeWidget::item:hover, QTreeWidget::branch:hover\n"
+"{\n"
+"    color: rgb(43, 179, 246);\n"
+"    cursor: pointer;\n"
+"}\n"
+"QTreeWidget::item:selected { \n"
+"    background-color: rgb(0, 85, 255);\n"
+"color:white; \n"
 "}")
+        self.treeContentTable.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.treeContentTable.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.treeContentTable.setProperty("showDropIndicator", False)
+        self.treeContentTable.setIndentation(0)
+        self.treeContentTable.setUniformRowHeights(True)
+        self.treeContentTable.setExpandsOnDoubleClick(False)
         self.treeContentTable.setObjectName("treeContentTable")
         self.treeContentTable.headerItem().setTextAlignment(0, QtCore.Qt.AlignCenter)
         item_0 = QtWidgets.QTreeWidgetItem(self.treeContentTable)

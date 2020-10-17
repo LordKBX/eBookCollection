@@ -52,7 +52,7 @@ class Lang:
             'DialogBtnOk': 'Compris'
         }),
         'Reader': Dictionary({
-            'WindowTitle': 'EbookCollection - Gestionnaire de livre numérique',
+            'WindowTitle': 'EbookCollection: Lecteur Ebook',
             'DialogInfoNoFileWindowTitle': 'Erreur Fichier',
             'DialogInfoNoFileWindowText': 'Vous n\'avez pas fournis d\'adresse fichier',
             'DialogInfoBadFileWindowTitle': 'Erreur Fichier',
@@ -60,7 +60,17 @@ class Lang:
             'ContentTableHeader': 'Table des Matières',
             'ContentTableTxtCover': 'Couverture',
             'ContentTableTxtEnd': 'Fin',
-            'ContentTableTxtPageX': 'Page {}'
+            'ContentTableTxtPageX': 'Page {}',
+            'ContentTableTxtChapterX': 'Chapitre {}: {}'
+        }),
+        'Editor': Dictionary({
+            'WindowTitle': 'EbookCollection: Editeur',
+            'DialogInfoNoFileWindowTitle': 'Erreur Fichier',
+            'DialogInfoNoFileWindowText': 'Vous n\'avez pas fournis d\'adresse fichier',
+            'DialogInfoBadFileWindowTitle': 'Erreur Fichier',
+            'DialogInfoBadFileWindowText': 'Format de fichier invalide',
+            'ContentTableHeader': 'Table des Matières',
+            'FileTableHeader': 'Explorateur de fichiers',
         }),
         'Time': Dictionary({
             'template': Dictionary({
@@ -106,7 +116,7 @@ class Lang:
             'DialogBtnOk': 'Compris'
         }),
         'Reader': Dictionary({
-            'WindowTitle': 'EbookCollection - Gestionnaire de livre numérique',
+            'WindowTitle': 'EbookCollection: Reader',
             'DialogInfoNoFileWindowTitle': 'Erreur Fichier',
             'DialogInfoNoFileWindowText': 'Vous n\'avez pas fournis d\'adresse fichier',
             'DialogInfoBadFileWindowTitle': 'Erreur Fichier',
@@ -114,7 +124,17 @@ class Lang:
             'ContentTableHeader': 'Content Table',
             'ContentTableTxtCover': 'Cover',
             'ContentTableTxtEnd': 'End',
-            'ContentTableTxtPageX': 'Page {}'
+            'ContentTableTxtPageX': 'Page {}',
+            'ContentTableTxtChapterX': 'Chapitre {}: {}'
+        }),
+        'Editor': Dictionary({
+            'WindowTitle': 'EbookCollection: Editor',
+            'DialogInfoNoFileWindowTitle': 'Erreur Fichier',
+            'DialogInfoNoFileWindowText': 'Vous n\'avez pas fournis d\'adresse fichier',
+            'DialogInfoBadFileWindowTitle': 'Erreur Fichier',
+            'DialogInfoBadFileWindowText': 'Format de fichier invalide',
+            'ContentTableHeader': 'Content Table',
+            'FileTableHeader': 'File Explorer',
         }),
         'Time': Dictionary({
             'template': Dictionary({

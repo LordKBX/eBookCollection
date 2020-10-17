@@ -5,47 +5,29 @@ import re
 import time
 import datetime
 import enum
+import vars
+import subprocess
 
 
-class SIZE_UNIT(enum.Enum):
-    BYTES = 1
-    KB = 2
-    MB = 3
-    GB = 4
-
-
-def convert_unit(size_in_bytes, unit):
-    """
-    Convert the size from bytes to other units like KB, MB or GB
-
-    :param size_in_bytes:
-    :param unit:
-    :return:
-    """
-    if unit == SIZE_UNIT.KB:
-        return '{:.2f} Kb'.format(size_in_bytes/1024)
-    elif unit == SIZE_UNIT.MB:
-        return '{:.2f} Mb'.format(size_in_bytes/(1024*1024))
-    elif unit == SIZE_UNIT.GB:
-        return '{:.2f} Gb'.format(size_in_bytes/(1024*1024*1024))
-    else:
-        return '{} bytes'.format(size_in_bytes)
-
-
-def get_file_size(file_name):
+def get_file_size(file_name: str, human_readable: bool = True):
     """
     Get file in size in given unit like KB, MB or GB
 
     :param file_name:
-    :param size_type:
+    :param human_readable:
     :return:
     """
     size = os.path.getsize(file_name)
-    size_type = SIZE_UNIT.BYTES
-    if size > (1024*1024*1024): size_type = SIZE_UNIT.GB
-    elif size > (1024*1024): size_type = SIZE_UNIT.MB
-    if size > 1024: size_type = SIZE_UNIT.KB
-    return convert_unit(size, size_type)
+    if human_readable is False:
+        return size
+    elif size > (1024*1024*1024):
+        return '{:.2f} Gb'.format(size/(1024*1024*1024))
+    elif size > (1024*1024):
+        return '{:.2f} Mb'.format(size/(1024*1024))
+    elif size > 1024:
+        return '{:.2f} Kb'.format(size/1024)
+    else:
+        return '{} bytes'.format(size)
 
 
 def is_in(objet: dict, indexes: list):
@@ -131,3 +113,15 @@ def cleanStringForUrl(string: str):
         .replace('"', '_')\
         .replace(',', '_')\
         .replace('?', '_')
+
+
+def deflate(src: str, dest: str):
+    global env_vars
+    list_args = list()  # create list argument for external command execution
+    list_args.append(env_vars['tools']['7zip'][os.name]['path'])  # insert executable path
+    temp_args = env_vars['tools']['7zip'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
+    for var in temp_args:  # parse table of raw command arguments
+        # insert parsed param
+        list_args.append(var.replace('%input%', src).replace('%output%', dest))
+    print(list_args)
+    return subprocess.check_output(list_args, universal_newlines=True)  # execute the command

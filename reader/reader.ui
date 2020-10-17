@@ -12,7 +12,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
+    <width>720</width>
     <height>600</height>
    </size>
   </property>
@@ -216,12 +216,36 @@ QLineEdit{
      <property name="styleSheet">
       <string notr="true">::section{
 background-color:#4B4B4B;
+}
+QTreeWidget::item { 
+	padding-left:2px;
+}
+QTreeWidget::item:hover, QTreeWidget::branch:hover
+{
+    color: rgb(43, 179, 246);
+    cursor: pointer;
+}
+QTreeWidget::item:selected { 
+	background-color: rgb(0, 85, 255);
+color:white; 
 }</string>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
      <property name="showDropIndicator" stdset="0">
+      <bool>false</bool>
+     </property>
+     <property name="indentation">
+      <number>0</number>
+     </property>
+     <property name="uniformRowHeights">
+      <bool>true</bool>
+     </property>
+     <property name="expandsOnDoubleClick">
       <bool>false</bool>
      </property>
      <attribute name="headerVisible">

@@ -18,8 +18,10 @@ except Exception:
 	from CustomQWebView import *
 from vars import *
 from lang import *
+from bdd import *
 from dialog import *
 from common import *
+from booksTools import *
 
 ReaderWindow = None
 ui = None
@@ -70,21 +72,53 @@ def ContentTableCurrentItemChanged(current: QtWidgets.QTreeWidgetItem, previous:
 		elif re.search('^page:', data) is not None:
 			td = data.split(':')
 			ui.webView.updatePositionCbzByPage(int(float(td[1])))
+	elif appMode.value == QwwMode.EPUB.value:
+		if re.search('^chapter:', data) is not None:
+			td = data.split(':')
+			page = destDir + "/" + td[1]
+			page = 'file:///' + page.replace("\\", '/')
+			ui.webView.setUrl(QtCore.QUrl(page))
+
+
+def eventHandler(event: dir):
+	global previousEvent, ui
+	evt = '{}'.format(event)
+	if event['type'] == 'pageChange':
+		if ui.webView.mode.value == QwwMode.CBZ.value:
+			ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(event['index']), 0)
+	if evt == previousEvent:
+		if event['type'] == 'chapterChange':
+			if ui.webView.mode.value == QwwMode.EPUB.value:
+				index = 0
+				try: index = ui.treeContentTable.currentIndex().row()
+				except Exception: {}
+				if event['value'] == 'prev':
+					if index - 1 >= 0:
+						ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(index - 1), 0)
+						timer = QtCore.QTimer()
+						timer.singleShot(100, ui.webView.updatePositionCbzEnd)
+				if event['value'] == 'next':
+					print(ui.treeContentTable.size().height())
+					if index + 1 < ui.treeContentTable.size().height():
+						ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(index + 1), 0)
+	previousEvent = evt
+	print(event)
 
 
 if __name__ == "__main__":
+	previousEvent = ''
+	app = QtWidgets.QApplication(sys.argv)
 	print(sys.argv)
 	print(env_vars)
 	lang = Lang()
-	app = QtWidgets.QApplication(sys.argv)
-	
-	dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+	bdd = BDD()
+
 	app_icon = QtGui.QIcon()
-	app_icon.addFile(dir + '/icons/app_icon16x16.png', QtCore.QSize(16, 16))
-	app_icon.addFile(dir + '/icons/app_24x24.png', QtCore.QSize(24, 24))
-	app_icon.addFile(dir + '/icons/app_32x32.png', QtCore.QSize(32, 32))
-	app_icon.addFile(dir + '/icons/app_48x48.png', QtCore.QSize(48, 48))
-	app_icon.addFile(dir + '/icons/app_256x256.png', QtCore.QSize(256, 256))
+	app_icon.addFile(appDir + '/icons/app_icon16x16.png', QtCore.QSize(16, 16))
+	app_icon.addFile(appDir + '/icons/app_24x24.png', QtCore.QSize(24, 24))
+	app_icon.addFile(appDir + '/icons/app_32x32.png', QtCore.QSize(32, 32))
+	app_icon.addFile(appDir + '/icons/app_48x48.png', QtCore.QSize(48, 48))
+	app_icon.addFile(appDir + '/icons/app_256x256.png', QtCore.QSize(256, 256))
 	app.setWindowIcon(app_icon)
 	if os.name == 'nt':
 		myappid = 'lordkbx.ebook_collection.reader'
@@ -96,13 +130,13 @@ if __name__ == "__main__":
 	
 	# Button FullScreen
 	icon1 = QtGui.QIcon()
-	icon1.addPixmap(QtGui.QPixmap("../icons/white/full_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon1.addPixmap(QtGui.QPixmap(appDir+"/icons/white/full_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonFullScreen.setIcon(icon1)
 	ui.buttonFullScreen.clicked.connect(toogleFullScreen)
 
 	# Button Content Table
 	icon2 = QtGui.QIcon()
-	icon2.addPixmap(QtGui.QPixmap("../icons/white/content_table.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon2.addPixmap(QtGui.QPixmap(appDir+"/icons/white/content_table.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonContentTable.setIcon(icon2)
 	ui.buttonContentTable.clicked.connect(DisplayTreeContentTable)
 	ui.treeContentTable.setMinimumWidth(180)
@@ -110,7 +144,7 @@ if __name__ == "__main__":
 
 	# Button Info
 	icon3 = QtGui.QIcon()
-	icon3.addPixmap(QtGui.QPixmap("../icons/white/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon3.addPixmap(QtGui.QPixmap(appDir+"/icons/white/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonInfo.setIcon(icon3)
 	# ui.buttonInfo.clicked.connect(DisplayTreeContentTable)
 
@@ -118,13 +152,22 @@ if __name__ == "__main__":
 	ui.treeContentTable.clear()
 	ui.treeContentTable.headerItem().setText(0, lang['Reader']['ContentTableHeader'])
 	ui.treeContentTable.currentItemChanged.connect(ContentTableCurrentItemChanged)
+	ui.treeContentTable.setIndentation(0)
+	ui.treeContentTable.setCursor(QtCore.Qt.PointingHandCursor)
 
 	if len(sys.argv) < 2:
 		WarnDialog(lang['Reader']['DialogInfoNoFileWindowTitle'], lang['Reader']['DialogInfoNoFileWindowText'], ReaderWindow)
 		exit(0)
-	ReaderWindow.show()
+
 	file = sys.argv[1]
+
+	mappdir = appDir.replace(os.sep, '/')+'/data/'
 	filepath, ext = os.path.splitext(file)
+	ReaderWindow.setWindowTitle(
+		lang['Reader']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
+			.replace(mappdir, '').replace('/', ' / ').replace(ext, '')
+	)
+	ReaderWindow.show()
 	destDir = appDir + '/reader/tmp'
 	rmDir(destDir)
 	if os.path.isdir(destDir) is not True: os.mkdir(destDir)
@@ -132,9 +175,32 @@ if __name__ == "__main__":
 
 	appMode = QwwMode.CBZ
 	if ext in ['.epub', '.epub2', '.epub3']:
-		ret = deflate(file, destDir)
-		print(ret)
 		appMode = QwwMode.EPUB
+		bookData = getEpubIfo(file)
+		winTitle = lang['Reader']['WindowTitle'] + ' - '
+		first = True
+		for index in ['authors', 'serie', 'title']:
+			if bookData[index] is not None:
+				if bookData[index].strip() != '':
+					if first is False:
+						winTitle += ' / '
+					else: first = False
+					winTitle += bookData[index]
+
+		ReaderWindow.setWindowTitle(winTitle)
+		ret = deflate(file, destDir)
+		page = destDir + "/" + bookData['chapters'][0]['src']
+		page = 'file:///' + page.replace("\\", '/')
+		i = 0
+		max = len(bookData['chapters'])
+		while i < max:
+			item = QtWidgets.QTreeWidgetItem(ui.treeContentTable)
+			item.setText(0, bookData['chapters'][i]['name'])
+			item.setData(0, 99, "chapter:{}".format(bookData['chapters'][i]['src']))
+			ui.treeContentTable.insertTopLevelItem(0, item)
+			i += 1
+		ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(0), 0)
+
 	elif ext in ['.cbz', '.cbr']:
 		appMode = QwwMode.CBZ
 		ret = deflate(file, destDir)
@@ -195,17 +261,19 @@ if __name__ == "__main__":
 		item.setText(0, lang['Reader']['ContentTableTxtEnd'])
 		item.setData(0, 99, "end")
 		ui.treeContentTable.insertTopLevelItem(0, item)
+		ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(0), 0)
 	else:
 		WarnDialog(lang['Reader']['DialogInfoBadFileWindowTitle'], lang['Reader']['DialogInfoBadFileWindowText'], ReaderWindow)
 		exit(0)
 
 	ui.webView.setMode(appMode)
+	ui.webView.setEventHandler(eventHandler)
 	ui.webView.setUrl(QtCore.QUrl(page))
 	tmpcss = destDir + "/tmp.css"
 	filePage = open(tmpcss, "w", encoding="utf8")
 	filePage.write("body { -webkit-user-select: none; }")
 	filePage.close()
-	ui.webView.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(tmpcss))
+	# ui.webView.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(tmpcss))
 	ui.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
 	ui.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
