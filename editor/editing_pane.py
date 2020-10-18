@@ -2,9 +2,17 @@ import os
 import io
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+import PyQt5.uic
+from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common import *
+from vars import *
+
+
+class uiClass(QtWidgets.QWidget):
+    def __init__(self):
+        {}
 
 
 class editorTabManager(QtWidgets.QTabWidget):
@@ -17,15 +25,12 @@ class editorTabManager(QtWidgets.QTabWidget):
         tab.setProperty('fileName', path)
         verticalLayout = QtWidgets.QVBoxLayout(tab)
         # verticalLayout.setObjectName("verticalLayout")
-        scrollArea = QtWidgets.QScrollArea(tab)
-        scrollArea.setMaximumSize(QtCore.QSize(16777215, 50))
-        scrollArea.setWidgetResizable(True)
-        # scrollArea.setObjectName("scrollArea")
-        scrollAreaWidgetContents = QtWidgets.QWidget()
-        scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 203, 48))
-        # scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
-        scrollArea.setWidget(scrollAreaWidgetContents)
-        verticalLayout.addWidget(scrollArea)
+
+        block = uiClass()
+        super(uiClass, block).__init__()
+        PyQt5.uic.loadUi(appDir+'/editor/text_edit.ui'.replace('/', os.sep), block) # Load the .ui file
+
+        verticalLayout.addWidget(block)
         textEdit = QtWidgets.QTextEdit(tab)
         textEdit.setStyleSheet("background-color: rgb(154, 154, 154);\n"
                                     "color: rgb(0, 0, 0);")

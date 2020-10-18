@@ -7,6 +7,7 @@ import datetime
 import enum
 import vars
 import subprocess
+from vars import *
 
 
 def get_file_size(file_name: str, human_readable: bool = True):
@@ -91,6 +92,27 @@ def listDir(dirName: str, ext: str = None):
     return allFiles
 
 
+def listDirTree(dirName: str, ext: str = None):
+    listOfFile = listDir(dirName, ext)
+    listOfFile.sort()
+    treeFiles = {}
+    for file in listOfFile:
+        recurListDirTree(file, dirName + os.sep, treeFiles)
+    return treeFiles
+
+
+def recurListDirTree(file: str, path: str, treeFiles: dir):
+    tmpl = file.replace(path, '')
+    tmpp = tmpl.split(os.sep)
+    if len(tmpp) > 1:
+        if tmpp[0] not in treeFiles:
+            treeFiles[tmpp[0]] = {}
+        return recurListDirTree(file, path + tmpp[0] + os.sep, treeFiles[tmpp[0]])
+    else:
+        treeFiles[tmpp[0]] = file
+        return treeFiles
+
+
 def cleanDir(src_dir: str):
     for dirpath, _, _ in os.walk(src_dir, topdown=False):  # Listing the files
         if dirpath == src_dir: break
@@ -123,5 +145,5 @@ def deflate(src: str, dest: str):
     for var in temp_args:  # parse table of raw command arguments
         # insert parsed param
         list_args.append(var.replace('%input%', src).replace('%output%', dest))
-    print(list_args)
+    # print(list_args)
     return subprocess.check_output(list_args, universal_newlines=True)  # execute the command

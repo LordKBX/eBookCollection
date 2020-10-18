@@ -10,11 +10,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 try:
 	# Line written for IDE import scraping
-	from editor.interface_ui import *
+	from editor.mainwindow_ui import *
 	from editor.editing_pane import *
 except Exception:
 	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-	from interface_ui import *
+	from mainwindow_ui import *
 	from editing_pane import *
 from vars import *
 from lang import *
@@ -32,9 +32,22 @@ def ContentTableCurrentItemChanged(current: QtWidgets.QTreeWidgetItem, previous:
 	data = current.data(0, 99)
 
 
-def eventHandler(event: dir):
+def eventHandler(event: dict):
 	global previousEvent, ui
 	print(event)
+
+
+def recurFileTableInsert(baseItem: QtWidgets.QTreeWidgetItem, tree: dict):
+	for indexr in tree:
+		itemr = QtWidgets.QTreeWidgetItem(baseItem)
+		itemr.setText(0, indexr)
+		if isinstance(tree[indexr], dict):
+			itemr.setData(0, 99, ':dir:')
+			itemr = recurFileTableInsert(itemr, tree[indexr])
+		else:
+			itemr.setData(0, 99, tree[indexr])
+		baseItem.addChild(itemr)
+	return baseItem
 
 
 if __name__ == "__main__":
@@ -57,8 +70,8 @@ if __name__ == "__main__":
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 	try:
-		EditorWindow = QtWidgets.QWidget()
-		ui = Ui_EditorWindow()
+		EditorWindow = QtWidgets.QMainWindow()
+		ui = Ui_MainWindow()
 		ui.setupUi(EditorWindow)
 
 		# ui.tabWidget
@@ -72,7 +85,7 @@ if __name__ == "__main__":
 		ui.treeFileTable.clear()
 		ui.treeFileTable.headerItem().setText(0, lang['Editor']['FileTableHeader'])
 		ui.treeFileTable.currentItemChanged.connect(ContentTableCurrentItemChanged)
-		ui.treeFileTable.setIndentation(0)
+		ui.treeFileTable.setIndentation(10)
 		ui.treeFileTable.setCursor(QtCore.Qt.PointingHandCursor)
 
 		# Processing Content Table
@@ -95,16 +108,30 @@ if __name__ == "__main__":
 				.replace(mappdir, '').replace('/', ' / ').replace(ext, '')
 		)
 		EditorWindow.show()
-		destDir = appDir + '/reader/tmp'
+		destDir = appDir + '/editor/tmp'.replace('/', os.sep)
+		print(destDir)
 		rmDir(destDir)
 		if os.path.isdir(destDir) is not True: os.mkdir(destDir)
 		page = 'file:///C:/Users/KevBo/wuxiaworld_export_ebook/tmp/toc.xhtml'
 
 		if ext in ['.epub', '.epub2', '.epub3']:
-			{}
+			ret = deflate(file, destDir)
+			print(ret)
+			liste = listDirTree(destDir, None)
+			print(liste)
+			for index in liste:
+				item = QtWidgets.QTreeWidgetItem(ui.treeFileTable)
+				item.setText(0, index)
+				if isinstance(liste[index], dict):
+					item.setData(0, 99, ':dir:')
+					item = recurFileTableInsert(item, liste[index])
+				else:
+					item.setData(0, 99, liste[index])
+				ui.treeFileTable.insertTopLevelItem(0, item)
 
 		elif ext in ['.cbz', '.cbr']:
-			{}
+			deflate(file, destDir)
+			liste = listDir(destDir, 'jpg|jpeg|png').sort()
 		else:
 			WarnDialog(lang['Editor']['DialogInfoBadFileWindowTitle'], lang['Editor']['DialogInfoBadFileWindowText'], EditorWindow)
 			exit(0)
