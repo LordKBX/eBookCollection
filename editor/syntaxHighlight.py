@@ -5,13 +5,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 import PyQt5.Qsci
-from PyQt5.Qsci import QsciScintilla, QsciLexerPython
+from PyQt5.Qsci import *
 
 
 class SimplePythonEditor(QsciScintilla):
     ARROW_MARKER_NUM = 8
 
-    def __init__(self, parent=None):
+    def __init__(self, lexer_type, parent=None):
         super(SimplePythonEditor, self).__init__(parent)
 
         # Set the default font
@@ -53,7 +53,7 @@ class SimplePythonEditor(QsciScintilla):
         # courier.
         #
 
-        self.elexer = QsciLexerPython()
+        self.elexer = lexer_type
         self.elexer.setDefaultFont(font)
         self.setLexer(self.elexer)
 

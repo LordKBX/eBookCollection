@@ -185,7 +185,7 @@
         <number>1</number>
        </property>
        <item>
-        <widget class="QPushButton" name="btnFix">
+        <widget class="QPushButton" name="btnDebug">
          <property name="maximumSize">
           <size>
            <width>30</width>
@@ -197,7 +197,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/html-fix.png</normaloff>../icons/tmp/html-fix.png</iconset>
+           <normaloff>../icons/tmp/debug.png</normaloff>../icons/tmp/debug.png</iconset>
          </property>
          <property name="iconSize">
           <size>
