@@ -71,6 +71,7 @@ class Lang:
             'DialogInfoBadFileWindowText': 'Format de fichier invalide',
             'ContentTableHeader': 'Table des Matières',
             'FileTableHeader': 'Explorateur de fichiers',
+            'WebViewDefaultPageContent': '<?xml version=\'1.0\' encoding=\'utf-8\'?><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><title>Prévisualisation en direct</title></head><body><h3>Prévisualisation en direct</h3><p>Vous verrez ici une prévisualisation en direct du fichier HTML en cours d\'édition. 	La prévisualisation se mettra à jour automatiquement au fur et à mesure de vos changements.</p><p>Notez que ceci est une prévisualisation rapide, ceci n\'est pas prévu pour simuler un réel lecteur de livre numérique.</p></body></html>',
         }),
         'Time': Dictionary({
             'template': Dictionary({
@@ -135,6 +136,7 @@ class Lang:
             'DialogInfoBadFileWindowText': 'Format de fichier invalide',
             'ContentTableHeader': 'Content Table',
             'FileTableHeader': 'File Explorer',
+            'WebViewDefaultPageContent': '<?xml version=\'1.0\' encoding=\'utf-8\'?><html xmlns="http://www.w3.org/1999/xhtml" lang="fr"><head><title>Prévisualisation en direct</title></head><body><h3>Prévisualisation en direct</h3><p>Vous verrez ici une prévisualisation en direct du fichier HTML en cours d\'édition. 	La prévisualisation se mettra à jour automatiquement au fur et à mesure de vos changements.</p><p style="font-size:x-small;">Notez que ceci est une prévisualisation rapide 	uniquement, ceci n\'est pas prévu pour simuler un réel lecteur de livre numérique. Certains 	aspects de votre livre numérique ne fonctionneront pas, comme, les sauts de page et 	les marges de page.</p></body></html>',
         }),
         'Time': Dictionary({
             'template': Dictionary({

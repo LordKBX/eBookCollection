@@ -15,21 +15,22 @@ import base64
 import zipfile
 
 
-def create_thumbnail(path: str):
-    max_h = max_w = 600
+def create_thumbnail(path: str, resize: bool = True):
     img = Image.open(path)
     img.load()
-    size = list(img.size)
-    if size[0] > size[1]:
-        size[1] = int(size[1] * max_h / size[0])
-        size[0] = max_w
-    elif size[0] < size[1]:
-        size[0] = int(size[0] * max_w / size[1])
-        size[1] = max_h
-    else:
-        size[0] = max_w
-        size[1] = max_h
-    img = img.resize(tuple(size), Image.ANTIALIAS)
+    if resize is True:
+        max_h = max_w = 600
+        size = list(img.size)
+        if size[0] > size[1]:
+            size[1] = int(size[1] * max_h / size[0])
+            size[0] = max_w
+        elif size[0] < size[1]:
+            size[0] = int(size[0] * max_w / size[1])
+            size[1] = max_h
+        else:
+            size[0] = max_w
+            size[1] = max_h
+        img = img.resize(tuple(size), Image.ANTIALIAS)
     buffer = io.BytesIO()
     img.save(buffer, 'jpeg')
     return 'data:image/jpeg;base64,'+base64.b64encode(buffer.getvalue()).decode()

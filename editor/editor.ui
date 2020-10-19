@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>930</width>
     <height>600</height>
    </rect>
   </property>
@@ -19,46 +19,91 @@
 color:white;
 }
 QDockWidget {
-    border: 1px solid lightgray;
+    border: 0;
+margin:0;
+padding:0;
 }
 
 QDockWidget::title {
     text-align: left; /* align the text to the left */
     background: #333333;
     padding-left: 5px;
+}
+
+QPushButton{
+	background:transparent;
+}
+QPushButton:hover{
+	background-color:rgb(120, 120, 120);
+}
+QPushButton:pressed{
+	background-color:rgb(120, 120, 120);
+}
+QPushButton:checked{
+	background-color:rgb(150, 150, 150);
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_4">
+    <property name="spacing">
+     <number>1</number>
+    </property>
+    <property name="leftMargin">
+     <number>1</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>1</number>
+    </property>
+    <property name="bottomMargin">
+     <number>1</number>
+    </property>
     <item>
      <widget class="editorTabManager" name="tabWidget">
       <property name="minimumSize">
        <size>
-        <width>300</width>
+        <width>320</width>
         <height>0</height>
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">QTabWidget::tab-bar {
-	
- }
-QTabBar::tab {
-  background: rgb(80, 80, 80);
-  color: white;
-  padding: 10px;
-margin-right:2px;
-border-color:rgb(0,0,0);
-border-width:1px;
-border-style:solid;
- }
-
- QTabBar::tab:selected {
-  background: rgb(0, 135, 202);
- }</string>
+       <string notr="true"/>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="elideMode">
+       <enum>Qt::ElideNone</enum>
+      </property>
+      <property name="usesScrollButtons">
+       <bool>true</bool>
+      </property>
+      <property name="documentMode">
+       <bool>true</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>false</bool>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
         <string>Tab 1</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string notr="true">test tip</string>
+       </attribute>
+       <attribute name="whatsThis">
+        <string notr="true">test what</string>
        </attribute>
       </widget>
       <widget class="QWidget" name="tab_2">
@@ -105,6 +150,9 @@ border-style:solid;
      </property>
      <item>
       <widget class="QTreeWidget" name="treeFileTable">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <attribute name="headerVisible">
         <bool>false</bool>
        </attribute>
@@ -113,6 +161,36 @@ border-style:solid;
          <string notr="true">1</string>
         </property>
        </column>
+       <item>
+        <property name="text">
+         <string>aaa</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>bbbb</string>
+         </property>
+        </item>
+       </item>
+       <item>
+        <property name="text">
+         <string>hhhh</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>ljljl</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>è_yohp</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>uohohoh</string>
+         </property>
+        </item>
+       </item>
       </widget>
      </item>
     </layout>
@@ -217,7 +295,7 @@ border-style:solid;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>930</width>
      <height>20</height>
     </rect>
    </property>
@@ -237,18 +315,7 @@ border-style:solid;
   </widget>
   <widget class="QDockWidget" name="dockWidget_6">
    <property name="styleSheet">
-    <string notr="true">QDockWidget {
-    padding: 0px;
-    margin: 0px;
-border:0;
-}
-QDockWidget::title {
-    text-align: left; /* align the text to the left */
-    background: #333333;
-    padding: 0px;
-    margin: 0px;
-border:0;
-}</string>
+    <string notr="true"/>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetMovable</set>
@@ -285,7 +352,7 @@ border:0;
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>607</width>
+         <width>737</width>
          <height>20</height>
         </size>
        </property>

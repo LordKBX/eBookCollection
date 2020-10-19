@@ -13,7 +13,7 @@
   <property name="minimumSize">
    <size>
     <width>200</width>
-    <height>36</height>
+    <height>75</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -50,12 +50,15 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="QPushButton" name="pushButton_3">
+      <widget class="QPushButton" name="btnUndo">
        <property name="maximumSize">
         <size>
          <width>30</width>
          <height>30</height>
         </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
         <string/>
@@ -73,12 +76,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_23">
+      <widget class="QPushButton" name="btnRedo">
        <property name="maximumSize">
         <size>
          <width>30</width>
          <height>30</height>
         </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
         <string/>
@@ -96,12 +102,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_24">
+      <widget class="QPushButton" name="btnCut">
        <property name="maximumSize">
         <size>
          <width>30</width>
          <height>30</height>
         </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
         <string/>
@@ -119,12 +128,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_25">
+      <widget class="QPushButton" name="btnCopy">
        <property name="maximumSize">
         <size>
          <width>30</width>
          <height>30</height>
         </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
         <string/>
@@ -142,12 +154,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_26">
+      <widget class="QPushButton" name="btnPaste">
        <property name="maximumSize">
         <size>
          <width>30</width>
          <height>30</height>
         </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
         <string/>
@@ -170,7 +185,7 @@
         <number>1</number>
        </property>
        <item>
-        <widget class="QPushButton" name="pushButton_28">
+        <widget class="QPushButton" name="btnFix">
          <property name="maximumSize">
           <size>
            <width>30</width>
@@ -193,7 +208,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_27">
+        <widget class="QPushButton" name="btnComment">
          <property name="maximumSize">
           <size>
            <width>30</width>
@@ -216,7 +231,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_29">
+        <widget class="QPushButton" name="btnPrettify">
          <property name="maximumSize">
           <size>
            <width>30</width>
@@ -341,7 +356,7 @@
             <enum>QLayout::SetFixedSize</enum>
            </property>
            <item>
-            <widget class="QPushButton" name="pushButton_43">
+            <widget class="QPushButton" name="btnBold">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -370,7 +385,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_44">
+            <widget class="QPushButton" name="btnItalic">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -399,7 +414,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_45">
+            <widget class="QPushButton" name="btnUnderline">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -428,7 +443,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_46">
+            <widget class="QPushButton" name="btnStrikethrough">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -457,36 +472,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_47">
-             <property name="minimumSize">
-              <size>
-               <width>30</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>30</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset>
-               <normaloff>../icons/tmp/format-text-superscript.png</normaloff>../icons/tmp/format-text-superscript.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>25</width>
-               <height>25</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_48">
+            <widget class="QPushButton" name="btnSub">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -515,7 +501,36 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_49">
+            <widget class="QPushButton" name="btnSup">
+             <property name="minimumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>30</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../icons/tmp/format-text-superscript.png</normaloff>../icons/tmp/format-text-superscript.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>25</width>
+               <height>25</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnTextColor">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -544,7 +559,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_50">
+            <widget class="QPushButton" name="btnBackColor">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -583,7 +598,7 @@
             <enum>QLayout::SetFixedSize</enum>
            </property>
            <item>
-            <widget class="QPushButton" name="pushButton_37">
+            <widget class="QPushButton" name="btnAlignLeft">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -612,7 +627,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_39">
+            <widget class="QPushButton" name="btnAlignCenter">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -641,7 +656,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_36">
+            <widget class="QPushButton" name="btnAlignRight">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -670,7 +685,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_41">
+            <widget class="QPushButton" name="btnAlignJustify">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -699,7 +714,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_40">
+            <widget class="QPushButton" name="btnList">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -728,7 +743,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_42">
+            <widget class="QPushButton" name="btnNumList">
              <property name="minimumSize">
               <size>
                <width>30</width>
@@ -759,7 +774,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_38">
+          <widget class="QPushButton" name="btnLink">
            <property name="minimumSize">
             <size>
              <width>30</width>
@@ -788,7 +803,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_35">
+          <widget class="QPushButton" name="btnImg">
            <property name="minimumSize">
             <size>
              <width>30</width>

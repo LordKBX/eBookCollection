@@ -7,14 +7,15 @@ import shutil
 import re
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtWebKitWidgets
+import PyQt5.uic
+from PyQt5.uic import *
 
 try:
 	# Line written for IDE import scraping
-	from reader.reader_ui import *
 	from reader.CustomQWebView import *
 except Exception:
 	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-	from reader_ui import *
 	from CustomQWebView import *
 from vars import *
 from lang import *
@@ -105,9 +106,15 @@ def eventHandler(event: dir):
 	print(event)
 
 
+class readerWindow(QtWidgets.QMainWindow):
+	def __init__(self, parent: QtWidgets.QMainWindow):
+		super(readerWindow, self).__init__(parent)
+		PyQt5.uic.loadUi(appDir + '/reader/reader2.ui'.replace('/', os.sep), self)
+
+
 if __name__ == "__main__":
-	previousEvent = ''
 	app = QtWidgets.QApplication(sys.argv)
+	previousEvent = ''
 	print(sys.argv)
 	print(env_vars)
 	lang = Lang()
@@ -115,18 +122,17 @@ if __name__ == "__main__":
 
 	app_icon = QtGui.QIcon()
 	app_icon.addFile(appDir + '/icons/app_icon16x16.png', QtCore.QSize(16, 16))
-	app_icon.addFile(appDir + '/icons/app_24x24.png', QtCore.QSize(24, 24))
-	app_icon.addFile(appDir + '/icons/app_32x32.png', QtCore.QSize(32, 32))
-	app_icon.addFile(appDir + '/icons/app_48x48.png', QtCore.QSize(48, 48))
-	app_icon.addFile(appDir + '/icons/app_256x256.png', QtCore.QSize(256, 256))
+	app_icon.addFile(appDir + '/icons/app_icon24x24.png', QtCore.QSize(24, 24))
+	app_icon.addFile(appDir + '/icons/app_icon32x32.png', QtCore.QSize(32, 32))
+	app_icon.addFile(appDir + '/icons/app_icon48x48.png', QtCore.QSize(48, 48))
+	app_icon.addFile(appDir + '/icons/app_icon256x256.png', QtCore.QSize(256, 256))
 	app.setWindowIcon(app_icon)
 	if os.name == 'nt':
 		myappid = 'lordkbx.ebook_collection.reader'
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 	
-	ReaderWindow = QtWidgets.QWidget()
-	ui = Ui_ReaderWindow()
-	ui.setupUi(ReaderWindow)
+	ReaderWindow = QtWidgets.QMainWindow()
+	ui = readerWindow(ReaderWindow)
 	
 	# Button FullScreen
 	icon1 = QtGui.QIcon()
@@ -161,13 +167,13 @@ if __name__ == "__main__":
 
 	file = sys.argv[1]
 
+	ui.showNormal()
 	mappdir = appDir.replace(os.sep, '/')+'/data/'
 	filepath, ext = os.path.splitext(file)
-	ReaderWindow.setWindowTitle(
+	ui.setWindowTitle(
 		lang['Reader']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
 			.replace(mappdir, '').replace('/', ' / ').replace(ext, '')
 	)
-	ReaderWindow.show()
 	destDir = appDir + '/reader/tmp'
 	rmDir(destDir)
 	if os.path.isdir(destDir) is not True: os.mkdir(destDir)
@@ -187,7 +193,7 @@ if __name__ == "__main__":
 					else: first = False
 					winTitle += bookData[index]
 
-		ReaderWindow.setWindowTitle(winTitle)
+		ui.setWindowTitle(winTitle)
 		ret = deflate(file, destDir)
 		page = destDir + "/" + bookData['chapters'][0]['src']
 		page = 'file:///' + page.replace("\\", '/')
@@ -276,7 +282,6 @@ if __name__ == "__main__":
 	# ui.webView.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(tmpcss))
 	ui.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
 	ui.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
-
 	app.exec_()
 	rmDir(destDir)
 	sys.exit(0)
