@@ -2,45 +2,20 @@ import os
 import sys
 if os.name == 'nt':
 	import ctypes
-import subprocess
-import shutil
-import re
-from pprint import pprint
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5 import QtWebKitWidgets
 import PyQt5.uic
 from PyQt5.uic import *
 
-try:
-	# Line written for IDE import scraping
-	from editor.editing_pane import *
-except Exception:
-	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-	from editing_pane import *
-from vars import *
-from lang import *
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+from editor.editing_pane import *
+from editor.window import *
 from bdd import *
-from dialog import *
-from common import *
-from booksTools import *
+from common.dialog import *
+from common.books import *
+from common.files import *
+from common.archive import *
 
-EditorWindow = None
 ui = None
-
-
-def ContentTableCurrentItemChanged(current: QtWidgets.QTreeWidgetItem, previous: QtWidgets.QTreeWidgetItem):
-	print(current.data(0, 99))
-	data = current.data(0, 99)
-
-
-def fileTableItemDoubleClicked(current: QtWidgets.QTreeWidgetItem, previous: QtWidgets.QTreeWidgetItem):
-	data = current.data(0, 99)
-	text = current.text(0)
-	if data != ':dir:':
-		print(data)
-		print(text)
-		ui.tabWidget.createPane(text, data)
 
 
 def eventHandler(event: dict):
@@ -61,28 +36,9 @@ def recurFileTableInsert(baseItem: QtWidgets.QTreeWidgetItem, tree: dict):
 	return baseItem
 
 
-def onCloseTab(indexTab: int):
-	global ui
-	if ui.tabWidget.count() == 0: return
-	print('onCloseTab')
-	if ui.tabWidget.count() > indexTab >= 0:
-		ui.tabWidget.removeTab(indexTab)
-
-def onChangeTab(indexTab: int):
-	ui.tabWidget.drawPreview()
-
-
-class editorWindow(QtWidgets.QMainWindow):
-	def __init__(self, parent: QtWidgets.QMainWindow):
-		super(editorWindow, self).__init__(parent)
-		PyQt5.uic.loadUi(appDir + '/editor/editor.ui'.replace('/', os.sep), self)
-		self.show()
-
-
 if __name__ == "__main__":
 	lng = Lang()
-	destDir = appDir + '/editor/tmp'.replace('/', os.sep)
-	default_page = lng['Editor']['WebViewDefaultPageContent']
+
 	previousEvent = ''
 	app = QtWidgets.QApplication(sys.argv)
 	print(sys.argv)
@@ -102,84 +58,10 @@ if __name__ == "__main__":
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
 	try:
-		EditorWindow = QtWidgets.QMainWindow()
-		ui = editorWindow(EditorWindow)
-		for attr in dir(ui):
-			print("obj.%s = %r" % (attr, getattr(ui, attr)))
-
-		# ui.tabWidget
-		ui.tabWidget.clear()
-		ui.tabWidget.setStyleSheet(
-			"""
-			QFrame { 
-				background: rgb(50, 50, 50);
-			}
-			QTabWidget::pane { 
-			}
-			QTabWidget::tab-bar { }
-			QTabBar::tab {
-				background: rgb(80, 80, 80) !important;
-				color: white;
-				padding: 5px;
-				margin-right:2px;
-				border-color:rgb(0,0,0);
-				border-width:1px;
-				border-style:solid;
-			}
-			QTabBar::tab:selected { background: rgb(0, 135, 202) !important; }
-			QTabBar::close-button { 
-				border-image: none;
-				image: url('"""+appDir.replace(os.sep, '/')+"""/icons/white/close.png');
-				cursor: pointer;
-			}
-			QTabBar::close-button:hover { 
-				border-image: none;
-				image: url('"""+appDir.replace(os.sep, '/')+"""/icons/black/close.png');
-			}
-			"""
-		)
-		ui.tabWidget.setPreviewWebview(ui.webView, default_page)
-		ui.tabWidget.tabCloseRequested.connect(onCloseTab)
-		ui.tabWidget.currentChanged.connect(onChangeTab)
-
-
-		# Button connec signals to slots
-		# ui.buttonFullScreen.clicked.connect(toogleFullScreen)
-
-		# Processing File Table
-		ui.treeFileTable.clear()
-		ui.treeFileTable.headerItem().setText(0, lang['Editor']['FileTableHeader'])
-		ui.treeFileTable.itemDoubleClicked.connect(fileTableItemDoubleClicked)
-		ui.treeFileTable.setIndentation(10)
-		ui.treeFileTable.setCursor(QtCore.Qt.PointingHandCursor)
-		ui.treeFileTable.setStyleSheet(
-			"""
-			QTreeView::branch:has-siblings:!adjoins-item { }
-			QTreeView::branch:has-siblings:adjoins-item { }
-			QTreeView::branch:!has-children:!has-siblings:adjoins-item { }
-			
-			QTreeView::branch:has-children:!has-siblings:closed, QTreeView::branch:closed:has-children:has-siblings {
-				border-image: none;
-				image: url('"""+appDir.replace(os.sep, '/')+"""/icons/white/tree_closed.png');
-			}
-
-			QTreeView::branch:open:has-children:!has-siblings,
-			QTreeView::branch:open:has-children:has-siblings  {
-				border-image: none;
-				image: url('"""+appDir.replace(os.sep, '/')+"""/icons/white/tree_opened.png');
-			}
-			"""
-		)
-
-		# Processing Content Table
-		ui.treeContentTable.clear()
-		ui.treeContentTable.headerItem().setText(0, lang['Editor']['ContentTableHeader'])
-		ui.treeContentTable.currentItemChanged.connect(ContentTableCurrentItemChanged)
-		ui.treeContentTable.setIndentation(0)
-		ui.treeContentTable.setCursor(QtCore.Qt.PointingHandCursor)
+		ui = editorWindow(None)
 
 		if len(sys.argv) < 2:
-			WarnDialog(lang['Editor']['DialogInfoNoFileWindowTitle'], lang['Editor']['DialogInfoNoFileWindowText'], EditorWindow)
+			WarnDialog(lang['Editor']['DialogInfoNoFileWindowTitle'], lang['Editor']['DialogInfoNoFileWindowText'], ui)
 			exit(0)
 
 		file = sys.argv[1]
@@ -191,15 +73,18 @@ if __name__ == "__main__":
 				.replace(mappdir, '').replace('/', ' / ').replace(ext, '')
 		)
 		# EditorWindow.show()
+		destDir = appDir + os.sep + 'editor' + os.sep + 'tmp'
 		print(destDir)
 		rmDir(destDir)
-		if os.path.isdir(destDir) is not True: os.mkdir(destDir)
+		if os.path.isdir(destDir) is not True:
+			os.makedirs(destDir + os.sep + 'original')
+			os.makedirs(destDir + os.sep + 'current')
 		page = 'file:///C:/Users/KevBo/wuxiaworld_export_ebook/tmp/toc.xhtml'
 
 		if ext in ['.epub', '.epub2', '.epub3']:
-			ret = deflate(file, destDir)
-			print(ret)
-			liste = listDirTree(destDir, None)
+			ret = inflate(file, destDir + os.sep + 'original')
+			ret = inflate(file, destDir + os.sep + 'current')
+			liste = listDirTree(destDir + os.sep + 'current', None)
 			print(liste)
 			for index in liste:
 				item = QtWidgets.QTreeWidgetItem(ui.treeFileTable)
@@ -212,13 +97,15 @@ if __name__ == "__main__":
 				ui.treeFileTable.insertTopLevelItem(0, item)
 
 		elif ext in ['.cbz', '.cbr']:
-			deflate(file, destDir)
-			liste = listDir(destDir, 'jpg|jpeg|png').sort()
+			ret = inflate(file, destDir + os.sep + 'original')
+			ret = inflate(file, destDir + os.sep + 'current')
+			liste = listDir(destDir + os.sep + 'current', 'jpg|jpeg|png').sort()
 		else:
-			WarnDialog(lang['Editor']['DialogInfoBadFileWindowTitle'], lang['Editor']['DialogInfoBadFileWindowText'], EditorWindow)
+			WarnDialog(lang['Editor']['DialogInfoBadFileWindowTitle'], lang['Editor']['DialogInfoBadFileWindowText'], ui)
 			exit(0)
 
-		ui.webView.setHtml(default_page)
+		ui.show()
+		ui.webView.setHtml(lang['Editor']['WebViewDefaultPageContent'])
 		tmpcss = destDir + "/tmp.css"
 		filePage = open(tmpcss, "w", encoding="utf8")
 		filePage.write("body { background:#999999;color:#ffffff; }")
@@ -228,7 +115,7 @@ if __name__ == "__main__":
 		ui.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
 		# données de test
-		# ui.tabWidget.createPane("test", "D:\\CODES\\Python\\EbookCollection\\editor\\tmp\\OEBPS\\content.opf")
+		ui.tabWidget.createPane("metadata.opf", appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep + 'metadata.opf')
 
 		app.exec_()
 		# rmDir(destDir)

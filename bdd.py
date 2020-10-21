@@ -1,12 +1,8 @@
 # This Python file uses the following encoding: utf-8
-import sys
-import os
 import traceback
-import time
-import re
 import sqlite3
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-from common import *
+from common.common import *
 from vars import *
 
 

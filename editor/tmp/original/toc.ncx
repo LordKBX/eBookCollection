@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="fr">
+  <head>
+    <meta content="b0538d32-948b-407d-af68-394bbe774c42" name="dtb:uid"/>
+    <meta content="2" name="dtb:depth"/>
+    <meta content="calibre (3.12.0)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>Lazy Dungeon Master - Arc 01: Hey, I’m Suddenly in a Checkmate?</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="num_01" playOrder="1">
+      <navLabel>
+        <text>Arc 01: Hey, I’m Suddenly in a Checkmate?</text>
+      </navLabel>
+      <content src="texte/cover.xhtml"/>
+    </navPoint>
+    <navPoint id="num_02" playOrder="2">
+      <navLabel>
+        <text>Chapter 1</text>
+      </navLabel>
+      <content src="texte/ch01.xhtml"/>
+    </navPoint>
+    <navPoint id="num_03" playOrder="3">
+      <navLabel>
+        <text>Chapter 2</text>
+      </navLabel>
+      <content src="texte/ch02.xhtml"/>
+    </navPoint>
+    <navPoint id="num_04" playOrder="4">
+      <navLabel>
+        <text>Chapter 3</text>
+      </navLabel>
+      <content src="texte/ch03.xhtml"/>
+    </navPoint>
+    <navPoint id="num_05" playOrder="5">
+      <navLabel>
+        <text>Chapter 4</text>
+      </navLabel>
+      <content src="texte/ch04.xhtml"/>
+    </navPoint>
+    <navPoint id="num_06" playOrder="6">
+      <navLabel>
+        <text>Chapter 5</text>
+      </navLabel>
+      <content src="texte/ch05.xhtml"/>
+    </navPoint>
+    <navPoint id="num_07" playOrder="7">
+      <navLabel>
+        <text>Chapter 6</text>
+      </navLabel>
+      <content src="texte/ch06.xhtml"/>
+    </navPoint>
+    <navPoint id="num_08" playOrder="8">
+      <navLabel>
+        <text>Chapter 7</text>
+      </navLabel>
+      <content src="texte/ch07.xhtml"/>
+    </navPoint>
+    <navPoint id="num_09" playOrder="9">
+      <navLabel>
+        <text>Chapter 8</text>
+      </navLabel>
+      <content src="texte/ch08.xhtml"/>
+    </navPoint>
+    <navPoint id="num_10" playOrder="10">
+      <navLabel>
+        <text>Chapter 9</text>
+      </navLabel>
+      <content src="texte/ch09.xhtml"/>
+    </navPoint>
+    <navPoint id="num_11" playOrder="11">
+      <navLabel>
+        <text>Chapter 10</text>
+      </navLabel>
+      <content src="texte/ch10.xhtml"/>
+    </navPoint>
+    <navPoint id="num_12" playOrder="12">
+      <navLabel>
+        <text>Chapter 11</text>
+      </navLabel>
+      <content src="texte/ch11.xhtml"/>
+    </navPoint>
+    <navPoint id="num_13" playOrder="13">
+      <navLabel>
+        <text>Chapter 12</text>
+      </navLabel>
+      <content src="texte/ch12.xhtml"/>
+    </navPoint>
+    <navPoint id="num_14" playOrder="14">
+      <navLabel>
+        <text>Chapter 13</text>
+      </navLabel>
+      <content src="texte/ch13.xhtml"/>
+    </navPoint>
+    <navPoint id="num_15" playOrder="15">
+      <navLabel>
+        <text>End</text>
+      </navLabel>
+      <content src="texte/end.xhtml"/>
+    </navPoint>
+  </navMap>
+</ncx>

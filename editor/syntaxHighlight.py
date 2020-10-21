@@ -1,10 +1,4 @@
-import sys
-
-import sip
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-import PyQt5.Qsci
 from PyQt5.Qsci import *
 
 

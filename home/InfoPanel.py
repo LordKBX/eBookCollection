@@ -1,9 +1,8 @@
-import json
-import re
+import os, sys
 import base64
 import traceback
-from PyQt5 import QtCore, QtGui, QtWidgets
-from common import *
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+from common.common import *
 
 
 class HomeWindowInfoPanel:

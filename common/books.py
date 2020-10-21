@@ -6,6 +6,8 @@ import zipfile
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import bdd
 from common.common import *
+from common.files import *
+from common.archive import *
 from vars import *
 
 
@@ -169,14 +171,7 @@ def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_nam
 
         elif ext in ['.cbz', '.cbr']:  # section for CBZ and CBR files
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
-            list_args = list()  # create list argument for external command execution
-            list_args.append(tools['7zip'][os.name]['path'])  # insert executable path
-            temp_args = tools['7zip'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
-            for var in temp_args:  # parse table of raw command arguments
-                # insert parsed param
-                list_args.append(var.replace('%input%', file).replace('%output%', tmpdir))
-            print(list_args)
-            ret = subprocess.check_output(list_args, universal_newlines=True)  # execute the command
+            ret = inflate(file, tmpdir)
             print(ret)
             tmp_cover = create_thumbnail(listDir(tmpdir)[0])  # get path of the first image into temp dir
 

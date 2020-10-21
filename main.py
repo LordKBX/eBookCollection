@@ -9,7 +9,6 @@ from lang import *
 from home.home import *
 
 if __name__ == "__main__":
-    app = QApplication([])
     bdd = BDD()
     translation = Lang()
 
@@ -18,6 +17,7 @@ if __name__ == "__main__":
     ret = bdd.getParam('home_central_table_header_sizes')
     if ret is not None: env_vars['vars']['home_central_table_header_sizes'] = ret
 
+    app = QApplication([])
     app_icon = QtGui.QIcon()
     app_icon.addFile(appDir + '/icons/app_icon16x16.png', QtCore.QSize(16, 16))
     app_icon.addFile(appDir + '/icons/app_icon24x24.png', QtCore.QSize(24, 24))

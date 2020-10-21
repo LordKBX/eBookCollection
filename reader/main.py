@@ -2,40 +2,28 @@ import os
 import sys
 if os.name == 'nt':
 	import ctypes
-import subprocess
-import shutil
-import re
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5 import QtWebKitWidgets
 import PyQt5.uic
 from PyQt5.uic import *
 
-try:
-	# Line written for IDE import scraping
-	from reader.CustomQWebView import *
-except Exception:
-	sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-	from CustomQWebView import *
-from vars import *
-from lang import *
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from bdd import *
-from dialog import *
-from common import *
-from booksTools import *
+from common.dialog import *
+from common.books import *
+from common.archive import *
+from reader.CustomQWebView import *
 
-ReaderWindow = None
 ui = None
 
 
 def toogleFullScreen():
-	if ReaderWindow.isFullScreen() is True:
-		ReaderWindow.showNormal()
+	if ui.isFullScreen() is True:
+		ui.showNormal()
 		icon1 = QtGui.QIcon()
 		icon1.addPixmap(QtGui.QPixmap("../icons/white/full_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		ui.buttonFullScreen.setIcon(icon1)
 	else:
-		ReaderWindow.showFullScreen()
+		ui.showFullScreen()
 		icon1 = QtGui.QIcon()
 		icon1.addPixmap(QtGui.QPixmap("../icons/white/normal_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		ui.buttonFullScreen.setIcon(icon1)
@@ -48,17 +36,6 @@ def DisplayTreeContentTable():
 	else:
 		ui.treeContentTable.setMinimumWidth(0)
 		ui.treeContentTable.setMaximumWidth(0)
-	
-
-def deflate(src: str, dest: str):
-	list_args = list()  # create list argument for external command execution
-	list_args.append(env_vars['tools']['7zip'][os.name]['path'])  # insert executable path
-	temp_args = env_vars['tools']['7zip'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
-	for var in temp_args:  # parse table of raw command arguments
-		# insert parsed param
-		list_args.append(var.replace('%input%', src).replace('%output%', dest))
-	print(list_args)
-	return subprocess.check_output(list_args, universal_newlines=True)  # execute the command
 
 
 def ContentTableCurrentItemChanged(current: QtWidgets.QTreeWidgetItem, previous: QtWidgets.QTreeWidgetItem):
@@ -83,56 +60,62 @@ def ContentTableCurrentItemChanged(current: QtWidgets.QTreeWidgetItem, previous:
 
 def eventHandler(event: dir):
 	global previousEvent, ui
-	evt = '{}'.format(event)
-	if event['type'] == 'pageChange':
-		if ui.webView.mode.value == QwwMode.CBZ.value:
-			ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(event['index']), 0)
-	if evt == previousEvent:
-		if event['type'] == 'chapterChange':
-			if ui.webView.mode.value == QwwMode.EPUB.value:
-				index = 0
-				try: index = ui.treeContentTable.currentIndex().row()
-				except Exception: {}
-				if event['value'] == 'prev':
-					if index - 1 >= 0:
-						ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(index - 1), 0)
-						timer = QtCore.QTimer()
-						timer.singleShot(100, ui.webView.updatePositionCbzEnd)
-				if event['value'] == 'next':
-					print(ui.treeContentTable.size().height())
-					if index + 1 < ui.treeContentTable.size().height():
-						ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(index + 1), 0)
-	previousEvent = evt
-	print(event)
+	try:
+		evt = '{}'.format(event)
+		if event['type'] == 'pageChange':
+			if ui.webView.mode.value == QwwMode.CBZ.value:
+				ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(event['index']), 0)
+		if evt == previousEvent:
+			if event['type'] == 'chapterChange':
+				if ui.webView.mode.value == QwwMode.EPUB.value:
+					index = 0
+					try: index = ui.treeContentTable.currentIndex().row()
+					except Exception: {}
+					if event['value'] == 'prev':
+						if index - 1 >= 0:
+							ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(index - 1), 0)
+							timer = QtCore.QTimer()
+							timer.singleShot(100, ui.webView.updatePositionCbzEnd)
+					if event['value'] == 'next':
+						if index + 1 < ui.treeContentTable.topLevelItemCount():
+							ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(index + 1), 0)
+		previousEvent = evt
+		# print(event)
+	except Exception:
+		traceback.print_exc()
 
 
 class readerWindow(QtWidgets.QMainWindow):
 	def __init__(self, parent: QtWidgets.QMainWindow):
 		super(readerWindow, self).__init__(parent)
 		PyQt5.uic.loadUi(appDir + '/reader/reader2.ui'.replace('/', os.sep), self)
+		self.show()
 
 
 if __name__ == "__main__":
-	app = QtWidgets.QApplication(sys.argv)
 	previousEvent = ''
 	print(sys.argv)
 	print(env_vars)
 	lang = Lang()
 	bdd = BDD()
 
+	print(appDir + '/icons/app_icon16x16.png'.replace('/', os.sep))
+
+	app = QtWidgets.QApplication([])
 	app_icon = QtGui.QIcon()
-	app_icon.addFile(appDir + '/icons/app_icon16x16.png', QtCore.QSize(16, 16))
-	app_icon.addFile(appDir + '/icons/app_icon24x24.png', QtCore.QSize(24, 24))
-	app_icon.addFile(appDir + '/icons/app_icon32x32.png', QtCore.QSize(32, 32))
-	app_icon.addFile(appDir + '/icons/app_icon48x48.png', QtCore.QSize(48, 48))
-	app_icon.addFile(appDir + '/icons/app_icon256x256.png', QtCore.QSize(256, 256))
+	app_icon.addFile(appDir + '/icons/app_icon16x16.png'.replace('/', os.sep), QtCore.QSize(16, 16))
+	app_icon.addFile(appDir + '/icons/app_icon24x24.png'.replace('/', os.sep), QtCore.QSize(24, 24))
+	app_icon.addFile(appDir + '/icons/app_icon32x32.png'.replace('/', os.sep), QtCore.QSize(32, 32))
+	app_icon.addFile(appDir + '/icons/app_icon48x48.png'.replace('/', os.sep), QtCore.QSize(48, 48))
+	app_icon.addFile(appDir + '/icons/app_icon256x256.png'.replace('/', os.sep), QtCore.QSize(256, 256))
 	app.setWindowIcon(app_icon)
 	if os.name == 'nt':
 		myappid = 'lordkbx.ebook_collection.reader'
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-	
-	ReaderWindow = QtWidgets.QMainWindow()
-	ui = readerWindow(ReaderWindow)
+
+	ui = readerWindow(None)
+	ui.show()
+
 	
 	# Button FullScreen
 	icon1 = QtGui.QIcon()
@@ -162,12 +145,11 @@ if __name__ == "__main__":
 	ui.treeContentTable.setCursor(QtCore.Qt.PointingHandCursor)
 
 	if len(sys.argv) < 2:
-		WarnDialog(lang['Reader']['DialogInfoNoFileWindowTitle'], lang['Reader']['DialogInfoNoFileWindowText'], ReaderWindow)
+		WarnDialog(lang['Reader']['DialogInfoNoFileWindowTitle'], lang['Reader']['DialogInfoNoFileWindowText'], ui)
 		exit(0)
 
 	file = sys.argv[1]
 
-	ui.showNormal()
 	mappdir = appDir.replace(os.sep, '/')+'/data/'
 	filepath, ext = os.path.splitext(file)
 	ui.setWindowTitle(
@@ -194,7 +176,7 @@ if __name__ == "__main__":
 					winTitle += bookData[index]
 
 		ui.setWindowTitle(winTitle)
-		ret = deflate(file, destDir)
+		ret = inflate(file, destDir)
 		page = destDir + "/" + bookData['chapters'][0]['src']
 		page = 'file:///' + page.replace("\\", '/')
 		i = 0
@@ -209,7 +191,7 @@ if __name__ == "__main__":
 
 	elif ext in ['.cbz', '.cbr']:
 		appMode = QwwMode.CBZ
-		ret = deflate(file, destDir)
+		ret = inflate(file, destDir)
 		print(ret)
 		imgList = listDir(destDir, 'jpg|jpeg|png')
 		page = destDir + "/page.xhtml"
@@ -269,7 +251,7 @@ if __name__ == "__main__":
 		ui.treeContentTable.insertTopLevelItem(0, item)
 		ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(0), 0)
 	else:
-		WarnDialog(lang['Reader']['DialogInfoBadFileWindowTitle'], lang['Reader']['DialogInfoBadFileWindowText'], ReaderWindow)
+		WarnDialog(lang['Reader']['DialogInfoBadFileWindowTitle'], lang['Reader']['DialogInfoBadFileWindowText'], ui)
 		exit(0)
 
 	ui.webView.setMode(appMode)

@@ -1,20 +1,20 @@
 import os
-import io
 import sys
-from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5 import QtWebKitWidgets
 import PyQt5.uic
 from PyQt5.uic import *
 import filetype
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from common import *
-from vars import *
-from booksTools import *
-import dialog
 from editor.syntaxHighlight import *
-import editor.xmlTool
 from PyQt5.Qsci import *
+import lang
+from common.books import *
+from common import dialog
+import editor.xmlt
+import editor.css
+import editor.link
+import editor.img
 
 
 class uiClass(QtWidgets.QWidget):
@@ -34,6 +34,7 @@ class editorTabManager(QtWidgets.QTabWidget):
         self.setWindowTitle("Tab Dialog")
         self.previewWebview = None
         self.default_page = None
+        self.lang = lang.Lang()
 
     def setPreviewWebview(self, webview: QtWebKitWidgets.QWebView, default_page: str):
         self.previewWebview = webview
@@ -42,10 +43,17 @@ class editorTabManager(QtWidgets.QTabWidget):
     def drawPreview(self):
         if self.count() <= 0: return
         item = self.currentWidget()
+        fileDir = os.path.dirname(os.path.realpath(__file__)).replace('file:///', '').replace('/', os.sep)+os.sep+'tmp'
+        print('fileDir = ' + fileDir)
         if item.property('fileType') in [] or item.property('fileExt') in ['xhtml', 'html']:
             try:
-                txe = item.children().__getitem__(2)
-                self.previewWebview.setHtml(txe.text())
+                txe = item.children().__getitem__(2).text()
+                txe = txe\
+                    .replace(' href="../', ' href="')\
+                    .replace(' src="../', ' src="')\
+                    .replace(' href="', ' href="file:///'+fileDir.replace(os.sep, '/')+'/')\
+                    .replace(' src="', ' src="file:///'+fileDir.replace(os.sep, '/')+'/')
+                self.previewWebview.setHtml(txe)
             except Exception:
                 traceback.print_exc()
         else:
@@ -70,7 +78,6 @@ class editorTabManager(QtWidgets.QTabWidget):
         if kind is None:
             fn, ext = os.path.splitext(path)
             kind = FileType(ext[1:], 'text/plain')
-            print('Cannot guess file type!')
             try:
                 with open(path, "r", encoding="utf8") as file:
                     data = file.read()
@@ -80,8 +87,6 @@ class editorTabManager(QtWidgets.QTabWidget):
                 kind = FileType('bin', 'binary')
 
         isText = True
-        print('----------')
-        print(kind.mime)
         if kind.mime in ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']:
             isText = False
             data = create_thumbnail(path, False)
@@ -89,7 +94,6 @@ class editorTabManager(QtWidgets.QTabWidget):
             isText = False
         if data is None:
             return
-
 
         tab = QtWidgets.QWidget()
         # tab.setObjectName("tab")
@@ -133,20 +137,24 @@ class editorTabManager(QtWidgets.QTabWidget):
             except Exception:
                 traceback.print_exc()
 
-
-
             verticalLayout.addWidget(block)
 
             try:
                 textEdit = None
-                if tab.property('fileExt') not in ['xhtml', 'html']:
+                if tab.property('fileExt') in ['xhtml', 'html']:
                     textEdit = SimplePythonEditor(QsciLexerHTML(), tab)
-                elif tab.property('fileExt') not in ['xml', 'opf', 'ncx']:
+                elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
                     textEdit = SimplePythonEditor(QsciLexerXML(), tab)
-                elif tab.property('fileExt') not in ['css']:
+                    textEdit.elexer.setColor(QtGui.QColor.fromRgb(255, 255, 255), QsciLexerXML.Default)
+                    textEdit.elexer.setColor(QtGui.QColor('#000080'), QsciLexerXML.Tag)
+                    textEdit.elexer.setColor(QtGui.QColor('#000080'), QsciLexerXML.UnknownTag)
+                elif tab.property('fileExt') in ['css']:
                     textEdit = SimplePythonEditor(QsciLexerCSS(), tab)
-                textEdit.setPaper(QColor("#666666"))
+                textEdit.elexer.setDefaultPaper(QColor("#A6A6A6"))
+                textEdit.elexer.setDefaultColor(QColor("#ffffff"))
+                textEdit.elexer.setPaper(QColor("#A6A6A6"))
                 textEdit.setObjectName("textEdit")
+                textEdit.setCaretLineBackgroundColor(QColor("#BBBBBB"))
                 font = QFont()
                 font.setFamily('Courier')
                 font.setFixedPitch(True)
@@ -157,13 +165,6 @@ class editorTabManager(QtWidgets.QTabWidget):
                 textEdit.setMarginWidth(0, fontmetrics.width("00000") + 1)
                 textEdit.setMarginsBackgroundColor(QColor("#333333"))
                 textEdit.setMarginsForegroundColor(QColor("#ffffff"))
-
-                textEdit.elexer.setDefaultPaper(QColor("#A6A6A6"))
-                textEdit.elexer.setDefaultColor(QColor("#ffffff"))
-                textEdit.elexer.setPaper(QColor("#A6A6A6"))
-
-                # textEdit.elexer.setColor(QtGui.QColor.fromRgb(255, 0, 0), QsciLexerPython.Keyword)
-                textEdit.elexer.setColor(QtGui.QColor.fromRgb(255, 255, 255), QsciLexerPython.Default)
 
                 textEdit.setText(data)
                 textEdit.textChanged.connect(lambda: self.contentUpdate())
@@ -189,6 +190,8 @@ class editorTabManager(QtWidgets.QTabWidget):
         self.setCurrentIndex(self.count() - 1)
 
         try:
+            block.btnSave.setToolTip('Save File in session')
+            block.btnSave.clicked.connect(self.saveFile)
             block.btnUndo.setToolTip('Undo')
             block.btnUndo.clicked.connect(lambda: textEdit.undo())
             block.btnRedo.setToolTip('Redo')
@@ -235,9 +238,35 @@ class editorTabManager(QtWidgets.QTabWidget):
             block.btnNumList.setToolTip('Numeric List')
             block.btnNumList.clicked.connect(lambda: self.blockList('ol'))
             block.btnLink.setToolTip('Link')
+            block.btnLink.clicked.connect(self.LinkPoser)
             block.btnImg.setToolTip('Image')
+            block.btnImg.clicked.connect(self.imgPoser)
         except Exception:
             {}
+
+    def saveFile(self, evt):
+        try:
+            item = self.currentWidget()
+            newText = item.children().__getitem__(2).text()
+            oldText = item.property('originalContent')
+            fileName = item.property('fileName')
+            if oldText != newText:
+                ret = dialog.InfoDialogConfirm(
+                    self.lang['Editor']['DialogConfirmSaveWindowTitle'],
+                    self.lang['Editor']['DialogConfirmSaveWindowText'],
+                    self.lang['Generic']['DialogBtnYes'],
+                    self.lang['Generic']['DialogBtnNo'], self.parent()
+                )
+                if ret is True:
+                    print('Save')
+                    file = open(fileName, 'w', encoding="utf8")
+                    file.write(newText)
+                    file.close()
+                    item.setProperty('originalContent', newText)
+            else:
+                print('NO DIF')
+        except Exception:
+            traceback.print_exc()
 
     def claimBackColor(self):
         color = self.claimColor()
@@ -251,7 +280,7 @@ class editorTabManager(QtWidgets.QTabWidget):
 
     def claimColor(self):
         try:
-            color = QColorDialog.getColor(QtGui.QColor.fromRgb(0,0,0), self)
+            color = QtWidgets.QColorDialog.getColor(QtGui.QColor.fromRgb(0,0,0), self)
             if color.isValid() is True:
                 return color
         except Exception:
@@ -263,7 +292,7 @@ class editorTabManager(QtWidgets.QTabWidget):
             item = self.currentWidget()
             txEdit = item.children().__getitem__(2)
             if item.property('fileExt') in ['xhtml', 'html', 'xml', 'opf', 'ncx']:
-                ret = editor.xmlTool.parse(txEdit.text())
+                ret = editor.xmlt.parse(txEdit.text())
                 if ret is not None:
                     dialog.WarnDialog('', 'Error found at line {}, collumn {}'.format(ret[0], ret[1]), self.parent())
                     txEdit.setSelection(ret[0]-1, 0, ret[0]-1, ret[1])
@@ -364,11 +393,11 @@ class editorTabManager(QtWidgets.QTabWidget):
             if sel[0] == sel[2] and sel[1] == sel[3]:
                 pos = txEdit.getCursorPosition()
             if item.property('fileExt') in ['xml', 'opf', 'ncx']:
-                ret = editor.xmlTool.prettify(txEdit.text())
+                ret = editor.xmlt.prettify(txEdit.text())
                 txEdit.selectAll(True)
                 txEdit.replaceSelectedText(ret)
             elif item.property('fileExt') in ['css']:
-                ret = editor.xmlTool.prettifyCss(txEdit.text())
+                ret = editor.css.prettifyCss(txEdit.text())
                 txEdit.selectAll(True)
                 txEdit.replaceSelectedText(ret)
             else:
@@ -377,5 +406,56 @@ class editorTabManager(QtWidgets.QTabWidget):
                 txEdit.setCursorPosition(pos[0], pos[1])
             else:
                 txEdit.setSelection(sel[0], sel[1], sel[2], sel[3])
+        except Exception:
+            traceback.print_exc()
+
+    def LinkPoser(self):
+        block_start = '<a '
+        block_end = '</a>'
+        try:
+            item = self.currentWidget()
+            window = editor.link.LinkWindow(self.parent(), appDir + os.sep + 'editor' + os.sep + 'tmp')
+            txEdit = item.children().__getitem__(2)
+            selectedText = txEdit.selectedText()
+            sel = txEdit.getSelection()
+            if sel[0] == sel[2] and sel[1] == sel[3]:
+                ret = window.openExec()
+                if ret is not None:
+                    pos = txEdit.getCursorPosition()
+                    newText = '<a href="' + ret['url'] + '">' + ret['text'] + '</a>'
+                    txEdit.insertAt(newText, pos[0], pos[1])
+                    tb = newText.split('\n')
+                    txEdit.setSelection(pos[0], pos[1], pos[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
+            else:
+                max = len(block_start) + len(block_end)
+                if selectedText.startswith(block_start) and selectedText.endswith(block_end):
+                    newText = re.sub('<a(.*)>(.*)</a>', '%2', selectedText)
+                    txEdit.replaceSelectedText(newText)
+                    tb = newText.split('\n')
+                    txEdit.setSelection(sel[0], sel[1], sel[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
+                else:
+                    ret = window.openExec(selectedText)
+                    if ret is not None:
+                        newText = '<a href="'+ret['url']+'">'+ret['text']+'</a>'
+                        txEdit.replaceSelectedText(newText)
+                        tb = newText.split('\n')
+                        txEdit.setSelection(sel[0], sel[1], sel[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
+        except Exception:
+            traceback.print_exc()
+
+    def imgPoser(self):
+        try:
+            item = self.currentWidget()
+            window = editor.img.ImgWindow(self.parent(), appDir + os.sep + 'editor' + os.sep + 'tmp')
+            txEdit = item.children().__getitem__(2)
+            selectedText = txEdit.selectedText()
+            sel = txEdit.getSelection()
+            pos = txEdit.getCursorPosition()
+            ret = window.openExec(selectedText, None)
+            if ret is not None:
+                newText = '<img src="' + ret['url'] + '" alt="' + ret['text'] + '" title="' + ret['text'] + '" />'
+                txEdit.insertAt(newText, pos[0], pos[1])
+                tb = newText.split('\n')
+                txEdit.setSelection(pos[0], pos[1], pos[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
         except Exception:
             traceback.print_exc()

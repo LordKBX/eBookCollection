@@ -1,23 +1,13 @@
 # This Python file uses the following encoding: utf-8
-import sys
-import os
-import shutil
-import subprocess
-import traceback
-import json
-
-from PyQt5 import QtCore, QtGui, QtWidgets
+import os, sys
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
 import PyQt5.uic
 from PyQt5.uic import *
 
-# sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-from common import *
-from dialog import *
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+from common.dialog import *
 from lang import *
-from booksTools import *
+from common.books import *
 import bdd
 
 from home.CentralBlockTable import *

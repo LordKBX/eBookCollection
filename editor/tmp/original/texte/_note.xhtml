@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Lazy Dungeon Master - Arc 01: Hey, I’m Suddenly in a Checkmate?</title>
+    </head>
+    <body>
+        <h1>Code export js</h1>
+        <pre><![CDATA[
+    content = document.querySelector('.entry-content').innerHTML;
+    content = content.replace(new RegExp('<h1>','g'), '<p class="elypsys">');
+    content = content.replace(new RegExp('</h1>','g'), '</p>');
+    content = content.replace(new RegExp('<h2 style="text-align:center;">','g'), '<h1>');
+    content = content.replace(new RegExp('</h2>','g'), '</h1>');
+    content = content.replace(new RegExp('<p>','g'), '<div class="block">');
+    content = content.replace(new RegExp('</p>','g'), '</div>');
+    console.log(content);
+        ]]></pre>
+    </body>
+</html>

@@ -1,11 +1,6 @@
 import json
-import os
-import shutil
-import subprocess
 import traceback
-import PyQt5
-from PyQt5 import QtCore, QtGui, QtWidgets
-from common import *
+from common.common import *
 
 class HomeWindowCentralBlock:
     CentralBlockTableCasesUidList = []

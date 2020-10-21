@@ -1,5 +1,8 @@
+import os, sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from lang import *
+from vars import *
 
 dialogStyle = """
         QMessageBox { background-color: rgb(62, 62, 62); color: rgb(255, 255, 255); }
