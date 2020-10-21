@@ -79,11 +79,13 @@ class editorTabManager(QtWidgets.QTabWidget):
             fn, ext = os.path.splitext(path)
             kind = FileType(ext[1:], 'text/plain')
             try:
-                with open(path, "r", encoding="utf8") as file:
-                    data = file.read()
+                file = open(path, "r", encoding="utf8")
+                data = file.read()
+                file.close()
             except Exception:
-                with open(path, "rb") as file:
-                    data = file.read()
+                file = open(path, "rb")
+                data = file.read()
+                file.close()
                 kind = FileType('bin', 'binary')
 
         isText = True

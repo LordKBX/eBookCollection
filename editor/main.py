@@ -23,26 +23,12 @@ def eventHandler(event: dict):
 	print(event)
 
 
-def recurFileTableInsert(baseItem: QtWidgets.QTreeWidgetItem, tree: dict):
-	for indexr in tree:
-		itemr = QtWidgets.QTreeWidgetItem(baseItem)
-		itemr.setText(0, indexr)
-		if isinstance(tree[indexr], dict):
-			itemr.setData(0, 99, ':dir:')
-			itemr = recurFileTableInsert(itemr, tree[indexr])
-		else:
-			itemr.setData(0, 99, tree[indexr])
-		baseItem.addChild(itemr)
-	return baseItem
-
-
 if __name__ == "__main__":
 	lng = Lang()
 
 	previousEvent = ''
 	app = QtWidgets.QApplication(sys.argv)
 	print(sys.argv)
-	print(env_vars)
 	lang = Lang()
 	bdd = BDD()
 
@@ -56,69 +42,21 @@ if __name__ == "__main__":
 	if os.name == 'nt':
 		myappid = 'lordkbx.ebook_collection.editor'
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-
 	try:
-		ui = editorWindow(None)
+		file = sys.argv[1]
 
 		if len(sys.argv) < 2:
 			WarnDialog(lang['Editor']['DialogInfoNoFileWindowTitle'], lang['Editor']['DialogInfoNoFileWindowText'], ui)
 			exit(0)
 
-		file = sys.argv[1]
-
-		mappdir = appDir.replace(os.sep, '/')+'/data/'
-		filepath, ext = os.path.splitext(file)
-		ui.setWindowTitle(
-			lang['Editor']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
-				.replace(mappdir, '').replace('/', ' / ').replace(ext, '')
-		)
-		# EditorWindow.show()
-		destDir = appDir + os.sep + 'editor' + os.sep + 'tmp'
-		print(destDir)
-		rmDir(destDir)
-		if os.path.isdir(destDir) is not True:
-			os.makedirs(destDir + os.sep + 'original')
-			os.makedirs(destDir + os.sep + 'current')
-		page = 'file:///C:/Users/KevBo/wuxiaworld_export_ebook/tmp/toc.xhtml'
-
-		if ext in ['.epub', '.epub2', '.epub3']:
-			ret = inflate(file, destDir + os.sep + 'original')
-			ret = inflate(file, destDir + os.sep + 'current')
-			liste = listDirTree(destDir + os.sep + 'current', None)
-			print(liste)
-			for index in liste:
-				item = QtWidgets.QTreeWidgetItem(ui.treeFileTable)
-				item.setText(0, index)
-				if isinstance(liste[index], dict):
-					item.setData(0, 99, ':dir:')
-					item = recurFileTableInsert(item, liste[index])
-				else:
-					item.setData(0, 99, liste[index])
-				ui.treeFileTable.insertTopLevelItem(0, item)
-
-		elif ext in ['.cbz', '.cbr']:
-			ret = inflate(file, destDir + os.sep + 'original')
-			ret = inflate(file, destDir + os.sep + 'current')
-			liste = listDir(destDir + os.sep + 'current', 'jpg|jpeg|png').sort()
-		else:
-			WarnDialog(lang['Editor']['DialogInfoBadFileWindowTitle'], lang['Editor']['DialogInfoBadFileWindowText'], ui)
-			exit(0)
-
+		ui = editorWindow(None, file)
 		ui.show()
-		ui.webView.setHtml(lang['Editor']['WebViewDefaultPageContent'])
-		tmpcss = destDir + "/tmp.css"
-		filePage = open(tmpcss, "w", encoding="utf8")
-		filePage.write("body { background:#999999;color:#ffffff; }")
-		filePage.close()
-		ui.webView.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(tmpcss))
-		# ui.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
-		ui.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
 		# données de test
 		ui.tabWidget.createPane("metadata.opf", appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep + 'metadata.opf')
 
 		app.exec_()
-		# rmDir(destDir)
+		# rmDir(destDir)  # disable for debug purpose
 	except Exception:
 		traceback.print_exc()
 	sys.exit(0)

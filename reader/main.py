@@ -159,7 +159,7 @@ if __name__ == "__main__":
 	destDir = appDir + '/reader/tmp'
 	rmDir(destDir)
 	if os.path.isdir(destDir) is not True: os.mkdir(destDir)
-	page = 'file:///C:/Users/KevBo/wuxiaworld_export_ebook/tmp/toc.xhtml'
+	page = ''
 
 	appMode = QwwMode.CBZ
 	if ext in ['.epub', '.epub2', '.epub3']:

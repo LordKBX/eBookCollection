@@ -24,21 +24,24 @@ def get_file_size(file_name: str, human_readable: bool = True):
         return '{} bytes'.format(size)
 
 
-def listDir(dirName: str, ext: str = None):
+def listDir(dirName: str, ext: str = None, first: bool = True):
     """
     Recursive function for listing files in a folder and his sub folders
 
     :param dirName: path of the parsed dir
     :return: list(str)
     """
-    listOfFile = os.listdir(dirName)
+    listOfFile = list()
+    if first is True:
+        listOfFile = [x[0] for x in os.walk(dirName)]
+    listOfFile += os.listdir(dirName)
     allFiles = list()
     for entry in listOfFile:
         fullPath = os.path.join(dirName, entry)
         if ext is not None and os.path.isfile(fullPath):
             if re.search("\\.({})$".format(ext), entry) is None: continue
         if os.path.isdir(fullPath):
-            allFiles = allFiles + listDir(fullPath, ext)
+            allFiles = allFiles + listDir(fullPath, ext, False)
         else:
             allFiles.append(fullPath)
     return allFiles
