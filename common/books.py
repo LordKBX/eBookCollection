@@ -1,18 +1,12 @@
-import sys
-import os
-import io
-import subprocess
-import shutil
-import traceback
+import sys, os, io, traceback
 from xml.dom import minidom
-from bs4 import BeautifulSoup
-import bdd
-from common import *
-from vars import *
-import PIL
 from PIL import Image
 import base64
 import zipfile
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+import bdd
+from common.common import *
+from vars import *
 
 
 def create_thumbnail(path: str, resize: bool = True):
@@ -193,7 +187,7 @@ def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_nam
         # shutil.rmtree(tmpdir)  # delete temp dir
 
         # build final file path
-        end_file = 'data/'
+        end_file = '../data/'
         if tmp_authors is not None:
             if tmp_authors != '': end_file += cleanStringForUrl(tmp_authors) + '/'
         if tmp_serie is not None:
