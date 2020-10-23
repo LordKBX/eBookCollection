@@ -1,4 +1,5 @@
 import os, sys, shutil, re
+import traceback
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from vars import *
 
@@ -24,58 +25,76 @@ def get_file_size(file_name: str, human_readable: bool = True):
         return '{} bytes'.format(size)
 
 
-def listDir(dirName: str, ext: str = None, first: bool = True):
+def listDir(dirName: str, ext: str = None):
     """
     Recursive function for listing files in a folder and his sub folders
 
     :param dirName: path of the parsed dir
     :return: list(str)
     """
-    listOfFile = list()
-    if first is True:
-        listOfFile = [x[0] for x in os.walk(dirName)]
-    listOfFile += os.listdir(dirName)
     allFiles = list()
-    for entry in listOfFile:
-        fullPath = os.path.join(dirName, entry)
-        if ext is not None and os.path.isfile(fullPath):
-            if re.search("\\.({})$".format(ext), entry) is None: continue
-        if os.path.isdir(fullPath):
-            allFiles = allFiles + listDir(fullPath, ext, False)
-        else:
+    for root, directories, files in os.walk(dirName, topdown=False):
+        for name in files:
+            fullPath = os.path.join(root, name)
+            if ext is not None:
+                if re.search("\\.({})$".format(ext), name) is None: continue
             allFiles.append(fullPath)
+        if ext is None:
+            for name in directories:
+                allFiles.append(os.path.join(root, name))
     return allFiles
+
+
+def listOnlyDir(path: str, level: int = 1, startDirs: list = [], excludeDirs: list = []):
+    some_dir = path.rstrip(os.path.sep)
+    listDir = startDirs
+    if os.path.isdir(some_dir):
+        num_sep = some_dir.count(os.path.sep)
+        for root, dirs, files in os.walk(some_dir):
+            num_sep_this = root.count(os.path.sep)
+            for name in dirs:
+                if name in excludeDirs: continue
+                if num_sep + level > num_sep_this:
+                    listDir.append(name)
+    return listDir
 
 
 def listDirTree(dirName: str, ext: str = None):
     listOfFile = listDir(dirName, ext)
     listOfFile.sort()
-    treeFiles = {}
+    # print(listOfFile)
+
+    treeFiles = dict()
     for file in listOfFile:
         recurListDirTree(file, dirName + os.sep, treeFiles)
     return treeFiles
 
 
-def recurListDirTree(file: str, path: str, treeFiles: dir):
+def recurListDirTree(file: str, path: str, treeFiles: dict):
     tmpl = file.replace(path, '')
     tmpp = tmpl.split(os.sep)
-    if len(tmpp) > 1:
-        if tmpp[0] not in treeFiles:
-            treeFiles[tmpp[0]] = {}
-        return recurListDirTree(file, path + tmpp[0] + os.sep, treeFiles[tmpp[0]])
-    else:
-        treeFiles[tmpp[0]] = file
-        return treeFiles
+
+    if isinstance(tmpp, list):
+        if len(tmpp) > 1:
+            if tmpp[0] not in treeFiles:
+                treeFiles[tmpp[0]] = dict()
+            if isinstance(treeFiles[tmpp[0]], dict):
+                recurListDirTree(file, path + tmpp[0] + os.sep, treeFiles[tmpp[0]])
+        else:
+            if os.path.isfile(file): treeFiles[tmpl] = file
+            else: treeFiles[tmpl] = dict()
 
 
 def cleanDir(src_dir: str):
     for dirpath, _, _ in os.walk(src_dir, topdown=False):  # Listing the files
         if dirpath == src_dir: break
-        try:
-            os.rmdir(dirpath)
-        except Exception:
-            {}
+        try: os.rmdir(dirpath)
+        except Exception: ''
 
 
 def rmDir(src_dir: str):
     shutil.rmtree(src_dir, ignore_errors=True)
+
+
+def copyDir(src_dir: str, dest_dir: str):
+    shutil.copytree(src_dir, dest_dir)

@@ -5,11 +5,14 @@ if os.name == 'nt':
     import ctypes
 
 import PyQt5.uic
-from PyQt5.uic import *
+import PyQt5.uic
+import PyQt5.QtWebKitWidgets
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from editor.editing_pane import *
 from editor.window import *
+from editor.checkpoint import *
+from editor.files import *
 from bdd import *
 from vars import *
 from lang import *
@@ -18,6 +21,7 @@ from common.dialog import *
 from common.books import *
 from common.files import *
 from common.archive import *
+import common.qt
 
 
 class editorWindow(QtWidgets.QMainWindow):
@@ -35,8 +39,14 @@ class editorWindow(QtWidgets.QMainWindow):
             QWidget{ background: rgba(63, 63, 63); color:white; }
             QDockWidget { border: 0; margin:0; padding:0; }
             QDockWidget::title { font: bold; text-align: left; background: #333333; padding-left: 5px; }
-            """ + env_vars['styles']['black']['fullButton']
+            """ + env_vars['styles']['black']['defaultAltButton']
         )
+        self.btnEbookSave.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
+        self.btnEbookLoadCheckpoint.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
+        self.btnEbookCreateCheckpoint.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
+        self.btnEbookAddFile.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
+        self.btnEbookContentTable.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
+
         self.dockTop1.setStyleSheet(env_vars['styles']['black']['defaultButton'])
 
         # ui.tabWidget
@@ -78,6 +88,13 @@ class editorWindow(QtWidgets.QMainWindow):
         # Processing global buttons
         self.btnEbookCreateCheckpoint.setText('Create session checkpoint')
         self.btnEbookCreateCheckpoint.clicked.connect(self.createCheckpoint)
+        self.btnEbookLoadCheckpoint.setText('Load session checkpoint')
+        self.btnEbookLoadCheckpoint.clicked.connect(self.loadCheckpoint)
+        self.btnEbookSave.setText('Save Ebook')
+        self.btnEbookSave.clicked.connect(self.saveEbook)
+        self.btnEbookAddFile.setText('Files Managment')
+        self.btnEbookAddFile.clicked.connect(self.loadFileManagment)
+
         self.webView.setHtml(self.lang['Editor']['WebViewDefaultPageContent'])
 
         filepath, ext = os.path.splitext(self.openedFile)
@@ -133,6 +150,8 @@ class editorWindow(QtWidgets.QMainWindow):
             item.setText(0, index)
             if isinstance(liste[index], dict):
                 item.setData(0, 99, ':dir:')
+                common.qt.setQTreeItemFolderIcon(item)
+
                 item = self.recurFileTableInsert(item, liste[index])
             else:
                 item.setData(0, 99, liste[index])
@@ -144,6 +163,8 @@ class editorWindow(QtWidgets.QMainWindow):
             itemr.setText(0, indexr)
             if isinstance(tree[indexr], dict):
                 itemr.setData(0, 99, ':dir:')
+                common.qt.setQTreeItemFolderIcon(itemr)
+
                 itemr = self.recurFileTableInsert(itemr, tree[indexr])
             else:
                 itemr.setData(0, 99, tree[indexr])
@@ -159,9 +180,47 @@ class editorWindow(QtWidgets.QMainWindow):
     def onChangeTab(self, indexTab: int):
         self.tabWidget.drawPreview()
 
-    def createCheckpoint(self, indexTab: int):
+    def createCheckpoint(self):
         try:
             print("createCheckpoint")
-            shutil.copytree(self.tmpDir + os.sep + 'current', self.tmpDir + os.sep + unixtimeToString(time.time(), '%Y-%m-%d_%H-%M-%S'))
+            stime = unixtimeToString(time.time(), template='%Y-%m-%d_%H-%M-%S', isUTC=False)
+            shutil.copytree(self.tmpDir + os.sep + 'current', self.tmpDir + os.sep + stime)
+            InfoDialog(self.lang['Editor']['DialogCreateCheckpointWindowTitle'], self.lang['Editor']['DialogCreateCheckpointWindowText'].format(stime), self)
+        except Exception:
+            traceback.print_exc()
+
+    def loadCheckpoint(self):
+        try:
+            wl = CheckpointWindow(self, self.tmpDir)
+            ret = wl.openExec()
+            if ret is not None:
+                if os.path.isdir(self.tmpDir + os.sep + ret) is True:
+                    common.files.rmDir(self.tmpDir + os.sep + 'current')
+                    common.files.copyDir(self.tmpDir + os.sep + ret, self.tmpDir + os.sep + 'current')
+                    self.tabWidget.reloadContents()
+        except Exception:
+            traceback.print_exc()
+
+    def loadFileManagment(self):
+        try:
+            wl = FilesWindow(self, self.tmpDir + os.sep + 'current')
+            ret = wl.openExec()
+            if ret is not None:
+                print(ret)
+                self.fileTableLoad()
+        except Exception:
+            traceback.print_exc()
+
+    def saveEbook(self):
+        try:
+            ret = dialog.InfoDialogConfirm(
+                self.lang['Editor']['DialogConfirmSaveWindowTitle'],
+                self.lang['Editor']['DialogConfirmSaveWindowText'],
+                self.lang['Generic']['DialogBtnYes'],
+                self.lang['Generic']['DialogBtnNo'], self.parent()
+            )
+            if ret is True:
+                os.remove(self.openedFile)
+                deflate(self.tmpDir + os.sep + 'current' + os.sep + '*', self.openedFile)
         except Exception:
             traceback.print_exc()

@@ -1,6 +1,6 @@
 import os
 import sys
-from PyQt5 import QtWebKitWidgets
+import PyQt5.QtWebKitWidgets
 import PyQt5.uic
 from PyQt5.uic import *
 import filetype
@@ -34,32 +34,56 @@ class editorTabManager(QtWidgets.QTabWidget):
         self.setWindowTitle("Tab Dialog")
         self.previewWebview = None
         self.default_page = None
+        self.previous_file = ''
         self.lang = lang.Lang()
 
-    def setPreviewWebview(self, webview: QtWebKitWidgets.QWebView, default_page: str):
+    def setPreviewWebview(self, webview: PyQt5.QtWebKitWidgets.QWebView, default_page: str):
         self.previewWebview = webview
         self.default_page = default_page
 
     def drawPreview(self):
         if self.count() <= 0: return
         item = self.currentWidget()
-        fileDir = os.path.dirname(os.path.realpath(__file__)).replace('file:///', '').replace('/', os.sep)+os.sep+'tmp'
+        fileDir = item.property('fileName').replace(item.property('fileShortName'), '')
         print('fileDir = ' + fileDir)
+        print('fileName = ' + item.property('fileName'))
+        print('fileShortName = ' + item.property('fileShortName'))
+        scroll = None
+        if self.previous_file == item.property('fileName'):
+            scroll = self.previewWebview.page().currentFrame().scrollPosition()
+            print(scroll)
+        self.previous_file = item.property('fileName')
         if item.property('fileType') in [] or item.property('fileExt') in ['xhtml', 'html']:
             try:
                 txe = item.children().__getitem__(2).text()
                 txe = txe\
-                    .replace(' href="../', ' href="')\
-                    .replace(' src="../', ' src="')\
-                    .replace(' href="', ' href="file:///'+fileDir.replace(os.sep, '/')+'/')\
-                    .replace(' src="', ' src="file:///'+fileDir.replace(os.sep, '/')+'/')
-                self.previewWebview.setHtml(txe)
+                    .replace('<head>', '<head><base href="file:///'+fileDir.replace(os.sep, '/')+'">')
+                #     .replace(' href="../', ' href="')\
+                #     .replace(' src="../', ' src="')\
+                #     .replace(' href="', ' href="file:///'+fileDir.replace(os.sep, '/')+'/')\
+                #     .replace(' src="', ' src="file:///'+fileDir.replace(os.sep, '/')+'/')
+                self.previewWebview.page().currentFrame().setHtml(txe)
+                if scroll is not None:
+                    self.previewWebview.page().currentFrame().setScrollPosition(scroll)
             except Exception:
                 traceback.print_exc()
         else:
             self.previewWebview.setHtml(self.default_page)
 
     def contentUpdate(self):
+        if self.currentWidget().property('fileExt') in ['xhtml', 'html', 'css', 'xml', 'opf', 'ncx']:
+            oldTxt = self.currentWidget().property('originalContent')
+            newTxt = self.currentWidget().children().__getitem__(2).text()
+
+            index = self.currentIndex()
+            if oldTxt != newTxt:
+                icon = QtGui.QIcon()
+                image = QtGui.QPixmap()
+                image.load(appDir.replace(os.sep, '/') + '/icons/white/edit.png')
+                icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                self.setTabIcon(index, icon)
+            else:
+                self.setTabIcon(index, QtGui.QIcon())
         self.drawPreview()
 
     def clearLayout(self, layout):
@@ -71,6 +95,18 @@ class editorTabManager(QtWidgets.QTabWidget):
                     widget.deleteLater()
                 else:
                     self.clearLayout(item.layout())
+
+    def reloadContents(self):
+        try:
+            for i in range(0, self.count()):
+                item = self.widget(i)
+                if item.property('fileExt') in ['xhtml', 'html', 'css', 'xml', 'opf', 'ncx']:
+                    file = open(item.property('fileName'), "r", encoding="utf8")
+                    data = file.read()
+                    file.close()
+                    item.children().__getitem__(2).setText(data)
+                self.setTabIcon(i, QtGui.QIcon())
+        except Exception: ''
 
     def createPane(self, title: str, path: str):
         data = None
@@ -100,12 +136,14 @@ class editorTabManager(QtWidgets.QTabWidget):
         tab = QtWidgets.QWidget()
         # tab.setObjectName("tab")
         tab.setProperty('fileName', path)
+        tab.setProperty('fileShortName', path.replace(os.path.dirname(path), '')[1:])
         tab.setProperty('fileType', kind.mime)
         tab.setProperty('fileExt', kind.extension)
         if isText is True:
             tab.setProperty('originalContent', data)
         verticalLayout = QtWidgets.QVBoxLayout(tab)
         verticalLayout.setContentsMargins(0, 0, 0, 0)
+        verticalLayout.setSpacing(1)
 
         if isText is True:
             block = uiClass()
@@ -118,12 +156,16 @@ class editorTabManager(QtWidgets.QTabWidget):
             QPushButton:checked{ background-color:rgb(150, 150, 150);}
             """)
             try:
+                block.setMaximumHeight(85)
+                block.setMinimumHeight(85)
+                block.setFixedHeight(85)
                 if tab.property('fileExt') not in ['xhtml', 'html', 'css', 'xml', 'opf', 'ncx']:
                     self.clearLayout(block.horizon1_1)
                     self.clearLayout(block.horizon2)
-                    block.setMaximumHeight(block.height() - 40)
-                    block.setMinimumHeight(block.height() - 40)
-                    block.setFixedHeight(block.height() - 40)
+                    self.clearLayout(block.horizon3)
+                    block.setMaximumHeight(30)
+                    block.setMinimumHeight(30)
+                    block.setFixedHeight(30)
                 elif tab.property('fileExt') in ['css', 'xml', 'opf', 'ncx']:
                     if tab.property('fileExt') in ['css']:
                         block.btnDebug.setMinimumHeight(0)
@@ -133,9 +175,10 @@ class editorTabManager(QtWidgets.QTabWidget):
                         block.btnDebug.setFixedHeight(0)
                         block.btnDebug.setFixedWidth(0)
                     self.clearLayout(block.horizon2)
-                    block.setMaximumHeight(block.height() - 40)
-                    block.setMinimumHeight(block.height() - 40)
-                    block.setFixedHeight(block.height() - 40)
+                    self.clearLayout(block.horizon3)
+                    block.setMaximumHeight(30)
+                    block.setMinimumHeight(30)
+                    block.setFixedHeight(30)
             except Exception:
                 traceback.print_exc()
 
@@ -152,11 +195,18 @@ class editorTabManager(QtWidgets.QTabWidget):
                     textEdit.elexer.setColor(QtGui.QColor('#000080'), QsciLexerXML.UnknownTag)
                 elif tab.property('fileExt') in ['css']:
                     textEdit = SimplePythonEditor(QsciLexerCSS(), tab)
-                textEdit.elexer.setDefaultPaper(QColor("#A6A6A6"))
-                textEdit.elexer.setDefaultColor(QColor("#ffffff"))
-                textEdit.elexer.setPaper(QColor("#A6A6A6"))
-                textEdit.setObjectName("textEdit")
-                textEdit.setCaretLineBackgroundColor(QColor("#BBBBBB"))
+                else:
+                    textEdit = SimplePythonEditor(None, tab)
+                    textEdit.setColor(QColor("#ffffff"))
+                    textEdit.setPaper(QColor("#A6A6A6"))
+
+                if textEdit.elexer is not None:
+                    textEdit.elexer.setDefaultPaper(QColor("#A6A6A6"))
+                    textEdit.elexer.setDefaultColor(QColor("#ffffff"))
+                    textEdit.elexer.setPaper(QColor("#A6A6A6"))
+                    textEdit.setObjectName("textEdit")
+                    textEdit.setCaretLineBackgroundColor(QColor("#BBBBBB"))
+
                 font = QFont()
                 font.setFamily('Courier')
                 font.setFixedPitch(True)
@@ -167,27 +217,27 @@ class editorTabManager(QtWidgets.QTabWidget):
                 textEdit.setMarginWidth(0, fontmetrics.width("00000") + 1)
                 textEdit.setMarginsBackgroundColor(QColor("#333333"))
                 textEdit.setMarginsForegroundColor(QColor("#ffffff"))
+                textEdit.setFolding(QsciScintilla.BoxedTreeFoldStyle)
 
                 textEdit.setText(data)
                 textEdit.textChanged.connect(lambda: self.contentUpdate())
 
                 verticalLayout.addWidget(textEdit)
+
+                shortcut = QtWidgets.QShortcut(QtCore.Qt.ControlModifier | QtCore.Qt.Key_S, textEdit)
+                shortcut.activated.connect(lambda: self.saveFile(None))
+
+                shortcut = QtWidgets.QShortcut(QtCore.Qt.ControlModifier | QtCore.Qt.Key_D, textEdit)
+                shortcut.activated.connect(self.duplication)
             except Exception:
                 traceback.print_exc()
         else:
-            block = QtWebKitWidgets.QWebView()
+            block = PyQt5.QtWebKitWidgets.QWebView()
             page = 'file:///' + path.replace(os.sep, '/')
             block.setUrl(QtCore.QUrl(page))
             verticalLayout.addWidget(block)
 
-        app_icon = QtGui.QIcon()
-        app_icon.addFile(appDir + '/icons/app_icon16x16.png', QtCore.QSize(16, 16))
-        app_icon.addFile(appDir + '/icons/app_icon24x24.png', QtCore.QSize(24, 24))
-        app_icon.addFile(appDir + '/icons/app_icon32x32.png', QtCore.QSize(32, 32))
-        app_icon.addFile(appDir + '/icons/app_icon48x48.png', QtCore.QSize(48, 48))
-        app_icon.addFile(appDir + '/icons/app_icon256x256.png', QtCore.QSize(256, 256))
-
-        self.addTab(tab, app_icon, title)
+        self.addTab(tab, QtGui.QIcon(), title)
         self.setTabsClosable(True)
         self.setCurrentIndex(self.count() - 1)
 
@@ -253,20 +303,34 @@ class editorTabManager(QtWidgets.QTabWidget):
             oldText = item.property('originalContent')
             fileName = item.property('fileName')
             if oldText != newText:
-                ret = dialog.InfoDialogConfirm(
-                    self.lang['Editor']['DialogConfirmSaveWindowTitle'],
-                    self.lang['Editor']['DialogConfirmSaveWindowText'],
-                    self.lang['Generic']['DialogBtnYes'],
-                    self.lang['Generic']['DialogBtnNo'], self.parent()
-                )
-                if ret is True:
-                    print('Save')
-                    file = open(fileName, 'w', encoding="utf8")
-                    file.write(newText)
-                    file.close()
-                    item.setProperty('originalContent', newText)
+                print('Save')
+                file = open(fileName, 'w', encoding="utf8")
+                file.write(newText)
+                file.close()
+                item.setProperty('originalContent', newText)
+                self.setTabIcon(self.currentIndex(), QtGui.QIcon())
             else:
                 print('NO DIF')
+        except Exception:
+            traceback.print_exc()
+
+    def duplication(self):  # duplication of current line or selected block
+        try:
+            item = self.currentWidget()
+            txEdit = item.children().__getitem__(2)
+            sel = txEdit.getSelection()
+            if sel[0] == sel[2] and sel[1] == sel[3]:
+                pos = txEdit.getCursorPosition()
+                SimplePythonEditor.setSelection(sel[0], 0, sel[0]+1, 0)
+                selectedText = txEdit.selectedText()
+                txEdit.insertAt(selectedText, sel[0]+1, 0)
+            else:
+                selectedText = txEdit.selectedText()
+                mnewtx = selectedText + selectedText
+                tb = mnewtx.split('\n')
+                txEdit.replaceSelectedText(mnewtx)
+                tbx = mnewtx.split('\n')
+                txEdit.setSelection(sel[0], sel[1], sel[2], sel[3])
         except Exception:
             traceback.print_exc()
 
@@ -416,7 +480,7 @@ class editorTabManager(QtWidgets.QTabWidget):
         block_end = '</a>'
         try:
             item = self.currentWidget()
-            window = editor.link.LinkWindow(self.parent(), appDir + os.sep + 'editor' + os.sep + 'tmp')
+            window = editor.link.LinkWindow(self.parent(), appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current')
             txEdit = item.children().__getitem__(2)
             selectedText = txEdit.selectedText()
             sel = txEdit.getSelection()
@@ -448,14 +512,19 @@ class editorTabManager(QtWidgets.QTabWidget):
     def imgPoser(self):
         try:
             item = self.currentWidget()
-            window = editor.img.ImgWindow(self.parent(), appDir + os.sep + 'editor' + os.sep + 'tmp')
+            window = editor.img.ImgWindow(self.parent(), appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current')
             txEdit = item.children().__getitem__(2)
             selectedText = txEdit.selectedText()
             sel = txEdit.getSelection()
             pos = txEdit.getCursorPosition()
             ret = window.openExec(selectedText, None)
             if ret is not None:
-                newText = '<img src="' + ret['url'] + '" alt="' + ret['text'] + '" title="' + ret['text'] + '" />'
+                tb1 = item.property('fileName').replace(appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep, '').split(os.sep)
+                print(tb1)
+                adl = ''
+                for i in range(0, len(tb1)-1):
+                    adl += '../'
+                newText = '<img src="' + adl + ret['url'] + '" alt="' + ret['text'] + '" title="' + ret['text'] + '" />'
                 txEdit.insertAt(newText, pos[0], pos[1])
                 tb = newText.split('\n')
                 txEdit.setSelection(pos[0], pos[1], pos[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)

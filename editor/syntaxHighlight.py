@@ -28,10 +28,10 @@ class SimplePythonEditor(QsciScintilla):
 #        self.connect(self,
 #            SIGNAL('marginClicked(int, int, Qt::KeyboardModifiers)'),
 #            self.on_margin_clicked)
-        self.markerDefine(QsciScintilla.RightArrow,
-            self.ARROW_MARKER_NUM)
-        self.setMarkerBackgroundColor(QColor("#ee1111"),
-            self.ARROW_MARKER_NUM)
+        self.markerDefine(QsciScintilla.RightArrow, self.ARROW_MARKER_NUM)
+        self.setMarkerBackgroundColor(QColor("#ee1111"), self.ARROW_MARKER_NUM)
+        self.setFolding(QsciScintilla.BoxedTreeFoldStyle)
+        self.setFoldMarginColors(QColor("#cccccc"), QColor("#333333"))
 
         # Brace matching: enable for a brace immediately before or after
         # the current position
@@ -47,9 +47,12 @@ class SimplePythonEditor(QsciScintilla):
         # courier.
         #
 
-        self.elexer = lexer_type
-        self.elexer.setDefaultFont(font)
-        self.setLexer(self.elexer)
+        if lexer_type is not None:
+            self.elexer = lexer_type
+            self.elexer.setDefaultFont(font)
+            self.setLexer(self.elexer)
+        else:
+            self.elexer = None
 
         text = bytearray(str.encode("Arial"))
 # 32, "Courier New"

@@ -10,6 +10,12 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>900</width>
+    <height>400</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -308,14 +314,14 @@ QPushButton:checked{
   <widget class="QDockWidget" name="dockTop1">
    <property name="minimumSize">
     <size>
-     <width>665</width>
-     <height>35</height>
+     <width>774</width>
+     <height>65</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>524287</width>
-     <height>35</height>
+     <height>100</height>
     </size>
    </property>
    <property name="features">
@@ -345,9 +351,24 @@ QPushButton:checked{
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="btnEbookSave">
+      <widget class="QToolButton" name="btnEbookSave">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>130</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
-        <string notr="true"> Save Ebook</string>
+        <string notr="true">Save Ebook</string>
        </property>
        <property name="icon">
         <iconset>
@@ -355,14 +376,32 @@ QPushButton:checked{
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>30</width>
+         <height>30</height>
         </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnEbookLoadCheckpoint">
+      <widget class="QToolButton" name="btnEbookLoadCheckpoint">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>130</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string notr="true">Load session checkpoint</string>
        </property>
@@ -372,14 +411,32 @@ QPushButton:checked{
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>30</width>
+         <height>30</height>
         </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnEbookCreateCheckpoint">
+      <widget class="QToolButton" name="btnEbookCreateCheckpoint">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>60</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>130</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
         <string notr="true">Create session checkpoint</string>
        </property>
@@ -389,55 +446,82 @@ QPushButton:checked{
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>30</width>
+         <height>30</height>
         </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnEbookAddFile">
+      <widget class="QToolButton" name="btnEbookAddFile">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>60</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
-         <width>100</width>
+         <width>130</width>
          <height>16777215</height>
         </size>
        </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
+       </property>
        <property name="text">
-        <string notr="true">Add File</string>
+        <string notr="true">Files Managment</string>
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/white/add_item.png</normaloff>../icons/white/add_item.png</iconset>
+         <normaloff>../icons/tmp/tb_folder.png</normaloff>../icons/tmp/tb_folder.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>30</width>
+         <height>30</height>
         </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnEbookContentTable">
+      <widget class="QToolButton" name="btnEbookContentTable">
+       <property name="minimumSize">
+        <size>
+         <width>130</width>
+         <height>60</height>
+        </size>
+       </property>
        <property name="maximumSize">
         <size>
-         <width>150</width>
+         <width>130</width>
          <height>16777215</height>
         </size>
+       </property>
+       <property name="cursor">
+        <cursorShape>PointingHandCursor</cursorShape>
        </property>
        <property name="text">
         <string notr="true">Edit Content Table</string>
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/toc.png</normaloff>../icons/tmp/toc.png</iconset>
+         <normaloff>../icons/white/content_table.png</normaloff>../icons/white/content_table.png</iconset>
        </property>
        <property name="iconSize">
         <size>
-         <width>25</width>
-         <height>25</height>
+         <width>30</width>
+         <height>30</height>
         </size>
+       </property>
+       <property name="toolButtonStyle">
+        <enum>Qt::ToolButtonTextUnderIcon</enum>
        </property>
       </widget>
      </item>

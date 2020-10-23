@@ -15,7 +15,7 @@ env_vars = {
             '7zip': {
                 'nt': {
                     'path': appDir+'/tools/7zip/7z.exe',
-                    'params_deflate': 'a -tzip %input% %output%',
+                    'params_deflate': 'a -tzip %output% %input%',
                     'params_inflate': 'x %input% -o%output%'
                 }
                 # linux = p7zip, macos = keka
@@ -37,6 +37,9 @@ env_vars = {
         },
         'styles': {
             'black': {
+                'icons': {
+                    'folder': appDir.replace(os.sep, '/') + '/icons/white/folder.png'
+                },
                 'fullTreeView': """
                     ::section{
                         background-color:#4B4B4B;
@@ -74,11 +77,19 @@ env_vars = {
                         color:white; 
                     }
                     """,
+                'partialTreeViewItemColorNew': "#5972FF",
+                'partialTreeViewItemColorDel': "#FF324E",
                 'defaultButton': """
                     QPushButton{ background:transparent; }
                     QPushButton:hover{ background-color:rgb(120, 120, 120); }
                     QPushButton:pressed{ background-color:rgb(120, 120, 120); }
                     QPushButton:checked{ background-color:rgb(150, 150, 150); }
+                    """,
+                'defaultAltButton': """
+                    QToolButton{ background:transparent; }
+                    QToolButton:hover{ background-color:rgb(120, 120, 120); }
+                    QToolButton:pressed{ background-color:rgb(120, 120, 120); }
+                    QToolButton:checked{ background-color:rgb(150, 150, 150); }
                     """,
                 'fullButton': """
                     QPushButton{ background-color:rgb(80, 80, 80); }

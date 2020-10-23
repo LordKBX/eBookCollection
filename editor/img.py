@@ -7,7 +7,7 @@ from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import lang
-import common.common, common.files, common.books
+import common.common, common.files, common.books, common.qt
 from vars import *
 
 
@@ -21,6 +21,8 @@ class ImgWindow(QDialog):
         self.labelText.setText(lng['Editor']['ImgWindow']['labelText'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['ImgWindow']['btnOk'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ImgWindow']['btnCancel'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
         self.fileTree.setStyleSheet(env_vars['styles']['black']['fullTreeView'])
         self.imgButton.setStyleSheet(env_vars['styles']['black']['displayButton'])
         self.fileTree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
@@ -41,6 +43,8 @@ class ImgWindow(QDialog):
             item.setText(0, index)
             if isinstance(liste[index], dict):
                 item.setData(0, 99, ':dir:')
+                common.qt.setQTreeItemFolderIcon(item)
+
                 item = self.recurFileTableInsert(item, liste[index])
             else:
                 item.setData(0, 99, liste[index].replace(self.folder, ''))
@@ -58,6 +62,8 @@ class ImgWindow(QDialog):
             itemr.setText(0, indexr)
             if isinstance(tree[indexr], dict):
                 itemr.setData(0, 99, ':dir:')
+                common.qt.setQTreeItemFolderIcon(itemr)
+
                 itemr = self.recurFileTableInsert(itemr, tree[indexr])
             else:
                 itemr.setData(0, 99, tree[indexr].replace(self.folder, ''))
@@ -69,8 +75,8 @@ class ImgWindow(QDialog):
             info = event.data(0, 99)
             if info != ':dir:':
                 self.editUrl.setText(info.replace(os.sep, '/')[1:])
-                tmpDir = appDir + os.sep + 'editor' + os.sep + 'tmp'
-                file = tmpDir + info.replace('/', os.sep)
+                file = self.folder + info.replace('/', os.sep)
+                print(file)
                 icon = QtGui.QIcon()
                 image = QtGui.QPixmap()
                 image.load(file)

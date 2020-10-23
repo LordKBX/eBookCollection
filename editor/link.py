@@ -6,7 +6,7 @@ from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import lang
-import common.common, common.files
+import common.common, common.files, common.qt
 from vars import *
 
 
@@ -20,6 +20,8 @@ class LinkWindow(QDialog):
         self.labelText.setText(lng['Editor']['LinkWindow']['labelText'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['LinkWindow']['btnOk'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['LinkWindow']['btnCancel'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
         self.fileTree.setStyleSheet(env_vars['styles']['black']['fullTreeView'])
         self.fileTree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
         self.fileTree.itemClicked.connect(self.itemClick)
@@ -39,6 +41,8 @@ class LinkWindow(QDialog):
             item.setText(0, index)
             if isinstance(liste[index], dict):
                 item.setData(0, 99, ':dir:')
+                common.qt.setQTreeItemFolderIcon(item)
+
                 item = self.recurFileTableInsert(item, liste[index])
             else:
                 item.setData(0, 99, liste[index].replace(self.folder, ''))
@@ -56,6 +60,8 @@ class LinkWindow(QDialog):
             itemr.setText(0, indexr)
             if isinstance(tree[indexr], dict):
                 itemr.setData(0, 99, ':dir:')
+                common.qt.setQTreeItemFolderIcon(itemr)
+
                 itemr = self.recurFileTableInsert(itemr, tree[indexr])
             else:
                 itemr.setData(0, 99, tree[indexr].replace(self.folder, ''))

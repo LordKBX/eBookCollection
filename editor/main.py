@@ -53,7 +53,7 @@ if __name__ == "__main__":
 		ui.show()
 
 		# données de test
-		ui.tabWidget.createPane("metadata.opf", appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep + 'metadata.opf')
+		# ui.tabWidget.createPane("metadata.opf", appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep + 'metadata.opf')
 
 		app.exec_()
 		# rmDir(destDir)  # disable for debug purpose

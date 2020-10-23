@@ -35,7 +35,7 @@ def uid():
     return uuid.uuid1().urn.replace('urn:uuid:', '')
 
 
-def unixtimeToString(value: float, template: str = '%Y-%m-%d %H:%M:%S', months: list = list()):
+def unixtimeToString(value: float, template: str = '%Y-%m-%d %H:%M:%S', months: list = list(), isUTC: bool = True):
     """
     translate unix timestamp into human readable string
 
@@ -45,10 +45,16 @@ def unixtimeToString(value: float, template: str = '%Y-%m-%d %H:%M:%S', months: 
     :return: str
     """
     value = int(value)
-    if '$month' in template:
-        amonth = months[int(float(datetime.datetime.utcfromtimestamp(value).strftime('%m'))) - 1]
-        template = template.replace('$month', amonth)
-    return datetime.datetime.utcfromtimestamp(value).strftime(template)
+    if isUTC is True:
+        if '$month' in template:
+            amonth = months[int(float(datetime.datetime.utcfromtimestamp(value).strftime('%m'))) - 1]
+            template = template.replace('$month', amonth)
+        return datetime.datetime.utcfromtimestamp(value).strftime(template)
+    else:
+        if '$month' in template:
+            amonth = months[int(float(datetime.datetime.fromtimestamp(value).strftime('%m'))) - 1]
+            template = template.replace('$month', amonth)
+        return datetime.datetime.fromtimestamp(value).strftime(template)
 
 
 def cleanStringForUrl(string: str):
