@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+from xml.dom import minidom
 if os.name == 'nt':
     import ctypes
 
@@ -129,6 +130,7 @@ class editorWindow(QtWidgets.QMainWindow):
         self.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
         self.fileTableLoad()
+        self.loadContentTable()
 
     def ContentTableCurrentItemChanged(self, current: QtWidgets.QTreeWidgetItem, previous: QtWidgets.QTreeWidgetItem):
         print(current.data(0, 99))
@@ -143,8 +145,9 @@ class editorWindow(QtWidgets.QMainWindow):
             self.tabWidget.createPane(text, data)
 
     def fileTableLoad(self):
+        self.treeFileTable.clear()
         liste = listDirTree(self.tmpDir + os.sep + 'current', None)
-        print(liste)
+        # print(liste)
         for index in liste:
             item = QtWidgets.QTreeWidgetItem(self.treeFileTable)
             item.setText(0, index)
@@ -201,16 +204,6 @@ class editorWindow(QtWidgets.QMainWindow):
         except Exception:
             traceback.print_exc()
 
-    def loadFileManagment(self):
-        try:
-            wl = FilesWindow(self, self.tmpDir + os.sep + 'current')
-            ret = wl.openExec()
-            if ret is not None:
-                print(ret)
-                self.fileTableLoad()
-        except Exception:
-            traceback.print_exc()
-
     def saveEbook(self):
         try:
             ret = dialog.InfoDialogConfirm(
@@ -224,3 +217,50 @@ class editorWindow(QtWidgets.QMainWindow):
                 deflate(self.tmpDir + os.sep + 'current' + os.sep + '*', self.openedFile)
         except Exception:
             traceback.print_exc()
+
+    def loadFileManagment(self):
+        try:
+            wl = FilesWindow(self, self.tmpDir + os.sep + 'current')
+            ret = wl.openExec()
+            print(ret)
+            if ret is not None:
+                for file in ret['delete']:
+                    if ret['delete'][file]['type'] == 'deleteFile':
+                        os.remove(self.tmpDir + os.sep + 'current' + ret['delete'][file]['innerPath'])
+                    elif ret['delete'][file]['type'] == 'deleteFolder':
+                        rmDir(self.tmpDir + os.sep + 'current' + ret['delete'][file]['innerPath'])
+                for file in ret['rename']:
+                    if ret['rename'][file]['type'] == 'renameFile':
+                        rename(self.tmpDir + os.sep + 'current' + ret['rename'][file]['original'], self.tmpDir + os.sep + 'current' + ret['rename'][file]['newPath'])
+                    elif ret['rename'][file]['type'] == 'renameFolder':
+                        rename(self.tmpDir + os.sep + 'current' + ret['rename'][file]['original'], self.tmpDir + os.sep + 'current' + ret['rename'][file]['newPath'])
+                for file in ret['new']:
+                    print(file)
+                    if ret['new'][file]['type'] == 'newFile':
+                        f = open(self.tmpDir + os.sep + 'current' + ret['new'][file]['innerPath'], 'w', encoding="utf8")
+                        f.write(' ')
+                        f.close()
+                    elif ret['new'][file]['type'] == 'newFolder':
+                        os.makedirs(self.tmpDir + os.sep + 'current' + ret['new'][file]['innerPath'])
+                    elif ret['new'][file]['type'] == 'import':
+                        copyFile(ret['new'][file]['original'], self.tmpDir + os.sep + 'current' + ret['new'][file]['innerPath'])
+
+                self.fileTableLoad()
+        except Exception:
+            traceback.print_exc()
+
+    def loadContentTable(self):
+        ".ncx"
+        li = listDir(self.tmpDir + os.sep + 'current', "ncx")
+        if len(li) > 0:
+            print(li[0])
+            with open(li[0], 'r', encoding="utf8") as file:
+                content = file.read()
+                mydoc = minidom.parseString(content)
+                items = mydoc.getElementsByTagName('navPoint')
+                for item in items:
+                    url = item.getElementsByTagName('content')[0].attributes['src'].value
+                    text = item.getElementsByTagName('text')[0].firstChild.data
+                    print(url, text)
+
+                # print(items)

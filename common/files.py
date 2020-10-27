@@ -98,3 +98,11 @@ def rmDir(src_dir: str):
 
 def copyDir(src_dir: str, dest_dir: str):
     shutil.copytree(src_dir, dest_dir)
+
+
+def copyFile(src_dir: str, dest_dir: str):
+    shutil.copyfile(src_dir, dest_dir)
+
+
+def rename(src_dir: str, dest_dir: str):
+    shutil.move(src_dir, dest_dir)

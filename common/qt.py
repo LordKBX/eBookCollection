@@ -11,3 +11,11 @@ def setQTreeItemFolderIcon(item: QtWidgets.QTreeWidgetItem):
     icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
     item.setIcon(0, icon)
 
+
+def setQTreeItemLockIcon(item: QtWidgets.QTreeWidgetItem):
+    icon = QtGui.QIcon()
+    image = QtGui.QPixmap()
+    image.load(env_vars['styles']['black']['icons']['lock'])
+    icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
+    item.setIcon(0, icon)
+

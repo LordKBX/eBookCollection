@@ -336,13 +336,25 @@ class editorTabManager(QtWidgets.QTabWidget):
 
     def claimBackColor(self):
         color = self.claimColor()
+        text = self.currentWidget().children().__getitem__(2).selectedText()
         if color is not None:
-            self.blockPasterText('<p style="background-color:{}">'.format(color.name()), '</p>')
+            if re.search('<div', text) is not None:
+                self.blockPasterText('<div style="background-color:{}">'.format(color.name()), '</div>')
+            elif re.search('<p', text) is not None:
+                self.blockPasterText('<div style="background-color:{}">'.format(color.name()), '</div>')
+            else:
+                self.blockPasterText('<span style="background-color:{}">'.format(color.name()), '</span>')
 
     def claimTextColor(self):
         color = self.claimColor()
+        text = self.currentWidget().children().__getitem__(2).selectedText()
         if color is not None:
-            self.blockPasterText('<span style="color:{}">'.format(color.name()), '</span>')
+            if re.search('<div', text) is not None:
+                self.blockPasterText('<div style="color:{}">'.format(color.name()), '</div>')
+            elif re.search('<p', text) is not None:
+                self.blockPasterText('<div style="color:{}">'.format(color.name()), '</div>')
+            else:
+                self.blockPasterText('<span style="color:{}">'.format(color.name()), '</span>')
 
     def claimColor(self):
         try:

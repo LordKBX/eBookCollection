@@ -38,7 +38,9 @@ env_vars = {
         'styles': {
             'black': {
                 'icons': {
-                    'folder': appDir.replace(os.sep, '/') + '/icons/white/folder.png'
+                    'folder': appDir.replace(os.sep, '/') + '/icons/white/folder.png',
+                    'lock': appDir.replace(os.sep, '/') + '/icons/white/lock.png',
+                    'unlock': appDir.replace(os.sep, '/') + '/icons/white/unlock.png'
                 },
                 'fullTreeView': """
                     ::section{
@@ -79,6 +81,7 @@ env_vars = {
                     """,
                 'partialTreeViewItemColorNew': "#5972FF",
                 'partialTreeViewItemColorDel': "#FF324E",
+                'partialTreeViewItemColorMod': "#EFC91C",
                 'defaultButton': """
                     QPushButton{ background:transparent; }
                     QPushButton:hover{ background-color:rgb(120, 120, 120); }
