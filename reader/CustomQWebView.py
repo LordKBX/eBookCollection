@@ -71,16 +71,23 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 	def keyPressEvent(self, event: QtGui.QKeyEvent):
 		if event.type() != QtCore.QEvent.KeyPress: event.ignore()
 		else:
-			if self.mode.value == QwwMode.EPUB.value:
-				event.ignore()
+			# if self.mode.value == QwwMode.EPUB.value:
+			# 	event.ignore()
 			if event.key() == QtCore.Qt.Key_Control:
 				self.ctrlOn = True
 				return
+
 			if self.ctrlOn is True:
 				print('KeyPress + Ctrl')
+				if event.key() in [QtCore.Qt.Key_0]:
+					super().page().mainFrame().setZoomFactor(1)
+				if event.key() in [QtCore.Qt.Key_Plus]:
+					super().page().mainFrame().setZoomFactor(super().page().mainFrame().zoomFactor() * 1.10)
+				if event.key() in [QtCore.Qt.Key_Minus]:
+					super().page().mainFrame().setZoomFactor(super().page().mainFrame().zoomFactor() * 0.90)
+
 				if self.mode.value == QwwMode.CBZ.value:
-					if event.key() in [QtCore.Qt.Key_0, QtCore.Qt.Key_Escape]:
-						super().page().mainFrame().setZoomFactor(1)
+					""
 				elif self.mode.value == QwwMode.EPUB.value:
 					if event.key() in [QtCore.Qt.Key_C]:
 						pyperclip.copy(super().page().selectedText())
@@ -106,6 +113,13 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 						if event.key() in [QtCore.Qt.Key_Left, QtCore.Qt.Key_Up, QtCore.Qt.Key_PageUp]: passed = -1
 						elif event.key() in [QtCore.Qt.Key_Right, QtCore.Qt.Key_Down, QtCore.Qt.Key_PageDown]: passed = 1
 						self.updatePositionCbz(passed)
+					elif self.mode.value == QwwMode.EPUB.value:
+						passed = 0
+						if event.key() in [QtCore.Qt.Key_Left, QtCore.Qt.Key_Up, QtCore.Qt.Key_PageUp]:
+							passed = super().height() * -1
+						elif event.key() in [QtCore.Qt.Key_Right, QtCore.Qt.Key_Down, QtCore.Qt.Key_PageDown]:
+							passed = super().height()
+						self.updatePositionEpub(passed)
 				except Exception:
 					traceback.print_exc()
 
