@@ -260,7 +260,7 @@ class HomeWindowCentralBlock:
                     self.newBookTableItem(
                         book['guid'],
                         'imported',
-                        unixtimeToString(
+                        unixtime_to_string(
                             float(book['import_date']),
                             self.lang['Time']['template']['textual_date'],
                             self.lang['Time']['months_short']
@@ -274,7 +274,7 @@ class HomeWindowCentralBlock:
                     self.newBookTableItem(
                         book['guid'],
                         'modified',
-                        unixtimeToString(
+                        unixtime_to_string(
                             float(book['last_update_date']),
                             self.lang['Time']['template']['textual_date'],
                             self.lang['Time']['months_short']

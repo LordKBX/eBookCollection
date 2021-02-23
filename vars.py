@@ -39,6 +39,7 @@ env_vars = {
             'black': {
                 'icons': {
                     'folder': appDir.replace(os.sep, '/') + '/icons/white/folder.png',
+                    'file': appDir.replace(os.sep, '/') + '/icons/white/file.png',
                     'lock': appDir.replace(os.sep, '/') + '/icons/white/lock.png',
                     'unlock': appDir.replace(os.sep, '/') + '/icons/white/unlock.png'
                 },

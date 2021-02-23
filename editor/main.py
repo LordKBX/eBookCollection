@@ -49,11 +49,11 @@ if __name__ == "__main__":
 			WarnDialog(lang['Editor']['DialogInfoNoFileWindowTitle'], lang['Editor']['DialogInfoNoFileWindowText'], ui)
 			exit(0)
 
-		ui = editorWindow(None, file)
+		ui = EditorWindow(None, file)
 		ui.show()
 
 		# données de test
-		# ui.tabWidget.createPane("metadata.opf", appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep + 'metadata.opf')
+		# ui.tabWidget.create_pane("metadata.opf", appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep + 'metadata.opf')
 
 		app.exec_()
 		# rmDir(destDir)  # disable for debug purpose

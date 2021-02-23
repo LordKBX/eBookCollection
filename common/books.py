@@ -184,14 +184,14 @@ def insertBook(tools: dict, database: bdd.BDD, file_name_template: str, file_nam
         # build final file path
         end_file = '../data/'
         if tmp_authors is not None:
-            if tmp_authors != '': end_file += cleanStringForUrl(tmp_authors) + '/'
+            if tmp_authors != '': end_file += clean_string_for_url(tmp_authors) + '/'
         if tmp_serie is not None:
-            if tmp_serie != '': end_file += cleanStringForUrl(tmp_serie) + '/'
+            if tmp_serie != '': end_file += clean_string_for_url(tmp_serie) + '/'
         # create final file dir path
         if os.path.isdir(end_file) is not True:
             os.makedirs(end_file)
         # copy file to the destination
-        end_file += cleanStringForUrl(tmp_title) + ext
+        end_file += clean_string_for_url(tmp_title) + ext
         print(end_file)
         shutil.copyfile(file, end_file)
         # insert data in database

@@ -30,6 +30,7 @@ def listDir(dirName: str, ext: str = None):
     Recursive function for listing files in a folder and his sub folders
 
     :param dirName: path of the parsed dir
+    :param ext: list of extention separated by |
     :return: list(str)
     """
     allFiles = list()

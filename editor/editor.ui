@@ -73,7 +73,7 @@ QPushButton:checked{
      <number>1</number>
     </property>
     <item>
-     <widget class="editorTabManager" name="tabWidget">
+     <widget class="EditorTabManager" name="tabWidget">
       <property name="minimumSize">
        <size>
         <width>320</width>
@@ -554,7 +554,7 @@ QPushButton:checked{
    <header>QtWebKit/QWebView</header>
   </customwidget>
   <customwidget>
-   <class>editorTabManager</class>
+   <class>EditorTabManager</class>
    <extends>QTabWidget</extends>
    <header>editing_pane</header>
    <container>1</container>

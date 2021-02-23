@@ -15,69 +15,73 @@ dialogStyleBtnGreen = 'background-color: rgb(0, 153, 15); color: rgb(255, 255, 2
 
 
 def InfoDialog(title: str, text: str, parent: any = None):
-    lang = Lang()
-    msgBox = QtWidgets.QMessageBox(parent)
-    msgBox.setStyleSheet(dialogStyle)
-    msgBox.setWindowTitle(title)
-    msgBox.setText(text)
-    msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-    msgBox.button(QtWidgets.QMessageBox.Ok).setText(lang['Generic']['DialogBtnOk'])
-    msgBox.button(QtWidgets.QMessageBox.Ok).setStyleSheet(dialogStyleBtnGeneric)
-    msgBox.button(QtWidgets.QMessageBox.Ok).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-    msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
-    msgBox.setIcon(QtWidgets.QMessageBox.Information)
-    ret = msgBox.exec()
+    language = Lang()
+    msg_box = QtWidgets.QMessageBox(parent)
+    msg_box.setStyleSheet(dialogStyle)
+    msg_box.setWindowTitle(title)
+    msg_box.setText(text)
+    msg_box.setStandardButtons(QtWidgets.QMessageBox.Ok)
+    msg_box.button(QtWidgets.QMessageBox.Ok).setText(language['Generic']['DialogBtnOk'])
+    msg_box.button(QtWidgets.QMessageBox.Ok).setStyleSheet(dialogStyleBtnGeneric)
+    msg_box.button(QtWidgets.QMessageBox.Ok).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    msg_box.setDefaultButton(QtWidgets.QMessageBox.Ok)
+    msg_box.setIcon(QtWidgets.QMessageBox.Information)
+    ret = msg_box.exec()
 
 
 def InfoDialogConfirm(title: str, text: str, yes: str, no: str, parent: any = None):
-    msgBox = QtWidgets.QMessageBox(parent)
-    msgBox.setStyleSheet(dialogStyle)
-    msgBox.setWindowTitle(title)
-    msgBox.setText(text)
-    msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-    msgBox.button(QtWidgets.QMessageBox.Yes).setText(yes)
-    msgBox.button(QtWidgets.QMessageBox.Yes).setStyleSheet(dialogStyleBtnGreen)
-    msgBox.button(QtWidgets.QMessageBox.Yes).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-    msgBox.button(QtWidgets.QMessageBox.No).setText(no)
-    msgBox.button(QtWidgets.QMessageBox.No).setStyleSheet(dialogStyleBtnRed)
-    msgBox.button(QtWidgets.QMessageBox.No).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-    msgBox.setDefaultButton(QtWidgets.QMessageBox.No)
-    msgBox.setIcon(QtWidgets.QMessageBox.Information)
-    ret = msgBox.exec()
-    if ret == QtWidgets.QMessageBox.Yes: return True
-    else: return False
+    msg_box = QtWidgets.QMessageBox(parent)
+    msg_box.setStyleSheet(dialogStyle)
+    msg_box.setWindowTitle(title)
+    msg_box.setText(text)
+    msg_box.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+    msg_box.button(QtWidgets.QMessageBox.Yes).setText(yes)
+    msg_box.button(QtWidgets.QMessageBox.Yes).setStyleSheet(dialogStyleBtnGreen)
+    msg_box.button(QtWidgets.QMessageBox.Yes).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    msg_box.button(QtWidgets.QMessageBox.No).setText(no)
+    msg_box.button(QtWidgets.QMessageBox.No).setStyleSheet(dialogStyleBtnRed)
+    msg_box.button(QtWidgets.QMessageBox.No).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    msg_box.setDefaultButton(QtWidgets.QMessageBox.No)
+    msg_box.setIcon(QtWidgets.QMessageBox.Information)
+    ret = msg_box.exec()
+    if ret == QtWidgets.QMessageBox.Yes:
+        return True
+    else:
+        return False
 
 
 def WarnDialog(title: str, text: str, parent: any = None):
-    lang = Lang()
-    msgBox = QtWidgets.QMessageBox(parent)
-    msgBox.setStyleSheet(dialogStyle)
-    msgBox.setWindowTitle(title)
-    msgBox.setText(text)
-    msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-    msgBox.button(QtWidgets.QMessageBox.Ok).setText(lang['Generic']['DialogBtnOk'])
-    msgBox.button(QtWidgets.QMessageBox.Ok).setStyleSheet(dialogStyleBtnGeneric)
-    msgBox.button(QtWidgets.QMessageBox.Ok).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-    msgBox.setDefaultButton(QtWidgets.QMessageBox.Ok)
-    msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-    ret = msgBox.exec()
+    language = Lang()
+    msg_box = QtWidgets.QMessageBox(parent)
+    msg_box.setStyleSheet(dialogStyle)
+    msg_box.setWindowTitle(title)
+    msg_box.setText(text)
+    msg_box.setStandardButtons(QtWidgets.QMessageBox.Ok)
+    msg_box.button(QtWidgets.QMessageBox.Ok).setText(language['Generic']['DialogBtnOk'])
+    msg_box.button(QtWidgets.QMessageBox.Ok).setStyleSheet(dialogStyleBtnGeneric)
+    msg_box.button(QtWidgets.QMessageBox.Ok).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    msg_box.setDefaultButton(QtWidgets.QMessageBox.Ok)
+    msg_box.setIcon(QtWidgets.QMessageBox.Warning)
+    ret = msg_box.exec()
 
 
 def WarnDialogConfirm(title: str, text: str, yes: str, no: str, parent: any = None):
-    msgBox = QtWidgets.QMessageBox(parent)
-    msgBox.setStyleSheet(dialogStyle)
-    msgBox.setWindowTitle(title)
-    msgBox.setText(text)
-    msgBox.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-    msgBox.button(QtWidgets.QMessageBox.Yes).setText(yes)
-    msgBox.button(QtWidgets.QMessageBox.Yes).setStyleSheet(dialogStyleBtnRed)
-    msgBox.button(QtWidgets.QMessageBox.Yes).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-    msgBox.button(QtWidgets.QMessageBox.No).setText(no)
-    msgBox.button(QtWidgets.QMessageBox.No).setStyleSheet(dialogStyleBtnGreen)
-    msgBox.button(QtWidgets.QMessageBox.No).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-    msgBox.setDefaultButton(QtWidgets.QMessageBox.No)
-    msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-    ret = msgBox.exec()
-    if ret == QtWidgets.QMessageBox.Yes: return True
-    else: return False
+    msg_box = QtWidgets.QMessageBox(parent)
+    msg_box.setStyleSheet(dialogStyle)
+    msg_box.setWindowTitle(title)
+    msg_box.setText(text)
+    msg_box.setStandardButtons(QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+    msg_box.button(QtWidgets.QMessageBox.Yes).setText(yes)
+    msg_box.button(QtWidgets.QMessageBox.Yes).setStyleSheet(dialogStyleBtnRed)
+    msg_box.button(QtWidgets.QMessageBox.Yes).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    msg_box.button(QtWidgets.QMessageBox.No).setText(no)
+    msg_box.button(QtWidgets.QMessageBox.No).setStyleSheet(dialogStyleBtnGreen)
+    msg_box.button(QtWidgets.QMessageBox.No).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    msg_box.setDefaultButton(QtWidgets.QMessageBox.No)
+    msg_box.setIcon(QtWidgets.QMessageBox.Warning)
+    ret = msg_box.exec()
+    if ret == QtWidgets.QMessageBox.Yes:
+        return True
+    else:
+        return False
 

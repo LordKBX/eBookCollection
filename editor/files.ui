@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
+ <class>dialog</class>
+ <widget class="QDialog" name="dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -33,7 +33,7 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="QTreeWidget" name="fileTree">
+    <widget class="QTreeWidget" name="file_tree">
      <column>
       <property name="text">
        <string notr="true">1</string>
@@ -42,12 +42,12 @@
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="vertical_layout">
      <property name="spacing">
       <number>3</number>
      </property>
      <item>
-      <widget class="QPushButton" name="btnImport">
+      <widget class="QPushButton" name="btn_import">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -63,12 +63,12 @@
       </widget>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QHBoxLayout" name="horizontal_layout_2">
        <property name="spacing">
         <number>2</number>
        </property>
        <item>
-        <widget class="QPushButton" name="btnNewFile">
+        <widget class="QPushButton" name="btn_new_file">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -84,7 +84,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="btnNewFolder">
+        <widget class="QPushButton" name="btn_new_folder">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -102,7 +102,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="btnRename">
+      <widget class="QPushButton" name="btn_rename">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -118,7 +118,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnDelete">
+      <widget class="QPushButton" name="btn_delete">
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -134,7 +134,7 @@
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer">
+      <spacer name="vertical_spacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -147,7 +147,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
+      <widget class="QDialogButtonBox" name="button_box">
        <property name="cursor">
         <cursorShape>PointingHandCursor</cursorShape>
        </property>
@@ -166,9 +166,9 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>button_box</sender>
    <signal>accepted()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>dialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -182,9 +182,9 @@
    </hints>
   </connection>
   <connection>
-   <sender>buttonBox</sender>
+   <sender>button_box</sender>
    <signal>rejected()</signal>
-   <receiver>Dialog</receiver>
+   <receiver>dialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

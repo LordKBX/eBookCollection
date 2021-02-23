@@ -20,18 +20,18 @@ class FilesNameWindow(QDialog):
         self.lang = lng
         self.setWindowTitle(lng['Editor']['FilesWindow']['FileNameWindowTitle'])
         self.label.setText(lng['Editor']['FilesWindow']['FileNameWindowLabel'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['FilesWindow']['btnOk'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['FilesWindow']['btnCancel'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['FilesWindow']['btnOk'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['FilesWindow']['btnCancel'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
 
-    def openExec(self, text: str = None):
+    def open_exec(self, text: str = None):
         if text is not None:
-            self.lineEdit.setText(text)
+            self.line_edit.setText(text)
         ret = self.exec_()
         if ret == 1:
-            print('name = ', self.lineEdit.text())
-            return self.lineEdit.text()
+            print('name = ', self.line_edit.text())
+            return self.line_edit.text()
         else:
             return None
 
@@ -44,29 +44,29 @@ class FilesWindow(QDialog):
         self.lang = lng
         self.setWindowTitle(lng['Editor']['FilesWindow']['WindowTitle'])
         self.setStyleSheet(env_vars['styles']['black']['fullButton'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['FilesWindow']['btnOk'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['FilesWindow']['btnCancel'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.fileTree.setStyleSheet(env_vars['styles']['black']['fullTreeView'])
-        self.fileTree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
-        self.fileTree.itemClicked.connect(self.itemClick)
-        self.fileTree.header().setSectionsClickable(True)
-        self.fileTree.header().sectionClicked.connect(self.razSelection)
-        self.btnImport.clicked.connect(self.importer)
-        self.btnNewFile.clicked.connect(lambda: self.newFile(True))
-        self.btnNewFolder.clicked.connect(self.newFolder)
-        self.btnRename.clicked.connect(self.rename)
-        self.btnDelete.clicked.connect(self.delete)
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['FilesWindow']['btnOk'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['FilesWindow']['btnCancel'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.file_tree.setStyleSheet(env_vars['styles']['black']['fullTreeView'])
+        self.file_tree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
+        self.file_tree.itemClicked.connect(self.item_click)
+        self.file_tree.header().setSectionsClickable(True)
+        self.file_tree.header().sectionClicked.connect(self.raz_selection)
+        self.btn_import.clicked.connect(self.importer)
+        self.btn_new_file.clicked.connect(lambda: self.new_file(True))
+        self.btn_new_folder.clicked.connect(self.new_folder)
+        self.btn_rename.clicked.connect(self.rename)
+        self.btn_delete.clicked.connect(self.delete)
         self.folder = folder
-        self.selectedFolder = ''
-        self.listDelete = dict()
-        self.listRename = dict()
-        self.listNew = dict()
-        self.lockList = [os.sep + 'mimetype', os.sep + 'META-INF', os.sep + 'META-INF' + os.sep + 'container.xml']
+        self.selected_folder = ''
+        self.list_delete = dict()
+        self.list_rename = dict()
+        self.list_new = dict()
+        self.lock_list = [os.sep + 'mimetype', os.sep + 'META-INF', os.sep + 'META-INF' + os.sep + 'container.xml']
 
-    def openExec(self, text: str = None, url: str = None):
-        self.fileTree.clear()
+    def open_exec(self, text: str = None, url: str = None):
+        self.file_tree.clear()
         tree = common.files.listDirTree(self.folder)
         # for index in tree:
         #     item = QtWidgets.QTreeWidgetItem(self.fileTree)
@@ -76,85 +76,85 @@ class FilesWindow(QDialog):
         #         item.setData(0, 99, index)
         #         common.qt.setQTreeItemFolderIcon(item)
         #
-        #         item = self.recurFileTableInsert(item, tree[index], index)
+        #         item = self.recur_file_table_insert(item, tree[index], index)
         #     else:
         #         item.setData(0, 99, tree[index].replace(self.folder, ''))
         #         item.setData(0, 100, ':file:')
         #     self.fileTree.insertTopLevelItem(0, item)
-        print(self.lockList)
-        self.fileTree = self.recurFileTableInsert(self.fileTree, tree, '')
+        print(self.lock_list)
+        self.file_tree = self.recur_file_table_insert(self.file_tree, tree, '')
 
         ret = self.exec_()
         if ret == 1:
             return {
-                'delete': self.listDelete,
-                'rename': self.listRename,
-                'new': self.listNew,
+                'delete': self.list_delete,
+                'rename': self.list_rename,
+                'new': self.list_new,
             }
         else:
             return None
 
-    def recurFileTableInsert(self, baseitem: Union[QtWidgets.QTreeWidgetItem, QtWidgets.QTreeWidget], tree: dict,
-                             previousdir: str = '') -> Union[QtWidgets.QTreeWidgetItem, QtWidgets.QTreeWidget]:
+    def recur_file_table_insert(self, base_item: Union[QtWidgets.QTreeWidgetItem, QtWidgets.QTreeWidget], tree: dict,
+                                previous_dir: str = '') -> Union[QtWidgets.QTreeWidgetItem, QtWidgets.QTreeWidget]:
         for indexr in tree:
-            itemr = QtWidgets.QTreeWidgetItem(baseitem)
+            itemr = QtWidgets.QTreeWidgetItem(base_item)
             itemr.setText(0, indexr)
             if isinstance(tree[indexr], dict):
                 itemr.setData(0, 100, ':dir:')
-                itemr.setData(0, 99, previousdir + os.sep + indexr)
+                itemr.setData(0, 99, previous_dir + os.sep + indexr)
                 common.qt.setQTreeItemFolderIcon(itemr)
 
-                itemr = self.recurFileTableInsert(itemr, tree[indexr], previousdir + os.sep + indexr)
+                itemr = self.recur_file_table_insert(itemr, tree[indexr], previous_dir + os.sep + indexr)
             else:
                 itemr.setData(0, 100, ':file:')
                 itemr.setData(0, 99, tree[indexr].replace(self.folder, ''))
-            print(previousdir + os.sep + indexr)
-            if previousdir + os.sep + indexr in self.lockList or re.search('\\.opf$', indexr) is not None:
+            print(previous_dir + os.sep + indexr)
+            if previous_dir + os.sep + indexr in self.lock_list or re.search('\\.opf$', indexr) is not None:
                 itemr.setData(0, 98, True)
                 common.qt.setQTreeItemLockIcon(itemr)
-            if isinstance(baseitem, QtWidgets.QTreeWidget):
-                self.fileTree.insertTopLevelItem(0, itemr)
+            if isinstance(base_item, QtWidgets.QTreeWidget):
+                self.file_tree.insertTopLevelItem(0, itemr)
             else:
-                baseitem.addChild(itemr)
-        return baseitem
+                base_item.addChild(itemr)
+        return base_item
 
-    def razSelection(self):
-        print('razSelection')
-        self.selectedFolder = ''
-        self.fileTree.clearSelection()
+    def raz_selection(self):
+        print('raz_selection')
+        self.selected_folder = ''
+        self.file_tree.clearSelection()
 
-    def itemClick(self, itm: QTreeWidgetItem):
-        filePath = itm.data(0, 99)
-        fileType = itm.data(0, 100)
-        if fileType == ':dir:':
+    def item_click(self, itm: QTreeWidgetItem):
+        file_path = itm.data(0, 99)
+        file_type = itm.data(0, 100)
+        if file_type == ':dir:':
             itm.setExpanded(True)
-            self.selectedFolder = filePath
-            print(filePath)
+            self.selected_folder = file_path
+            print(file_path)
 
-    def getItem(self, itm = None):
+    def get_item(self, itm=None):
         try:
-            items = self.fileTree.selectedItems()
+            items = self.file_tree.selectedItems()
             if itm is not None: items = [itm]
-            if items is None: return self.fileTree
-            if len(items) == 0: return self.fileTree
+            if items is None: return self.file_tree
+            if len(items) == 0: return self.file_tree
 
             item = items[0]
-            while item.data(0, 99) in self.listDelete:
+            while item.data(0, 99) in self.list_delete:
                 if item.parent() is not None:
                     item = item.parent()
-                    self.selectedFolder = item.data(0, 99)
+                    self.selected_folder = item.data(0, 99)
                 else:
-                    self.selectedFolder = ''
-                    return self.fileTree
+                    self.selected_folder = ''
+                    return self.file_tree
 
             while item.data(0, 100) == ':file:':
                 if isinstance(item.parent(), QtWidgets.QTreeWidget) or item.parent() is None:
-                    item = self.fileTree
-                    self.selectedFolder = ''
+                    item = self.file_tree
+                    self.selected_folder = ''
                     break
                 else:
                     item = item.parent()
-                    self.selectedFolder = item.data(0, 99)
+                    self.selected_folder = item.data(0, 99)
 
             return item
         except Exception:
@@ -171,97 +171,97 @@ class FilesWindow(QDialog):
                 "",
                 "All Files (*.*)", options=options
             )
-            item = self.getItem()
+            item = self.get_item()
 
-            prepath = self.selectedFolder
-            if self.selectedFolder != '':
-                prepath = os.sep + self.selectedFolder
+            prepath = self.selected_folder
+            if self.selected_folder != '':
+                prepath = os.sep + self.selected_folder
 
             for file in files:
                 file = file.replace('/', os.sep)
                 tb = file.split(os.sep)
-                self.listNew[prepath + os.sep + tb[len(tb)-1]] = {'innerPath': prepath + os.sep + tb[len(tb)-1], 'type': 'import', 'original': file}
+                self.list_new[prepath + os.sep + tb[len(tb)-1]] = {'innerPath': prepath + os.sep + tb[len(tb)-1], 'type': 'import', 'original': file}
 
                 if isinstance(item, QtWidgets.QTreeWidget):
-                    itemr = QtWidgets.QTreeWidgetItem(self.fileTree)
+                    itemr = QtWidgets.QTreeWidgetItem(self.file_tree)
                 else:
                     itemr = QtWidgets.QTreeWidgetItem(item)
                 itemr.setText(0, tb[len(tb)-1])
                 itemr.setForeground(0, QtGui.QColor(env_vars['styles']['black']['partialTreeViewItemColorNew']))
 
-                if isinstance(item, QtWidgets.QTreeWidget): self.fileTree.insertTopLevelItem(0, itemr)
+                if isinstance(item, QtWidgets.QTreeWidget): self.file_tree.insertTopLevelItem(0, itemr)
                 else: item.addChild(itemr)
         except Exception:
             traceback.print_exc()
 
-    def newFile(self, isFile: bool = True):
+    def new_file(self, is_file: bool = True):
         try:
             wn = FilesNameWindow(self)
-            file = wn.openExec()
+            file = wn.open_exec()
 
-            item = self.getItem()
+            item = self.get_item()
 
             if file is not None:
 
-                if isinstance(item, QtWidgets.QTreeWidget): itemr = QtWidgets.QTreeWidgetItem(self.fileTree)
+                if isinstance(item, QtWidgets.QTreeWidget): itemr = QtWidgets.QTreeWidgetItem(self.file_tree)
                 else: itemr = QtWidgets.QTreeWidgetItem(item)
-                prepath = self.selectedFolder
-                if self.selectedFolder != '':
-                    prepath = os.sep + self.selectedFolder
+                prepath = self.selected_folder
+                if self.selected_folder != '':
+                    prepath = os.sep + self.selected_folder
 
                 itemr.setForeground(0, QtGui.QColor(env_vars['styles']['black']['partialTreeViewItemColorNew']))
                 itemr.setText(0, file)
-                if isFile is True:
+                if is_file is True:
                     itemr.setData(0, 100, ':file:')
-                    self.listNew[prepath + os.sep + file] = {'innerPath': prepath + os.sep + file, 'type': 'newFile'}
+                    self.list_new[prepath + os.sep + file] = {'innerPath': prepath + os.sep + file, 'type': 'new_file'}
                 else:
                     itemr.setData(0, 100, ':dir:')
-                    self.listNew[prepath + os.sep + file] = {'innerPath': prepath + os.sep + file, 'type': 'newFolder'}
+                    self.list_new[prepath + os.sep + file] = {'innerPath': prepath + os.sep + file, 'type': 'new_folder'}
                     common.qt.setQTreeItemFolderIcon(itemr)
                 itemr.setData(0, 99, prepath + os.sep + file)
 
                 if isinstance(item, QtWidgets.QTreeWidget):
-                    self.fileTree.insertTopLevelItem(0, itemr)
+                    self.file_tree.insertTopLevelItem(0, itemr)
                 else:
                     item.addChild(itemr)
         except Exception:
             traceback.print_exc()
 
-    def newFolder(self):
-        self.newFile(False)
+    def new_folder(self):
+        self.new_file(False)
 
     def rename(self):
         try:
-            items = self.fileTree.selectedItems()
+            items = self.file_tree.selectedItems()
             if items is None: return
             if len(items) == 0: return
             item = items[0]
 
-            self.getItem()
+            self.get_item()
             pre_file = item.text(0)
             wn = FilesNameWindow(self)
-            file = wn.openExec(item.text(0))
+            file = wn.open_exec(item.text(0))
 
             if file is not None:
                 if isinstance(item, QtWidgets.QTreeWidget): return
 
                 prepath = ''
-                if self.selectedFolder != file and os.sep in self.selectedFolder:
-                    prepath = self.selectedFolder[(self.selectedFolder.rindex(os.sep)):]
+                if self.selected_folder != file and os.sep in self.selected_folder:
+                    prepath = self.selected_folder[(self.selected_folder.rindex(os.sep)):]
                 path = (prepath + os.sep + file).replace(os.sep + os.sep, os.sep)[1:]
-                if self.listNew.get(file) is not None:
-                    self.listNew[path] = self.listNew[pre_file]
-                    del self.listNew[pre_file]
-                    self.listNew[path]['innerPath'] = path
+                if self.list_new.get(file) is not None:
+                    self.list_new[path] = self.list_new[pre_file]
+                    del self.list_new[pre_file]
+                    self.list_new[path]['innerPath'] = path
                 else:
                     if item.data(0, 100) == ':dir:':
                         prepath = ''
-                        self.listRename[path] = {
+                        self.list_rename[path] = {
                             'newPath': path, 'type': 'renameFolder',
                             'original': prepath + os.sep + pre_file}
                     else:
-                        self.listRename[self.selectedFolder + os.sep + file] = {
-                            'newPath': self.selectedFolder + os.sep + file, 'type': 'renameFile',
+                        self.list_rename[self.selected_folder + os.sep + file] = {
+                            'newPath': self.selected_folder + os.sep + file, 'type': 'renameFile',
                             'original': prepath + os.sep + pre_file}
                 item.setText(0, file)
                 item.setForeground(0, QtGui.QColor(env_vars['styles']['black']['partialTreeViewItemColorMod']))
@@ -270,47 +270,48 @@ class FilesWindow(QDialog):
 
     def delete(self):
         try:
-            items = self.fileTree.selectedItems()
+            items = self.file_tree.selectedItems()
             if items is None: return
             if len(items) == 0: return
             item = items[0]
             if item.data(0, 98) is True: return
 
-            parent = self.getItem()
+            parent = self.get_item()
             file = item.data(0, 99)
 
             ret = common.dialog.WarnDialogConfirm('title', 'text', 'yes', 'no', self)
             if ret is None or ret is False: return
 
             if file is not None:
-                if isinstance(item, QtWidgets.QTreeWidget): return
-                ret1 = self.removeFromDict(self.listNew, file, parent)
+                if isinstance(item, QtWidgets.QTreeWidget):
+                    return
+                ret1 = self.remove_from_dict(self.list_new, file, parent)
                 if ret1 is not True:
-                    if self.listRename.get(file) is None:
+                    if self.list_rename.get(file) is None:
                         prepath = ''
-                        if self.selectedFolder != file and os.sep in self.selectedFolder:
-                            prepath = self.selectedFolder[(self.selectedFolder.rindex(os.sep)):]
+                        if self.selected_folder != file and os.sep in self.selected_folder:
+                            prepath = self.selected_folder[(self.selected_folder.rindex(os.sep)):]
                         path = (prepath + os.sep + file).replace(os.sep + os.sep, os.sep)
                         if item.data(0, 100) == ':dir:':
-                            self.listDelete[path] = {'innerPath': path, 'type': 'deleteFolder'}
+                            self.list_delete[path] = {'innerPath': path, 'type': 'deleteFolder'}
                         else:
-                            self.listDelete[path] = {'innerPath': file, 'type': 'deleteFile'}
+                            self.list_delete[path] = {'innerPath': file, 'type': 'deleteFile'}
                     else:
-                        original = self.listRename[file]['original']
+                        original = self.list_rename[file]['original']
                         tbo = original.split(os.sep)
 
                         if item.data(0, 100) == ':dir:':
-                            self.listDelete[original] = {'innerPath': original, 'type': 'deleteFolder'}
+                            self.list_delete[original] = {'innerPath': original, 'type': 'deleteFolder'}
                         else:
-                            self.listDelete[original] = {'innerPath': original, 'type': 'deleteFile'}
-                        ret2 = self.removeFromDict(self.listRename, file, parent)
+                            self.list_delete[original] = {'innerPath': original, 'type': 'deleteFile'}
+                        ret2 = self.remove_from_dict(self.list_rename, file, parent)
                         item.setText(tbo[len(tbo)-1])
 
                     item.setForeground(0, QtGui.QColor(env_vars['styles']['black']['partialTreeViewItemColorDel']))
         except Exception:
             traceback.print_exc()
 
-    def removeFromDict(self, tree: dict, path: str, parentItem: any):
+    def remove_from_dict(self, tree: dict, path: str, parentItem: any):
         if tree.get(path) is not None:
             del tree[path]
             if isinstance(parentItem, QTreeWidget) or parentItem is None:
