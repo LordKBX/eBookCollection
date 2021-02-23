@@ -4,43 +4,44 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class HomeWindowSortingBlockTree:
-    SortingBlockTreeActualFilter = 'all'
-    def SortingBlockTreeInit(self):
-        self.SortingBlockTree.itemClicked.connect(self.SortingBlockTreeItemActivated)
+    sorting_block_tree_actual_filter = 'all'
 
-    def SortingBlockTreeLoadData(self):
+    def sorting_block_tree_init(self):
+        self.sorting_block_tree.itemClicked.connect(self.sorting_block_tree_item_activated)
+
+    def sorting_block_tree_load_data(self):
         # Clean sub-tree Authors ans Series
-        while self.SortingBlockTree.topLevelItem(1).childCount() > 0:
-            self.SortingBlockTree.topLevelItem(1).removeChild(self.SortingBlockTree.topLevelItem(1).child(0))
-        while self.SortingBlockTree.topLevelItem(2).childCount() > 0:
-            self.SortingBlockTree.topLevelItem(2).removeChild(self.SortingBlockTree.topLevelItem(2).child(0))
+        while self.sorting_block_tree.topLevelItem(1).childCount() > 0:
+            self.sorting_block_tree.topLevelItem(1).removeChild(self.sorting_block_tree.topLevelItem(1).child(0))
+        while self.sorting_block_tree.topLevelItem(2).childCount() > 0:
+            self.sorting_block_tree.topLevelItem(2).removeChild(self.sorting_block_tree.topLevelItem(2).child(0))
         authors = self.BDD.getAuthors()
         series = self.BDD.getSeries()
         for author in authors:
-            item = QtWidgets.QTreeWidgetItem(self.SortingBlockTree.topLevelItem(1))
+            item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(1))
             item.setText(0, author)
             item.setText(1, 'authors:'+author)
         for serie in series:
-            item = QtWidgets.QTreeWidgetItem(self.SortingBlockTree.topLevelItem(2))
+            item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(2))
             item.setText(0, serie)
             item.setText(1, 'serie:'+serie)
 
-    def SortingBlockTreeItemActivated(self, item, column):
+    def sorting_block_tree_item_activated(self, item, column):
         try:
-            self.SortingBlockTreeSetFilter(item.text(1))
+            self.sorting_block_tree_set_filter(item.text(1))
         except Exception:
             traceback.print_exc()
 
-    def SortingBlockTreeSetFilter(self, filter):
+    def sorting_block_tree_set_filter(self, filter):
         try:
-            self.CentralBlockTable.clearSelection()
+            self.central_block_table.clearSelection()
             if filter == 'all':
-                self.loadooks(self.BDD.getBooks())
+                self.load_books(self.BDD.getBooks())
             elif re.search("^authors:", filter) or re.search("^serie:", filter):
-                self.loadooks(self.BDD.getBooks(None, filter))
+                self.load_books(self.BDD.getBooks(None, filter))
             else:
                 return
-            self.SortingBlockTreeActualFilter = filter
-            self.SortingBlockSearchValue.setText(filter)
+            self.sorting_block_tree_actual_filter = filter
+            self.sorting_block_search_value.setText(filter)
         except Exception:
             traceback.print_exc()

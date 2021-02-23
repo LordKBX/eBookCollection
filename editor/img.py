@@ -14,7 +14,7 @@ from vars import *
 class ImgWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(ImgWindow, self).__init__(parent)
-        PyQt5.uic.loadUi(appDir + os.sep + 'editor/img.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/img.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.setWindowTitle(lng['Editor']['ImgWindow']['WindowTitle'])
         self.labelUrl.setText(lng['Editor']['ImgWindow']['labelUrl'])

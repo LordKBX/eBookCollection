@@ -1,35 +1,38 @@
 import json
 import traceback
 from common.common import *
+from common.files import *
+
 
 class HomeWindowCentralBlock:
-    CentralBlockTableCasesUidList = []
-    CentralBlockTableLock = False
-    CentralBlockTableSortPreviousIndex = 0
-    CentralBlockTableSortPreviousOrder = QtCore.Qt.AscendingOrder
+    central_block_table_cases_uid_list = []
+    central_block_table_lock = False
+    central_block_table_sort_previous_index = 0
+    central_block_table_sort_previous_order = QtCore.Qt.AscendingOrder
+    timer = None
+    old_sizes = ''
 
-    def CentralBlockTableDefineSlots(self):
+    def central_block_table_define_slots(self):
         """
         Define Signal/Sloct connections for CentralBlockTable
         :return:
         """
         # self.CentralBlockTabletableView.setSortIcons(
-        #     QtGui.QIcon(self.appDir + "/icons/white/sort_up.png"),
-        #     QtGui.QIcon(self.appDir + "/icons/white/sort_down.png")
+        #     QtGui.QIcon(self.app_directory + "/icons/white/sort_up.png"),
+        #     QtGui.QIcon(self.app_directory + "/icons/white/sort_down.png")
         # )
 
-        self.CentralBlockTable.currentCellChanged.connect(self.CentralBlockTableNewSelection)
-        self.CentralBlockTable.itemChanged.connect(self.CentralBlockTableItemChanged)
-        self.CentralBlockTable.cellDoubleClicked.connect(self.CentralBlockTableCellDoubleClicked)
-        self.CentralBlockTable.horizontalHeader().sortIndicatorChanged.connect(self.CentralBlockTableSortIndicatorChanged)
+        self.central_block_table.currentCellChanged.connect(self.central_block_table_new_selection)
+        self.central_block_table.itemChanged.connect(self.central_block_table_item_changed)
+        self.central_block_table.cellDoubleClicked.connect(self.central_block_table_cell_double_clicked)
+        self.central_block_table.horizontalHeader().sortIndicatorChanged.connect(self.central_block_table_sort_indicator_changed)
 
         self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.CentralBlockTableGetCollumnWidth)
+        self.timer.timeout.connect(self.central_block_table_get_column_width)
         self.timer.start(500)
         self.old_sizes = ''
 
-
-    def CentralBlockTableGetCollumnWidth(self):
+    def central_block_table_get_column_width(self):
         """
         slot for timer checking columns size
 
@@ -38,85 +41,88 @@ class HomeWindowCentralBlock:
         try:
             sizes = list()
             i = 0
-            max = len(self.CentralBlockTable.horizontalHeader())
-            while i < max:
-                sizes.append(self.CentralBlockTable.columnWidth(i))
+            my_max = len(self.central_block_table.horizontalHeader())
+            while i < my_max:
+                sizes.append(self.central_block_table.columnWidth(i))
                 i += 1
-            nsize = json.dumps(sizes)
-            if self.old_sizes != nsize:
-                self.old_sizes = nsize
+            new_size = json.dumps(sizes)
+            if self.old_sizes != new_size:
+                self.old_sizes = new_size
                 # print("--------------------------------")
                 # print('home_central_table_header_WIDTH')
-                # print('new size = {}'.format(nsize))
-                self.env_vars['home_central_table_header_sizes'] = nsize
+                # print('new size = {}'.format(new_size))
+                self.env_vars['home_central_table_header_sizes'] = new_size
                 # print('old size = {}'.format(self.BDD.getParam('home_central_table_header_sizes')))
-                self.BDD.setParam('home_central_table_header_sizes', nsize)
+                self.BDD.setParam('home_central_table_header_sizes', new_size)
 
-        except Exception: {}
+        except Exception:
+            ""
 
-    def CentralBlockTableNewSelection(self, currentRow, currentColumn, previousRow, previousColumn):
+    def central_block_table_new_selection(self, current_row, current_column, previous_row, previous_column):
         """
         Slot for new selection on the Central Block Table Widget
 
-        :param currentRow:
-        :param currentColumn:
-        :param previousRow:
-        :param previousColumn:
+        :param current_row:
+        :param current_column:
+        :param previous_row:
+        :param previous_column:
         :return: void
         """
-        if self.CentralBlockTableLock is True: return
-        # print("CentralBlockTableNewSelection")
-        guid_book = self.CentralBlockTable.item(currentRow, currentColumn).data(99)
+        if self.central_block_table_lock is True: return
+        # print("central_block_table_new_selection")
+        guid_book = self.central_block_table.item(current_row, current_column).data(99)
         if self.currentBook != guid_book:
-            try: self.setInfoPanel(self.BDD.getBooks(guid_book)[0])
-            except Exception: traceback.print_exc()
+            try:
+                self.set_info_panel(self.BDD.getBooks(guid_book)[0])
+            except Exception:
+                traceback.print_exc()
 
-    def CentralBlockTableSortIndicatorChanged(self, index: int, order: QtCore.Qt.SortOrder):
+    def central_block_table_sort_indicator_changed(self, index: int, order: QtCore.Qt.SortOrder):
         try:
             # test and exclude locked column for sorting
-            if isinstance(self.CentralBlockTable.horizontalHeaderItem(index), QTableAltItem):
-                if self.CentralBlockTable.horizontalHeaderItem(index).locked is True:
+            if isinstance(self.central_block_table.horizontalHeaderItem(index), QTableAltItem):
+                if self.central_block_table.horizontalHeaderItem(index).locked is True:
                     # timer = QtCore.QTimer()
-                    # timer.singleShot(100, self.CentralBlockTableSortReset)
+                    # timer.singleShot(100, self.central_block_table_sort_reset)
                     return
-            self.CentralBlockTableSortPreviousIndex = index
-            self.CentralBlockTableSortPreviousOrder = order
+            self.central_block_table_sort_previous_index = index
+            self.central_block_table_sort_previous_order = order
 
             i = 0
-            max = len(self.CentralBlockTable.horizontalHeader())
-            while i < max:
+            my_max = len(self.central_block_table.horizontalHeader())
+            while i < my_max:
                 item = None
-                if isinstance(self.CentralBlockTable.horizontalHeaderItem(i), QTableAltItem):
+                if isinstance(self.central_block_table.horizontalHeaderItem(i), QTableAltItem):
                     item = QTableAltItem()
-                    item.lock(self.CentralBlockTable.horizontalHeaderItem(i).locked)
+                    item.lock(self.central_block_table.horizontalHeaderItem(i).locked)
                 else:
                     item = QtWidgets.QTableWidgetItem()
-                item.setText(self.CentralBlockTable.horizontalHeaderItem(i).text())
-                self.CentralBlockTable.setHorizontalHeaderItem(i, item)
+                item.setText(self.central_block_table.horizontalHeaderItem(i).text())
+                self.central_block_table.setHorizontalHeaderItem(i, item)
                 i += 1
             icon = QtGui.QIcon()
             if order == QtCore.Qt.AscendingOrder:
-                icon.addPixmap(QtGui.QPixmap(self.appDir + '/icons/white/sort_up.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                icon.addPixmap(QtGui.QPixmap(self.app_directory + '/icons/white/sort_up.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             else:
-                icon.addPixmap(QtGui.QPixmap(self.appDir + '/icons/white/sort_down.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.CentralBlockTable.horizontalHeaderItem(index).setIcon(icon)
+                icon.addPixmap(QtGui.QPixmap(self.app_directory + '/icons/white/sort_down.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.central_block_table.horizontalHeaderItem(index).setIcon(icon)
         except Exception:
             traceback.print_exc()
 
-    def CentralBlockTableSortReset(self):
-        self.CentralBlockTable.sortByColumn(self.CentralBlockTableSortPreviousIndex, self.CentralBlockTableSortPreviousOrder)
+    def central_block_table_sort_reset(self):
+        self.central_block_table.sortByColumn(self.central_block_table_sort_previous_index, self.central_block_table_sort_previous_order)
 
-    def CentralBlockTableCellDoubleClicked(self, currentRow, currentColumn):
+    def central_block_table_cell_double_clicked(self, current_row, current_column):
         """
         Slot for new selection on the Central Block Table Widget
 
-        :param currentRow:
-        :param currentColumn:
+        :param current_row:
+        :param current_column:
         :return: void
         """
         # print("--------------------------------")
-        # print("CentralBlockTableCellDoubleClicked")
-        item = self.CentralBlockTable.item(currentRow, currentColumn)
+        # print("central_block_table_cell_double_clicked")
+        item = self.central_block_table.item(current_row, current_column)
         guid_book = item.data(99)
         # print("Book GUID : {}".format(guid_book))
         if self.currentBook != guid_book:
@@ -124,20 +130,21 @@ class HomeWindowCentralBlock:
         args = list()
         if self.BDD.getBooks(guid_book)[0]['files'][0]['format'] in ['CBZ', 'CBR', 'EPUB']:
             args.append('python')
-            args.append(self.appDir + '/reader/main.py'.replace('/', os.sep))
-            args.append(self.appDir + os.sep + self.BDD.getBooks(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
+            args.append(self.app_directory + '/reader/main.py'.replace('/', os.sep))
+            args.append(self.app_directory + os.sep + self.BDD.getBooks(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
         else:
             args.append(self.BDD.getBooks(guid_book)[0]['files'][0]['link'])
         print(args)
-        try: retcode = subprocess.call(args, shell=True)
+        try:
+            retcode = subprocess.call(args, shell=True)
         except Exception:
             traceback.print_exc()
 
-    def CentralBlockTableItemChanged(self, newItem):
+    def central_block_table_item_changed(self, new_item):
         """
         Slot for new item content on the Central Block Table Widget
 
-        :param newItem: the modified QTableWidgetItem
+        :param new_item: the modified QTableWidgetItem
         :return: void
         """
         try:
@@ -145,15 +152,15 @@ class HomeWindowCentralBlock:
             # print("Row = {}".format(newItem.row()))
             # print("Column = {}".format(newItem.column()))
             # print(newItem.text())
-            guid_case = newItem.data(98)
-            if guid_case not in self.CentralBlockTableCasesUidList:
-                self.CentralBlockTableCasesUidList.append(guid_case)
+            guid_case = new_item.data(98)
+            if guid_case not in self.central_block_table_cases_uid_list:
+                self.central_block_table_cases_uid_list.append(guid_case)
                 return
-            guid_book = newItem.data(99)
-            col_type = newItem.data(100)
+            guid_book = new_item.data(99)
+            col_type = new_item.data(100)
             book = self.BDD.getBooks(guid_book)[0]
-            book[col_type] = newItem.text()
-            self.BDD.updateBook(guid_book, col_type, newItem.text())
+            book[col_type] = new_item.text()
+            self.BDD.updateBook(guid_book, col_type, new_item.text())
             if col_type in ['title', 'authors', 'serie']:
                 index = 0
                 while index < len(book['files']):
@@ -180,16 +187,19 @@ class HomeWindowCentralBlock:
         except Exception:
             traceback.print_exc()
 
-    def newBookTableItem(self, guid: str, type: str, value: str, editable: bool = True, alt: any = None, alt_type: str = None, locked: bool = False):
+    @staticmethod
+    def new_book_table_item(guid: str, book_type: str, value: str, editable: bool = True, alt: any = None,
+                            alt_type: str = None, locked: bool = False):
         """
         Create item for the Central Block Table Widget
 
         :param guid: guid book
-        :param type: case item type
+        :param book_type: case item type
         :param value: case item value
         :param editable:
         :param alt:
         :param alt_type:
+        :param locked:
         :return: QTableWidgetItem
         """
         item = QtWidgets.QTableWidgetItem()
@@ -205,59 +215,59 @@ class HomeWindowCentralBlock:
         item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
         item.setData(98, uid())
         item.setData(99, guid)
-        item.setData(100, type)
+        item.setData(100, book_type)
         item.setText(value)
         item.setToolTip(value)
         return item
 
-    def loadooks(self, books: list):
+    def load_books(self, books: list):
         """
         load book list into the Central Block Table Widget
 
         :param books: list(dir)
         :return: void
         """
-        self.CentralBlockTableCasesUidList.clear()
+        self.central_block_table_cases_uid_list.clear()
         try:
-            self.CentralBlockTableLock = True
-            self.CentralBlockTable.clearSelection()
-            self.CentralBlockTable.clearContents()
+            self.central_block_table_lock = True
+            self.central_block_table.clearSelection()
+            self.central_block_table.clearContents()
         except Exception:
             traceback.print_exc()
-        self.CentralBlockTableLock = False
+        self.central_block_table_lock = False
         header_size_policy = self.env_vars['home_central_table_header_size_policy']
         if header_size_policy in ['ResizeToContents', 'ResizeToContentsAndInteractive']:
-            self.CentralBlockTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+            self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         if header_size_policy == 'Stretch':
-            self.CentralBlockTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+            self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         if header_size_policy == 'UserDefined':
             sizes = []
             try:
                 sizes = json.loads(self.env_vars['home_central_table_header_sizes'])
-                self.CentralBlockTable.setColumnWidth(0, sizes[0])
-                self.CentralBlockTable.setColumnWidth(1, sizes[1])
-                self.CentralBlockTable.setColumnWidth(2, sizes[2])
-                self.CentralBlockTable.setColumnWidth(3, sizes[3])
-                self.CentralBlockTable.setColumnWidth(4, sizes[4])
+                self.central_block_table.setColumnWidth(0, sizes[0])
+                self.central_block_table.setColumnWidth(1, sizes[1])
+                self.central_block_table.setColumnWidth(2, sizes[2])
+                self.central_block_table.setColumnWidth(3, sizes[3])
+                self.central_block_table.setColumnWidth(4, sizes[4])
             except Exception:
                 traceback.print_exc()
-            self.CentralBlockTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
+            self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
         # self.CentralBlockTable.setCornerButtonEnabled(False)
         line = 0
-        self.CentralBlockTable.setRowCount(len(books))
+        self.central_block_table.setRowCount(len(books))
         for book in books:
             try:
                 # Title
-                self.CentralBlockTable.setItem(line, 0, self.newBookTableItem(book['guid'], 'title', book['title']))
+                self.central_block_table.setItem(line, 0, self.new_book_table_item(book['guid'], 'title', book['title']))
                 # authors
-                self.CentralBlockTable.setItem(line, 1, self.newBookTableItem(book['guid'], 'authors', book['authors']))
+                self.central_block_table.setItem(line, 1, self.new_book_table_item(book['guid'], 'authors', book['authors']))
                 # serie
-                self.CentralBlockTable.setItem(line, 2, self.newBookTableItem(book['guid'], 'serie', book['serie']))
+                self.central_block_table.setItem(line, 2, self.new_book_table_item(book['guid'], 'serie', book['serie']))
                 # tags
-                self.CentralBlockTable.setItem(line, 3, self.newBookTableItem(book['guid'], 'tags', book['tags'], True, book['tags'], 'str', True))
+                self.central_block_table.setItem(line, 3, self.new_book_table_item(book['guid'], 'tags', book['tags'], True, book['tags'], 'str', True))
                 # imported
-                self.CentralBlockTable.setItem(line, 4,
-                    self.newBookTableItem(
+                self.central_block_table.setItem(line, 4,
+                                                 self.new_book_table_item(
                         book['guid'],
                         'imported',
                         unixtime_to_string(
@@ -268,10 +278,10 @@ class HomeWindowCentralBlock:
                         False,
                         float(book['import_date']), 'float'
                     )
-                )
+                                                 )
                 # Modified
-                self.CentralBlockTable.setItem(line, 5,
-                    self.newBookTableItem(
+                self.central_block_table.setItem(line, 5,
+                                                 self.new_book_table_item(
                         book['guid'],
                         'modified',
                         unixtime_to_string(
@@ -282,21 +292,21 @@ class HomeWindowCentralBlock:
                         False,
                         float(book['last_update_date']), 'float'
                     )
-                )
+                                                 )
             except Exception:
                 traceback.print_exc()
 
             line += 1
-        self.setInfoPanel(None)
-        self.CentralBlockTableSortReset()
-        self.CentralBlockTable.setCurrentCell(0, 0)
+        self.set_info_panel(None)
+        self.central_block_table_sort_reset()
+        self.central_block_table.setCurrentCell(0, 0)
 
         if header_size_policy == 'ResizeToContentsAndInteractive':
             timer = QtCore.QTimer()
-            timer.singleShot(500, self.delayedTableHeaderInteractiveMode)
+            timer.singleShot(500, self.delayed_table_header_interactive_mode)
 
-    def delayedTableHeaderInteractiveMode(self):
-        self.CentralBlockTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
+    def delayed_table_header_interactive_mode(self):
+        self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
 
 
 class QTableAltItem(QtWidgets.QTableWidgetItem):

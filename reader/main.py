@@ -7,6 +7,7 @@ import PyQt5.uic
 from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+import vars
 from bdd import *
 from common.dialog import *
 from common.books import *
@@ -88,7 +89,7 @@ def eventHandler(event: dir):
 class readerWindow(QtWidgets.QMainWindow):
 	def __init__(self, parent: QtWidgets.QMainWindow):
 		super(readerWindow, self).__init__(parent)
-		PyQt5.uic.loadUi(appDir + '/reader/reader2.ui'.replace('/', os.sep), self)
+		PyQt5.uic.loadUi(app_directory + '/reader/reader2.ui'.replace('/', os.sep), self)
 		self.show()
 
 
@@ -99,15 +100,15 @@ if __name__ == "__main__":
 	lang = Lang()
 	bdd = BDD()
 
-	print(appDir + '/icons/app_icon16x16.png'.replace('/', os.sep))
+	print(app_directory + '/icons/app_icon16x16.png'.replace('/', os.sep))
 
 	app = QtWidgets.QApplication([])
 	app_icon = QtGui.QIcon()
-	app_icon.addFile(appDir + '/icons/app_icon16x16.png'.replace('/', os.sep), QtCore.QSize(16, 16))
-	app_icon.addFile(appDir + '/icons/app_icon24x24.png'.replace('/', os.sep), QtCore.QSize(24, 24))
-	app_icon.addFile(appDir + '/icons/app_icon32x32.png'.replace('/', os.sep), QtCore.QSize(32, 32))
-	app_icon.addFile(appDir + '/icons/app_icon48x48.png'.replace('/', os.sep), QtCore.QSize(48, 48))
-	app_icon.addFile(appDir + '/icons/app_icon256x256.png'.replace('/', os.sep), QtCore.QSize(256, 256))
+	app_icon.addFile(app_directory + '/icons/app_icon16x16.png'.replace('/', os.sep), QtCore.QSize(16, 16))
+	app_icon.addFile(app_directory + '/icons/app_icon24x24.png'.replace('/', os.sep), QtCore.QSize(24, 24))
+	app_icon.addFile(app_directory + '/icons/app_icon32x32.png'.replace('/', os.sep), QtCore.QSize(32, 32))
+	app_icon.addFile(app_directory + '/icons/app_icon48x48.png'.replace('/', os.sep), QtCore.QSize(48, 48))
+	app_icon.addFile(app_directory + '/icons/app_icon256x256.png'.replace('/', os.sep), QtCore.QSize(256, 256))
 	app.setWindowIcon(app_icon)
 	if os.name == 'nt':
 		myappid = 'lordkbx.ebook_collection.reader'
@@ -119,13 +120,13 @@ if __name__ == "__main__":
 	
 	# Button FullScreen
 	icon1 = QtGui.QIcon()
-	icon1.addPixmap(QtGui.QPixmap(appDir+"/icons/white/full_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon1.addPixmap(QtGui.QPixmap(app_directory + "/icons/white/full_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonFullScreen.setIcon(icon1)
 	ui.buttonFullScreen.clicked.connect(toogleFullScreen)
 
 	# Button Content Table
 	icon2 = QtGui.QIcon()
-	icon2.addPixmap(QtGui.QPixmap(appDir+"/icons/white/content_table.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon2.addPixmap(QtGui.QPixmap(app_directory + "/icons/white/content_table.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonContentTable.setIcon(icon2)
 	ui.buttonContentTable.clicked.connect(DisplayTreeContentTable)
 	ui.treeContentTable.setMinimumWidth(180)
@@ -133,7 +134,7 @@ if __name__ == "__main__":
 
 	# Button Info
 	icon3 = QtGui.QIcon()
-	icon3.addPixmap(QtGui.QPixmap(appDir+"/icons/white/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon3.addPixmap(QtGui.QPixmap(app_directory + "/icons/white/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonInfo.setIcon(icon3)
 	# ui.buttonInfo.clicked.connect(DisplayTreeContentTable)
 
@@ -150,13 +151,13 @@ if __name__ == "__main__":
 
 	file = sys.argv[1]
 
-	mappdir = appDir.replace(os.sep, '/')+'/data/'
+	mappdir = app_directory.replace(os.sep, '/') + '/data/'
 	filepath, ext = os.path.splitext(file)
 	ui.setWindowTitle(
 		lang['Reader']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
 			.replace(mappdir, '').replace('/', ' / ').replace(ext, '')
 	)
-	destDir = appDir + '/reader/tmp'
+	destDir = app_directory + '/reader/tmp'
 	rmDir(destDir)
 	if os.path.isdir(destDir) is not True: os.mkdir(destDir)
 	page = ''
@@ -164,7 +165,7 @@ if __name__ == "__main__":
 	appMode = QwwMode.CBZ
 	if ext in ['.epub', '.epub2', '.epub3']:
 		appMode = QwwMode.EPUB
-		bookData = getEpubIfo(file)
+		bookData = getEpubInfo(file)
 		winTitle = lang['Reader']['WindowTitle'] + ' - '
 		first = True
 		for index in ['authors', 'serie', 'title']:

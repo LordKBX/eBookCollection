@@ -30,9 +30,9 @@ import common.qt
 class EditorWindow(QtWidgets.QMainWindow):
     def __init__(self, parent: QtWidgets.QMainWindow, opened_file):
         super(EditorWindow, self).__init__(parent)
-        PyQt5.uic.loadUi(appDir + '/editor/editor.ui'.replace('/', os.sep), self)
+        PyQt5.uic.loadUi(app_directory + '/editor/editor.ui'.replace('/', os.sep), self)
         self.opened_file = opened_file
-        self.tmpDir = appDir + os.sep + 'editor' + os.sep + 'tmp'
+        self.tmpDir = app_directory + os.sep + 'editor' + os.sep + 'tmp'
         self.lang = Lang()
         self.default_page = self.lang['Editor']['WebViewDefaultPageContent']
 
@@ -52,7 +52,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.dockTop1.setStyleSheet(env_vars['styles']['black']['defaultButton'])
 
         # ui.tabWidget
-        ad = appDir.replace(os.sep, '/')
+        ad = app_directory.replace(os.sep, '/')
         self.tabWidget.clear()
         self.tabWidget.setStyleSheet(
             """
@@ -105,7 +105,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.webView.setHtml(self.lang['Editor']['WebViewDefaultPageContent'])
 
         filepath, ext = os.path.splitext(self.opened_file)
-        mappdir = appDir.replace(os.sep, '/') + '/data/'
+        mappdir = app_directory.replace(os.sep, '/') + '/data/'
         self.setWindowTitle(
             self.lang['Editor']['WindowTitle'] + ' - ' + self.opened_file.replace(os.sep, '/')
             .replace(mappdir, '').replace('/', ' / ').replace(ext, '')

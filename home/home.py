@@ -17,7 +17,7 @@ from home.SortingBlockTree import *
 
 class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
     def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict):
-        self.appDir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        self.app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.currentBook = ''
         self.BDD = database
         self.lang = translation
@@ -25,23 +25,23 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
         self.env_vars = env_vars['vars']
         super(HomeWindow, self).__init__()
         PyQt5.uic.loadUi('home/home.ui', self) # Load the .ui file
-        self.setLocalisation()
-        self.setInfoPanel()
-        # self.loadooks(self.BDD.getBooks())
+        self.set_localisation()
+        self.set_info_panel()
+        # self.load_books(self.BDD.getBooks())
 
-        self.HeaderBlockBtnAddBook.clicked.connect(self.HeaderBlockBtnAddBookClicked)
-        self.HeaderBlockBtnSettings.clicked.connect(self.HeaderBlockBtnSettingsClicked)
-        self.HeaderBlockBtnDelBook.clicked.connect(self.HeaderBlockBtnDelBookClicked)
+        self.header_block_btn_add_book.clicked.connect(self.header_block_btn_add_book_clicked)
+        self.header_block_btn_settings.clicked.connect(self.header_block_btn_settings_clicked)
+        self.header_block_btn_del_book.clicked.connect(self.header_block_btn_del_book_clicked)
 
-        self.CentralBlockTableDefineSlots()
+        self.central_block_table_define_slots()
 
-        self.SortingBlockTreeInit()
-        self.SortingBlockTreeLoadData()
-        self.SortingBlockTreeSetFilter('all')
+        self.sorting_block_tree_init()
+        self.sorting_block_tree_load_data()
+        self.sorting_block_tree_set_filter('all')
 
         self.show() # Show the GUI
 
-    def HeaderBlockBtnAddBookClicked(self):
+    def header_block_btn_add_book_clicked(self):
         """
         Slot for click on the Add Book Button
 
@@ -68,13 +68,14 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
                 for file in files:
                     # Call booksTools.insertBook
                     insertBook(self.tools, self.BDD, file_name_template, file_name_separator, file)
-                self.CentralBlockTable.clearSelection()
-                self.SortingBlockTreeSetFilter(self.SortingBlockTreeActualFilter)
+                self.central_block_table.clearSelection()
+                self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)
 
         except Exception:
             traceback.print_exc()
 
-    def HeaderBlockBtnSettingsClicked(self):
+    @staticmethod
+    def header_block_btn_settings_clicked():
         """
         Slot for click on the Settings Button
 
@@ -82,7 +83,7 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
         """
         print("Bouton Options clické")
 
-    def HeaderBlockBtnDelBookClicked(self):
+    def header_block_btn_del_book_clicked(self):
         """
         Slot for click on the Delete book Button
 
@@ -90,7 +91,7 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
         """
         try:
             print("Bouton Delete book clické")
-            if len(self.CentralBlockTable.selectedItems()) > 0:
+            if len(self.central_block_table.selectedItems()) > 0:
                 ret = WarnDialogConfirm(
                     self.lang['Home']['DialogConfirmDeleteBookWindowTitle'],
                     self.lang['Home']['DialogConfirmDeleteBookWindowText'],
@@ -100,25 +101,25 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
                 )
 
                 if ret is True:
-                    items = self.CentralBlockTable.selectedItems()
-                    self.CentralBlockTable.clearSelection()
+                    items = self.central_block_table.selectedItems()
+                    self.central_block_table.clearSelection()
                     for item in items:
                         if item.column() == 0:
                             book_id = item.data(99)
                             for file in self.BDD.getBooks(book_id)[0]['files']:
-                                try: os.remove(self.appDir + '/' + file['link'])
+                                try: os.remove(self.app_directory + '/' + file['link'])
                                 except Exception: {}
 
                             self.BDD.deleteBook(book_id)
                             print("line n° {}".format(item.row()))
                     # Cleanup all empty folder in data folder
                     cleanDir('./data')
-                    self.SortingBlockTreeSetFilter(self.SortingBlockTreeActualFilter)
-                    self.setInfoPanel(None)
+                    self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)
+                    self.set_info_panel(None)
         except Exception:
             traceback.print_exc()
 
-    def setLocalisation(self):
+    def set_localisation(self):
         """
         translate window text with the content of the lang object
 
@@ -127,49 +128,49 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
         # Titre fenêtre
         self.setWindowTitle(self.lang['Home']['WindowTitle'])
         # Boutons du bandeau
-        self.HeaderBlockBtnAddBook.setToolTip(self.lang['Home']['HeaderBlockBtnAddBook'])
-        self.HeaderBlockBtnDelBook.setToolTip(self.lang['Home']['HeaderBlockBtnDelBook'])
-        self.HeaderBlockBtnSettings.setToolTip(self.lang['Home']['HeaderBlockBtnSettings'])
+        self.header_block_btn_add_book.setToolTip(self.lang['Home']['HeaderBlockBtnAddBook'])
+        self.header_block_btn_del_book.setToolTip(self.lang['Home']['HeaderBlockBtnDelBook'])
+        self.header_block_btn_settings.setToolTip(self.lang['Home']['HeaderBlockBtnSettings'])
         # Panneau de gauche
-        self.SortingBlockTree.topLevelItem(0).setText(0, self.lang['Home']['SortingBlockTreeAll'])
-        self.SortingBlockTree.topLevelItem(0).setText(1, 'all')
-        self.SortingBlockTree.topLevelItem(1).setText(0, self.lang['Home']['SortingBlockTreeAuthors'])
-        self.SortingBlockTree.topLevelItem(1).setText(1, 'authors')
-        self.SortingBlockTree.topLevelItem(2).setText(0, self.lang['Home']['SortingBlockTreeSeries'])
-        self.SortingBlockTree.topLevelItem(2).setText(1, 'serie')
+        self.sorting_block_tree.topLevelItem(0).setText(0, self.lang['Home']['SortingBlockTreeAll'])
+        self.sorting_block_tree.topLevelItem(0).setText(1, 'all')
+        self.sorting_block_tree.topLevelItem(1).setText(0, self.lang['Home']['SortingBlockTreeAuthors'])
+        self.sorting_block_tree.topLevelItem(1).setText(1, 'authors')
+        self.sorting_block_tree.topLevelItem(2).setText(0, self.lang['Home']['SortingBlockTreeSeries'])
+        self.sorting_block_tree.topLevelItem(2).setText(1, 'serie')
 
-        self.SortingBlockSearchLabel.setText(self.lang['Home']['SortingBlockSearchLabel'])
+        self.sorting_block_search_label.setText(self.lang['Home']['SortingBlockSearchLabel'])
         # Panneau central
-        self.CentralBlockTable.clear()
-        self.CentralBlockTable.setColumnCount(6)
+        self.central_block_table.clear()
+        self.central_block_table.setColumnCount(6)
         item = QtWidgets.QTableWidgetItem()
         item.setText(self.lang['Home']['CentralBlockTableTitle'])
-        self.CentralBlockTable.setHorizontalHeaderItem(0, item)
+        self.central_block_table.setHorizontalHeaderItem(0, item)
 
         item = QtWidgets.QTableWidgetItem()
         item.setText(self.lang['Home']['CentralBlockTableAuthors'])
-        self.CentralBlockTable.setHorizontalHeaderItem(1, item)
+        self.central_block_table.setHorizontalHeaderItem(1, item)
 
         item = QtWidgets.QTableWidgetItem()
         item.setText(self.lang['Home']['CentralBlockTableSeries'])
-        self.CentralBlockTable.setHorizontalHeaderItem(2, item)
+        self.central_block_table.setHorizontalHeaderItem(2, item)
 
         item = QTableAltItem()
         item.lock(True)
         item.setText(self.lang['Home']['CentralBlockTableTags'])
-        self.CentralBlockTable.setHorizontalHeaderItem(3, item)
+        self.central_block_table.setHorizontalHeaderItem(3, item)
 
         item = QtWidgets.QTableWidgetItem()
         item.setText(self.lang['Home']['CentralBlockTableAdded'])
-        self.CentralBlockTable.setHorizontalHeaderItem(4, item)
+        self.central_block_table.setHorizontalHeaderItem(4, item)
 
         item = QtWidgets.QTableWidgetItem()
         item.setText(self.lang['Home']['CentralBlockTableModified'])
-        self.CentralBlockTable.setHorizontalHeaderItem(5, item)
+        self.central_block_table.setHorizontalHeaderItem(5, item)
         # Panneau de info
-        self.InfoBlockTitleLabel.setText(self.lang['Home']['InfoBlockTitleLabel'])
-        self.InfoBlockSerieLabel.setText(self.lang['Home']['InfoBlockSerieLabel'])
-        self.InfoBlockAuthorsLabel.setText(self.lang['Home']['InfoBlockAuthorsLabel'])
-        self.InfoBlockFileFormatsLabel.setText(self.lang['Home']['InfoBlockFileFormatsLabel'])
-        self.InfoBlockSizeLabel.setText(self.lang['Home']['InfoBlockSizeLabel'])
+        self.info_block_title_label.setText(self.lang['Home']['InfoBlockTitleLabel'])
+        self.info_block_serie_label.setText(self.lang['Home']['InfoBlockSerieLabel'])
+        self.info_block_authors_label.setText(self.lang['Home']['InfoBlockAuthorsLabel'])
+        self.info_block_file_formats_label.setText(self.lang['Home']['InfoBlockFileFormatsLabel'])
+        self.info_block_size_label.setText(self.lang['Home']['InfoBlockSizeLabel'])
 

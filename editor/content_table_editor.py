@@ -18,7 +18,7 @@ from vars import *
 class IndexNameWindow(QDialog):
     def __init__(self, parent):
         super(IndexNameWindow, self).__init__(parent)
-        PyQt5.uic.loadUi(appDir + os.sep + 'editor/files_name.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/files_name.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.lang = lng
         self.setWindowTitle(lng['Editor']['FilesWindow']['FileNameWindowTitle'])
@@ -42,7 +42,7 @@ class IndexNameWindow(QDialog):
 class ContentTableWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(ContentTableWindow, self).__init__(parent)
-        PyQt5.uic.loadUi(appDir + os.sep + 'editor/content_table_editor.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/content_table_editor.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.lang = lng
         self.setWindowTitle(lng['Editor']['FilesWindow']['WindowTitle'])

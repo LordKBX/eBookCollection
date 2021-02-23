@@ -22,7 +22,7 @@ def dict_factory(cursor, row):
 
 class BDD:
     def __init__(self):
-        self.connexion = sqlite3.connect(appDir + os.sep + 'database.db')
+        self.connexion = sqlite3.connect(app_directory + os.sep + 'database.db')
         self.connexion.row_factory = dict_factory
         self.cursor = self.connexion.cursor()
 

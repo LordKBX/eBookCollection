@@ -32,7 +32,7 @@ def create_thumbnail(path: str, resize: bool = True):
     return 'data:image/jpeg;base64,'+base64.b64encode(buffer.getvalue()).decode()
 
 
-def getEpubIfo(path: str):
+def getEpubInfo(path: str):
     ret = {
         'guid': None,
         'title': None,
@@ -90,7 +90,7 @@ def getEpubIfo(path: str):
                 if cov_id != '':
                     if itm.attributes['id'].value == cov_id:
                         filepath, ext = os.path.splitext(itm.attributes['href'].value)
-                        tmpdir = appDir + '/tmp'  # create var for temporary file extraction
+                        tmpdir = app_directory + '/tmp'  # create var for temporary file extraction
                         if os.path.isdir(tmpdir) is False:
                             os.makedirs(tmpdir)
                         mfile = myzip.extract(base+itm.attributes['href'].value, tmpdir)
@@ -99,7 +99,7 @@ def getEpubIfo(path: str):
                 else:
                     if itm.attributes['media-type'].value in ['image/jpeg', 'image/png']:
                         filepath, ext = os.path.splitext(itm.attributes['href'].value)
-                        tmpdir = appDir + '/tmp'  # create var for temporary file extraction
+                        tmpdir = app_directory + '/tmp'  # create var for temporary file extraction
                         if os.path.isdir(tmpdir) is False:
                             os.makedirs(tmpdir)
                         mfile = myzip.extract(base+itm.attributes['href'].value, tmpdir)

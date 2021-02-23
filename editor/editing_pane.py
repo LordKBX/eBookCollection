@@ -80,7 +80,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             if old_txt != new_txt:
                 icon = QtGui.QIcon()
                 image = QtGui.QPixmap()
-                image.load(appDir.replace(os.sep, '/') + '/icons/white/edit.png')
+                image.load(app_directory.replace(os.sep, '/') + '/icons/white/edit.png')
                 icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
                 self.setTabIcon(index, icon)
             else:
@@ -150,7 +150,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
         if is_text is True:
             block = UIClass()
             super(UIClass, block).__init__()
-            PyQt5.uic.loadUi(appDir+'/editor/text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
+            PyQt5.uic.loadUi(app_directory + '/editor/text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
             block.setStyleSheet("""
             QPushButton{ background:transparent; }
             QPushButton:hover{ background-color:rgb(120, 120, 120); }
@@ -493,7 +493,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
         block_end = '</a>'
         try:
             item = self.currentWidget()
-            window = editor.link.LinkWindow(self.parent(), appDir + os.sep + 'editor' + os.sep + 'tmp'
+            window = editor.link.LinkWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp'
                                             + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
             selected_text = tx_edit.selectedText()
@@ -526,7 +526,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
     def img_poser(self):
         try:
             item = self.currentWidget()
-            window = editor.img.ImgWindow(self.parent(), appDir + os.sep + 'editor' + os.sep + 'tmp'
+            window = editor.img.ImgWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp'
                                           + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
             selected_text = tx_edit.selectedText()
@@ -535,7 +535,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             ret = window.openExec(selected_text, None)
             if ret is not None:
                 tb1 = item.property('fileName').replace(
-                    appDir + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep,
+                    app_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep,
                     ''
                 ).split(os.sep)
                 print(tb1)

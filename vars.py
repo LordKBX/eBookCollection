@@ -1,20 +1,20 @@
 import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-appDir = os.path.dirname(os.path.realpath(__file__))
+app_directory = os.path.dirname(os.path.realpath(__file__))
 
 env_vars = {
         'tools': {
             'poppler': {
                 'nt': {
-                    'path': appDir+'/tools/poppler/pdftoppm.exe',
+                    'path': app_directory + '/tools/poppler/pdftoppm.exe',
                     'params_cover': '-singlefile -r 200 -scale-to 600 -hide-annotations -jpeg -jpegopt quality=92,progressive=y,optimize=y %input% %output%',
                     'params_full': '-r 200 -scale-to 1920 -hide-annotations -jpeg -jpegopt quality=92,progressive=y,optimize=y %input% %output%'
                 }
             },
             '7zip': {
                 'nt': {
-                    'path': appDir+'/tools/7zip/7z.exe',
+                    'path': app_directory + '/tools/7zip/7z.exe',
                     'params_deflate': 'a -tzip %output% %input%',
                     'params_inflate': 'x %input% -o%output%'
                 }
@@ -38,10 +38,10 @@ env_vars = {
         'styles': {
             'black': {
                 'icons': {
-                    'folder': appDir.replace(os.sep, '/') + '/icons/white/folder.png',
-                    'file': appDir.replace(os.sep, '/') + '/icons/white/file.png',
-                    'lock': appDir.replace(os.sep, '/') + '/icons/white/lock.png',
-                    'unlock': appDir.replace(os.sep, '/') + '/icons/white/unlock.png'
+                    'folder': app_directory.replace(os.sep, '/') + '/icons/white/folder.png',
+                    'file': app_directory.replace(os.sep, '/') + '/icons/white/file.png',
+                    'lock': app_directory.replace(os.sep, '/') + '/icons/white/lock.png',
+                    'unlock': app_directory.replace(os.sep, '/') + '/icons/white/unlock.png'
                 },
                 'fullTreeView': """
                     ::section{
@@ -54,13 +54,13 @@ env_vars = {
                     
                     QTreeView::branch:has-children:!has-siblings:closed, QTreeView::branch:closed:has-children:has-siblings {
                         border-image: none;
-                        image: url('"""+appDir.replace(os.sep, '/')+"""/icons/white/tree_closed.png');
+                        image: url('""" + app_directory.replace(os.sep, '/') + """/icons/white/tree_closed.png');
                     }
         
                     QTreeView::branch:open:has-children:!has-siblings,
                     QTreeView::branch:open:has-children:has-siblings  {
                         border-image: none;
-                        image: url('"""+appDir.replace(os.sep, '/')+"""/icons/white/tree_opened.png');
+                        image: url('""" + app_directory.replace(os.sep, '/') + """/icons/white/tree_opened.png');
                     }
                     """,
                 'partialTreeView': """

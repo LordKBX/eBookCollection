@@ -13,7 +13,7 @@ from vars import *
 class CheckpointWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(CheckpointWindow, self).__init__(parent)
-        PyQt5.uic.loadUi(appDir + os.sep + 'editor/checkpoint.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/checkpoint.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.setWindowTitle(lng['Editor']['LinkWindow']['WindowTitle'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['LinkWindow']['btnOk'])

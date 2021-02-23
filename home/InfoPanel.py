@@ -6,26 +6,29 @@ from common.common import *
 
 
 class HomeWindowInfoPanel:
-    def setInfoPanel(self, book: dict = None):
+    current_book = None
+    
+    def set_info_panel(self, book: dict = None):
         """
         Insert into the info pannel the details values of the book
 
         :param book: dict of the spécified book
         :return: void
         """
-        print('setInfoPanel')
+        print('set_info_panel')
         # print(book)
         passed = True
-        if book is None: passed = False
+        if book is None: 
+            passed = False
         else:
             if not is_in(book, ['title', 'serie', 'authors', 'files']):
                 passed = False
 
         if passed is True:
-            self.currentBook = book['guid']
-            self.InfoBlockTitleValue.setText(book['title'])
-            self.InfoBlockSerieValue.setText(book['serie'])
-            self.InfoBlockAuthorsValue.setText(book['authors'])
+            self.current_book = book['guid']
+            self.info_block_title_value.setText(book['title'])
+            self.info_block_serie_value.setText(book['serie'])
+            self.info_block_authors_value.setText(book['authors'])
             formats = ''
             sizes = ''
             for file in book['files']:
@@ -34,16 +37,16 @@ class HomeWindowInfoPanel:
                     sizes += ' / '
                 link = file['link']
                 if re.search("^data/", link):
-                    link = 'file:///' + self.appDir.replace(os.sep, '/') + '/' + link
-                    # link = self.appDir.replace(os.sep, '/') + '/' + link
+                    link = 'file:///' + self.app_directory.replace(os.sep, '/') + '/' + link
+                    # link = self.app_directory.replace(os.sep, '/') + '/' + link
                 # elif re.search("^(http|https)://", link): {}
                 # else: link = 'file:///' + link
                 link = link.replace(' ', '%20')
                 formats += '<a href="' + link + '" style="color: rgb(255, 255, 255);">' + file['format'] + '</a>'
                 sizes += file['size']
-            self.InfoBlockFileFormatsValue.setText(formats)
-            self.InfoBlockFileFormatsValue.setOpenExternalLinks(True)
-            self.InfoBlockSizeValue.setText(sizes)
+            self.info_block_file_formats_value.setText(formats)
+            self.info_block_file_formats_value.setOpenExternalLinks(True)
+            self.info_block_size_value.setText(sizes)
             try:
                 icon = QtGui.QIcon()
                 tbimg = book['cover'].split(',')
@@ -58,23 +61,23 @@ class HomeWindowInfoPanel:
                     image.loadFromData(by, "PNG")
                 """
                 icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
-                self.InfoBlockCover.setIcon(icon)
-                self.InfoBlockCover.setIconSize(QtCore.QSize(160, 160))
-                self.InfoBlockCover.setToolTip("<img src='{}'/>".format(book['cover']))
+                self.info_block_cover.setIcon(icon)
+                self.info_block_cover.setIconSize(QtCore.QSize(160, 160))
+                self.info_block_cover.setToolTip("<img src='{}'/>".format(book['cover']))
             except Exception:
                 traceback.print_exc()
                 icon = QtGui.QIcon()
-                icon.addPixmap(QtGui.QPixmap(self.appDir + '/icons/white/book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-                self.InfoBlockCover.setIcon(icon)
-                self.InfoBlockCover.setIconSize(QtCore.QSize(130, 130))
+                icon.addPixmap(QtGui.QPixmap(self.app_directory + '/icons/white/book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                self.info_block_cover.setIcon(icon)
+                self.info_block_cover.setIconSize(QtCore.QSize(130, 130))
         else:
-            self.InfoBlockTitleValue.setText("")
-            self.InfoBlockSerieValue.setText("")
-            self.InfoBlockAuthorsValue.setText("")
-            self.InfoBlockFileFormatsValue.setText("")
-            self.InfoBlockSizeValue.setText("")
+            self.info_block_title_value.setText("")
+            self.info_block_serie_value.setText("")
+            self.info_block_authors_value.setText("")
+            self.info_block_file_formats_value.setText("")
+            self.info_block_size_value.setText("")
 
             icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(self.appDir+'/icons/white/book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            self.InfoBlockCover.setIcon(icon)
-            self.InfoBlockCover.setIconSize(QtCore.QSize(130, 130))
+            icon.addPixmap(QtGui.QPixmap(self.app_directory+'/icons/white/book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.info_block_cover.setIcon(icon)
+            self.info_block_cover.setIconSize(QtCore.QSize(130, 130))

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>HomeWindow</class>
- <widget class="QWidget" name="HomeWindow">
+ <class>home_window</class>
+ <widget class="QWidget" name="home_window">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -63,7 +63,7 @@ QLineEdit{
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QScrollArea" name="HeaderBlock">
+    <widget class="QScrollArea" name="header_block">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -91,7 +91,7 @@ QLineEdit{
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
      </property>
-     <widget class="QWidget" name="HeaderBlockScrollArea">
+     <widget class="QWidget" name="header_block_scroll_area">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -135,7 +135,7 @@ QLineEdit{
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="HeaderBlockBtnAddBook">
+        <widget class="QPushButton" name="header_block_btn_add_book">
          <property name="minimumSize">
           <size>
            <width>70</width>
@@ -182,7 +182,7 @@ QLineEdit{
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="HeaderBlockBtnDelBook">
+        <widget class="QPushButton" name="header_block_btn_del_book">
          <property name="minimumSize">
           <size>
            <width>70</width>
@@ -229,7 +229,7 @@ QLineEdit{
         </widget>
        </item>
        <item>
-        <spacer name="HeaderBlockScrollFiller">
+        <spacer name="header_block_scroll_filler">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -242,7 +242,7 @@ QLineEdit{
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="HeaderBlockBtnSettings">
+        <widget class="QPushButton" name="header_block_btn_settings">
          <property name="minimumSize">
           <size>
            <width>70</width>
@@ -287,9 +287,9 @@ QLineEdit{
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="MainBlock">
+    <layout class="QHBoxLayout" name="main_block">
      <item>
-      <layout class="QVBoxLayout" name="SortingBlock">
+      <layout class="QVBoxLayout" name="sorting_block">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -297,7 +297,7 @@ QLineEdit{
         <enum>QLayout::SetFixedSize</enum>
        </property>
        <item>
-        <widget class="QTreeWidget" name="SortingBlockTree">
+        <widget class="QTreeWidget" name="sorting_block_tree">
          <property name="minimumSize">
           <size>
            <width>210</width>
@@ -371,9 +371,9 @@ QLineEdit{
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="SortingBlockSearchBlock">
+        <layout class="QHBoxLayout" name="sorting_block_search_block">
          <item>
-          <widget class="QLabel" name="SortingBlockSearchLabel">
+          <widget class="QLabel" name="sorting_block_search_label">
            <property name="minimumSize">
             <size>
              <width>40</width>
@@ -392,7 +392,7 @@ QLineEdit{
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="SortingBlockSearchValue">
+          <widget class="QLineEdit" name="sorting_block_search_value">
            <property name="maximumSize">
             <size>
              <width>170</width>
@@ -410,7 +410,7 @@ QLineEdit{
         </layout>
        </item>
        <item>
-        <widget class="QFrame" name="InfoBlock_2">
+        <widget class="QFrame" name="info_block_2">
          <property name="maximumSize">
           <size>
            <width>200</width>
@@ -444,7 +444,7 @@ QLabel{
            <enum>QLayout::SetMaximumSize</enum>
           </property>
           <item>
-           <widget class="QPushButton" name="InfoBlockCover">
+           <widget class="QPushButton" name="info_block_cover">
             <property name="minimumSize">
              <size>
               <width>190</width>
@@ -472,7 +472,7 @@ QLabel{
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="InfoBlockTitle">
+           <layout class="QHBoxLayout" name="info_block_title">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -480,7 +480,7 @@ QLabel{
              <enum>QLayout::SetMinimumSize</enum>
             </property>
             <item>
-             <widget class="QLabel" name="InfoBlockTitleLabel">
+             <widget class="QLabel" name="info_block_title_label">
               <property name="minimumSize">
                <size>
                 <width>70</width>
@@ -499,7 +499,7 @@ QLabel{
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="InfoBlockTitleValue">
+             <widget class="QLabel" name="info_block_title_value">
               <property name="minimumSize">
                <size>
                 <width>120</width>
@@ -520,7 +520,7 @@ QLabel{
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="InfoBlockSerie">
+           <layout class="QHBoxLayout" name="info_block_serie">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -528,7 +528,7 @@ QLabel{
              <enum>QLayout::SetMinimumSize</enum>
             </property>
             <item>
-             <widget class="QLabel" name="InfoBlockSerieLabel">
+             <widget class="QLabel" name="info_block_serie_label">
               <property name="minimumSize">
                <size>
                 <width>70</width>
@@ -547,7 +547,7 @@ QLabel{
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="InfoBlockSerieValue">
+             <widget class="QLabel" name="info_block_serie_value">
               <property name="minimumSize">
                <size>
                 <width>120</width>
@@ -568,7 +568,7 @@ QLabel{
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="InfoBlockAuthors">
+           <layout class="QHBoxLayout" name="info_block_authors">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -576,7 +576,7 @@ QLabel{
              <enum>QLayout::SetMinimumSize</enum>
             </property>
             <item>
-             <widget class="QLabel" name="InfoBlockAuthorsLabel">
+             <widget class="QLabel" name="info_block_authors_label">
               <property name="minimumSize">
                <size>
                 <width>70</width>
@@ -595,7 +595,7 @@ QLabel{
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="InfoBlockAuthorsValue">
+             <widget class="QLabel" name="info_block_authors_value">
               <property name="minimumSize">
                <size>
                 <width>120</width>
@@ -616,7 +616,7 @@ QLabel{
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="InfoBlockFileFormats">
+           <layout class="QHBoxLayout" name="info_block_file_formats">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -624,7 +624,7 @@ QLabel{
              <enum>QLayout::SetMinimumSize</enum>
             </property>
             <item>
-             <widget class="QLabel" name="InfoBlockFileFormatsLabel">
+             <widget class="QLabel" name="info_block_file_formats_label">
               <property name="minimumSize">
                <size>
                 <width>70</width>
@@ -643,7 +643,7 @@ QLabel{
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="InfoBlockFileFormatsValue">
+             <widget class="QLabel" name="info_block_file_formats_value">
               <property name="minimumSize">
                <size>
                 <width>120</width>
@@ -667,7 +667,7 @@ QLabel{
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="InfoBlockSize">
+           <layout class="QHBoxLayout" name="info_block_size">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -675,7 +675,7 @@ QLabel{
              <enum>QLayout::SetMinimumSize</enum>
             </property>
             <item>
-             <widget class="QLabel" name="InfoBlockSizeLabel">
+             <widget class="QLabel" name="info_block_size_label">
               <property name="minimumSize">
                <size>
                 <width>70</width>
@@ -694,7 +694,7 @@ QLabel{
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="InfoBlockSizeValue">
+             <widget class="QLabel" name="info_block_size_value">
               <property name="minimumSize">
                <size>
                 <width>120</width>
@@ -715,7 +715,7 @@ QLabel{
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="InfoBlockSynopsis">
+           <layout class="QVBoxLayout" name="info_block_synopsis">
             <property name="spacing">
              <number>0</number>
             </property>
@@ -730,9 +730,9 @@ QLabel{
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="CentralBlock">
+      <layout class="QVBoxLayout" name="central_block">
        <item>
-        <widget class="QTableWidget" name="CentralBlockTable">
+        <widget class="QTableWidget" name="central_block_table">
          <property name="minimumSize">
           <size>
            <width>500</width>

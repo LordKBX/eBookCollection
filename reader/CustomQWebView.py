@@ -172,8 +172,13 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 			super().page().mainFrame().setScrollPosition(
 				QtCore.QPoint(0, self.nbpage * super().height())
 			)
-			if passed > 0: self.eventHandler({ 'type': 'pageChange', 'value': 'next', 'index': self.nbpage })
-			else: self.eventHandler({ 'type': 'pageChange', 'value': 'prev', 'index': self.nbpage })
+			try:
+				if passed > 0:
+					self.eventHandler({ 'type': 'pageChange', 'value': 'next', 'index': self.nbpage })
+				else:
+					self.eventHandler({ 'type': 'pageChange', 'value': 'prev', 'index': self.nbpage })
+			except Exception:
+				""
 
 	def updatePositionCbzByPage(self, page_index: int):
 		max = int(super().page().mainFrame().contentsSize().height() / super().height())
