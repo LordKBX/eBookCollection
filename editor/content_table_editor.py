@@ -17,7 +17,7 @@ from vars import *
 
 class IndexNameWindow(QDialog):
     def __init__(self, parent):
-        super(IndexNameWindow, self).__init__(parent, tCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+        super(IndexNameWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(app_directory + os.sep + 'editor/files_name.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.lang = lng

@@ -1,0 +1,135 @@
+{
+	"Home": {
+		"WindowTitle": "EbookCollection - Ebook manager",
+		"AddBookWindowTitle": "EbookCollection - New books selection",
+		"HeaderBlockBtnAddBook": "Add Ebook",
+		"HeaderBlockBtnDelBook": "Delete Ebook",
+		"HeaderBlockBtnSettings": "Settings",
+		"SortingBlockTreeAll": "All",
+		"SortingBlockTreeSeries": "Series",
+		"SortingBlockTreeAuthors": "Authors",
+		"SortingBlockSearchLabel": "Filter",
+		"CentralBlockTableTitle": "Title",
+		"CentralBlockTableAuthors": "Author",
+		"CentralBlockTableSeries": "Serie",
+		"CentralBlockTableTags": "Tags",
+		"CentralBlockTableModified": "Modified",
+		"CentralBlockTableAdded": "Imported",
+		"InfoBlockTitleLabel": "Title",
+		"InfoBlockSerieLabel": "Serie",
+		"InfoBlockAuthorsLabel": "Author(s)",
+		"InfoBlockFileFormatsLabel": "Format(s)",
+		"InfoBlockSizeLabel": "Size",
+		"InfoBlockSynopsisLabel": "Synopsis",
+		"DialogConfirmDeleteBookWindowTitle": "Delete Ebook",
+		"DialogConfirmDeleteBookWindowText": "Confirm Ebook remove ?",
+		"DialogConfirmDeleteBookBtnYes": "Yes",
+		"DialogConfirmDeleteBookBtnNo": "No",
+		"blockHeaderTitle": "  Toolbar",
+		"blockSortTitle": "  Filters",
+		"blockInfoTitle": "  Infos"
+	},
+	"Generic": {
+		"DialogBtnOk": "Ok",
+		"DialogBtnYes": "Yes",
+		"DialogBtnNo": "No",
+		"DialogBtnCancel": "Cancel"
+	},
+	"Reader": {
+		"WindowTitle": "EbookCollection: Reader",
+		"DialogInfoNoFileWindowTitle": "File Error",
+		"DialogInfoNoFileWindowText": "File Path not given",
+		"DialogInfoBadFileWindowTitle": "File Error",
+		"DialogInfoBadFileWindowText": "Invalid file format",
+		"ContentTableHeader": "Content Table",
+		"ContentTableTxtCover": "Cover",
+		"ContentTableTxtEnd": "End",
+		"ContentTableTxtPageX": "Page {}",
+		"ContentTableTxtChapterX": "Chapter {}: {}"
+	},
+	"Editor": {
+		"WindowTitle": "EbookCollection: Editor",
+		"DialogInfoNoFileWindowTitle": "File Error",
+		"DialogInfoNoFileWindowText": "File Path not given",
+		"DialogInfoBadFileWindowTitle": "File Error",
+		"DialogInfoBadFileWindowText": "Invalid file format",
+		"ContentTableHeader": "Content Table",
+		"FileTableHeader": "File Explorer",
+		"WebViewDefaultPageContent": "<?xml version=\"1.0\" encoding=\"utf-8\"?><html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"fr\"><head><title>Live Preview</title></head><body><h3>Live Preview</h3><p>You could see a here the live preview of the HTML file being edited. The preview will update automatically as you make your changes.</p><p style=\"font-size:x-small;\">Note that this is a quick preview only, this is not intended to simulate a real digital book reader. Some aspects of your eBook will not work, such as page breaks and page margins.</p></body></html>",
+		"DialogConfirmSaveWindowTitle": "Save File",
+		"DialogConfirmSaveWindowText": "Do you confirm saving the file changes ?",
+		"DialogCreateCheckpointWindowTitle": "Create session checkpoint",
+		"DialogCreateCheckpointWindowText": "Checkpoint {} successfuly created",
+		"LinkWindow": {
+			"WindowTitle": "Add/modify link",
+			"labelUrl": "Link URL",
+			"labelText": "Link text",
+			"btnOk": "Ok",
+			"btnCancel": "Cancel"
+		},
+		"ImgWindow": {
+			"WindowTitle": "Add/modify image",
+			"labelUrl": "Image URL",
+			"labelText": "Image alternate texte",
+			"btnOk": "Ok",
+			"btnCancel": "Cancel"
+		},
+		"FilesWindow": {
+			"WindowTitle": "Files manager",
+			"ImportWindowTitle": "Import file",
+			"FileNameWindowTitle": "Input name",
+			"FileNameWindowLabel": "Name",
+			"btnOk": "Ok",
+			"btnCancel": "Cancel"
+		},
+		"ContentTableWindow": {
+			"WindowTitle": "Content Table Editor",
+			"ListLabel": "Content Table",
+			"AddIndexLabel": "Insert new index",
+			"AddIndexPlaceholder": "Index name",
+			"ModifyIndexLabel": "Modify index",
+			"BtnRename": "Rename index",
+			"BtnDelete": "Delete index",
+			"NameWindowTitle": "Input name",
+			"NameWindowLabel": "Name",
+			"btnOk": "Ok",
+			"btnCancel": "Cancel"
+		}
+	},
+	"Time": {
+		"template": {
+			"numeric_date": "%m/%d/%Y",
+			"numeric_datetime": "%m/%d/%Y %H:%M",
+			"textual_date": "$month %d %Y",
+			"textual_datetime": "$month %d %Y at %H:%M"
+		},
+		"months_short": [
+			"jan.",
+			"feb.",
+			"march",
+			"april",
+			"may",
+			"june",
+			"july.",
+			"aug.",
+			"sept.",
+			"oct.",
+			"nov.",
+			"dec."
+		],
+		"months_full": [
+			"January",
+			"February",
+			"March",
+			"April",
+			"May",
+			"June",
+			"July",
+			"August",
+			"September",
+			"October",
+			"November",
+			"December"
+		]
+	}
+}

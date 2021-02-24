@@ -15,7 +15,7 @@ from home.InfoPanel import *
 from home.SortingBlockTree import *
 
 
-class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
+class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
     def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict):
         self.app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.currentBook = ''
@@ -24,7 +24,16 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
         self.tools = env_vars['tools']
         self.env_vars = env_vars['vars']
         super(HomeWindow, self).__init__()
-        PyQt5.uic.loadUi('home/home.ui', self) # Load the .ui file
+        PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file
+
+        self.setStyleSheet("""
+            QMainWindow::separator { background: rgba(63, 63, 63); }
+            QMainWindow::separator:hover { background: rgba(120, 120, 120); }
+            QWidget{ background: rgba(63, 63, 63); color:white; }
+            QDockWidget { border: 0; margin:0; padding:0; }
+            QDockWidget::title { font: bold; text-align: left; background: #333333; padding-left: 5px; }
+            """)
+        self.header_block_contents2.setStyleSheet(env_vars['styles']['black']['fullButton'])
         self.set_localisation()
         self.set_info_panel()
         # self.load_books(self.BDD.getBooks())
@@ -39,7 +48,7 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
         self.sorting_block_tree_load_data()
         self.sorting_block_tree_set_filter('all')
 
-        self.show() # Show the GUI
+        self.show()  # Show the GUI
 
     def header_block_btn_add_book_clicked(self):
         """
@@ -127,6 +136,10 @@ class HomeWindow(QWidget, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindo
         """
         # Titre fenêtre
         self.setWindowTitle(self.lang['Home']['WindowTitle'])
+        # Titres blocks
+        self.header_block.setWindowTitle(self.lang['Home']['blockHeaderTitle'])
+        self.sorting_block.setWindowTitle(self.lang['Home']['blockSortTitle'])
+        self.info_block.setWindowTitle(self.lang['Home']['blockInfoTitle'])
         # Boutons du bandeau
         self.header_block_btn_add_book.setToolTip(self.lang['Home']['HeaderBlockBtnAddBook'])
         self.header_block_btn_del_book.setToolTip(self.lang['Home']['HeaderBlockBtnDelBook'])

@@ -169,15 +169,22 @@ if __name__ == "__main__":
 		winTitle = lang['Reader']['WindowTitle'] + ' - '
 		first = True
 		for index in ['authors', 'serie', 'title']:
-			if bookData[index] is not None:
-				if bookData[index].strip() != '':
-					if first is False:
-						winTitle += ' / '
-					else: first = False
-					winTitle += bookData[index]
+			try:
+				if bookData[index] is not None:
+					if bookData[index].strip() != '':
+						if first is False:
+							winTitle += ' / '
+						else: first = False
+						winTitle += bookData[index]
+			except Exception:
+				""
 
 		ui.setWindowTitle(winTitle)
-		ret = inflate(file, destDir)
+		try:
+			ret = inflate(file, destDir)
+		except Exception:
+			WarnDialog("Error", "File not found")
+
 		page = destDir + "/" + bookData['chapters'][0]['src']
 		page = 'file:///' + page.replace("\\", '/')
 		i = 0

@@ -13,5 +13,7 @@ class Dictionary:
         :param value: index
         :return: str|None
         """
-        if value not in self.data: return None
-        else: return self.data[value]
+        if value not in self.data:
+            return None
+        else:
+            return self.data[value]

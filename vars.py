@@ -7,14 +7,14 @@ env_vars = {
         'tools': {
             'poppler': {
                 'nt': {
-                    'path': app_directory + '/tools/poppler/pdftoppm.exe',
+                    'path': app_directory + os.sep + 'tools' + os.sep + 'poppler' + os.sep + 'pdftoppm.exe',
                     'params_cover': '-singlefile -r 200 -scale-to 600 -hide-annotations -jpeg -jpegopt quality=92,progressive=y,optimize=y %input% %output%',
                     'params_full': '-r 200 -scale-to 1920 -hide-annotations -jpeg -jpegopt quality=92,progressive=y,optimize=y %input% %output%'
                 }
             },
             '7zip': {
                 'nt': {
-                    'path': app_directory + '/tools/7zip/7z.exe',
+                    'path': app_directory + os.sep + 'tools' + os.sep + '7zip' + os.sep + '7z.exe',
                     'params_deflate': 'a -tzip %output% %input%',
                     'params_inflate': 'x %input% -o%output%'
                 }
