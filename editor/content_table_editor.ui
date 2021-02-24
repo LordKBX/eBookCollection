@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -24,6 +27,9 @@
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
+  </property>
+  <property name="whatsThis">
+   <string notr="true"/>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -194,27 +200,34 @@
       </layout>
      </item>
      <item>
-      <widget class="Line" name="line">
-       <property name="minimumSize">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
         <size>
-         <width>200</width>
-         <height>5</height>
+         <width>20</width>
+         <height>20</height>
         </size>
        </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="modify_index_label">
        <property name="maximumSize">
         <size>
          <width>250</width>
          <height>16777215</height>
         </size>
        </property>
-       <property name="autoFillBackground">
-        <bool>true</bool>
+       <property name="text">
+        <string>Modify index</string>
        </property>
-       <property name="styleSheet">
-        <string notr="true">background-color: rgb(98, 98, 98);</string>
-       </property>
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+       <property name="margin">
+        <number>3</number>
        </property>
       </widget>
      </item>

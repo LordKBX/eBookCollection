@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import locale
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from lang.obj import *
@@ -23,6 +24,9 @@ class Lang:
         :return: str|None
         """
         ln = self.language
-        if ln not in self.translations: ln = 'en_US'
-        if value not in self.translations[ln]: return None
-        else: return self.translations[ln][value]
+        if ln not in self.translations:
+            ln = 'en_US'
+        if value not in self.translations[ln]:
+            return None
+        else:
+            return self.translations[ln][value]

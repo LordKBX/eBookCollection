@@ -13,7 +13,7 @@ from vars import *
 
 class ImgWindow(QDialog):
     def __init__(self, parent, folder: str):
-        super(ImgWindow, self).__init__(parent)
+        super(ImgWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(app_directory + os.sep + 'editor/img.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.setWindowTitle(lng['Editor']['ImgWindow']['WindowTitle'])

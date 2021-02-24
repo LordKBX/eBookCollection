@@ -83,6 +83,20 @@ data = {
                 'btnOk': 'Ok',
                 'btnCancel': 'Annuler'
             }),
+            'ContentTableWindow': Dictionary({
+                'WindowTitle': 'Edition table des matières',
+                'ListLabel': 'Table des matières',
+                'AddIndexLabel': 'Insérer un index',
+                'AddIndexPlaceholder': 'Nom d\'index',
+                'ModifyIndexLabel': 'Modification d\'un index',
+                'BtnRename': 'Renommer index',
+                'BtnDelete': 'Supprimer index',
+
+                'NameWindowTitle': 'Saisissez un nom',
+                'NameWindowLabel': 'Nom',
+                'btnOk': 'Ok',
+                'btnCancel': 'Annuler'
+            }),
         }),
         'Time': Dictionary({
             'template': Dictionary({
