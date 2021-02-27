@@ -192,7 +192,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
   <widget class="QDockWidget" name="header_block">
    <property name="minimumSize">
     <size>
-     <width>246</width>
+     <width>322</width>
      <height>95</height>
     </size>
    </property>
@@ -284,6 +284,53 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
           <property name="icon">
            <iconset>
             <normaloff>../icons/white/book_add.png</normaloff>../icons/white/book_add.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>60</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+          <property name="default">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="header_block_btn_create_book">
+          <property name="minimumSize">
+           <size>
+            <width>70</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>70</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../icons/white/book_new.png</normaloff>../icons/white/book_new.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -697,11 +744,14 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>20</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="text">
           <string>TextLabel</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -745,11 +795,14 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>20</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="text">
           <string>TextLabel</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -793,11 +846,14 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>20</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="text">
           <string>TextLabel</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -841,7 +897,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>20</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="styleSheet">
@@ -849,6 +905,9 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          </property>
          <property name="text">
           <string>&lt;a href=&quot;test&quot;&gt;test&lt;/a&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -892,7 +951,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>20</height>
+           <height>16777215</height>
           </size>
          </property>
          <property name="styleSheet">
@@ -927,6 +986,9 @@ QPushButton:checked{
          </property>
          <property name="text">
           <string>TextLabel</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

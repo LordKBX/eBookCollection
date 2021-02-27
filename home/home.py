@@ -13,6 +13,8 @@ import bdd
 from home.CentralBlockTable import *
 from home.InfoPanel import *
 from home.SortingBlockTree import *
+from home.settings import *
+import home.empty_book
 
 
 class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
@@ -25,6 +27,16 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.env_vars = env_vars['vars']
         super(HomeWindow, self).__init__()
         PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file
+
+        # load parameters for file import
+        file_name_template = self.BDD.getParam('import_file_template')
+        file_name_separator = self.BDD.getParam('import_file_separator')
+        # test parameters for file import and assign default value if not set
+        if file_name_template is None:
+            self.BDD.setParam('import_file_template', self.env_vars['import_file_template']['default'])
+
+        if file_name_separator is None:
+            self.BDD.setParam('import_file_separator', self.env_vars['import_file_separator'])
 
         self.setStyleSheet("""
             QMainWindow::separator { background: rgba(63, 63, 63); }
@@ -39,6 +51,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         # self.load_books(self.BDD.getBooks())
 
         self.header_block_btn_add_book.clicked.connect(self.header_block_btn_add_book_clicked)
+        self.header_block_btn_create_book.clicked.connect(self.header_block_btn_create_book_clicked)
         self.header_block_btn_settings.clicked.connect(self.header_block_btn_settings_clicked)
         self.header_block_btn_del_book.clicked.connect(self.header_block_btn_del_book_clicked)
 
@@ -60,11 +73,6 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             # load parameters for file import
             file_name_template = self.BDD.getParam('import_file_template')
             file_name_separator = self.BDD.getParam('import_file_separator')
-            # test parameters for file import and assign default value if not set
-            if file_name_template is None:
-                file_name_template = self.env_vars['import_file_template']['default']
-            if file_name_separator is None:
-                file_name_separator = self.env_vars['import_file_separator']
 
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
@@ -75,22 +83,59 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             )
             if len(files) > 0:
                 for file in files:
-                    # Call booksTools.insertBook
-                    insertBook(self.tools, self.BDD, file_name_template, file_name_separator, file)
+                    # Call booksTools.insert_book
+                    insert_book(self.BDD, file_name_template, file_name_separator, file)
                 self.central_block_table.clearSelection()
                 self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)
 
         except Exception:
             traceback.print_exc()
 
-    @staticmethod
-    def header_block_btn_settings_clicked():
+    def header_block_btn_create_book_clicked(self):
+        """
+        Slot for click on the Add Book Button
+
+        :return: void
+        """
+        try:
+            empty_ui = home.empty_book.EmptyBookWindow(self)
+            ret = empty_ui.open_exec()
+            if ret is not None:
+                try:
+                    rmDir(app_directory+os.sep+'tmp')
+                    os.makedirs(app_directory + os.sep + 'tmp')
+                except Exception:
+                    ""
+
+                if ret['format'] == 'EPUB':
+                    vol = ret['vol']
+                    file = create_epub(ret['name'], ret['authors'], ret['serie'], vol)
+
+                    # load parameters for file import
+                    file_name_template = self.BDD.getParam('import_file_template')
+                    file_name_separator = self.BDD.getParam('import_file_separator')
+                    insert_book(self.BDD, file_name_template, file_name_separator, file)
+                self.central_block_table.clearSelection()
+                self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)
+
+
+
+            print(ret)
+        except Exception:
+            traceback.print_exc()
+
+    def header_block_btn_settings_clicked(self):
         """
         Slot for click on the Settings Button
 
         :return: void
         """
         print("Bouton Options clické")
+        try:
+            dialog = SettingsWindow(self)
+            dialog.open_exec()
+        except Exception:
+            traceback.print_exc()
 
     def header_block_btn_del_book_clicked(self):
         """
@@ -122,7 +167,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                             self.BDD.deleteBook(book_id)
                             print("line n° {}".format(item.row()))
                     # Cleanup all empty folder in data folder
-                    cleanDir('./data')
+                    clean_dir('./data')
                     self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)
                     self.set_info_panel(None)
         except Exception:
@@ -142,6 +187,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.info_block.setWindowTitle(self.lang['Home']['blockInfoTitle'])
         # Boutons du bandeau
         self.header_block_btn_add_book.setToolTip(self.lang['Home']['HeaderBlockBtnAddBook'])
+        self.header_block_btn_create_book.setToolTip(self.lang['Home']['HeaderBlockBtnCreateBook'])
         self.header_block_btn_del_book.setToolTip(self.lang['Home']['HeaderBlockBtnDelBook'])
         self.header_block_btn_settings.setToolTip(self.lang['Home']['HeaderBlockBtnSettings'])
         # Panneau de gauche

@@ -165,7 +165,7 @@ if __name__ == "__main__":
 	appMode = QwwMode.CBZ
 	if ext in ['.epub', '.epub2', '.epub3']:
 		appMode = QwwMode.EPUB
-		bookData = getEpubInfo(file)
+		bookData = get_epub_info(file)
 		winTitle = lang['Reader']['WindowTitle'] + ' - '
 		first = True
 		for index in ['authors', 'serie', 'title']:

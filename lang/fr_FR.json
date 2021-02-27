@@ -1,8 +1,10 @@
 {
+	"Label": "Français (France)",
 	"Home": {
 		"WindowTitle": "EbookCollection - Gestionnaire de livre numérique",
 		"AddBookWindowTitle": "EbookCollection - Selection nouveaux livres",
 		"HeaderBlockBtnAddBook": "Ajouter Livre(s)",
+		"HeaderBlockBtnCreateBook": "Ajouter Livre Vide",
 		"HeaderBlockBtnDelBook": "Supprimer Livre(s)",
 		"HeaderBlockBtnSettings": "Options",
 		"SortingBlockTreeAll": "Tout",
@@ -27,10 +29,26 @@
 		"DialogConfirmDeleteBookBtnNo": "Non",
 		"blockHeaderTitle": "  Barre d'outils",
 		"blockSortTitle": "  Filtres",
-		"blockInfoTitle": "  Infos"
+		"blockInfoTitle": "  Infos",
+		"emptyBooks": {
+			"WindowTitle": "Ajout de livre vide",
+			"Number": "Nombre de livre vide",
+			"Authors": "Auteur(s)",
+			"Series": "Série",
+			"SeriesVolume": "N° du/premier tome",
+			"Name": "Nom du/des livre(s)",
+			"Format": "Format de fichier"
+		},
+		"emptyBookCreation": {
+			"Cover": "Couverture",
+			"Chapter1": "Chapitre 1",
+			"Author": "Auteur:",
+			"Authors": "Auteurs:"
+		}
 	},
 	"Generic": {
 		"DialogBtnOk": "Compris",
+		"DialogBtnSave": "Enregistrer",
 		"DialogBtnYes": "Oui",
 		"DialogBtnNo": "Non",
 		"DialogBtnCancel": "Annuler"
@@ -131,5 +149,8 @@
 			"Novembre",
 			"Décembre"
 		]
+	},
+	"Settings": {
+		"languageAutomatic": "< Langue système >"
 	}
 }

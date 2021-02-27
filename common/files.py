@@ -86,7 +86,7 @@ def recurListDirTree(file: str, path: str, treeFiles: dict):
             else: treeFiles[tmpl] = dict()
 
 
-def cleanDir(src_dir: str):
+def clean_dir(src_dir: str):
     for dirpath, _, _ in os.walk(src_dir, topdown=False):  # Listing the files
         if dirpath == src_dir: break
         try: os.rmdir(dirpath)

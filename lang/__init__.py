@@ -32,21 +32,8 @@ class Lang:
     translations = dict()
 
     def __init__(self):
-        self.language = locale.getdefaultlocale()[0]
-
-        ext = "json"
-        for root, directories, files in os.walk(os.path.dirname(os.path.realpath(__file__)), topdown=False):
-            for name in files:
-                if re.search("\\.({})$".format(ext), name) is None:
-                    continue
-                else:
-                    nm = name.replace(".json", "")
-                    fp = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + name, "r", encoding="utf8")
-                    content = fp.read()
-                    fp.close()
-                    decoder = json.decoder.JSONDecoder()
-                    tab = decoder.decode(content)
-                    self.translations[nm] = eval(content)
+        self.__load_langs()
+        self.set_lang(locale.getdefaultlocale()[0])
 
     def __getitem__(self, value: str):
         """
@@ -65,3 +52,43 @@ class Lang:
                 return Dictionary(self.translations[ln][value])
             else:
                 return self.translations[ln][value]
+
+    def __load_langs(self):
+        self.translations.clear()
+        ext = "json"
+        for root, directories, files in os.walk(os.path.dirname(os.path.realpath(__file__)), topdown=False):
+            for name in files:
+                if re.search("\\.({})$".format(ext), name) is None:
+                    continue
+                else:
+                    nm = name.replace(".json", "")
+                    fp = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + name, "r", encoding="utf8")
+                    content = fp.read()
+                    fp.close()
+                    decoder = json.decoder.JSONDecoder()
+                    tab = decoder.decode(content)
+                    self.translations[nm] = eval(content)
+
+    def refresh(self):
+        self.__load_langs()
+
+    def set_lang(self, lang: str):
+        if lang not in self.translations and lang != "auto":
+            return False
+        else:
+            self.language = lang
+            return True
+
+    def get_langs(self):
+        output = []
+        for lang in self.translations:
+            output.append({
+                "code": lang,
+                "name": self.translations[lang]['Label']
+            })
+        return output
+
+    def get_by_lang(self, lang: str, path: str):
+        if lang not in self.translations:
+            return None
+        ""

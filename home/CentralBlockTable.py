@@ -183,7 +183,7 @@ class HomeWindowCentralBlock:
             self.setInfoPanel(book)
 
             # Cleanup all empty folder in data folder
-            cleanDir('./data')
+            clean_dir('./data')
         except Exception:
             traceback.print_exc()
 

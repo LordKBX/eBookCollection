@@ -1,8 +1,10 @@
 {
+	"Label": "English (U.S.A)",
 	"Home": {
 		"WindowTitle": "EbookCollection - Ebook manager",
 		"AddBookWindowTitle": "EbookCollection - New books selection",
 		"HeaderBlockBtnAddBook": "Add Ebook",
+		"HeaderBlockBtnCreateBook": "Create Empty Ebook",
 		"HeaderBlockBtnDelBook": "Delete Ebook",
 		"HeaderBlockBtnSettings": "Settings",
 		"SortingBlockTreeAll": "All",
@@ -27,10 +29,26 @@
 		"DialogConfirmDeleteBookBtnNo": "No",
 		"blockHeaderTitle": "  Toolbar",
 		"blockSortTitle": "  Filters",
-		"blockInfoTitle": "  Infos"
+		"blockInfoTitle": "  Infos",
+		"emptyBooks": {
+			"WindowTitle": "Ajout de livre vide",
+			"Number": "Nombre de livre vide",
+			"Authors": "Auteur(s)",
+			"Series": "Série",
+			"SeriesVolume": "N° du/premier tome",
+			"Name": "Nom du/des livre(s)",
+			"Format": "Format de fichier"
+		},
+		"emptyBookCreation": {
+			"Cover": "Cover",
+			"Chapter1": "Chapters 1",
+			"Author": "Author:",
+			"Authors": "Authors:"
+		}
 	},
 	"Generic": {
 		"DialogBtnOk": "Ok",
+		"DialogBtnSave": "Save",
 		"DialogBtnYes": "Yes",
 		"DialogBtnNo": "No",
 		"DialogBtnCancel": "Cancel"
@@ -131,5 +149,8 @@
 			"November",
 			"December"
 		]
+	},
+	"Settings": {
+		"languageAutomatic": "< System defined >"
 	}
 }

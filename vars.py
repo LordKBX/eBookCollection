@@ -2,6 +2,7 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 app_directory = os.path.dirname(os.path.realpath(__file__))
+app_name = "EbookCollection"
 
 env_vars = {
         'tools': {
@@ -23,7 +24,7 @@ env_vars = {
         },
         'vars': {
             'import_file_template': {
-                'default': '%title% - %authors%',
+                'default': '%title% - %serie% - %authors%',
                 'title_authors': '%title% - %authors%',
                 'serie_title_authors': '%serie% - %title% - %authors%',
                 'title_serie_authors': '%title% - %serie% - %authors%',
@@ -43,6 +44,21 @@ env_vars = {
                     'lock': app_directory.replace(os.sep, '/') + '/icons/white/lock.png',
                     'unlock': app_directory.replace(os.sep, '/') + '/icons/white/unlock.png'
                 },
+                'dialog': """
+                    QDialog{ background-color:#4B4B4B; }
+                    QLabel{ 
+                        color:#999999;
+                        font-size:15px;
+                        font-weight:bold;
+                        background: transparent;
+                    }
+                    QSpinBox, QDoubleSpinBox, QLineEdit, QComboBox{ 
+                        background-color:#333333;
+                        color:#777777;
+                        border:#999999 2px solid;
+                        font-size:15px;
+                    }
+                 """,
                 'fullTreeView': """
                     ::section{
                         background-color:#4B4B4B;

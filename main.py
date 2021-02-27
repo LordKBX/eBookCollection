@@ -13,9 +13,11 @@ if __name__ == "__main__":
     translation = Lang()
 
     ret = bdd.getParam('home_central_table_header_size_policy')
-    if ret is not None: env_vars['vars']['home_central_table_header_size_policy'] = ret
+    if ret is not None:
+        env_vars['vars']['home_central_table_header_size_policy'] = ret
     ret = bdd.getParam('home_central_table_header_sizes')
-    if ret is not None: env_vars['vars']['home_central_table_header_sizes'] = ret
+    if ret is not None:
+        env_vars['vars']['home_central_table_header_sizes'] = ret
 
     app = QApplication([])
     app_icon = QtGui.QIcon()
