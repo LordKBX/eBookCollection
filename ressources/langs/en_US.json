@@ -151,6 +151,13 @@
 		]
 	},
 	"Settings": {
-		"languageAutomatic": "< System defined >"
+		"WindowTitle": "Settings",
+		"TabGlobalTitle": "Global",
+		"LanguageTitle": "Language",
+		"LanguageAutomatic": "< System defined >",
+		"Import": "Import",
+		"StyleTitle": "Style",
+		"StyleLight": "Light",
+		"StyleDark": "Dark"
 	}
 }

@@ -19,6 +19,9 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
   <property name="modal">
    <bool>true</bool>
   </property>
@@ -43,6 +46,18 @@
        <height>50</height>
       </size>
      </property>
+     <property name="cursor">
+      <cursorShape>PointingHandCursor</cursorShape>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
      <property name="tabPosition">
       <enum>QTabWidget::West</enum>
      </property>
@@ -59,17 +74,23 @@
       </size>
      </property>
      <property name="elideMode">
-      <enum>Qt::ElideNone</enum>
+      <enum>Qt::ElideMiddle</enum>
      </property>
      <property name="documentMode">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="tabBarAutoHide">
       <bool>false</bool>
      </property>
      <widget class="QWidget" name="tab_global">
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
       <property name="toolTip">
-       <string>Générale</string>
+       <string/>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
       </property>
       <attribute name="title">
        <string>Global</string>
@@ -77,6 +98,9 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QScrollArea" name="tab_global_scroll_area">
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
          <property name="widgetResizable">
           <bool>true</bool>
          </property>
@@ -85,13 +109,16 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>429</width>
-            <height>343</height>
+            <width>431</width>
+            <height>347</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
             <widget class="QLabel" name="tab_global_label">
+             <property name="cursor">
+              <cursorShape>ArrowCursor</cursorShape>
+             </property>
              <property name="text">
               <string>TextLabel</string>
              </property>
@@ -102,24 +129,29 @@
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>100</height>
+               <height>50</height>
               </size>
              </property>
              <property name="title">
               <string>Language</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="tab_global_lang_hl">
                 <item>
-                 <widget class="QLabel" name="tab_global_lang_selection_label">
-                  <property name="text">
-                   <string>App Language</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="tab_global_lang_selection_combo_box">
+                 <widget class="QComboBox" name="tab_global_lang_combo_box">
                   <item>
                    <property name="text">
                     <string>&lt;Automatic&gt;</string>
@@ -137,14 +169,14 @@
                   </item>
                  </widget>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="tab_global_lang_btn">
+                  <property name="text">
+                   <string>Import</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="lang_import_btn">
-                <property name="text">
-                 <string>Import</string>
-                </property>
-               </widget>
               </item>
              </layout>
             </widget>
@@ -154,24 +186,29 @@
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>100</height>
+               <height>50</height>
               </size>
              </property>
              <property name="title">
               <string>Style</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
               <item>
                <layout class="QHBoxLayout" name="tab_global_style_hl">
                 <item>
-                 <widget class="QLabel" name="tab_global_style_selection_label">
-                  <property name="text">
-                   <string>App Style</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="tab_global_style_selection_combo_box">
+                 <widget class="QComboBox" name="tab_global_style_combo_box">
                   <item>
                    <property name="text">
                     <string>Dark</string>
@@ -184,14 +221,14 @@
                   </item>
                  </widget>
                 </item>
+                <item>
+                 <widget class="QPushButton" name="tab_global_style_import_btn">
+                  <property name="text">
+                   <string>Import</string>
+                  </property>
+                 </widget>
+                </item>
                </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="tab_global_style_import_btn">
-                <property name="text">
-                 <string>Import</string>
-                </property>
-               </widget>
               </item>
              </layout>
             </widget>
@@ -260,8 +297,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>429</width>
-            <height>343</height>
+            <width>431</width>
+            <height>347</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -455,7 +492,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>415</width>
+            <width>417</width>
             <height>408</height>
            </rect>
           </property>

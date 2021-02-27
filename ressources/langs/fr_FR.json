@@ -151,6 +151,13 @@
 		]
 	},
 	"Settings": {
-		"languageAutomatic": "< Langue système >"
+		"WindowTitle": "Réglages",
+		"TabGlobalTitle": "Général",
+		"LanguageTitle": "Langue",
+		"LanguageAutomatic": "< Langue système >",
+		"Import": "Importer",
+		"StyleTitle": "Apparence",
+		"StyleLight": "Clair",
+		"StyleDark": "Foncé"
 	}
 }

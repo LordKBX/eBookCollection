@@ -46,6 +46,7 @@ env_vars = {
                 },
                 'dialog': """
                     QDialog{ background-color:#4B4B4B; }
+                    QScrollArea{ background-color:#4B4B4B; }
                     QLabel{ 
                         color:#999999;
                         font-size:15px;
@@ -57,6 +58,34 @@ env_vars = {
                         color:#777777;
                         border:#999999 2px solid;
                         font-size:15px;
+                    }
+                 """,
+                'QTabWidget': """
+                    QTabWidget {
+                    }
+                    QTabWidget::tab-bar {
+                        background-color:#333333;
+                        color:#AAAAAA;
+                    }
+                    QTabBar::tab {
+                        background-color:#999999;
+                        cursor:pointer;
+                        padding: 10px;
+                        border-bottom: 1px solid #ffffff;
+                        border-right: 1px solid #ffffff;
+                    }
+                    QTabBar::tab:selected
+                    {
+                        background-color:#004DD3;
+                        color:#ffffff;
+                    }
+                    QTabBar::tab:hover 
+                    {
+                        background-color:#196DFF;
+                        color:#ffffff;
+                    }
+                    QTabWidget::pane {
+                        background-color:#ff0000;
                     }
                  """,
                 'fullTreeView': """

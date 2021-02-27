@@ -18,7 +18,6 @@ from editor.files import *
 from editor.content_table_editor import *
 from bdd import *
 from vars import *
-from lang import *
 from common.common import *
 from common.dialog import *
 from common.books import *
@@ -28,12 +27,12 @@ import common.qt
 
 
 class EditorWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent: QtWidgets.QMainWindow, opened_file):
+    def __init__(self, parent: QtWidgets.QMainWindow, opened_file, lang):
         super(EditorWindow, self).__init__(parent)
         PyQt5.uic.loadUi(app_directory + '/editor/editor.ui'.replace('/', os.sep), self)
         self.opened_file = opened_file
         self.tmpDir = app_directory + os.sep + 'editor' + os.sep + 'tmp'
-        self.lang = Lang()
+        self.lang = lang
         self.default_page = self.lang['Editor']['WebViewDefaultPageContent']
 
         self.setStyleSheet("""

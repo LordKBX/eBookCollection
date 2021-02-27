@@ -45,24 +45,28 @@ class Lang:
         ln = self.language
         if ln not in self.translations:
             ln = 'en_US'
-        if value not in self.translations[ln]:
-            return None
-        else:
-            if type(self.translations[ln][value]) == "dict":
-                return Dictionary(self.translations[ln][value])
+        try:
+            if value not in self.translations[ln]:
+                return None
             else:
-                return self.translations[ln][value]
+                if type(self.translations[ln][value]) == "dict":
+                    return Dictionary(self.translations[ln][value])
+                else:
+                    return self.translations[ln][value]
+        except Exception:
+            return None
 
     def __load_langs(self):
         self.translations.clear()
+        directory = os.path.dirname(os.path.realpath(__file__)) + os.sep + "ressources" + os.sep + "langs"
         ext = "json"
-        for root, directories, files in os.walk(os.path.dirname(os.path.realpath(__file__)), topdown=False):
+        for root, directories, files in os.walk(directory, topdown=False):
             for name in files:
                 if re.search("\\.({})$".format(ext), name) is None:
                     continue
                 else:
                     nm = name.replace(".json", "")
-                    fp = open(os.path.dirname(os.path.realpath(__file__)) + os.sep + name, "r", encoding="utf8")
+                    fp = open(directory + os.sep + name, "r", encoding="utf8")
                     content = fp.read()
                     fp.close()
                     decoder = json.decoder.JSONDecoder()

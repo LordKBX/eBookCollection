@@ -14,6 +14,7 @@ from common.dialog import *
 from common.books import *
 from common.files import *
 from common.archive import *
+import lang
 
 ui = None
 
@@ -24,12 +25,11 @@ def eventHandler(event: dict):
 
 
 if __name__ == "__main__":
-	lng = Lang()
+	lng = lang.Lang()
 
 	previousEvent = ''
 	app = QtWidgets.QApplication(sys.argv)
 	print(sys.argv)
-	lang = Lang()
 	bdd = BDD()
 
 	app_icon = QtGui.QIcon()
@@ -46,10 +46,10 @@ if __name__ == "__main__":
 		file = sys.argv[1]
 
 		if len(sys.argv) < 2:
-			WarnDialog(lang['Editor']['DialogInfoNoFileWindowTitle'], lang['Editor']['DialogInfoNoFileWindowText'], ui)
+			WarnDialog(lng['Editor']['DialogInfoNoFileWindowTitle'], lng['Editor']['DialogInfoNoFileWindowText'], ui)
 			exit(0)
 
-		ui = EditorWindow(None, file)
+		ui = EditorWindow(None, file, lng)
 		ui.show()
 
 		# données de test

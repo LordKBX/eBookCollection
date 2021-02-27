@@ -8,6 +8,7 @@ from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import vars
+import lang
 from bdd import *
 from common.dialog import *
 from common.books import *
@@ -97,7 +98,7 @@ if __name__ == "__main__":
 	previousEvent = ''
 	print(sys.argv)
 	print(env_vars)
-	lang = Lang()
+	translation = lang.Lang()
 	bdd = BDD()
 
 	print(app_directory + '/icons/app_icon16x16.png'.replace('/', os.sep))
@@ -140,13 +141,13 @@ if __name__ == "__main__":
 
 	# Processing Content Table
 	ui.treeContentTable.clear()
-	ui.treeContentTable.headerItem().setText(0, lang['Reader']['ContentTableHeader'])
+	ui.treeContentTable.headerItem().setText(0, translation['Reader']['ContentTableHeader'])
 	ui.treeContentTable.currentItemChanged.connect(ContentTableCurrentItemChanged)
 	ui.treeContentTable.setIndentation(0)
 	ui.treeContentTable.setCursor(QtCore.Qt.PointingHandCursor)
 
 	if len(sys.argv) < 2:
-		WarnDialog(lang['Reader']['DialogInfoNoFileWindowTitle'], lang['Reader']['DialogInfoNoFileWindowText'], ui)
+		WarnDialog(translation['Reader']['DialogInfoNoFileWindowTitle'], translation['Reader']['DialogInfoNoFileWindowText'], ui)
 		exit(0)
 
 	file = sys.argv[1]
@@ -154,8 +155,8 @@ if __name__ == "__main__":
 	mappdir = app_directory.replace(os.sep, '/') + '/data/'
 	filepath, ext = os.path.splitext(file)
 	ui.setWindowTitle(
-		lang['Reader']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
-			.replace(mappdir, '').replace('/', ' / ').replace(ext, '')
+		translation['Reader']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
+		.replace(mappdir, '').replace('/', ' / ').replace(ext, '')
 	)
 	destDir = app_directory + '/reader/tmp'
 	rmDir(destDir)
@@ -166,7 +167,7 @@ if __name__ == "__main__":
 	if ext in ['.epub', '.epub2', '.epub3']:
 		appMode = QwwMode.EPUB
 		bookData = get_epub_info(file)
-		winTitle = lang['Reader']['WindowTitle'] + ' - '
+		winTitle = translation['Reader']['WindowTitle'] + ' - '
 		first = True
 		for index in ['authors', 'serie', 'title']:
 			try:
@@ -240,7 +241,7 @@ if __name__ == "__main__":
 		page = 'file:///' + page.replace("\\", '/')
 
 		item = QtWidgets.QTreeWidgetItem(ui.treeContentTable)
-		item.setText(0, lang['Reader']['ContentTableTxtCover'])
+		item.setText(0, translation['Reader']['ContentTableTxtCover'])
 		item.setData(0, 99, "cover")
 		ui.treeContentTable.insertTopLevelItem(0, item)
 
@@ -248,18 +249,18 @@ if __name__ == "__main__":
 		max = len(imgList)
 		while i < max - 1:
 			item = QtWidgets.QTreeWidgetItem(ui.treeContentTable)
-			item.setText(0, lang['Reader']['ContentTableTxtPageX'].format(i))
+			item.setText(0, translation['Reader']['ContentTableTxtPageX'].format(i))
 			item.setData(0, 99, "page:{}".format(i))
 			ui.treeContentTable.insertTopLevelItem(0, item)
 			i += 1
 
 		item = QtWidgets.QTreeWidgetItem(ui.treeContentTable)
-		item.setText(0, lang['Reader']['ContentTableTxtEnd'])
+		item.setText(0, translation['Reader']['ContentTableTxtEnd'])
 		item.setData(0, 99, "end")
 		ui.treeContentTable.insertTopLevelItem(0, item)
 		ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(0), 0)
 	else:
-		WarnDialog(lang['Reader']['DialogInfoBadFileWindowTitle'], lang['Reader']['DialogInfoBadFileWindowText'], ui)
+		WarnDialog(translation['Reader']['DialogInfoBadFileWindowTitle'], translation['Reader']['DialogInfoBadFileWindowText'], ui)
 		exit(0)
 
 	ui.webView.setMode(appMode)
