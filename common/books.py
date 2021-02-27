@@ -81,7 +81,7 @@ def __draw_text_on_image(img: Image, text: str, top: int, font_size: int, font_s
     elif font_style == "bold&italic":
         font = 'Bold-Italic'
     font = ImageFont.truetype(app_directory + os.sep + 'ressources' + os.sep + 'fonts'
-                              + os.sep + 'Arial' + os.sep + font + '.ttf', font_size)
+                              + os.sep + 'Arimo' + os.sep + font + '.ttf', font_size)
 
     textes = []
     size = len(text)
@@ -129,12 +129,12 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
         os.makedirs(app_directory+os.sep+'tmp'+os.sep+'META-INF')
         os.makedirs(app_directory+os.sep+'tmp'+os.sep+'texte')
 
-        font_dir = app_directory+os.sep+'ressources'+os.sep+'fonts'+os.sep+'Arial'
+        font_dir = app_directory+os.sep+'ressources'+os.sep+'fonts'+os.sep+'Arimo'
         font_tmp_dir = app_directory+os.sep+'tmp'+os.sep+'fonts'
-        copyFile(font_dir+os.sep+'Bold.ttf', font_tmp_dir+os.sep+'Arial-Bold.ttf')
-        copyFile(font_dir+os.sep+'Bold-Italic.ttf', font_tmp_dir+os.sep+'Arial-Bold-Italic.ttf')
-        copyFile(font_dir+os.sep+'Italic.ttf', font_tmp_dir+os.sep+'Arial-Italic.ttf')
-        copyFile(font_dir+os.sep+'Regular.ttf', font_tmp_dir+os.sep+'Arial-Regular.ttf')
+        copyFile(font_dir+os.sep+'Bold.ttf', font_tmp_dir+os.sep+'Arimo-Bold.ttf')
+        copyFile(font_dir+os.sep+'Bold-Italic.ttf', font_tmp_dir+os.sep+'Arimo-Bold-Italic.ttf')
+        copyFile(font_dir+os.sep+'Italic.ttf', font_tmp_dir+os.sep+'Arimo-Italic.ttf')
+        copyFile(font_dir+os.sep+'Regular.ttf', font_tmp_dir+os.sep+'Arimo-Regular.ttf')
 
         with open(app_directory+os.sep+'tmp'+os.sep+'META-INF'+os.sep+'container.xml', 'w', encoding="utf8") as file:
             file.write('<?xml version="1.0"?>'
@@ -143,14 +143,15 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                        '</rootfiles></container>')
 
         with open(app_directory+os.sep+'tmp'+os.sep+'style.css', 'w', encoding="utf8") as file:
-            file.write('@charset utf-8;@font-face{font-family:"Arial";src:url(fonts/Arial-Regular.ttf)}'
-                       '@font-face{font-family:"Arial";src:url(fonts/Arial-Italic.ttf);font-style:italic}'
-                       '@font-face{font-family:"Arial";src:url(fonts/Arial-Bold-Italic.ttf);font-weight:bold;font-style:italic}'
-                       '@font-face{font-family:"Arial";src:url(fonts/Arial-Bold.ttf);font-weight:bold}*{font-family:"Arial",sans-serif}'
+            file.write('@charset utf-8;@font-face{font-family:"Arimo";src:url(fonts/Arimo-Regular.ttf)}'
+                       '@font-face{font-family:"Arimo";src:url(fonts/Arimo-Italic.ttf);font-style:italic}'
+                       '@font-face{font-family:"Arimo";src:url(fonts/Arimo-Bold-Italic.ttf);font-weight:bold;font-style:italic}'
+                       '@font-face{font-family:"Arimo";src:url(fonts/Arimo-Bold.ttf);font-weight:bold}'
+                       '*{font-family:"Arimo",sans-serif}'
                        'h1{text-align:center}h2{text-align:center}h3{text-align:center}img{max-width:100%;height:auto;display:block;margin:0 auto}'
                        '.elypsys{text-align:center;font-weight:bold}.block{text-align:left;margin-top:1em;margin-bottom:1em}'
-                       '.italic{font-family:"Arial",sans-serif;font-style:italic}'
-                       '.bitalic{font-family:"Arial",sans-serif;font-style:italic;font-weight:bold}.credits{position:fixed;bottom:10px;left:10px}')
+                       '.italic{font-family:"Arimo",sans-serif;font-style:italic}'
+                       '.bitalic{font-family:"Arimo",sans-serif;font-style:italic;font-weight:bold}.credits{position:fixed;bottom:10px;left:10px}')
 
         with open(app_directory+os.sep+'tmp'+os.sep+'mimetype', 'w', encoding="utf8") as file:
             file.write('application/epub+zip')
