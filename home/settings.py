@@ -44,7 +44,6 @@ class SettingsWindow(QDialog):
                                                        lg['code'], 99)
 
     def change_language(self):
-        print("langs")
         index = self.tab_global_lang_combo_box.currentIndex()
         selected_lang = self.tab_global_lang_combo_box.itemData(index, 99)
         self.lng.set_lang(selected_lang)

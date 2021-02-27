@@ -199,7 +199,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
 
         with open(app_directory+os.sep+'tmp'+os.sep+'toc.ncx', 'w', encoding="utf8") as file:
             content = '<?xml version=\'1.0\' encoding=\'utf-8\'?>'\
-                       '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:langs="{{LANG}}"><head>'\
+                       '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="{{LANG}}"><head>'\
                        '<meta content="{{UUID}}" name="dtb:uid"/><meta content="2" name="dtb:depth"/>'\
                        '<meta content="{{APP_NAME}}" name="dtb:generator"/>'\
                        '<meta content="0" name="dtb:totalPageCount"/><meta content="0" name="dtb:maxPageNumber"/></head>'\
@@ -218,7 +218,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
 
         with open(app_directory+os.sep+'tmp'+os.sep+'texte'+os.sep+'cover.xhtml', 'w', encoding="utf8") as file:
             content = '<?xml version=\'1.0\' encoding=\'utf-8\'?>' \
-                      '<html xmlns="http://www.w3.org/1999/xhtml" langs="{{LANG}}" xml:langs="{{LANG}}">' \
+                      '<html xmlns="http://www.w3.org/1999/xhtml" lang="{{LANG}}" xml:lang="{{LANG}}">' \
                       '<head><title>{{TITLE}}</title><link href="../style.css" rel="stylesheet" type="text/css"/></head>' \
                       '<body><h1>{{TITLE}}</h1><h2 class="italic">{{SERIES}}</h2><div class="credits"><b>{{AUTHORS_LABEL}}</b>{{AUTHORS}}</div></body></html>'
             content = content.replace('{{LANG}}', local_lang.language)
@@ -243,7 +243,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
 
         with open(app_directory+os.sep+'tmp'+os.sep+'texte'+os.sep+'ch01.xhtml', 'w', encoding="utf8") as file:
             content = '<?xml version=\'1.0\' encoding=\'utf-8\'?>' \
-                      '<html xmlns="http://www.w3.org/1999/xhtml" langs="{{LANG}}" xml:langs="{{LANG}}">' \
+                      '<html xmlns="http://www.w3.org/1999/xhtml" lang="{{LANG}}" xml:lang="{{LANG}}">' \
                       '<head><title>{{CHAPTER1_NAME}}</title>' \
                       '<link href="../style.css" rel="stylesheet" type="text/css"/></head>' \
                       '<body><h1>{{CHAPTER1_NAME}}</h1>' \

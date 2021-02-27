@@ -175,7 +175,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
 
     def set_localisation(self):
         """
-        translate window text with the content of the langs object
+        translate window text with the content of the lang object
 
         :return: void
         """
