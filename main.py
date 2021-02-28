@@ -12,10 +12,10 @@ if __name__ == "__main__":
     bdd = BDD()
     translation = Lang()
 
-    ret = bdd.getParam('home_central_table_header_size_policy')
+    ret = bdd.get_param('home_central_table_header_size_policy')
     if ret is not None:
         env_vars['vars']['home_central_table_header_size_policy'] = ret
-    ret = bdd.getParam('home_central_table_header_sizes')
+    ret = bdd.get_param('home_central_table_header_sizes')
     if ret is not None:
         env_vars['vars']['home_central_table_header_sizes'] = ret
 

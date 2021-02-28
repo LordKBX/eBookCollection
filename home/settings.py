@@ -16,12 +16,12 @@ class SettingsWindow(QDialog):
         self.BDD = bdd
         PyQt5.uic.loadUi(app_directory + os.sep + 'home/settings.ui'.replace('/', os.sep), self)  # Load the .ui file
         self.lng = parent.lang  # language
-        app_lang = self.BDD.getParam('lang')
-        app_style = self.BDD.getParam('style')
+        app_lang = self.BDD.get_param('lang')
+        app_style = self.BDD.get_param('style')
         self.load_languages(app_lang)
-        self.apply_translation()
         self.load_styles(app_style)
         self.apply_style()
+        self.apply_translation()
 
         self.tab_global_lang_combo_box.currentIndexChanged.connect(self.change_language)
         self.tab_global_style_combo_box.currentIndexChanged.connect(self.change_style)
@@ -70,13 +70,13 @@ class SettingsWindow(QDialog):
         index = self.tab_global_lang_combo_box.currentIndex()
         selected_lang = self.tab_global_lang_combo_box.itemData(index, 99)
         self.lng.set_lang(selected_lang)
-        self.BDD.setParam('lang', selected_lang)
+        self.BDD.set_param('lang', selected_lang)
         self.apply_translation()
 
     def change_style(self):
         index = self.tab_global_style_combo_box.currentIndex()
         selected_style = self.tab_global_style_combo_box.itemData(index, 99)
-        self.BDD.setParam('style', selected_style)
+        self.BDD.set_param('style', selected_style)
         self.apply_style(selected_style)
 
     def apply_translation(self):
@@ -110,7 +110,7 @@ class SettingsWindow(QDialog):
 
     def apply_style(self, style: str = None):
         if style is None:
-            style = self.BDD.getParam('style')
+            style = self.BDD.get_param('style')
 
         self.setStyleSheet(env_vars['styles'][style]['dialog'])
         self.dialog_tabs.setStyleSheet(env_vars['styles'][style]['QTabWidget'])

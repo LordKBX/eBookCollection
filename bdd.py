@@ -23,12 +23,15 @@ def dict_factory(cursor, row):
 
 class BDD:
     def __init__(self, directory: str = None):
-        self.settings = PyQt5.QtCore.QSettings("", "")
+        self.settings = PyQt5.QtCore.QSettings("LordKBX Workshop", app_name)
+        # settings.setValue("editor/wrapMargin", 68);
         self.connexion = None
         self.cursor = None
-        self.directory = directory
+        self.directory = self.settings.value("library_directory")
+
         if directory is None or os.path.isdir(directory) is False:
             self.directory = app_directory
+            self.settings.setValue("library_directory", app_directory)
         self.__start()
 
     def __start(self):
@@ -57,10 +60,10 @@ class BDD:
                     'file_last_read_date' TEXT NOT NULL, 
                     'bookmark' TEXT)''')
 
-        self.cursor.execute('''PRAGMA table_info('settings')''')
-        ret = self.cursor.fetchone()
-        if ret is None:
-            self.cursor.execute('''CREATE TABLE settings('name' TEXT PRIMARY KEY NOT NULL, 'value' TEXT)''')
+        # self.cursor.execute('''PRAGMA table_info('settings')''')
+        # ret = self.cursor.fetchone()
+        # if ret is None:
+        #     self.cursor.execute('''CREATE TABLE settings('name' TEXT PRIMARY KEY NOT NULL, 'value' TEXT)''')
 
         self.connexion.commit()
 
@@ -84,25 +87,27 @@ class BDD:
             return
         shutil.copy(self.directory + os.sep + 'database.db', new_folder + os.sep + 'database.db')
         self.directory = new_folder
+        self.settings.setValue("library/directory", new_folder)
         self.__start()
 
-    def getParam(self, name: str):
+    def get_param(self, name: str):
         """
         Get setting value in database
 
         :param name: param value
         :return: string|None
         """
-        try:
-            self.cursor.execute("SELECT value FROM settings WHERE name = \"{}\"".format(name))
-            ret = self.cursor.fetchone()
-            if ret is not None: return ret['value']
-            else: return None
-        except Exception:
-            traceback.print_exc()
-            return None
+        # try:
+        #     self.cursor.execute("SELECT value FROM settings WHERE name = \"{}\"".format(name))
+        #     ret = self.cursor.fetchone()
+        #     if ret is not None: return ret['value']
+        #     else: return None
+        # except Exception:
+        #     traceback.print_exc()
+        #     return None
+        return self.settings.value(name)
 
-    def setParam(self, name: str, value: str):
+    def set_param(self, name: str, value: str):
         """
         Set setting value in database
 
@@ -110,14 +115,15 @@ class BDD:
         :param value: param value
         :return:
         """
-        try:
-            if self.getParam(name) is None:
-                self.cursor.execute('''INSERT INTO settings('name','value') VALUES(?, ?)''', (name, value))
-            else:
-                self.cursor.execute('''UPDATE settings SET value = ? WHERE name = ?''', (value, name))
-            self.connexion.commit()
-        except Exception:
-            traceback.print_exc()
+        # try:
+        #     if self.get_param(name) is None:
+        #         self.cursor.execute('''INSERT INTO settings('name','value') VALUES(?, ?)''', (name, value))
+        #     else:
+        #         self.cursor.execute('''UPDATE settings SET value = ? WHERE name = ?''', (value, name))
+        #     self.connexion.commit()
+        # except Exception:
+        #     traceback.print_exc()
+        self.settings.setValue(name, value)
 
     def getAuthors(self):
         """

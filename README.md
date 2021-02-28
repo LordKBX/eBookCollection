@@ -1,6 +1,19 @@
 # eBookCollection
 This application is designed for managing eBooks
 
+## formats support
+type | support | planed
+------ | ------ | ------
+epub 1/2/3 | X | 
+cbz | X | 
+cbr | X | 
+pdf |  | X
+mobi |  | X
+txt |  | X
+rtf |  | X
+doc |  | X
+docx |  | X
+
 ## Features
 - add eBook in database
 - open eBook

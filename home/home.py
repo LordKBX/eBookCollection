@@ -30,25 +30,25 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file
 
         # load parameters for file import
-        file_name_template = self.BDD.getParam('import_file_template')
-        file_name_separator = self.BDD.getParam('import_file_separator')
-        app_lang = self.BDD.getParam('lang')
-        app_style = self.BDD.getParam('style')
-        file_name_separator = self.BDD.getParam('import_file_separator')
+        file_name_template = self.BDD.get_param('import_file_template')
+        file_name_separator = self.BDD.get_param('import_file_separator')
+        app_lang = self.BDD.get_param('lang')
+        app_style = self.BDD.get_param('style')
+        file_name_separator = self.BDD.get_param('import_file_separator')
         # test parameters for file import and assign default value if not set
         if file_name_template is None:
-            self.BDD.setParam('import_file_template', self.env_vars['import_file_template']['default'])
+            self.BDD.set_param('import_file_template', self.env_vars['import_file_template']['default'])
 
         if file_name_separator is None:
-            self.BDD.setParam('import_file_separator', self.env_vars['import_file_separator'])
+            self.BDD.set_param('import_file_separator', self.env_vars['import_file_separator'])
 
         if app_lang is None:
-            self.BDD.setParam('lang', "auto")
+            self.BDD.set_param('lang', "auto")
         else:
             self.lang.set_lang(app_lang)
 
         if app_style is None:
-            self.BDD.setParam('style', "Dark")
+            self.BDD.set_param('style', "Dark")
 
         self.setStyleSheet("""
             QMainWindow::separator { background: rgba(63, 63, 63); }
@@ -88,14 +88,14 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         """
         try:
             # load parameters for file import
-            file_name_template = self.BDD.getParam('import_file_template')
-            file_name_separator = self.BDD.getParam('import_file_separator')
+            file_name_template = self.BDD.get_param('import_file_template')
+            file_name_separator = self.BDD.get_param('import_file_separator')
 
             options = QFileDialog.Options()
             options |= QFileDialog.DontUseNativeDialog
             files, _ = QFileDialog.getOpenFileNames(
                 self, self.lang['Home']['AddBookWindowTitle'], "D:\\Calibre_bookstore\\Kaida Spanner(Gui Ying supana)\\Lazy Dungeon Master Arc 01_ Hey, I' (116)",
-                "Ebook (*.epub *.epub2 *.epub3 *.cbz *.cbr *.pdf *.mobi);;Texte (*.txt *.doc *.docx *.rtf)",
+                "eBook (*.epub *.epub2 *.epub3 *.cbz *.cbr *.pdf *.mobi);;Texte (*.txt *.doc *.docx *.rtf)",
                 options=options
             )
             if len(files) > 0:
@@ -129,8 +129,8 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                     file = create_epub(ret['name'], ret['authors'], ret['serie'], vol)
 
                     # load parameters for file import
-                    file_name_template = self.BDD.getParam('import_file_template')
-                    file_name_separator = self.BDD.getParam('import_file_separator')
+                    file_name_template = self.BDD.get_param('import_file_template')
+                    file_name_separator = self.BDD.get_param('import_file_separator')
                     insert_book(self.BDD, file_name_template, file_name_separator, file)
                 self.central_block_table.clearSelection()
                 self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)

@@ -2,7 +2,7 @@ import os
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 app_directory = os.path.dirname(os.path.realpath(__file__))
-app_name = "EbookCollection"
+app_name = "eBookCollection"
 
 env_vars = {
         'tools': {

@@ -52,8 +52,8 @@ class HomeWindowCentralBlock:
                 # print('home_central_table_header_WIDTH')
                 # print('new size = {}'.format(new_size))
                 self.env_vars['home_central_table_header_sizes'] = new_size
-                # print('old size = {}'.format(self.BDD.getParam('home_central_table_header_sizes')))
-                self.BDD.setParam('home_central_table_header_sizes', new_size)
+                # print('old size = {}'.format(self.BDD.get_param('home_central_table_header_sizes')))
+                self.BDD.set_param('home_central_table_header_sizes', new_size)
 
         except Exception:
             ""
