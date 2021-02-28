@@ -4,6 +4,7 @@ import re
 import imp
 import locale
 import json.decoder
+import traceback
 
 
 class Dictionary:
@@ -43,9 +44,13 @@ class Lang:
         :return: str|None
         """
         ln = self.language
+        if ln == 'auto':
+            ln = locale.getdefaultlocale()[0]
         if ln not in self.translations:
             ln = 'en_US'
         try:
+            if '/' in value:
+                return self.get(value, ln)
             if value not in self.translations[ln]:
                 return None
             else:
@@ -54,6 +59,30 @@ class Lang:
                 else:
                     return self.translations[ln][value]
         except Exception:
+            return None
+
+    def get(self, path: str, lang: str = None):
+        if lang is None:
+            lang = self.language
+        if lang == 'auto':
+            lang = locale.getdefaultlocale()[0]
+        if lang not in self.translations:
+            lang = 'en_US'
+        if lang not in self.translations:
+            return None
+        path_tab = path.split('/')
+        try:
+            base = self.translations[lang]
+            for obj in path_tab:
+                if obj in base:
+                    if isinstance(base[obj], dict) is True:
+                        base = base[obj]
+                    else:
+                        return base[obj]
+                else:
+                    return None
+        except Exception:
+            traceback.print_exc()
             return None
 
     def __load_langs(self):
@@ -91,8 +120,3 @@ class Lang:
                 "name": self.translations[lang]['Label']
             })
         return output
-
-    def get_by_lang(self, lang: str, path: str):
-        if lang not in self.translations:
-            return None
-        ""

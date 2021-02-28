@@ -18,18 +18,22 @@ import home.empty_book
 
 
 class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
-    def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict):
+    def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict, argv: list):
         self.app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.currentBook = ''
         self.BDD = database
         self.lang = translation
         self.tools = env_vars['tools']
         self.env_vars = env_vars['vars']
+        self.argv = argv
         super(HomeWindow, self).__init__()
         PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file
 
         # load parameters for file import
         file_name_template = self.BDD.getParam('import_file_template')
+        file_name_separator = self.BDD.getParam('import_file_separator')
+        app_lang = self.BDD.getParam('lang')
+        app_style = self.BDD.getParam('style')
         file_name_separator = self.BDD.getParam('import_file_separator')
         # test parameters for file import and assign default value if not set
         if file_name_template is None:
@@ -38,6 +42,14 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         if file_name_separator is None:
             self.BDD.setParam('import_file_separator', self.env_vars['import_file_separator'])
 
+        if app_lang is None:
+            self.BDD.setParam('lang', "auto")
+        else:
+            self.lang.set_lang(app_lang)
+
+        if app_style is None:
+            self.BDD.setParam('style', "Dark")
+
         self.setStyleSheet("""
             QMainWindow::separator { background: rgba(63, 63, 63); }
             QMainWindow::separator:hover { background: rgba(120, 120, 120); }
@@ -45,7 +57,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             QDockWidget { border: 0; margin:0; padding:0; }
             QDockWidget::title { font: bold; text-align: left; background: #333333; padding-left: 5px; }
             """)
-        self.header_block_contents2.setStyleSheet(env_vars['styles']['black']['fullButton'])
+        self.header_block_contents2.setStyleSheet(env_vars['styles']['Dark']['fullButton'])
         self.set_localisation()
         self.set_info_panel()
         # self.load_books(self.BDD.getBooks())
@@ -62,6 +74,11 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.sorting_block_tree_set_filter('all')
 
         self.show()  # Show the GUI
+        try:
+            if self.argv[1] == "settings":
+                self.header_block_btn_settings_clicked()
+        except Exception:
+            ""
 
     def header_block_btn_add_book_clicked(self):
         """
@@ -132,8 +149,13 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         """
         print("Bouton Options clické")
         try:
-            dialog = SettingsWindow(self)
+            dialog = SettingsWindow(self, self.BDD)
             dialog.open_exec()
+            try:
+                if self.argv[1] == "settings":
+                    sys.exit(0)
+            except Exception:
+                ""
         except Exception:
             traceback.print_exc()
 

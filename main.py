@@ -31,6 +31,7 @@ if __name__ == "__main__":
         myappid = 'lordkbx.ebook_collection'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
-    Home = HomeWindow(bdd, translation, env_vars)
+    print(sys.argv)
+    Home = HomeWindow(bdd, translation, env_vars, sys.argv)
     Home.show()
     sys.exit(app.exec_())

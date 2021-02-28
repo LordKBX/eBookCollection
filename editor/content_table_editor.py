@@ -26,8 +26,8 @@ class IndexNameWindow(QDialog):
 
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['ContentTableWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ContentTableWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
 
     def open_exec(self, text: str = None):
         if text is not None:
@@ -46,7 +46,7 @@ class ContentTableWindow(QDialog):
         PyQt5.uic.loadUi(app_directory + os.sep + 'editor/content_table_editor.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.lang = lng
-        self.setStyleSheet(env_vars['styles']['black']['fullButton'])
+        self.setStyleSheet(env_vars['styles']['Dark']['fullButton'])
 
         self.setWindowTitle(lng['Editor']['ContentTableWindow']['WindowTitle'])
         self.list_label.setText(lng['Editor']['ContentTableWindow']['ListLabel'])
@@ -58,8 +58,8 @@ class ContentTableWindow(QDialog):
 
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['ContentTableWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ContentTableWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
 
         # self.list_content = QtWidgets.QListWidget()
 

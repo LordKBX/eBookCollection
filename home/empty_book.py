@@ -15,7 +15,7 @@ class EmptyBookWindow(QDialog):
         super(EmptyBookWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(app_directory + os.sep + 'home/empty_book.ui'.replace('/', os.sep), self)  # Load the .ui file
 
-        self.setStyleSheet(env_vars['styles']['black']['dialog'])
+        self.setStyleSheet(env_vars['styles']['Dark']['dialog'])
 
         lng = lang.Lang()
         self.lang = lng
@@ -36,8 +36,8 @@ class EmptyBookWindow(QDialog):
 
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['FilesWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['FilesWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
 
     def open_exec(self, file_formats: [str] = None):
         if file_formats is None:

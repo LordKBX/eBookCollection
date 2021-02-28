@@ -37,7 +37,7 @@ env_vars = {
             'home_central_table_header_sizes': '[100, 100, 100, 100, 100]'  # list of collumns size
         },
         'styles': {
-            'black': {
+            'Dark': {
                 'icons': {
                     'folder': app_directory.replace(os.sep, '/') + '/icons/white/folder.png',
                     'file': app_directory.replace(os.sep, '/') + '/icons/white/file.png',
@@ -45,7 +45,7 @@ env_vars = {
                     'unlock': app_directory.replace(os.sep, '/') + '/icons/white/unlock.png'
                 },
                 'dialog': """
-                    QDialog{ background-color:#4B4B4B; }
+                    QDialog, QWidget{ background-color:#4B4B4B; }
                     QScrollArea{ background-color:#4B4B4B; }
                     QLabel{ 
                         color:#999999;
@@ -53,7 +53,7 @@ env_vars = {
                         font-weight:bold;
                         background: transparent;
                     }
-                    QSpinBox, QDoubleSpinBox, QLineEdit, QComboBox{ 
+                    QSpinBox, QDoubleSpinBox, QLineEdit, QComboBox, QPushButton{ 
                         background-color:#333333;
                         color:#777777;
                         border:#999999 2px solid;
@@ -62,10 +62,12 @@ env_vars = {
                  """,
                 'QTabWidget': """
                     QTabWidget {
+                        background: none;
                     }
                     QTabWidget::tab-bar {
                         background-color:#333333;
                         color:#AAAAAA;
+                        border-right: 0;
                     }
                     QTabBar::tab {
                         background-color:#999999;
@@ -84,8 +86,8 @@ env_vars = {
                         background-color:#196DFF;
                         color:#ffffff;
                     }
-                    QTabWidget::pane {
-                        background-color:#ff0000;
+                    QTabWidget::pane QTabBar{
+                        /* border-bottom: 1px solid #999999; */
                     }
                  """,
                 'fullTreeView': """
@@ -99,15 +101,15 @@ env_vars = {
                     
                     QTreeView::branch:has-children:!has-siblings:closed, QTreeView::branch:closed:has-children:has-siblings {
                         border-image: none;
-                        image: url('""" + app_directory.replace(os.sep, '/') + """/icons/white/tree_closed.png');
+                        image: url('{DIR}/icons/white/tree_closed.png');
                     }
         
                     QTreeView::branch:open:has-children:!has-siblings,
                     QTreeView::branch:open:has-children:has-siblings  {
                         border-image: none;
-                        image: url('""" + app_directory.replace(os.sep, '/') + """/icons/white/tree_opened.png');
+                        image: url('{DIR}/icons/white/tree_opened.png');
                     }
-                    """,
+                    """.replace('{DIR}', app_directory.replace(os.sep, '/')),
                 'partialTreeView': """
                     ::section{
                         background-color:#4B4B4B;
@@ -147,7 +149,7 @@ env_vars = {
                     QPushButton:checked{ background-color:rgb(150, 150, 150); }
                     """,
                 'fullAltButton': """
-                    *{ background-color:rgb(80, 80, 80); color:#ffffff; }
+                    *{ background-color:#666666; color:#ffffff; padding:10px; }
                     *:hover{ background-color:rgb(120, 120, 120); }
                     *:pressed{ background-color:rgb(120, 120, 120); }
                     *:checked{ background-color:rgb(150, 150, 150); }

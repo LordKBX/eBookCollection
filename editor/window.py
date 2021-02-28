@@ -41,14 +41,14 @@ class EditorWindow(QtWidgets.QMainWindow):
             QWidget{ background: rgba(63, 63, 63); color:white; }
             QDockWidget { border: 0; margin:0; padding:0; }
             QDockWidget::title { font: bold; text-align: left; background: #333333; padding-left: 5px; }
-            """ + env_vars['styles']['black']['defaultAltButton'])
-        self.btnEbookSave.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
-        self.btnEbookLoadCheckpoint.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
-        self.btnEbookCreateCheckpoint.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
-        self.btnEbookAddFile.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
-        self.btnEbookContentTable.setStyleSheet(env_vars['styles']['black']['defaultAltButton'])
+            """ + env_vars['styles']['Dark']['defaultAltButton'])
+        self.btnEbookSave.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
+        self.btnEbookLoadCheckpoint.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
+        self.btnEbookCreateCheckpoint.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
+        self.btnEbookAddFile.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
+        self.btnEbookContentTable.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
 
-        self.dockTop1.setStyleSheet(env_vars['styles']['black']['defaultButton'])
+        self.dockTop1.setStyleSheet(env_vars['styles']['Dark']['defaultButton'])
 
         # ui.tabWidget
         ad = app_directory.replace(os.sep, '/')
@@ -78,7 +78,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.treeFileTable.itemDoubleClicked.connect(self.file_table_item_double_clicked)
         self.treeFileTable.setIndentation(10)
         self.treeFileTable.setCursor(QtCore.Qt.PointingHandCursor)
-        self.treeFileTable.setStyleSheet(env_vars['styles']['black']['fullTreeView'])
+        self.treeFileTable.setStyleSheet(env_vars['styles']['Dark']['fullTreeView'])
 
         # Processing Content Table
         self.treeContentTable.clear()

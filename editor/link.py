@@ -20,9 +20,9 @@ class LinkWindow(QDialog):
         self.labelText.setText(lng['Editor']['LinkWindow']['labelText'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['LinkWindow']['btnOk'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['LinkWindow']['btnCancel'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.fileTree.setStyleSheet(env_vars['styles']['black']['fullTreeView'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.fileTree.setStyleSheet(env_vars['styles']['Dark']['fullTreeView'])
         self.fileTree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
         self.fileTree.itemClicked.connect(self.itemClick)
         self.folder = folder

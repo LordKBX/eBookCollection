@@ -18,7 +18,7 @@ class CheckpointWindow(QDialog):
         self.setWindowTitle(lng['Editor']['LinkWindow']['WindowTitle'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['LinkWindow']['btnOk'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['LinkWindow']['btnCancel'])
-        self.fileTree.setStyleSheet(env_vars['styles']['black']['fullTreeView'])
+        self.fileTree.setStyleSheet(env_vars['styles']['Dark']['fullTreeView'])
         self.fileTree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
         self.fileTree.itemClicked.connect(self.itemClick)
         self.folder = folder

@@ -1,5 +1,6 @@
 # This Python file uses the following encoding: utf-8
-import traceback
+import sys, os, traceback
+import PyQt5.QtCore
 import sqlite3
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common.common import *
@@ -21,8 +22,17 @@ def dict_factory(cursor, row):
 
 
 class BDD:
-    def __init__(self):
-        self.connexion = sqlite3.connect(app_directory + os.sep + 'database.db')
+    def __init__(self, directory: str = None):
+        self.settings = PyQt5.QtCore.QSettings("", "")
+        self.connexion = None
+        self.cursor = None
+        self.directory = directory
+        if directory is None or os.path.isdir(directory) is False:
+            self.directory = app_directory
+        self.__start()
+
+    def __start(self):
+        self.connexion = sqlite3.connect(self.directory + os.sep + 'database.db')
         self.connexion.row_factory = dict_factory
         self.cursor = self.connexion.cursor()
 
@@ -30,22 +40,22 @@ class BDD:
         ret = self.cursor.fetchone()
         if ret is None:
             self.cursor.execute('''CREATE TABLE books('guid' TEXT PRIMARY KEY NOT NULL, 'title' TEXT NOT NULL, 
-            'authors' TEXT, 'serie' TEXT, 'import_date' TEXT NOT NULL, 'last_update_date' TEXT NOT NULL, 
-            'tags' TEXT, 'synopsis' TEXT, 'cover' TEXT NOT NULL)''')
+                    'authors' TEXT, 'serie' TEXT, 'import_date' TEXT NOT NULL, 'last_update_date' TEXT NOT NULL, 
+                    'tags' TEXT, 'synopsis' TEXT, 'cover' TEXT NOT NULL)''')
 
         self.cursor.execute('''PRAGMA table_info('files')''')
         ret = self.cursor.fetchone()
         if ret is None:
             self.cursor.execute('''CREATE TABLE files(
-            'guid_file' TEXT PRIMARY KEY NOT NULL, 
-            'book_id' TEXT NOT NULL, 
-            'size' TEXT NOT NULL, 
-            'format' TEXT NOT NULL, 
-            'link' TEXT NOT NULL, 
-            'file_import_date' TEXT NOT NULL, 
-            'file_last_update_date' TEXT NOT NULL, 
-            'file_last_read_date' TEXT NOT NULL, 
-            'bookmark' TEXT)''')
+                    'guid_file' TEXT PRIMARY KEY NOT NULL, 
+                    'book_id' TEXT NOT NULL, 
+                    'size' TEXT NOT NULL, 
+                    'format' TEXT NOT NULL, 
+                    'link' TEXT NOT NULL, 
+                    'file_import_date' TEXT NOT NULL, 
+                    'file_last_update_date' TEXT NOT NULL, 
+                    'file_last_read_date' TEXT NOT NULL, 
+                    'bookmark' TEXT)''')
 
         self.cursor.execute('''PRAGMA table_info('settings')''')
         ret = self.cursor.fetchone()
@@ -53,6 +63,28 @@ class BDD:
             self.cursor.execute('''CREATE TABLE settings('name' TEXT PRIMARY KEY NOT NULL, 'value' TEXT)''')
 
         self.connexion.commit()
+
+    def close(self):
+        """
+        Close database
+        """
+        if self.connexion is not None:
+            self.cursor.close()
+            self.connexion.close()
+            self.cursor = None
+            self.connexion = None
+
+    def migrate(self, new_folder: str):
+        """
+        Migrate
+        :param new_folder:
+        :return:
+        """
+        if os.path.isdir(new_folder) is False:
+            return
+        shutil.copy(self.directory + os.sep + 'database.db', new_folder + os.sep + 'database.db')
+        self.directory = new_folder
+        self.__start()
 
     def getParam(self, name: str):
         """

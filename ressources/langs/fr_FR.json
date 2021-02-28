@@ -158,6 +158,7 @@
 		"Import": "Importer",
 		"StyleTitle": "Apparence",
 		"StyleLight": "Clair",
-		"StyleDark": "Foncé"
+		"StyleDark": "Foncé",
+		"LibraryTitle": "Bibliothèque"
 	}
 }

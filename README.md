@@ -1,17 +1,36 @@
-# EbookCollection
-This application is designed for managing ebooks
+# eBookCollection
+This application is designed for managing eBooks
 
 ## Features
-- add Ebook in database
-- open ebook
-- modify Ebook data(support for title, serie and authors)
+- add eBook in database
+- open eBook
+- modify eBook
+- modify eBook metadata(support for title, series and authors)
+- modify eBook storage directory if metadata updated
 
 ## Planed Features
-- modify Ebook storage dir if metadata updated
-- synchronize ebook library with mobile terminal
-    - incompatible terminal software would only have the ebook file copied
+- File conversion
+- Settings window
+    - Global
+        - change language (implemented, unstable)
+        - change style (implemented, unstable)
+        - import language pack
+        - import style pack
+        - modify library folder
+    - Metadata
+        - change default eBook cover style
+        - change file name eBook import template
+    - Conversion
+        - default module CBZ to EPUB
+        - import Conversion module
+        - modify parameters of Conversion modules
+    - About
+        - use language translation on tab content
+
+- synchronize eBook library with mobile terminal (in a far future)
+    - incompatible terminal software would only have the eBook file copied
     - compatible terminal software would have
-        - full metadata infos
+        - full metadata information's
         - bookmark
         - cover
         - tags
@@ -20,7 +39,7 @@ This application is designed for managing ebooks
 ## Prerequisites
 
 Require Python >= 3.5.x
-Require the followin complements:
+Require the following complements:
 - PyQt5
 - PyQtWebKit(optional)
 - pysqlite3
@@ -32,8 +51,8 @@ Require the followin complements:
 ## Installation
 ### Windows installer: 
 Go to the Release page [Here](https://github.com/LordKBX/EbookCollection/releases), contains:
-- executable with all dependancies (full version) 
-- executable without dependancies (light version)
+- executable with all dependencies (full version) 
+- executable without dependencies (light version)
 
 ### Manualy
 #### On Windows and Mac
@@ -68,8 +87,10 @@ python [path of the application files]main.py
 ```
 python3 main.py
 ```
-or use the sctipt start.sh
+or use the script start.sh
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+Third party references => [here](./README-third_party.md)

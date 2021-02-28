@@ -22,8 +22,8 @@ class FilesNameWindow(QDialog):
         self.label.setText(lng['Editor']['FilesWindow']['FileNameWindowLabel'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['FilesWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['FilesWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
 
     def open_exec(self, text: str = None):
         if text is not None:
@@ -43,12 +43,12 @@ class FilesWindow(QDialog):
         lng = lang.Lang()
         self.lang = lng
         self.setWindowTitle(lng['Editor']['FilesWindow']['WindowTitle'])
-        self.setStyleSheet(env_vars['styles']['black']['fullButton'])
+        self.setStyleSheet(env_vars['styles']['Dark']['fullButton'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['FilesWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['FilesWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['black']['fullAltButton'])
-        self.file_tree.setStyleSheet(env_vars['styles']['black']['fullTreeView'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.file_tree.setStyleSheet(env_vars['styles']['Dark']['fullTreeView'])
         self.file_tree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
         self.file_tree.itemClicked.connect(self.item_click)
         self.file_tree.header().setSectionsClickable(True)
@@ -187,7 +187,7 @@ class FilesWindow(QDialog):
                 else:
                     itemr = QtWidgets.QTreeWidgetItem(item)
                 itemr.setText(0, tb[len(tb)-1])
-                itemr.setForeground(0, QtGui.QColor(env_vars['styles']['black']['partialTreeViewItemColorNew']))
+                itemr.setForeground(0, QtGui.QColor(env_vars['styles']['Dark']['partialTreeViewItemColorNew']))
 
                 if isinstance(item, QtWidgets.QTreeWidget): self.file_tree.insertTopLevelItem(0, itemr)
                 else: item.addChild(itemr)
@@ -209,7 +209,7 @@ class FilesWindow(QDialog):
                 if self.selected_folder != '':
                     prepath = os.sep + self.selected_folder
 
-                itemr.setForeground(0, QtGui.QColor(env_vars['styles']['black']['partialTreeViewItemColorNew']))
+                itemr.setForeground(0, QtGui.QColor(env_vars['styles']['Dark']['partialTreeViewItemColorNew']))
                 itemr.setText(0, file)
                 if is_file is True:
                     itemr.setData(0, 100, ':file:')
@@ -264,7 +264,7 @@ class FilesWindow(QDialog):
                             'newPath': self.selected_folder + os.sep + file, 'type': 'renameFile',
                             'original': prepath + os.sep + pre_file}
                 item.setText(0, file)
-                item.setForeground(0, QtGui.QColor(env_vars['styles']['black']['partialTreeViewItemColorMod']))
+                item.setForeground(0, QtGui.QColor(env_vars['styles']['Dark']['partialTreeViewItemColorMod']))
         except Exception:
             traceback.print_exc()
 
@@ -307,7 +307,7 @@ class FilesWindow(QDialog):
                         ret2 = self.remove_from_dict(self.list_rename, file, parent)
                         item.setText(tbo[len(tbo)-1])
 
-                    item.setForeground(0, QtGui.QColor(env_vars['styles']['black']['partialTreeViewItemColorDel']))
+                    item.setForeground(0, QtGui.QColor(env_vars['styles']['Dark']['partialTreeViewItemColorDel']))
         except Exception:
             traceback.print_exc()
 
