@@ -413,7 +413,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
             tmp_serie = infos['serie']
             tmp_cover = infos['cover']
 
-            if len(database.getBooks(tmp_guid)) > 0:
+            if len(database.get_books(tmp_guid)) > 0:
                 tmp_guid = uid()
 
         elif ext in ['.cbz', '.cbr']:  # section for CBZ and CBR files
@@ -429,7 +429,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         # shutil.rmtree(tmpdir)  # delete temp dir
 
         # build final file path
-        end_file = '../data/'
+        end_file = database.get_param('library/directory').replace('{APP_DIR}', app_directory) + os.sep
         if tmp_authors is not None:
             if tmp_authors != '': end_file += clean_string_for_url(tmp_authors) + '/'
         if tmp_serie is not None:
@@ -442,4 +442,4 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         print(end_file)
         shutil.copyfile(file, end_file)
         # insert data in database
-        database.insertBook(tmp_guid, tmp_title, tmp_serie, tmp_authors, tmp_tags, get_file_size(end_file), tmp_format, end_file, tmp_cover)
+        database.insert_book(tmp_guid, tmp_title, tmp_serie, tmp_authors, tmp_tags, get_file_size(end_file), tmp_format, end_file, tmp_cover)

@@ -2,6 +2,8 @@ import json
 import traceback
 from common.common import *
 from common.files import *
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+import vars
 
 
 class HomeWindowCentralBlock:
@@ -17,8 +19,8 @@ class HomeWindowCentralBlock:
         Define Signal/Sloct connections for CentralBlockTable
         :return:
         """
-        # self.CentralBlockTabletableView.setSortIcons(
-        #     QtGui.QIcon(self.app_directory + "/icons/white/sort_up.png"),
+        # self.central_block_table.setSortIcons(
+        #     QtGui.QIcon(vars.env_vars['styles']['styles']['icons']['sort_up']),
         #     QtGui.QIcon(self.app_directory + "/icons/white/sort_down.png")
         # )
 
@@ -73,7 +75,7 @@ class HomeWindowCentralBlock:
         guid_book = self.central_block_table.item(current_row, current_column).data(99)
         if self.currentBook != guid_book:
             try:
-                self.set_info_panel(self.BDD.getBooks(guid_book)[0])
+                self.set_info_panel(self.BDD.get_books(guid_book)[0])
             except Exception:
                 traceback.print_exc()
 
@@ -128,12 +130,12 @@ class HomeWindowCentralBlock:
         if self.currentBook != guid_book:
             self.currentBook = guid_book
         args = list()
-        if self.BDD.getBooks(guid_book)[0]['files'][0]['format'] in ['CBZ', 'CBR', 'EPUB']:
+        if self.BDD.get_books(guid_book)[0]['files'][0]['format'] in ['CBZ', 'CBR', 'EPUB']:
             args.append('python')
             args.append(self.app_directory + '/reader/main.py'.replace('/', os.sep))
-            args.append(self.app_directory + os.sep + self.BDD.getBooks(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
+            args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
         else:
-            args.append(self.BDD.getBooks(guid_book)[0]['files'][0]['link'])
+            args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'])
         print(args)
         try:
             retcode = subprocess.call(args, shell=True)
@@ -158,9 +160,9 @@ class HomeWindowCentralBlock:
                 return
             guid_book = new_item.data(99)
             col_type = new_item.data(100)
-            book = self.BDD.getBooks(guid_book)[0]
+            book = self.BDD.get_books(guid_book)[0]
             book[col_type] = new_item.text()
-            self.BDD.updateBook(guid_book, col_type, new_item.text())
+            self.BDD.update_book(guid_book, col_type, new_item.text())
             if col_type in ['title', 'authors', 'serie']:
                 index = 0
                 while index < len(book['files']):
@@ -177,7 +179,7 @@ class HomeWindowCentralBlock:
                     new_path += '/' + book['title'] + '.' + book['files'][index]['format'].lower()
                     shutil.move(old_path, new_path)
                     book['files'][index]['link'] = new_path
-                    self.BDD.updateBook(guid_book, 'link', new_path, book['files'][index]['guid'])
+                    self.BDD.update_book(guid_book, 'link', new_path, book['files'][index]['guid'])
                     index += 1
 
             self.setInfoPanel(book)

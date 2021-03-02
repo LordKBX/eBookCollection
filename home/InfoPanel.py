@@ -15,7 +15,6 @@ class HomeWindowInfoPanel:
         :param book: dict of the spécified book
         :return: void
         """
-        print('set_info_panel')
         # print(book)
         passed = True
         if book is None: 

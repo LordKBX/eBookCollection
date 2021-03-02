@@ -65,7 +65,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/white/save.png</normaloff>../icons/white/save.png</iconset>
+         <normaloff>../ressources/icons/white/save.png</normaloff>../ressources/icons/white/save.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -91,7 +91,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/edit-undo.png</normaloff>../icons/tmp/edit-undo.png</iconset>
+         <normaloff>../ressources/icons/tmp/edit-undo.png</normaloff>../ressources/icons/tmp/edit-undo.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -117,7 +117,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/edit-redo.png</normaloff>../icons/tmp/edit-redo.png</iconset>
+         <normaloff>../ressources/icons/tmp/edit-redo.png</normaloff>../ressources/icons/tmp/edit-redo.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -143,7 +143,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/edit-cut.png</normaloff>../icons/tmp/edit-cut.png</iconset>
+         <normaloff>../ressources/icons/tmp/edit-cut.png</normaloff>../ressources/icons/tmp/edit-cut.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -169,7 +169,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/edit-copy.png</normaloff>../icons/tmp/edit-copy.png</iconset>
+         <normaloff>../ressources/icons/tmp/edit-copy.png</normaloff>../ressources/icons/tmp/edit-copy.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -195,7 +195,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/edit-paste.png</normaloff>../icons/tmp/edit-paste.png</iconset>
+         <normaloff>../ressources/icons/tmp/edit-paste.png</normaloff>../ressources/icons/tmp/edit-paste.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -223,7 +223,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/debug.png</normaloff>../icons/tmp/debug.png</iconset>
+           <normaloff>../ressources/icons/tmp/debug.png</normaloff>../ressources/icons/tmp/debug.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -246,7 +246,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/white/comment.png</normaloff>../icons/white/comment.png</iconset>
+           <normaloff>../ressources/icons/white/comment.png</normaloff>../ressources/icons/white/comment.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -269,7 +269,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/beautify.png</normaloff>../icons/tmp/beautify.png</iconset>
+           <normaloff>../ressources/icons/tmp/beautify.png</normaloff>../ressources/icons/tmp/beautify.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -328,7 +328,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-text-bold.png</normaloff>../icons/tmp/format-text-bold.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-text-bold.png</normaloff>../ressources/icons/tmp/format-text-bold.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -357,7 +357,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-text-italic.png</normaloff>../icons/tmp/format-text-italic.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-text-italic.png</normaloff>../ressources/icons/tmp/format-text-italic.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -386,7 +386,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-text-underline.png</normaloff>../icons/tmp/format-text-underline.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-text-underline.png</normaloff>../ressources/icons/tmp/format-text-underline.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -415,7 +415,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-text-strikethrough.png</normaloff>../icons/tmp/format-text-strikethrough.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-text-strikethrough.png</normaloff>../ressources/icons/tmp/format-text-strikethrough.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -444,7 +444,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-text-subscript.png</normaloff>../icons/tmp/format-text-subscript.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-text-subscript.png</normaloff>../ressources/icons/tmp/format-text-subscript.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -473,7 +473,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-text-superscript.png</normaloff>../icons/tmp/format-text-superscript.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-text-superscript.png</normaloff>../ressources/icons/tmp/format-text-superscript.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -502,7 +502,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-text-color.png</normaloff>../icons/tmp/format-text-color.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-text-color.png</normaloff>../ressources/icons/tmp/format-text-color.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -531,7 +531,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-fill-color.png</normaloff>../icons/tmp/format-fill-color.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-fill-color.png</normaloff>../ressources/icons/tmp/format-fill-color.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -590,7 +590,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-justify-left.png</normaloff>../icons/tmp/format-justify-left.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-justify-left.png</normaloff>../ressources/icons/tmp/format-justify-left.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -619,7 +619,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-justify-center.png</normaloff>../icons/tmp/format-justify-center.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-justify-center.png</normaloff>../ressources/icons/tmp/format-justify-center.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -648,7 +648,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-justify-right.png</normaloff>../icons/tmp/format-justify-right.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-justify-right.png</normaloff>../ressources/icons/tmp/format-justify-right.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -677,7 +677,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-justify-fill.png</normaloff>../icons/tmp/format-justify-fill.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-justify-fill.png</normaloff>../ressources/icons/tmp/format-justify-fill.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -706,7 +706,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-list-unordered.png</normaloff>../icons/tmp/format-list-unordered.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-list-unordered.png</normaloff>../ressources/icons/tmp/format-list-unordered.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -735,7 +735,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/format-list-ordered.png</normaloff>../icons/tmp/format-list-ordered.png</iconset>
+           <normaloff>../ressources/icons/tmp/format-list-ordered.png</normaloff>../ressources/icons/tmp/format-list-ordered.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -764,7 +764,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/insert-link.png</normaloff>../icons/tmp/insert-link.png</iconset>
+           <normaloff>../ressources/icons/tmp/insert-link.png</normaloff>../ressources/icons/tmp/insert-link.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -793,7 +793,7 @@
          </property>
          <property name="icon">
           <iconset>
-           <normaloff>../icons/tmp/view-image.png</normaloff>../icons/tmp/view-image.png</iconset>
+           <normaloff>../ressources/icons/tmp/view-image.png</normaloff>../ressources/icons/tmp/view-image.png</iconset>
          </property>
          <property name="iconSize">
           <size>

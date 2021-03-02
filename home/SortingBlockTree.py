@@ -15,8 +15,8 @@ class HomeWindowSortingBlockTree:
             self.sorting_block_tree.topLevelItem(1).removeChild(self.sorting_block_tree.topLevelItem(1).child(0))
         while self.sorting_block_tree.topLevelItem(2).childCount() > 0:
             self.sorting_block_tree.topLevelItem(2).removeChild(self.sorting_block_tree.topLevelItem(2).child(0))
-        authors = self.BDD.getAuthors()
-        series = self.BDD.getSeries()
+        authors = self.BDD.get_authors()
+        series = self.BDD.get_series()
         for author in authors:
             item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(1))
             item.setText(0, author)
@@ -36,9 +36,9 @@ class HomeWindowSortingBlockTree:
         try:
             self.central_block_table.clearSelection()
             if filter == 'all':
-                self.load_books(self.BDD.getBooks())
+                self.load_books(self.BDD.get_books())
             elif re.search("^authors:", filter) or re.search("^serie:", filter):
-                self.load_books(self.BDD.getBooks(None, filter))
+                self.load_books(self.BDD.get_books(None, filter))
             else:
                 return
             self.sorting_block_tree_actual_filter = filter

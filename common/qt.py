@@ -12,10 +12,10 @@ class QtQIconEnum(enum.Enum):
     unlock = env_vars['styles']['Dark']['icons']['unlock']
 
 
-def setQTreeItemIcon(item: QtWidgets.QTreeWidgetItem, iconRef: QtQIconEnum = QtQIconEnum.folder):
+def setQTreeItemIcon(item: QtWidgets.QTreeWidgetItem, icon_ref: QtQIconEnum = QtQIconEnum.folder):
     icon = QtGui.QIcon()
     image = QtGui.QPixmap()
-    image.load(iconRef.value)
+    image.load(icon_ref.value)
     icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
     item.setIcon(0, icon)
 

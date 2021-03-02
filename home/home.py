@@ -1,6 +1,7 @@
 # This Python file uses the following encoding: utf-8
 import os, sys
 from PyQt5.QtWidgets import *
+import PyQt5.QtCore
 import PyQt5.uic
 from PyQt5.uic import *
 
@@ -27,13 +28,17 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.env_vars = env_vars['vars']
         self.argv = argv
         super(HomeWindow, self).__init__()
-        PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file
+        PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file*
+        size_tx = self.BDD.get_param('home/windowSize')
+        if size_tx is not None:
+            size = eval(size_tx)
+            self.resize(size[0], size[1])
 
         # load parameters for file import
         file_name_template = self.BDD.get_param('import_file_template')
         file_name_separator = self.BDD.get_param('import_file_separator')
-        app_lang = self.BDD.get_param('lang')
-        app_style = self.BDD.get_param('style')
+        self.app_lang = self.BDD.get_param('lang')
+        self.app_style = self.BDD.get_param('style')
         file_name_separator = self.BDD.get_param('import_file_separator')
         # test parameters for file import and assign default value if not set
         if file_name_template is None:
@@ -42,25 +47,40 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         if file_name_separator is None:
             self.BDD.set_param('import_file_separator', self.env_vars['import_file_separator'])
 
-        if app_lang is None:
-            self.BDD.set_param('lang', "auto")
-        else:
-            self.lang.set_lang(app_lang)
+        if self.app_lang is None:
+            self.BDD.set_param('lang', self.env_vars["default_language"])
+            self.app_lang = self.env_vars["default_language"]
 
-        if app_style is None:
-            self.BDD.set_param('style', "Dark")
+        self.lang.set_lang(self.app_lang)
 
-        self.setStyleSheet("""
-            QMainWindow::separator { background: rgba(63, 63, 63); }
-            QMainWindow::separator:hover { background: rgba(120, 120, 120); }
-            QWidget{ background: rgba(63, 63, 63); color:white; }
-            QDockWidget { border: 0; margin:0; padding:0; }
-            QDockWidget::title { font: bold; text-align: left; background: #333333; padding-left: 5px; }
-            """)
-        self.header_block_contents2.setStyleSheet(env_vars['styles']['Dark']['fullButton'])
+        if self.app_style is None:
+            self.app_style = self.env_vars["default_style"]
+            self.BDD.set_param('style', self.env_vars["default_style"])
+
+        var = self.BDD.get_param('defaultCover/background')
+        if var is None or var == '':
+            self.BDD.set_param('defaultCover/background', self.env_vars["default_cover"]["background"])
+
+        var = self.BDD.get_param('defaultCover/pattern')
+        if var is None or var == '':
+            self.BDD.set_param('defaultCover/pattern', self.env_vars["default_cover"]["pattern"])
+
+        var = self.BDD.get_param('defaultCover/title')
+        if var is None or var == '':
+            self.BDD.set_param('defaultCover/title', self.env_vars["default_cover"]["title"])
+
+        var = self.BDD.get_param('defaultCover/series')
+        if var is None or var == '':
+            self.BDD.set_param('defaultCover/series', self.env_vars["default_cover"]["series"])
+
+        var = self.BDD.get_param('defaultCover/authors')
+        if var is None or var == '':
+            self.BDD.set_param('defaultCover/authors', self.env_vars["default_cover"]["authors"])
+
+        self.set_style()
         self.set_localisation()
         self.set_info_panel()
-        # self.load_books(self.BDD.getBooks())
+        # self.load_books(self.BDD.get_books())
 
         self.header_block_btn_add_book.clicked.connect(self.header_block_btn_add_book_clicked)
         self.header_block_btn_create_book.clicked.connect(self.header_block_btn_create_book_clicked)
@@ -79,6 +99,11 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                 self.header_block_btn_settings_clicked()
         except Exception:
             ""
+
+    def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+        size = self.size()
+        tx = [size.width(), size.height()].__str__()
+        self.BDD.set_param('home/windowSize', tx)
 
     def header_block_btn_add_book_clicked(self):
         """
@@ -115,7 +140,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         :return: void
         """
         try:
-            empty_ui = home.empty_book.EmptyBookWindow(self)
+            empty_ui = home.empty_book.EmptyBookWindow(self, self.BDD)
             ret = empty_ui.open_exec()
             if ret is not None:
                 try:
@@ -134,8 +159,6 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                     insert_book(self.BDD, file_name_template, file_name_separator, file)
                 self.central_block_table.clearSelection()
                 self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)
-
-
 
             print(ret)
         except Exception:
@@ -182,11 +205,13 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                     for item in items:
                         if item.column() == 0:
                             book_id = item.data(99)
-                            for file in self.BDD.getBooks(book_id)[0]['files']:
-                                try: os.remove(self.app_directory + '/' + file['link'])
-                                except Exception: {}
+                            for file in self.BDD.get_books(book_id)[0]['files']:
+                                try:
+                                    os.remove(file['link'].replace('\\', '/').replace('/', os.sep))
+                                except Exception:
+                                    traceback.print_exc()
 
-                            self.BDD.deleteBook(book_id)
+                            self.BDD.delete_book(book_id)
                             print("line n° {}".format(item.row()))
                     # Cleanup all empty folder in data folder
                     clean_dir('./data')
@@ -254,4 +279,13 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.info_block_authors_label.setText(self.lang['Home']['InfoBlockAuthorsLabel'])
         self.info_block_file_formats_label.setText(self.lang['Home']['InfoBlockFileFormatsLabel'])
         self.info_block_size_label.setText(self.lang['Home']['InfoBlockSizeLabel'])
+
+    def set_style(self):
+        self.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
+        self.header_block_contents2.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
+        self.sorting_block_contents.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
+        # self.central_block_table = QTableWidget()
+        self.central_block_table.horizontalHeader().setStyleSheet(env_vars['styles'][self.app_style]['QTableWidget'])
+        self.central_block_table.setStyleSheet(env_vars['styles'][self.app_style]['QTableWidget'])
+        self.central_block_table.horizontalHeader().setSortIndicatorShown(True)
 

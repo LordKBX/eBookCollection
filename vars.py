@@ -1,4 +1,4 @@
-import os
+import os, re
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 app_directory = os.path.dirname(os.path.realpath(__file__))
@@ -34,141 +34,44 @@ env_vars = {
             },
             'import_file_separator': ' - ',
             'home_central_table_header_size_policy': 'UserDefined',  # ResizeToContents, ResizeToContentsAndInteractive, Stretch, UserDefined
-            'home_central_table_header_sizes': '[100, 100, 100, 100, 100]'  # list of collumns size
-        },
-        'styles': {
-            'Dark': {
-                'icons': {
-                    'folder': app_directory.replace(os.sep, '/') + '/icons/white/folder.png',
-                    'file': app_directory.replace(os.sep, '/') + '/icons/white/file.png',
-                    'lock': app_directory.replace(os.sep, '/') + '/icons/white/lock.png',
-                    'unlock': app_directory.replace(os.sep, '/') + '/icons/white/unlock.png'
-                },
-                'dialog': """
-                    QDialog, QWidget{ background-color:#4B4B4B; }
-                    QScrollArea{ background-color:#4B4B4B; }
-                    QLabel{ 
-                        color:#999999;
-                        font-size:15px;
-                        font-weight:bold;
-                        background: transparent;
-                    }
-                    QSpinBox, QDoubleSpinBox, QLineEdit, QComboBox, QPushButton{ 
-                        background-color:#333333;
-                        color:#777777;
-                        border:#999999 2px solid;
-                        font-size:15px;
-                    }
-                 """,
-                'QTabWidget': """
-                    QTabWidget {
-                        background: none;
-                    }
-                    QTabWidget::tab-bar {
-                        background-color:#333333;
-                        color:#AAAAAA;
-                        border-right: 0;
-                    }
-                    QTabBar::tab {
-                        background-color:#999999;
-                        cursor:pointer;
-                        padding: 10px;
-                        border-bottom: 1px solid #ffffff;
-                        border-right: 1px solid #ffffff;
-                    }
-                    QTabBar::tab:selected
-                    {
-                        background-color:#004DD3;
-                        color:#ffffff;
-                    }
-                    QTabBar::tab:hover 
-                    {
-                        background-color:#196DFF;
-                        color:#ffffff;
-                    }
-                    QTabWidget::pane QTabBar{
-                        /* border-bottom: 1px solid #999999; */
-                    }
-                 """,
-                'fullTreeView': """
-                    ::section{
-                        background-color:#4B4B4B;
-                        color:#ffffff;
-                    }
-                    QTreeView::branch:has-siblings:!adjoins-item { }
-                    QTreeView::branch:has-siblings:adjoins-item { }
-                    QTreeView::branch:!has-children:!has-siblings:adjoins-item { }
-                    
-                    QTreeView::branch:has-children:!has-siblings:closed, QTreeView::branch:closed:has-children:has-siblings {
-                        border-image: none;
-                        image: url('{DIR}/icons/white/tree_closed.png');
-                    }
-        
-                    QTreeView::branch:open:has-children:!has-siblings,
-                    QTreeView::branch:open:has-children:has-siblings  {
-                        border-image: none;
-                        image: url('{DIR}/icons/white/tree_opened.png');
-                    }
-                    """.replace('{DIR}', app_directory.replace(os.sep, '/')),
-                'partialTreeView': """
-                    ::section{
-                        background-color:#4B4B4B;
-                    }
-                    QTreeWidget::item { 
-                        padding-left:2px;
-                    }
-                    QTreeWidget::item:hover, QTreeWidget::branch:hover
-                    {
-                        color: rgb(43, 179, 246);
-                        cursor: pointer;
-                    }
-                    QTreeWidget::item:selected { 
-                        background-color: rgb(0, 85, 255);
-                        color:white; 
-                    }
-                    """,
-                'partialTreeViewItemColorNew': "#5972FF",
-                'partialTreeViewItemColorDel': "#FF324E",
-                'partialTreeViewItemColorMod': "#EFC91C",
-                'defaultButton': """
-                    QPushButton{ background:transparent; }
-                    QPushButton:hover{ background-color:rgb(120, 120, 120); }
-                    QPushButton:pressed{ background-color:rgb(120, 120, 120); }
-                    QPushButton:checked{ background-color:rgb(150, 150, 150); }
-                    """,
-                'defaultAltButton': """
-                    QToolButton{ background:transparent; }
-                    QToolButton:hover{ background-color:rgb(120, 120, 120); }
-                    QToolButton:pressed{ background-color:rgb(120, 120, 120); }
-                    QToolButton:checked{ background-color:rgb(150, 150, 150); }
-                    """,
-                'fullButton': """
-                    QPushButton{ background-color:rgb(80, 80, 80); }
-                    QPushButton:hover{ background-color:rgb(120, 120, 120); }
-                    QPushButton:pressed{ background-color:rgb(120, 120, 120); }
-                    QPushButton:checked{ background-color:rgb(150, 150, 150); }
-                    """,
-                'fullAltButton': """
-                    *{ background-color:#666666; color:#ffffff; padding:10px; }
-                    *:hover{ background-color:rgb(120, 120, 120); }
-                    *:pressed{ background-color:rgb(120, 120, 120); }
-                    *:checked{ background-color:rgb(150, 150, 150); }
-                    """,
-                'invisibleButton': """
-                    QPushButton{ background:transparent; }
-                    QPushButton:hover{ background:transparent; }
-                    QPushButton:pressed{ background:transparent; }
-                    QPushButton:checked{ background:transparent; }
-                    """,
-                'displayButton': """
-                    QPushButton{ border:#000000 1px solid; background-color:rgb(80, 80, 80); }
-                    QPushButton:hover{ background-color:rgb(80, 80, 80); }
-                    QPushButton:pressed{ background-color:rgb(80, 80, 80); }
-                    QPushButton:checked{ background-color:rgb(80, 80, 80); }
-                    """,
-                'border': """
-                    QWidget{ border:#000000 1px solid; }
-                    """
+            'home_central_table_header_sizes': '[100, 100, 100, 100, 100]',  # list of collumns size
+            'default_style': 'Dark',
+            'default_language': 'auto',
+            'default_cover': {
+                'colors': [
+                    '#ffffff',
+                    '#000000',
+                ],
+                'patterns': [],
+                'background': '#ffffff',
+                'pattern': '01',
+                'title': '#000000',
+                'series': '#000000',
+                'authors': '#000000'
             }
-        }
+        },
+        'styles': { }
     }
+
+directory = os.path.dirname(os.path.realpath(__file__)) + os.sep + "ressources" + os.sep + "cover_patterns"
+ext = "png"
+for root, directories, files in os.walk(directory, topdown=False):
+    for name in files:
+        if re.search("\\.({})$".format(ext), name) is None:
+            continue
+        else:
+            nm = name.replace("."+ext, "")
+            env_vars['vars']['default_cover']['patterns'].append(nm)
+
+directory = os.path.dirname(os.path.realpath(__file__)) + os.sep + "ressources" + os.sep + "styles"
+ext = "json"
+for root, directories, files in os.walk(directory, topdown=False):
+    for name in files:
+        if re.search("\\.({})$".format(ext), name) is None:
+            continue
+        else:
+            nm = name.replace("."+ext, "")
+            fp = open(directory + os.sep + name, "r", encoding="utf8")
+            content = fp.read()
+            fp.close()
+            env_vars['styles'][nm] = eval(content.replace('{APP_DIR}', app_directory.replace(os.sep, '/')))

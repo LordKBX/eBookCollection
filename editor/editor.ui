@@ -372,7 +372,7 @@ QPushButton:checked{
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/white/save.png</normaloff>../icons/white/save.png</iconset>
+         <normaloff>../ressources/icons/white/save.png</normaloff>../ressources/icons/white/save.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -407,7 +407,7 @@ QPushButton:checked{
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/catalog.png</normaloff>../icons/tmp/catalog.png</iconset>
+         <normaloff>../ressources/icons/tmp/catalog.png</normaloff>../ressources/icons/tmp/catalog.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -442,7 +442,7 @@ QPushButton:checked{
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/bookmarks.png</normaloff>../icons/tmp/bookmarks.png</iconset>
+         <normaloff>../ressources/icons/tmp/bookmarks.png</normaloff>../ressources/icons/tmp/bookmarks.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -477,7 +477,7 @@ QPushButton:checked{
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/tmp/tb_folder.png</normaloff>../icons/tmp/tb_folder.png</iconset>
+         <normaloff>../ressources/icons/tmp/tb_folder.png</normaloff>../ressources/icons/tmp/tb_folder.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -512,7 +512,7 @@ QPushButton:checked{
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>../icons/white/content_table.png</normaloff>../icons/white/content_table.png</iconset>
+         <normaloff>../ressources/icons/white/content_table.png</normaloff>../ressources/icons/white/content_table.png</iconset>
        </property>
        <property name="iconSize">
         <size>

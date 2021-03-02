@@ -16,6 +16,12 @@
     <height>400</height>
    </size>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>480</width>
+    <height>16777215</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -46,9 +52,6 @@
        <height>50</height>
       </size>
      </property>
-     <property name="cursor">
-      <cursorShape>PointingHandCursor</cursorShape>
-     </property>
      <property name="focusPolicy">
       <enum>Qt::NoFocus</enum>
      </property>
@@ -65,7 +68,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <property name="iconSize">
       <size>
@@ -158,16 +161,16 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <property name="leftMargin">
-               <number>0</number>
+               <number>9</number>
               </property>
               <property name="topMargin">
-               <number>0</number>
+               <number>9</number>
               </property>
               <property name="rightMargin">
-               <number>0</number>
+               <number>9</number>
               </property>
               <property name="bottomMargin">
-               <number>0</number>
+               <number>9</number>
               </property>
               <item>
                <layout class="QHBoxLayout" name="tab_global_lang_hl">
@@ -193,7 +196,10 @@
                 <item>
                  <widget class="QPushButton" name="tab_global_lang_btn">
                   <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
+                   <cursorShape>ArrowCursor</cursorShape>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
                    <string>Import</string>
@@ -218,16 +224,16 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <property name="leftMargin">
-               <number>0</number>
+               <number>9</number>
               </property>
               <property name="topMargin">
-               <number>0</number>
+               <number>9</number>
               </property>
               <property name="rightMargin">
-               <number>0</number>
+               <number>9</number>
               </property>
               <property name="bottomMargin">
-               <number>0</number>
+               <number>9</number>
               </property>
               <item>
                <layout class="QHBoxLayout" name="tab_global_style_hl">
@@ -248,7 +254,10 @@
                 <item>
                  <widget class="QPushButton" name="tab_global_style_import_btn">
                   <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
+                   <cursorShape>ArrowCursor</cursorShape>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
                    <string>Import</string>
@@ -281,7 +290,10 @@
                 <item>
                  <widget class="QPushButton" name="tab_global_library_folder_btn">
                   <property name="cursor">
-                   <cursorShape>PointingHandCursor</cursorShape>
+                   <cursorShape>ArrowCursor</cursorShape>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
                   </property>
                   <property name="text">
                    <string>Parcourir...</string>
@@ -317,6 +329,18 @@
        <string>Metadata</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QScrollArea" name="tab_metadata_scroll_area">
          <property name="widgetResizable">
@@ -327,8 +351,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>431</width>
-            <height>347</height>
+            <width>449</width>
+            <height>365</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -348,17 +372,58 @@
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout">
               <item>
-               <widget class="QLabel" name="tab_metadata_default_cover_label_preview">
-                <property name="maximumSize">
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
                  <size>
-                  <width>300</width>
-                  <height>16777215</height>
+                  <width>40</width>
+                  <height>20</height>
                  </size>
                 </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="tab_metadata_default_cover_preview">
+                <property name="minimumSize">
+                 <size>
+                  <width>190</width>
+                  <height>160</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>190</width>
+                  <height>160</height>
+                 </size>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background: transparent !important;</string>
+                </property>
                 <property name="text">
-                 <string>TextLabel</string>
+                 <string/>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>160</width>
+                  <height>160</height>
+                 </size>
                 </property>
                </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
                <layout class="QVBoxLayout" name="tab_metadata_default_cover_vl">
@@ -366,6 +431,12 @@
                  <layout class="QHBoxLayout" name="tab_metadata_default_cover_hl1">
                   <item>
                    <widget class="QLabel" name="tab_metadata_default_cover_background_label">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>Background</string>
                     </property>
@@ -380,6 +451,12 @@
                  <layout class="QHBoxLayout" name="tab_metadata_default_cover_hl2">
                   <item>
                    <widget class="QLabel" name="tab_metadata_default_cover_pattern_label">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>Pattern</string>
                     </property>
@@ -394,6 +471,12 @@
                  <layout class="QHBoxLayout" name="tab_metadata_default_cover_hl3">
                   <item>
                    <widget class="QLabel" name="tab_metadata_default_cover_title_label">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>Title</string>
                     </property>
@@ -408,6 +491,12 @@
                  <layout class="QHBoxLayout" name="tab_metadata_default_cover_hl4">
                   <item>
                    <widget class="QLabel" name="tab_metadata_default_cover_series_label">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>Series</string>
                     </property>
@@ -422,6 +511,12 @@
                  <layout class="QHBoxLayout" name="tab_metadata_default_cover_hl5">
                   <item>
                    <widget class="QLabel" name="tab_metadata_default_cover_authors_label">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>0</height>
+                     </size>
+                    </property>
                     <property name="text">
                      <string>Authors</string>
                     </property>

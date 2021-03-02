@@ -98,7 +98,7 @@ def rmDir(src_dir: str):
 
 
 def copyDir(src_dir: str, dest_dir: str):
-    shutil.copytree(src_dir, dest_dir)
+    shutil.copytree(src_dir, dest_dir, dirs_exist_ok=True)
 
 
 def copyFile(src_dir: str, dest_dir: str):

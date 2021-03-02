@@ -153,12 +153,17 @@
 	"Settings": {
 		"WindowTitle": "Réglages",
 		"TabGlobalTitle": "Général",
+		"TabMetadataTitle": "Metadata",
+		"TabConversionTitle": "Conversion de fichier",
+		"TabAboutTitle": "À propos",
 		"LanguageTitle": "Langue",
 		"LanguageAutomatic": "< Langue système >",
 		"Import": "Importer",
 		"StyleTitle": "Apparence",
 		"StyleLight": "Clair",
 		"StyleDark": "Foncé",
-		"LibraryTitle": "Bibliothèque"
+		"LibraryTitle": "Bibliothèque",
+		"LibraryFolder": "Dossier de stockage Bibliothèque",
+		"LibraryFolderBrowse": "Parcourir..."
 	}
 }

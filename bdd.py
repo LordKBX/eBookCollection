@@ -1,9 +1,10 @@
 # This Python file uses the following encoding: utf-8
-import sys, os, traceback
+import sys, os, shutil, traceback
 import PyQt5.QtCore
 import sqlite3
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common.common import *
+from common.files import *
 from vars import *
 
 
@@ -24,18 +25,26 @@ def dict_factory(cursor, row):
 class BDD:
     def __init__(self, directory: str = None):
         self.settings = PyQt5.QtCore.QSettings("LordKBX Workshop", app_name)
-        # settings.setValue("editor/wrapMargin", 68);
         self.connexion = None
         self.cursor = None
-        self.directory = self.settings.value("library_directory")
+        self.__directory = self.get_param('library/directory')
+        if directory is None and self.__directory is None:
+            self.__directory = app_directory + os.sep + 'data'
+            if os.path.isdir(self.__directory) is False:
+                os.makedirs(self.__directory)
+        elif directory is not None:
+            self.__directory = directory
+        self.__database_filename = 'database.db'
 
-        if directory is None or os.path.isdir(directory) is False:
-            self.directory = app_directory
-            self.settings.setValue("library_directory", app_directory)
+        self.__directory = self.__directory.replace('{APP_DIR}', app_directory)
+        if os.path.isdir(self.__directory) is False:
+            self.__directory = app_directory + os.sep + 'data'
+            self.set_param('library/directory', '{APP_DIR}' + os.sep + 'data')
+        print(self.__directory)
         self.__start()
 
     def __start(self):
-        self.connexion = sqlite3.connect(self.directory + os.sep + 'database.db')
+        self.connexion = sqlite3.connect(self.__directory + os.sep + self.__database_filename)
         self.connexion.row_factory = dict_factory
         self.cursor = self.connexion.cursor()
 
@@ -60,11 +69,6 @@ class BDD:
                     'file_last_read_date' TEXT NOT NULL, 
                     'bookmark' TEXT)''')
 
-        # self.cursor.execute('''PRAGMA table_info('settings')''')
-        # ret = self.cursor.fetchone()
-        # if ret is None:
-        #     self.cursor.execute('''CREATE TABLE settings('name' TEXT PRIMARY KEY NOT NULL, 'value' TEXT)''')
-
         self.connexion.commit()
 
     def close(self):
@@ -79,16 +83,22 @@ class BDD:
 
     def migrate(self, new_folder: str):
         """
-        Migrate
+        Migrate database file
+
         :param new_folder:
         :return:
         """
-        if os.path.isdir(new_folder) is False:
-            return
-        shutil.copy(self.directory + os.sep + 'database.db', new_folder + os.sep + 'database.db')
-        self.directory = new_folder
-        self.settings.setValue("library/directory", new_folder)
-        self.__start()
+        try:
+            if os.path.isdir(new_folder) is False:
+                return
+            self.close()
+            copyDir(self.__directory, new_folder)
+            rmDir(self.__directory)
+            self.__directory = new_folder
+            self.set_param('library/directory', new_folder)
+            self.__start()
+        except Exception:
+            traceback.print_exc()
 
     def get_param(self, name: str):
         """
@@ -97,15 +107,7 @@ class BDD:
         :param name: param value
         :return: string|None
         """
-        # try:
-        #     self.cursor.execute("SELECT value FROM settings WHERE name = \"{}\"".format(name))
-        #     ret = self.cursor.fetchone()
-        #     if ret is not None: return ret['value']
-        #     else: return None
-        # except Exception:
-        #     traceback.print_exc()
-        #     return None
-        return self.settings.value(name)
+        return self.settings.value(name, None, str)
 
     def set_param(self, name: str, value: str):
         """
@@ -115,17 +117,9 @@ class BDD:
         :param value: param value
         :return:
         """
-        # try:
-        #     if self.get_param(name) is None:
-        #         self.cursor.execute('''INSERT INTO settings('name','value') VALUES(?, ?)''', (name, value))
-        #     else:
-        #         self.cursor.execute('''UPDATE settings SET value = ? WHERE name = ?''', (value, name))
-        #     self.connexion.commit()
-        # except Exception:
-        #     traceback.print_exc()
         self.settings.setValue(name, value)
 
-    def getAuthors(self):
+    def get_authors(self):
         """
         get Authors in database
 
@@ -133,13 +127,13 @@ class BDD:
         """
         ret = []
         self.cursor.execute('''SELECT authors FROM books GROUP BY authors ORDER BY authors ASC''')
-        re = self.cursor.fetchall()
-        if re is not None:
-            for row in re:
+        rows = self.cursor.fetchall()
+        if rows is not None:
+            for row in rows:
                 ret.append(row['authors'])
         return ret
 
-    def getSeries(self):
+    def get_series(self):
         """
         get Series in database
 
@@ -153,7 +147,7 @@ class BDD:
                 ret.append(row['serie'])
         return ret
 
-    def getBooks(self, guid: str = None, search: str = None):
+    def get_books(self, guid: str = None, search: str = None):
         """
         get registred book in database
 
@@ -161,26 +155,29 @@ class BDD:
         :param search: research patern
         :return: list(dict)
         """
-        retList = []
+        return_list = []
         ret = None
         if guid is None and search is None:
-            self.cursor.execute('''SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) ORDER BY title ASC''')
+            self.cursor.execute('SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) '
+                                'ORDER BY title ASC')
             ret = self.cursor.fetchall()
         else:
             if guid is not None:
-                self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE guid = '"+guid+"'")
+                self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) "
+                                    "WHERE guid = '"+guid+"'")
                 ret = self.cursor.fetchall()
             elif search is not None:
                 if re.search("^authors:", search) or re.search("^serie:", search):
                     tab = search.split(':')
-                    self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE " + tab[0] + " = '" + tab[1] + "'")
+                    self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) "
+                                        "WHERE " + tab[0] + " = '" + tab[1] + "'")
                     ret = self.cursor.fetchall()
         if ret is not None:
             prev_guid = ''
             for row in ret:
                 if prev_guid != row['guid']:
                     prev_guid = row['guid']
-                    retList.append({
+                    return_list.append({
                         'guid': row['guid'],
                         'title': row['title'],
                         'authors': row['authors'],
@@ -192,7 +189,7 @@ class BDD:
                         'cover': row['cover'],
                         'files': []
                     })
-                retList[len(retList) - 1]['files'].append({
+                return_list[len(return_list) - 1]['files'].append({
                     'guid': row['guid_file'],
                     'size': row['size'],
                     'format': row['format'],
@@ -203,9 +200,9 @@ class BDD:
                     'bookmark': row['bookmark']
                 })
 
-        return retList
+        return return_list
 
-    def insertBook(self, guid: str, title: str, serie: str, authors: str, tags: str, size: str, format: str, link: str, cover: str):
+    def insert_book(self, guid: str, title: str, serie: str, authors: str, tags: str, size: str, format: str, link: str, cover: str):
         """
 
         :param guid:
@@ -234,7 +231,7 @@ class BDD:
             )
         self.connexion.commit()
 
-    def updateBook(self, guid: str, col: str, value: str, file_guid: str = None):
+    def update_book(self, guid: str, col: str, value: str, file_guid: str = None):
         """
 
         :param guid:
@@ -255,7 +252,7 @@ class BDD:
         except Exception:
             traceback.print_exc()
 
-    def deleteBook(self, guid: str, file_guid: str = None):
+    def delete_book(self, guid: str, file_guid: str = None):
         """
 
         :param guid:

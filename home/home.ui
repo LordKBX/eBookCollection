@@ -26,10 +26,10 @@
    <string>HomeWindow</string>
   </property>
   <property name="autoFillBackground">
-   <bool>true</bool>
+   <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QMainWindow { background-color: rgb(0, 0, 0); }</string>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -52,21 +52,11 @@
           <height>0</height>
          </size>
         </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
         <property name="styleSheet">
-         <string notr="true">::section {
-spacing: 10px;
-background-color: #333333;
-color: white;
-border: 1px solid black;
-margin: 0;
-text-align: right;
-font-family: arial;
-font-size: 12px; }
-QTableView::item { padding: 0px }
-
-QTableView::item {cursor:pointer;}
-QTableView::item:hover {background: skyblue;}
-QTableView::item:selected {background: lightgray; color: black;}</string>
+         <string notr="true"/>
         </property>
         <property name="editTriggers">
          <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
@@ -78,7 +68,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          <bool>false</bool>
         </property>
         <property name="alternatingRowColors">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="selectionBehavior">
          <enum>QAbstractItemView::SelectRows</enum>
@@ -93,9 +83,18 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          <bool>true</bool>
         </property>
         <property name="cornerButtonEnabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
+        <attribute name="horizontalHeaderVisible">
+         <bool>true</bool>
+        </attribute>
         <attribute name="horizontalHeaderCascadingSectionResizes">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="horizontalHeaderMinimumSectionSize">
+         <number>100</number>
+        </attribute>
+        <attribute name="horizontalHeaderHighlightSections">
          <bool>false</bool>
         </attribute>
         <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
@@ -117,7 +116,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
          <bool>false</bool>
         </attribute>
         <attribute name="verticalHeaderShowSortIndicator" stdset="0">
-         <bool>true</bool>
+         <bool>false</bool>
         </attribute>
         <attribute name="verticalHeaderStretchLastSection">
          <bool>false</bool>
@@ -283,7 +282,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../icons/white/book_add.png</normaloff>../icons/white/book_add.png</iconset>
+            <normaloff>../ressources/icons/white/book_add.png</normaloff>../ressources/icons/white/book_add.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -330,7 +329,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../icons/white/book_new.png</normaloff>../icons/white/book_new.png</iconset>
+            <normaloff>../ressources/icons/white/book_new.png</normaloff>../ressources/icons/white/book_new.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -377,7 +376,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../icons/white/book_del.png</normaloff>../icons/white/book_del.png</iconset>
+            <normaloff>../ressources/icons/white/book_del.png</normaloff>../ressources/icons/white/book_del.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -434,7 +433,7 @@ QTableView::item:selected {background: lightgray; color: black;}</string>
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../icons/white/settings.png</normaloff>../icons/white/settings.png</iconset>
+            <normaloff>../ressources/icons/white/settings.png</normaloff>../ressources/icons/white/settings.png</iconset>
           </property>
           <property name="iconSize">
            <size>

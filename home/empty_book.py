@@ -11,22 +11,23 @@ from vars import *
 
 
 class EmptyBookWindow(QDialog):
-    def __init__(self, parent):
+    def __init__(self, parent, bdd):
         super(EmptyBookWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(app_directory + os.sep + 'home/empty_book.ui'.replace('/', os.sep), self)  # Load the .ui file
 
-        self.setStyleSheet(env_vars['styles']['Dark']['dialog'])
+        lng = parent.lang
+        self.BDD = bdd
+        style = self.BDD.get_param('style')
 
-        lng = lang.Lang()
-        self.lang = lng
-        self.setWindowTitle(lng['Home']['emptyBooks']['WindowTitle'])
+        self.setStyleSheet(env_vars['styles'][style]['dialog'])
+        self.setWindowTitle(lng['Home/emptyBooks/WindowTitle'])
 
-        self.number_label.setText(lng['Home']['emptyBooks']['Number'])
-        self.authors_label.setText(lng['Home']['emptyBooks']['Authors'])
-        self.serie_label.setText(lng['Home']['emptyBooks']['Series'])
-        self.name_label.setText(lng['Home']['emptyBooks']['Name'])
-        self.format_label.setText(lng['Home']['emptyBooks']['Format'])
-        self.serie_volume_label.setText(lng['Home']['emptyBooks']['SeriesVolume'])
+        self.number_label.setText(lng['Home/emptyBooks/Number'])
+        self.authors_label.setText(lng['Home/emptyBooks/Authors'])
+        self.serie_label.setText(lng['Home/emptyBooks/Series'])
+        self.name_label.setText(lng['Home/emptyBooks/Name'])
+        self.format_label.setText(lng['Home/emptyBooks/Format'])
+        self.serie_volume_label.setText(lng['Home/emptyBooks/SeriesVolume'])
 
         self.number_spin_box.setValue(1)
         self.serie_volume_spin_box.setValue(1.0)
@@ -34,10 +35,14 @@ class EmptyBookWindow(QDialog):
         self.serie_line_edit.setText("")
         self.name_line_edit.setText("")
 
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['FilesWindow']['btnOk'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['FilesWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.button_box.button(QDialogButtonBox.Ok).setText(lng['Editor/FilesWindow/btnOk'])
+        self.button_box.button(QDialogButtonBox.Cancel).setText(lng['Editor/FilesWindow/btnCancel'])
+
+        cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][style]['fullAltButton'])
+        self.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
+        self.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][style]['fullAltButton'])
+        self.button_box.button(QDialogButtonBox.Cancel).setCursor(cursor)
 
     def open_exec(self, file_formats: [str] = None):
         if file_formats is None:
