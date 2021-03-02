@@ -86,6 +86,9 @@ class SettingsWindow(QDialog):
 
         self.combo_changed()
 
+        self.tab_about_btn_license.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE'))
+        self.tab_about_btn_website.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE'))
+
     def open_exec(self):
         ret = self.exec_()  # Show the GUI
         if ret == 1:

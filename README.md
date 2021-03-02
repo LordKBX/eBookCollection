@@ -29,9 +29,9 @@ docx |  | X
         - change style (implemented, unstable)
         - import language pack
         - import style pack
-        - modify library folder
+        - modify library folder(implemented, unstable)
     - Metadata
-        - change default eBook cover style
+        - change default eBook cover style (implemented, unstable)
         - change file name eBook import template
     - Conversion
         - default module CBZ to EPUB
