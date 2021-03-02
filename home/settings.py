@@ -1,5 +1,6 @@
 # This Python file uses the following encoding: utf-8
 import os, sys, traceback
+from typing import Union
 from PyQt5.QtWidgets import *
 import PyQt5.QtCore
 import PyQt5.QtGui
@@ -9,6 +10,7 @@ from PyQt5.uic import *
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import common.common
 import common.files
+import common.books
 from vars import *
 
 
@@ -35,6 +37,7 @@ class SettingsWindow(QDialog):
 
         default_cover_background = self.BDD.get_param('defaultCover/background')
         default_cover_pattern = self.BDD.get_param('defaultCover/pattern')
+        default_cover_pattern_color = self.BDD.get_param('defaultCover/pattern_color')
         default_cover_title = self.BDD.get_param('defaultCover/title')
         default_cover_series = self.BDD.get_param('defaultCover/series')
         default_cover_authors = self.BDD.get_param('defaultCover/authors')
@@ -42,6 +45,7 @@ class SettingsWindow(QDialog):
         self.color_selectors = [
             'tab_metadata_default_cover_background_combo_box',
             # 'tab_metadata_default_cover_pattern_combo_box',
+            'tab_metadata_default_cover_pattern_color_combo_box',
             'tab_metadata_default_cover_title_combo_box',
             'tab_metadata_default_cover_series_combo_box',
             'tab_metadata_default_cover_authors_combo_box'
@@ -72,7 +76,7 @@ class SettingsWindow(QDialog):
         model = self.tab_metadata_default_cover_pattern_combo_box.model()
         for pattern in env_vars['vars']['default_cover']['patterns']:
             entry = PyQt5.QtGui.QStandardItem(pattern)
-            entry.setData(pattern, 98)
+            entry.setData(pattern, 99)
             model.appendRow(entry)
             if pattern == default_cover_pattern:
                 selected = nb
@@ -199,7 +203,7 @@ class SettingsWindow(QDialog):
         cls = self.__dir__()
         for var_name in cls:
             obj = eval('self.'+var_name)
-            if isinstance(obj, (QPushButton, QComboBox)):
+            if isinstance(obj, (QPushButton, QComboBox)) and var_name not in ['tab_metadata_default_cover_preview']:
                 obj.setCursor(cursor)
             if isinstance(obj, QWidget):
                 obj.setStyleSheet(env_vars['styles'][style]['QTabWidget'])
@@ -215,9 +219,25 @@ class SettingsWindow(QDialog):
         self.tab_about.setStyleSheet(env_vars['styles'][style]['dialog'])
 
     def combo_changed(self):
+        vals = {
+            'background': '',
+            'pattern': '',
+            'pattern_color': '',
+            'title': '',
+            'series': '',
+            'authors': ''
+        }
         for id in self.color_selectors:
             selector_type = id.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
             combo = eval('self.'+id)
             index = combo.currentIndex()
             color = combo.itemData(index, 99)
+            vals[selector_type] = color
             combo.setStyleSheet("QComboBox:!editable {{ color: {}; }} QComboBox::down-arrow {{ image:none; width:0px; }}".format(color))
+
+        vals['pattern'] = self.tab_metadata_default_cover_pattern_combo_box.currentData(99)
+        cover = common.books.create_cover("TITRE", "auteur", "La série", 2, style=vals)
+        print(cover)
+        icon = PyQt5.QtGui.QIcon()
+        icon.addPixmap(PyQt5.QtGui.QPixmap(cover, "png"))
+        self.tab_metadata_default_cover_preview.setIcon(icon)

@@ -1,5 +1,7 @@
 import sys, os, io, traceback, shutil, datetime, re, uuid
 from xml.dom import minidom
+import numpy as np
+import PIL
 from PIL import Image, ImageDraw, ImageFont
 import base64
 import zipfile
@@ -37,19 +39,33 @@ def create_thumbnail(path: str, resize: bool = True):
 
 
 def create_cover(title: str, authors: str = None, series: str = None, volume_number: float = None,
-                 file_name: str = app_directory+os.sep+'tmp'+os.sep+'cover.png', style=None):
+                 file_name: str = app_directory + os.sep + 'tmp' + os.sep + 'cover.png', style: dict = None):
+    pattern_folder = app_directory + os.sep + 'ressources' + os.sep + 'cover_patterns'
     if style is None:
         style = {
-            "background": "white",
+            "background": "#ffffff",
             "pattern": "01",
-            "Title": "black",
-            "Series": "blue",
-            "Authors": "black",
+            "pattern_color": "black",
+            "title": "#000000",
+            "series": "#0000ff",
+            "authors": "#000000",
         }
 
-    img = Image.new('RGB', (cover_width, cover_height), color=style['background'])
+    img = Image.new('RGBA', (cover_width, cover_height), color=style['background'])
+    pattern = Image.open(pattern_folder + os.sep + style['pattern'] + '.png').convert("RGBA")
 
-    top = __draw_text_on_image(img, title, 100, 100, "bold", style['Title'])
+    data = np.array(pattern)  # "data" is a height x width x 4 numpy array
+    red, green, blue, alpha = data.T  # Temporarily unpack the bands for readability
+
+    # Replace white with red... (leaves alpha values alone...)
+    white_areas = (red == 0) & (blue == 0) & (green == 0)
+    data[..., :-1][white_areas.T] = __hex_to_rgb(style['pattern_color'])  # Transpose back needed
+
+    mask = Image.fromarray(data)
+
+    img.paste(mask, (0, 0), mask=mask)
+
+    top = __draw_text_on_image(img, title, 100, 100, "bold", style['title'])
 
     if series is not None:
         if volume_number is None:
@@ -60,13 +76,18 @@ def create_cover(title: str, authors: str = None, series: str = None, volume_num
                 tx += " ({})".format(volume_number)
             else:
                 tx += " ({})".format(volume_number.__int__())
-        top = __draw_text_on_image(img, tx, top + 170, 80, "italic", style['Series'])
-        ""
+        top = __draw_text_on_image(img, tx, top + 170, 80, "italic", style['series'])
 
     if authors is not None:
-        top = __draw_text_on_image(img, authors, 1400, 80, "regular", style['Authors'])
+        top = __draw_text_on_image(img, authors, 1400, 80, "regular", style['authors'])
 
-    img.save(file_name)
+    img.save(file_name, format="png")
+    return file_name
+
+
+def __hex_to_rgb(value):
+    value = value.lstrip('#')
+    return tuple(list(int(value[i:i+2], 16) for i in (0, 2, 4)))
 
 
 def __draw_text_on_image(img: Image, text: str, top: int, font_size: int, font_style: str, color: str):
@@ -111,11 +132,12 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                 ):
     if style is None:
         style = {
-            "background": "white",
+            "background": "#ffffff",
             "pattern": "01",
-            "Title": "black",
-            "Series": "blue",
-            "Authors": "black",
+            "pattern_color": "#000000",
+            "title": "#000000",
+            "series": "#0000ff",
+            "authors": "#000000",
         }
     try:
         local_lang = lang.Lang()

@@ -57,6 +57,7 @@ Require the following complements:
 - PyQtWebKit(optional)
 - pysqlite3
 - lxml
+- numpy
 - six
 - Beautifulsoup4
 - pywin32(optional on windows)

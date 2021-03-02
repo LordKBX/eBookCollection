@@ -676,6 +676,9 @@
            <height>160</height>
           </size>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
          <property name="styleSheet">
           <string notr="true">background: transparent !important;</string>
          </property>

@@ -61,9 +61,13 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         if var is None or var == '':
             self.BDD.set_param('defaultCover/background', self.env_vars["default_cover"]["background"])
 
-        var = self.BDD.get_param('defaultCover/pattern')
+        var = self.BDD.get_param('defaultCover/pattern_color')
         if var is None or var == '':
-            self.BDD.set_param('defaultCover/pattern', self.env_vars["default_cover"]["pattern"])
+            self.BDD.set_param('defaultCover/pattern_color', self.env_vars["default_cover"]["pattern"])
+
+        var = self.BDD.get_param('defaultCover/pattern_color')
+        if var is None or var == '':
+            self.BDD.set_param('defaultCover/pattern_color', self.env_vars["default_cover"]["pattern_color"])
 
         var = self.BDD.get_param('defaultCover/title')
         if var is None or var == '':

@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>480</width>
-    <height>400</height>
+    <height>450</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>480</width>
-    <height>400</height>
+    <height>450</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -134,7 +134,7 @@
             <x>0</x>
             <y>0</y>
             <width>449</width>
-            <height>365</height>
+            <height>415</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -352,7 +352,7 @@
             <x>0</x>
             <y>0</y>
             <width>449</width>
-            <height>365</height>
+            <height>415</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -361,7 +361,7 @@
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>100</height>
+               <height>250</height>
               </size>
              </property>
              <property name="title">
@@ -398,6 +398,9 @@
                   <height>160</height>
                  </size>
                 </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">background: transparent !important;</string>
                 </property>
@@ -409,6 +412,9 @@
                   <width>160</width>
                   <height>160</height>
                  </size>
+                </property>
+                <property name="flat">
+                 <bool>false</bool>
                 </property>
                </widget>
               </item>
@@ -464,6 +470,26 @@
                   </item>
                   <item>
                    <widget class="QComboBox" name="tab_metadata_default_cover_pattern_combo_box"/>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="tab_metadata_default_cover_hl2_2">
+                  <item>
+                   <widget class="QLabel" name="tab_metadata_default_cover_pattern_color_label_2">
+                    <property name="minimumSize">
+                     <size>
+                      <width>100</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>Pattern Color</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QComboBox" name="tab_metadata_default_cover_pattern_color_combo_box"/>
                   </item>
                  </layout>
                 </item>
