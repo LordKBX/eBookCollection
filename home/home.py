@@ -20,21 +20,25 @@ import home.empty_book
 
 class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
     def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict, argv: list):
+        super(HomeWindow, self).__init__()
+        PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file
+
+        # load vars and base objects
         self.app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.currentBook = ''
         self.BDD = database
         self.lang = translation
         self.tools = env_vars['tools']
-        self.env_vars = env_vars['vars']
+        self.env_vars = self.vars = env_vars['vars']
         self.argv = argv
-        super(HomeWindow, self).__init__()
-        PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file*
+
+        # load window size
         size_tx = self.BDD.get_param('home/windowSize')
         if size_tx is not None:
             size = eval(size_tx)
             self.resize(size[0], size[1])
 
-        # load parameters for file import
+        # load parameters
         self.app_lang = None
         self.app_style = None
 
@@ -68,7 +72,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.set_style()
         self.set_localisation()
         self.set_info_panel()
-        # self.load_books(self.BDD.get_books())
+        self.load_books(self.BDD.get_books())
 
         self.header_block_btn_add_book.clicked.connect(self.header_block_btn_add_book_clicked)
         self.header_block_btn_create_book.clicked.connect(self.header_block_btn_create_book_clicked)

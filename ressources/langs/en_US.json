@@ -1,5 +1,6 @@
 {
 	"Label": "English (U.S.A)",
+	"NotImplemented": "Not implemented",
 	"Home": {
 		"WindowTitle": "EbookCollection - Ebook manager",
 		"AddBookWindowTitle": "EbookCollection - New books selection",

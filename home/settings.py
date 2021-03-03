@@ -37,7 +37,7 @@ class SettingsWindow(QDialog):
         self.apply_style()
         self.apply_translation()
 
-        # self.dialog_tabs.setCurrentIndex(0)
+        self.dialog_tabs.setCurrentIndex(0)
 
         self.tab_global_lang_combo_box.currentIndexChanged.connect(self.change_language)
         self.tab_global_style_combo_box.currentIndexChanged.connect(self.change_style)
@@ -282,6 +282,15 @@ class SettingsWindow(QDialog):
         self.tab_about.setStyleSheet(env_vars['styles'][style]['QDialog'])
 
         self.tab_metadata_import_filename_separator_line_edit.setStyleSheet(env_vars['styles'][style]['QLineEditPrecise'])
+
+        # IN DEV DISABLED CONTENT
+        cursor_disabled = QtGui.QCursor(QtCore.Qt.ForbiddenCursor)
+        # self.tab_global_lang_btn.setDisabled(True)
+        # self.tab_global_style_import_btn.setDisabled(True)
+        self.tab_global_lang_btn.setCursor(cursor_disabled)
+        self.tab_global_style_import_btn.setCursor(cursor_disabled)
+        self.tab_global_lang_btn.setToolTip(self.lng['NotImplemented'])
+        self.tab_global_style_import_btn.setToolTip(self.lng['NotImplemented'])
 
     def combo_changed(self):
         vals = {

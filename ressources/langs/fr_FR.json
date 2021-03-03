@@ -1,5 +1,6 @@
 {
 	"Label": "Français (France)",
+	"NotImplemented": "Partie non fonctionnelle",
 	"Home": {
 		"WindowTitle": "EbookCollection - Gestionnaire de livre numérique",
 		"AddBookWindowTitle": "EbookCollection - Selection nouveaux livres",

@@ -2,7 +2,7 @@
 This application is designed for managing eBooks
 
 ## formats support
-type | support | planed
+type | complete | partial*
 ------ | ------ | ------
 epub 1/2/3 | X | 
 cbz | X | 
@@ -13,6 +13,8 @@ txt |  | X
 rtf |  | X
 doc |  | X
 docx |  | X
+
+###### * = import in library only, no edition, read with external reader
 
 ## Features
 - add eBook in database

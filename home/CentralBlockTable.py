@@ -3,7 +3,6 @@ import traceback
 from common.common import *
 from common.files import *
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-import vars
 
 
 class HomeWindowCentralBlock:
@@ -11,28 +10,45 @@ class HomeWindowCentralBlock:
     central_block_table_lock = False
     central_block_table_sort_previous_index = 0
     central_block_table_sort_previous_order = QtCore.Qt.AscendingOrder
-    timer = None
-    old_sizes = ''
+    header_policy = ''
 
     def central_block_table_define_slots(self):
         """
         Define Signal/Sloct connections for CentralBlockTable
         :return:
         """
-        # self.central_block_table.setSortIcons(
-        #     QtGui.QIcon(vars.env_vars['styles']['styles']['icons']['sort_up']),
-        #     QtGui.QIcon(self.app_directory + "/icons/white/sort_down.png")
-        # )
-
         self.central_block_table.currentCellChanged.connect(self.central_block_table_new_selection)
         self.central_block_table.itemChanged.connect(self.central_block_table_item_changed)
         self.central_block_table.cellDoubleClicked.connect(self.central_block_table_cell_double_clicked)
         self.central_block_table.horizontalHeader().sortIndicatorChanged.connect(self.central_block_table_sort_indicator_changed)
+        self.central_block_table.horizontalHeader().sectionResized.connect(self.central_block_table_get_column_width)
 
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.central_block_table_get_column_width)
-        self.timer.start(500)
-        self.old_sizes = ''
+        sizes = []
+        print('header_size_policy')
+        try:
+            self.header_policy = self.BDD.get_param('home_central_table_header_size_policy')
+            if self.header_policy is None or self.header_policy == '':
+                self.header_policy = self.vars['home_central_table_header_size_policy']
+            print(self.header_policy)
+            if self.header_policy in ['ResizeToContents', 'ResizeToContentsAndInteractive']:
+                self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
+            if self.header_policy == 'Stretch':
+                self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+            if self.header_policy == 'UserDefined':
+                self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
+                tx = self.BDD.get_param('home_central_table_header_sizes')
+                if tx is None or tx == '':
+                    sizes = json.loads(self.vars['home_central_table_header_sizes'])
+                else:
+                    sizes = json.loads(tx)
+                print(sizes)
+                self.central_block_table.setColumnWidth(0, sizes[0])
+                self.central_block_table.setColumnWidth(1, sizes[1])
+                self.central_block_table.setColumnWidth(2, sizes[2])
+                self.central_block_table.setColumnWidth(3, sizes[3])
+                self.central_block_table.setColumnWidth(4, sizes[4])
+        except Exception:
+            traceback.print_exc()
 
     def central_block_table_get_column_width(self):
         """
@@ -48,14 +64,9 @@ class HomeWindowCentralBlock:
                 sizes.append(self.central_block_table.columnWidth(i))
                 i += 1
             new_size = json.dumps(sizes)
-            if self.old_sizes != new_size:
-                self.old_sizes = new_size
-                # print("--------------------------------")
-                # print('home_central_table_header_WIDTH')
-                # print('new size = {}'.format(new_size))
-                self.env_vars['home_central_table_header_sizes'] = new_size
-                # print('old size = {}'.format(self.BDD.get_param('home_central_table_header_sizes')))
-                self.BDD.set_param('home_central_table_header_sizes', new_size)
+            print(new_size)
+            self.BDD.set_param('home_central_table_header_sizes', new_size)
+            self.BDD.set_param('home_central_table_header_size_policy', self.header_policy)
 
         except Exception:
             ""
@@ -72,7 +83,7 @@ class HomeWindowCentralBlock:
         """
         if self.central_block_table_lock is True: return
         if current_row < 0 or current_column < 0: return
-        if current_row >= self.central_block_table.rowCount() or current_column >= self.central_block_table.columnCount(): return
+        if current_row >= self.central_block_table.rowCount() or current_column < 0: return
         # print("central_block_table_new_selection")
         guid_book = self.central_block_table.item(current_row, current_column).data(99)
         if self.currentBook != guid_book:
@@ -239,23 +250,6 @@ class HomeWindowCentralBlock:
         except Exception:
             traceback.print_exc()
         self.central_block_table_lock = False
-        header_size_policy = self.env_vars['home_central_table_header_size_policy']
-        if header_size_policy in ['ResizeToContents', 'ResizeToContentsAndInteractive']:
-            self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
-        if header_size_policy == 'Stretch':
-            self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
-        if header_size_policy == 'UserDefined':
-            sizes = []
-            try:
-                sizes = json.loads(self.env_vars['home_central_table_header_sizes'])
-                self.central_block_table.setColumnWidth(0, sizes[0])
-                self.central_block_table.setColumnWidth(1, sizes[1])
-                self.central_block_table.setColumnWidth(2, sizes[2])
-                self.central_block_table.setColumnWidth(3, sizes[3])
-                self.central_block_table.setColumnWidth(4, sizes[4])
-            except Exception:
-                traceback.print_exc()
-            self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
         # self.CentralBlockTable.setCornerButtonEnabled(False)
         line = 0
         self.central_block_table.setRowCount(len(books))
@@ -304,13 +298,6 @@ class HomeWindowCentralBlock:
         self.set_info_panel(None)
         self.central_block_table_sort_reset()
         self.central_block_table.setCurrentCell(0, 0)
-
-        if header_size_policy == 'ResizeToContentsAndInteractive':
-            timer = QtCore.QTimer()
-            timer.singleShot(500, self.delayed_table_header_interactive_mode)
-
-    def delayed_table_header_interactive_mode(self):
-        self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
 
 
 class QTableAltItem(QtWidgets.QTableWidgetItem):
