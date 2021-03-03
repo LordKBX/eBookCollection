@@ -49,7 +49,7 @@ if __name__ == "__main__":
 			WarnDialog(lng['Editor']['DialogInfoNoFileWindowTitle'], lng['Editor']['DialogInfoNoFileWindowText'], ui)
 			exit(0)
 
-		ui = EditorWindow(None, file, lng)
+		ui = EditorWindow(None, file, lng, bdd)
 		ui.show()
 
 		# données de test

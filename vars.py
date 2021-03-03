@@ -24,13 +24,13 @@ env_vars = {
         },
         'vars': {
             'import_file_template': {
-                'default': '%title% - %serie% - %authors%',
+                'default': '%title% - %series% - %authors%',
                 'title_authors': '%title% - %authors%',
-                'serie_title_authors': '%serie% - %title% - %authors%',
-                'title_serie_authors': '%title% - %serie% - %authors%',
+                'serie_title_authors': '%series% - %title% - %authors%',
+                'title_serie_authors': '%title% - %series% - %authors%',
                 'title_authors_tags': '%title% - %authors% - %tags%',
-                'serie_title_authors_tags': '%serie% - %title% - %authors% - %tags%',
-                'title_serie_authors_tags': '%title% - %serie% - %authors% - %tags%'
+                'serie_title_authors_tags': '%series% - %title% - %authors% - %tags%',
+                'title_serie_authors_tags': '%title% - %series% - %authors% - %tags%'
             },
             'import_file_separator': ' - ',
             'home_central_table_header_size_policy': 'UserDefined',  # ResizeToContents, ResizeToContentsAndInteractive, Stretch, UserDefined

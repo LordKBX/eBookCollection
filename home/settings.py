@@ -2,6 +2,7 @@
 import os, sys, traceback
 from typing import Union
 from PyQt5.QtWidgets import *
+import PyQt5.sip
 import PyQt5.QtCore
 import PyQt5.QtGui
 import PyQt5.uic
@@ -19,6 +20,15 @@ class SettingsWindow(QDialog):
         super(SettingsWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         self.BDD = bdd
         PyQt5.uic.loadUi(app_directory + os.sep + 'home/settings.ui'.replace('/', os.sep), self)  # Load the .ui file
+
+        self.color_selectors = [
+            'tab_metadata_default_cover_background_combo_box',
+            'tab_metadata_default_cover_pattern_color_combo_box',
+            'tab_metadata_default_cover_title_combo_box',
+            'tab_metadata_default_cover_series_combo_box',
+            'tab_metadata_default_cover_authors_combo_box'
+        ]
+
         self.lng = parent.lang  # language
         self.app_lang = self.BDD.get_param('lang')
         self.app_style = self.BDD.get_param('style')
@@ -42,23 +52,15 @@ class SettingsWindow(QDialog):
         default_cover_series = self.BDD.get_param('defaultCover/series')
         default_cover_authors = self.BDD.get_param('defaultCover/authors')
 
-        self.color_selectors = [
-            'tab_metadata_default_cover_background_combo_box',
-            # 'tab_metadata_default_cover_pattern_combo_box',
-            'tab_metadata_default_cover_pattern_color_combo_box',
-            'tab_metadata_default_cover_title_combo_box',
-            'tab_metadata_default_cover_series_combo_box',
-            'tab_metadata_default_cover_authors_combo_box'
-        ]
-        for id in self.color_selectors:
-            selector_type = id.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
-            combo = eval('self.'+id)
+        for selector in self.color_selectors:
+            selector_type = selector.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
+            combo = eval('self.'+selector)
             # combo = QComboBox()
             model = combo.model()
             selected = 0
             nb = 0
             for color in env_vars['vars']['default_cover']['colors']:
-                entry = PyQt5.QtGui.QStandardItem('█████')
+                entry = PyQt5.QtGui.QStandardItem('███')
                 entry.setForeground(PyQt5.QtGui.QColor(color))
                 entry.setData(color, 99)
                 model.appendRow(entry)
@@ -83,11 +85,24 @@ class SettingsWindow(QDialog):
             nb += 1
         self.tab_metadata_default_cover_pattern_combo_box.setCurrentIndex(selected)
         self.tab_metadata_default_cover_pattern_combo_box.currentIndexChanged.connect(self.combo_changed)
-
         self.combo_changed()
 
-        self.tab_about_btn_license.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE'))
-        self.tab_about_btn_website.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE'))
+        filename_template = self.BDD.get_param('import_file_template')
+        selected = 0
+        for index in env_vars['vars']['import_file_template']:
+            if index == 'default':
+                continue
+            if filename_template == env_vars['vars']['import_file_template'][index]:
+                selected = self.tab_metadata_import_filename_template_combo_box.count()
+            self.tab_metadata_import_filename_template_combo_box.insertItem(
+                self.tab_metadata_import_filename_template_combo_box.count(),
+                env_vars['vars']['import_file_template'][index]
+            )
+        self.tab_metadata_import_filename_template_combo_box.setCurrentIndex(selected)
+        self.tab_metadata_import_filename_separator_line_edit.setText(self.BDD.get_param('import_file_separator'))
+
+        self.tab_about_btn_license.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE.txt'))
+        self.tab_about_btn_website.clicked.connect(lambda: os.system("start https://github.com/LordKBX/eBookCollection"))
 
     def open_exec(self):
         ret = self.exec_()  # Show the GUI
@@ -95,8 +110,31 @@ class SettingsWindow(QDialog):
             new_folder = self.tab_global_library_folder_line_edit.text()
             if self.BDD.get_param('library/directory') != new_folder:
                 self.BDD.migrate(new_folder)
-            data = {}
-            return data
+
+            parse_list = [
+                'tab_metadata_default_cover_background_combo_box',
+                'tab_metadata_default_cover_pattern_combo_box',
+                'tab_metadata_default_cover_pattern_color_combo_box',
+                'tab_metadata_default_cover_title_combo_box',
+                'tab_metadata_default_cover_series_combo_box',
+                'tab_metadata_default_cover_authors_combo_box'
+            ]
+            for id in parse_list:
+                selector = id.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
+                self.BDD.set_param(
+                    'defaultCover/'+selector,
+                    eval('self.'+id+'.currentData(99)')
+                )
+
+            template = self.tab_metadata_import_filename_template_combo_box.currentText()
+            if self.BDD.get_param('import_file_template') != template:
+                self.BDD.set_param('import_file_template', template)
+
+            template_separator = self.tab_metadata_import_filename_separator_line_edit.text()
+            if self.BDD.get_param('import_file_separator') != template_separator:
+                self.BDD.set_param('import_file_separator', template_separator)
+
+            return 'ok'
         else:
             self.lng.set_lang(self.app_lang)
             self.BDD.set_param('lang', self.app_lang)
@@ -174,25 +212,47 @@ class SettingsWindow(QDialog):
             self.dialog_tabs.setTabText(2, self.lng['Settings/TabConversionTitle'])
             self.dialog_tabs.setTabText(3, self.lng['Settings/TabAboutTitle'])
 
+            # tab_global
             #   lang group
-            self.tab_global_lang_group_box.setTitle(self.lng['Settings/LanguageTitle'])
+            self.tab_global_lang_group_box.setTitle(self.lng['Settings/LanguageGroupTitle'])
             self.tab_global_lang_combo_box.setItemText(0, self.lng['Settings/LanguageAutomatic'])
             self.tab_global_lang_btn.setText(self.lng['Settings/Import'])
 
             #   style group
-            self.tab_global_style_group_box.setTitle(self.lng['Settings/StyleTitle'])
+            self.tab_global_style_group_box.setTitle(self.lng['Settings/StyleGroupTitle'])
             self.tab_global_style_import_btn.setText(self.lng['Settings/Import'])
-            for id in range(0, self.tab_global_style_combo_box.count()):
-                data = self.tab_global_style_combo_box.itemData(id, 99)
+            for index in range(0, self.tab_global_style_combo_box.count()):
+                data = self.tab_global_style_combo_box.itemData(index, 99)
                 st = self.lng["Settings/Style" + data]
                 if st is None:
                     st = data
-                self.tab_global_style_combo_box.setItemText(id, st)
+                self.tab_global_style_combo_box.setItemText(index, st)
 
             #   Library group
-            self.tab_global_library_group_box.setTitle(self.lng['Settings/LibraryTitle'])
+            self.tab_global_library_group_box.setTitle(self.lng['Settings/LibraryGroupTitle'])
             self.tab_global_library_folder_label.setText(self.lng['Settings/LibraryFolder'])
             self.tab_global_library_folder_btn.setText(self.lng['Settings/LibraryFolderBrowse'])
+
+            # tab_metadata
+            #   Default Cover group
+            self.tab_metadata_default_cover_group_box.setTitle(self.lng['Settings/DefaultCoverGroupTitle'])
+            self.tab_metadata_default_cover_background_label.setText(self.lng['Settings/DefaultCoverBackground'])
+            self.tab_metadata_default_cover_pattern_label.setText(self.lng['Settings/DefaultCoverPattern'])
+            self.tab_metadata_default_cover_pattern_color_label.setText(self.lng['Settings/DefaultCoverPatternColor'])
+            self.tab_metadata_default_cover_title_label.setText(self.lng['Settings/DefaultCoverTitle'])
+            self.tab_metadata_default_cover_series_label.setText(self.lng['Settings/DefaultCoverSeries'])
+            self.tab_metadata_default_cover_authors_label.setText(self.lng['Settings/DefaultCoverAuthors'])
+
+            #   eBook import
+            self.tab_metadata_import_group_box.setTitle(self.lng['Settings/eBookImportGroupTitle'])
+            self.tab_metadata_import_filename_template_label.setText(self.lng['Settings/eBookImportFilenameTpl'])
+            self.tab_metadata_import_filename_separator_label.setText(self.lng['Settings/eBookImportFilenameTplSeparator'])
+
+            # tab_about
+            #   About group
+            self.tab_about_btn_license.setText(self.lng['Settings/AboutBtnLicense'])
+            self.tab_about_btn_website.setText(self.lng['Settings/AboutBtnWebsite'])
+            self.tab_about_label.setText(self.lng['Settings/AboutLabel'])
 
         except Exception:
             traceback.print_exc()
@@ -201,7 +261,7 @@ class SettingsWindow(QDialog):
         if style is None:
             style = self.BDD.get_param('style')
         cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
-        self.setStyleSheet(env_vars['styles'][style]['dialog'])
+        self.setStyleSheet(env_vars['styles'][style]['QDialog'])
 
         cls = self.__dir__()
         for var_name in cls:
@@ -216,10 +276,12 @@ class SettingsWindow(QDialog):
         self.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][style]['fullAltButton'])
         self.button_box.button(QDialogButtonBox.Cancel).setCursor(cursor)
 
-        self.tab_global.setStyleSheet(env_vars['styles'][style]['dialog'])
-        self.tab_metadata.setStyleSheet(env_vars['styles'][style]['dialog'])
-        self.tab_conversion.setStyleSheet(env_vars['styles'][style]['dialog'])
-        self.tab_about.setStyleSheet(env_vars['styles'][style]['dialog'])
+        self.tab_global.setStyleSheet(env_vars['styles'][style]['QDialog'])
+        self.tab_metadata.setStyleSheet(env_vars['styles'][style]['QDialog'])
+        self.tab_conversion.setStyleSheet(env_vars['styles'][style]['QDialog'])
+        self.tab_about.setStyleSheet(env_vars['styles'][style]['QDialog'])
+
+        self.tab_metadata_import_filename_separator_line_edit.setStyleSheet(env_vars['styles'][style]['QLineEditPrecise'])
 
     def combo_changed(self):
         vals = {
@@ -230,17 +292,30 @@ class SettingsWindow(QDialog):
             'series': '',
             'authors': ''
         }
-        for id in self.color_selectors:
-            selector_type = id.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
-            combo = eval('self.'+id)
+        style = self.BDD.get_param('style')
+        for selector in self.color_selectors:
+            selector_type = selector.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
+            combo = eval('self.'+selector)
             index = combo.currentIndex()
             color = combo.itemData(index, 99)
             vals[selector_type] = color
-            combo.setStyleSheet("QComboBox:!editable {{ color: {}; }} QComboBox::down-arrow {{ image:none; width:0px; }}".format(color))
+            combo.setStyleSheet(
+                "QComboBox:!editable {{ color: {}; }}".format(color) + env_vars['styles'][self.app_style]['QComboBoxArrow']
+            )
 
         vals['pattern'] = self.tab_metadata_default_cover_pattern_combo_box.currentData(99)
         cover = common.books.create_cover("TITRE", "auteur", "La série", 2, style=vals)
-        print(cover)
         icon = PyQt5.QtGui.QIcon()
         icon.addPixmap(PyQt5.QtGui.QPixmap(cover, "png"))
         self.tab_metadata_default_cover_preview.setIcon(icon)
+
+        isize = icon.actualSize(PyQt5.QtCore.QSize(500, 500))
+        image = PyQt5.QtGui.QImage(icon.pixmap(isize.width(), isize.height()).toImage())
+        byte_array = PyQt5.QtCore.QByteArray()
+        buffer = PyQt5.QtCore.QBuffer(byte_array)
+        image.save(buffer, "PNG")
+        icon_base64 = byte_array.toBase64().data()
+
+        self.tab_metadata_default_cover_preview.setToolTip(
+            '<img src="data:image/png;base64,{}" width="500"/>'.format(icon_base64.decode('UTF-8'))
+        )

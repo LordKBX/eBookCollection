@@ -35,52 +35,36 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             self.resize(size[0], size[1])
 
         # load parameters for file import
-        file_name_template = self.BDD.get_param('import_file_template')
-        file_name_separator = self.BDD.get_param('import_file_separator')
-        self.app_lang = self.BDD.get_param('lang')
-        self.app_style = self.BDD.get_param('style')
-        file_name_separator = self.BDD.get_param('import_file_separator')
-        # test parameters for file import and assign default value if not set
-        if file_name_template is None:
-            self.BDD.set_param('import_file_template', self.env_vars['import_file_template']['default'])
+        self.app_lang = None
+        self.app_style = None
 
-        if file_name_separator is None:
-            self.BDD.set_param('import_file_separator', self.env_vars['import_file_separator'])
+        list_test_param = [
+            {'parameter': 'defaultCover/background', 'default': self.env_vars["default_cover"]["background"]},
+            {'parameter': 'defaultCover/pattern', 'default': self.env_vars["default_cover"]["pattern"]},
+            {'parameter': 'defaultCover/pattern_color', 'default': self.env_vars["default_cover"]["pattern_color"]},
+            {'parameter': 'defaultCover/title', 'default': self.env_vars["default_cover"]["title"]},
+            {'parameter': 'defaultCover/series', 'default': self.env_vars["default_cover"]["series"]},
+            {'parameter': 'defaultCover/authors', 'default': self.env_vars["default_cover"]["authors"]},
+            {'parameter': 'home/lastOpenDir', 'default': app_directory},
+            {'parameter': 'import_file_separator', 'default': self.env_vars["import_file_separator"]},
+            {'parameter': 'import_file_template', 'default': self.env_vars['import_file_template']['default']},
 
-        if self.app_lang is None:
-            self.BDD.set_param('lang', self.env_vars["default_language"])
-            self.app_lang = self.env_vars["default_language"]
+            {'parameter': 'style', 'default': self.env_vars["default_style"], 'var': 'app_style'},
+            {'parameter': 'lang', 'default': self.env_vars["default_language"], 'var': 'app_lang'}
+        ]
+
+        for obj in list_test_param:
+            var = self.BDD.get_param(obj['parameter'])
+            if var is None or var == '':
+                self.BDD.set_param(obj['parameter'], obj['default'])
+                var = obj['default']
+            if 'var' in obj:
+                if obj['var'] == 'app_style':
+                    self.app_style = var
+                if obj['var'] == 'app_lang':
+                    self.app_lang = var
 
         self.lang.set_lang(self.app_lang)
-
-        if self.app_style is None:
-            self.app_style = self.env_vars["default_style"]
-            self.BDD.set_param('style', self.env_vars["default_style"])
-
-        var = self.BDD.get_param('defaultCover/background')
-        if var is None or var == '':
-            self.BDD.set_param('defaultCover/background', self.env_vars["default_cover"]["background"])
-
-        var = self.BDD.get_param('defaultCover/pattern_color')
-        if var is None or var == '':
-            self.BDD.set_param('defaultCover/pattern_color', self.env_vars["default_cover"]["pattern"])
-
-        var = self.BDD.get_param('defaultCover/pattern_color')
-        if var is None or var == '':
-            self.BDD.set_param('defaultCover/pattern_color', self.env_vars["default_cover"]["pattern_color"])
-
-        var = self.BDD.get_param('defaultCover/title')
-        if var is None or var == '':
-            self.BDD.set_param('defaultCover/title', self.env_vars["default_cover"]["title"])
-
-        var = self.BDD.get_param('defaultCover/series')
-        if var is None or var == '':
-            self.BDD.set_param('defaultCover/series', self.env_vars["default_cover"]["series"])
-
-        var = self.BDD.get_param('defaultCover/authors')
-        if var is None or var == '':
-            self.BDD.set_param('defaultCover/authors', self.env_vars["default_cover"]["authors"])
-
         self.set_style()
         self.set_localisation()
         self.set_info_panel()
@@ -121,14 +105,18 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             file_name_separator = self.BDD.get_param('import_file_separator')
 
             options = QFileDialog.Options()
-            options |= QFileDialog.DontUseNativeDialog
-            files, _ = QFileDialog.getOpenFileNames(
-                self, self.lang['Home']['AddBookWindowTitle'], "D:\\Calibre_bookstore\\Kaida Spanner(Gui Ying supana)\\Lazy Dungeon Master Arc 01_ Hey, I' (116)",
+            # options |= QFileDialog.DontUseNativeDialog
+            list_files, _ = QFileDialog.getOpenFileNames(
+                self, self.lang['Home']['AddBookWindowTitle'], self.BDD.get_param('home/lastOpenDir'),
                 "eBook (*.epub *.epub2 *.epub3 *.cbz *.cbr *.pdf *.mobi);;Texte (*.txt *.doc *.docx *.rtf)",
                 options=options
             )
-            if len(files) > 0:
-                for file in files:
+            if len(list_files) > 0:
+                selected_directory = list_files[0].replace('/', os.sep)
+                selected_index = selected_directory.rindex(""+os.sep)
+                selected_directory = selected_directory[0:selected_index]
+                self.BDD.set_param('home/lastOpenDir', selected_directory)
+                for file in list_files:
                     # Call booksTools.insert_book
                     insert_book(self.BDD, file_name_template, file_name_separator, file)
                 self.central_block_table.clearSelection()
@@ -177,12 +165,17 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         print("Bouton Options clické")
         try:
             dialog = SettingsWindow(self, self.BDD)
-            dialog.open_exec()
+            ret = dialog.open_exec()
             try:
+                if ret is not None:
+                    self.app_lang = self.BDD.get_param('lang')
+                    self.app_style = self.BDD.get_param('style')
+                    self.set_localisation()
+                    self.set_style()
                 if self.argv[1] == "settings":
                     sys.exit(0)
             except Exception:
-                ""
+                traceback.print_exc()
         except Exception:
             traceback.print_exc()
 

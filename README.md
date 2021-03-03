@@ -20,25 +20,26 @@ docx |  | X
 - modify eBook
 - modify eBook metadata(support for title, series and authors)
 - modify eBook storage directory if metadata updated
+- Settings window
+    - Global
+        - change language
+        - change style
+        - modify library folder
+    - Metadata
+        - change default eBook cover style
+        - change file name eBook import template
+    - About tab
 
 ## Planed Features
 - File conversion
 - Settings window
     - Global
-        - change language (implemented, unstable)
-        - change style (implemented, unstable)
         - import language pack
         - import style pack
-        - modify library folder(implemented, unstable)
-    - Metadata
-        - change default eBook cover style (implemented, unstable)
-        - change file name eBook import template
     - Conversion
         - default module CBZ to EPUB
         - import Conversion module
         - modify parameters of Conversion modules
-    - About
-        - use language translation on tab content
 
 - synchronize eBook library with mobile terminal (in a far future)
     - incompatible terminal software would only have the eBook file copied

@@ -16,7 +16,6 @@ from editor.window import *
 from editor.checkpoint import *
 from editor.files import *
 from editor.content_table_editor import *
-from bdd import *
 from vars import *
 from common.common import *
 from common.dialog import *
@@ -27,28 +26,24 @@ import common.qt
 
 
 class EditorWindow(QtWidgets.QMainWindow):
-    def __init__(self, parent: QtWidgets.QMainWindow, opened_file, lang):
+    def __init__(self, parent: QtWidgets.QMainWindow, opened_file, lang, bdd):
         super(EditorWindow, self).__init__(parent)
         PyQt5.uic.loadUi(app_directory + '/editor/editor.ui'.replace('/', os.sep), self)
         self.opened_file = opened_file
         self.tmpDir = app_directory + os.sep + 'editor' + os.sep + 'tmp'
         self.lang = lang
+        self.BDD = bdd
+        self.app_style = self.BDD.get_param('style')
         self.default_page = self.lang['Editor']['WebViewDefaultPageContent']
 
-        self.setStyleSheet("""
-            QMainWindow::separator { background: rgba(63, 63, 63); }
-            QMainWindow::separator:hover { background: rgba(120, 120, 120); }
-            QWidget{ background: rgba(63, 63, 63); color:white; }
-            QDockWidget { border: 0; margin:0; padding:0; }
-            QDockWidget::title { font: bold; text-align: left; background: #333333; padding-left: 5px; }
-            """ + env_vars['styles']['Dark']['defaultAltButton'])
-        self.btnEbookSave.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
-        self.btnEbookLoadCheckpoint.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
-        self.btnEbookCreateCheckpoint.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
-        self.btnEbookAddFile.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
-        self.btnEbookContentTable.setStyleSheet(env_vars['styles']['Dark']['defaultAltButton'])
+        self.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
+        self.btnEbookSave.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
+        self.btnEbookLoadCheckpoint.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
+        self.btnEbookCreateCheckpoint.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
+        self.btnEbookAddFile.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
+        self.btnEbookContentTable.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
 
-        self.dockTop1.setStyleSheet(env_vars['styles']['Dark']['defaultButton'])
+        self.dockTop1.setStyleSheet(env_vars['styles'][self.app_style]['defaultButton'])
 
         # ui.tabWidget
         ad = app_directory.replace(os.sep, '/')
@@ -78,7 +73,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.treeFileTable.itemDoubleClicked.connect(self.file_table_item_double_clicked)
         self.treeFileTable.setIndentation(10)
         self.treeFileTable.setCursor(QtCore.Qt.PointingHandCursor)
-        self.treeFileTable.setStyleSheet(env_vars['styles']['Dark']['fullTreeView'])
+        self.treeFileTable.setStyleSheet(env_vars['styles'][self.app_style]['fullTreeView'])
 
         # Processing Content Table
         self.treeContentTable.clear()

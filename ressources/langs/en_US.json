@@ -156,14 +156,34 @@
 		"TabMetadataTitle": "Metadata",
 		"TabConversionTitle": "File Conversion",
 		"TabAboutTitle": "About",
-		"LanguageTitle": "Language",
+		"LanguageGroupTitle": "Language",
 		"LanguageAutomatic": "< System defined >",
 		"Import": "Import",
-		"StyleTitle": "Style",
+		"StyleGroupTitle": "Style",
 		"StyleLight": "Light",
 		"StyleDark": "Dark",
-		"LibraryTitle": "Library",
+		"LibraryGroupTitle": "Library",
 		"LibraryFolder": "Library storage folder",
-		"LibraryFolderBrowse": "Browse..."
+		"LibraryFolderBrowse": "Browse...",
+
+		"DefaultCoverGroupTitle": "Default Cover Style",
+		"DefaultCoverBackground": "Background Color",
+		"DefaultCoverPattern": "Pattern",
+		"DefaultCoverPatternColor": "Pattern Color",
+		"DefaultCoverTitle": "Title Color",
+		"DefaultCoverSeries": "Series Color",
+		"DefaultCoverAuthors": "Authors Color",
+
+		"eBookImportGroupTitle": "eBook Import settings",
+		"eBookImportFilenameTpl": "File name parse template",
+		"eBookImportFilenameTplSeparator": "File name parse separator",
+
+		"AboutLabel": [
+			"{APP_NAME}\\n\\n",
+			"MIT License\\n\\n",
+			"Copyright (c) 2020-2021 Boulain Kévin"
+		],
+		"AboutBtnLicense": "License",
+		"AboutBtnWebsite": "Web Site"
 	}
 }

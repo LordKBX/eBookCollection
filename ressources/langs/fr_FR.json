@@ -73,7 +73,16 @@
 		"DialogInfoBadFileWindowText": "Format de fichier invalide",
 		"ContentTableHeader": "Table des Matières",
 		"FileTableHeader": "Explorateur de fichiers",
-		"WebViewDefaultPageContent": "<?xml version=\"1.0\" encoding=\"utf-8\"?><html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"fr\"><head><title>Prévisualisation en direct</title></head><body><h3>Prévisualisation en direct</h3><p>Vous verrez ici une prévisualisation en direct du fichier HTML en cours d'édition. La prévisualisation se mettra à jour automatiquement au fur et à mesure de vos changements.</p><p>Notez que ceci est une prévisualisation rapide, ceci n'est pas prévu pour simuler un réel lecteur de livre numérique.</p></body></html>",
+		"WebViewDefaultPageContent": [
+			"<?xml version=\"1.0\" encoding=\"utf-8\"?><html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"fr\">\n",
+			"<head><title>Prévisualisation en direct</title></head>\n",
+			"<body>\n",
+			"\t<h3>Prévisualisation en direct</h3>\n",
+			"\t<p>Vous verrez ici une prévisualisation en direct du fichier HTML en cours d'édition. ",
+			"La prévisualisation se mettra à jour automatiquement au fur et à mesure de vos changements.</p>\n",
+			"\t<p>Notez que ceci est une prévisualisation rapide, ceci n'est pas prévu pour simuler un réel lecteur de livre numérique.</p>",
+			"</body></html>"
+		],
 		"DialogConfirmSaveWindowTitle": "Sauvegarde fichier",
 		"DialogConfirmSaveWindowText": "Confirmez vous la sauvegarde du fichier ?",
 		"DialogCreateCheckpointWindowTitle": "Création checkpoint session",
@@ -156,14 +165,34 @@
 		"TabMetadataTitle": "Metadata",
 		"TabConversionTitle": "Conversion de fichier",
 		"TabAboutTitle": "À propos",
-		"LanguageTitle": "Langue",
+		"LanguageGroupTitle": "Langue",
 		"LanguageAutomatic": "< Langue système >",
 		"Import": "Importer",
-		"StyleTitle": "Apparence",
+		"StyleGroupTitle": "Apparence",
 		"StyleLight": "Clair",
 		"StyleDark": "Foncé",
-		"LibraryTitle": "Bibliothèque",
+		"LibraryGroupTitle": "Bibliothèque",
 		"LibraryFolder": "Dossier de stockage Bibliothèque",
-		"LibraryFolderBrowse": "Parcourir..."
+		"LibraryFolderBrowse": "Parcourir...",
+
+		"DefaultCoverGroupTitle": "Style Couverture par défaut",
+		"DefaultCoverBackground": "Couleur Fond",
+		"DefaultCoverPattern": "Motif",
+		"DefaultCoverPatternColor": "Couleur Motif",
+		"DefaultCoverTitle": "Couleur Titre",
+		"DefaultCoverSeries": "Couleur Série",
+		"DefaultCoverAuthors": "Couleur Auteurs",
+
+		"eBookImportGroupTitle": "Réglages import eBook",
+		"eBookImportFilenameTpl": "Template de parsing nom fichier",
+		"eBookImportFilenameTplSeparator": "Séparateur nom fichier",
+
+		"AboutLabel": [
+			"{APP_NAME}\\n\\n",
+			"License MIT\\n\\n",
+			"Copyright (c) 2020-2021 Boulain Kévin"
+		],
+		"AboutBtnLicense": "Licence",
+		"AboutBtnWebsite": "Site Web"
 	}
 }

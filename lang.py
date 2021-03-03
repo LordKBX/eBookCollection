@@ -5,6 +5,7 @@ import imp
 import locale
 import json.decoder
 import traceback
+import vars
 
 
 class Dictionary:
@@ -100,7 +101,9 @@ class Lang:
                     fp.close()
                     decoder = json.decoder.JSONDecoder()
                     tab = decoder.decode(content)
-                    self.translations[nm] = eval(content)
+                    self.translations[nm] = eval(
+                        content.replace('[', '"\\n".join([').replace(']', '])').replace('{APP_NAME}', vars.app_name)
+                    )
 
     def refresh(self):
         self.__load_langs()

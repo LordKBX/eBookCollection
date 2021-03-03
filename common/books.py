@@ -280,7 +280,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
 
         filename = file_name_template\
             .replace('%title%', title)\
-            .replace('%serie%', series)\
+            .replace('%series%', series)\
             .replace('%authors%', authors)
         output = app_directory+os.sep+'tmp'+os.sep+filename+'.epub'
         deflate(app_directory+os.sep+'tmp'+os.sep+'*', output)
@@ -419,7 +419,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
             while i < len(tab_file):
                 if tab_mask[i] == '%title%': tmp_title = tab_file[i]
                 if tab_mask[i] == '%authors%': tmp_authors = tab_file[i]
-                if tab_mask[i] == '%serie%': tmp_serie = tab_file[i]
+                if tab_mask[i] == '%series%': tmp_serie = tab_file[i]
                 if tab_mask[i] == '%tags%': tmp_tags = tab_file[i]
                 i += 1
         except Exception:

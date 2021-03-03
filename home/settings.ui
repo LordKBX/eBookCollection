@@ -56,7 +56,7 @@
       <enum>Qt::NoFocus</enum>
      </property>
      <property name="autoFillBackground">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="styleSheet">
       <string notr="true"/>
@@ -68,7 +68,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>1</number>
      </property>
      <property name="iconSize">
       <size>
@@ -356,6 +356,18 @@
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
+           <property name="leftMargin">
+            <number>5</number>
+           </property>
+           <property name="topMargin">
+            <number>5</number>
+           </property>
+           <property name="rightMargin">
+            <number>5</number>
+           </property>
+           <property name="bottomMargin">
+            <number>5</number>
+           </property>
            <item>
             <widget class="QGroupBox" name="tab_metadata_default_cover_group_box">
              <property name="minimumSize">
@@ -371,19 +383,9 @@
               <bool>false</bool>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <spacer name="horizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
               <item>
                <widget class="QPushButton" name="tab_metadata_default_cover_preview">
                 <property name="minimumSize">
@@ -439,7 +441,7 @@
                    <widget class="QLabel" name="tab_metadata_default_cover_background_label">
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>120</width>
                       <height>0</height>
                      </size>
                     </property>
@@ -459,7 +461,7 @@
                    <widget class="QLabel" name="tab_metadata_default_cover_pattern_label">
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>120</width>
                       <height>0</height>
                      </size>
                     </property>
@@ -476,10 +478,10 @@
                 <item>
                  <layout class="QHBoxLayout" name="tab_metadata_default_cover_hl2_2">
                   <item>
-                   <widget class="QLabel" name="tab_metadata_default_cover_pattern_color_label_2">
+                   <widget class="QLabel" name="tab_metadata_default_cover_pattern_color_label">
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>120</width>
                       <height>0</height>
                      </size>
                     </property>
@@ -499,7 +501,7 @@
                    <widget class="QLabel" name="tab_metadata_default_cover_title_label">
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>120</width>
                       <height>0</height>
                      </size>
                     </property>
@@ -519,7 +521,7 @@
                    <widget class="QLabel" name="tab_metadata_default_cover_series_label">
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>120</width>
                       <height>0</height>
                      </size>
                     </property>
@@ -539,7 +541,7 @@
                    <widget class="QLabel" name="tab_metadata_default_cover_authors_label">
                     <property name="minimumSize">
                      <size>
-                      <width>100</width>
+                      <width>120</width>
                       <height>0</height>
                      </size>
                     </property>
@@ -563,8 +565,11 @@
              <property name="minimumSize">
               <size>
                <width>0</width>
-               <height>100</height>
+               <height>130</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">gridline-color: rgb(255, 0, 127);</string>
              </property>
              <property name="title">
               <string>Import</string>
@@ -573,31 +578,53 @@
               <bool>false</bool>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_10">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>9</number>
+              </property>
               <item>
-               <layout class="QHBoxLayout" name="tab_metadata_import_hl1">
-                <item>
-                 <widget class="QLabel" name="tab_metadata_import_filename_template_label">
-                  <property name="text">
-                   <string>File name parse template</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="tab_metadata_import_filename_template_combo_box"/>
-                </item>
-               </layout>
+               <widget class="QLabel" name="tab_metadata_import_filename_template_label">
+                <property name="autoFillBackground">
+                 <bool>true</bool>
+                </property>
+                <property name="text">
+                 <string>File name parse template</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="tab_metadata_import_filename_template_combo_box">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+               </widget>
               </item>
               <item>
                <layout class="QHBoxLayout" name="tab_metadata_import_hl2">
                 <item>
                  <widget class="QLabel" name="tab_metadata_import_filename_separator_label">
+                  <property name="autoFillBackground">
+                   <bool>true</bool>
+                  </property>
                   <property name="text">
                    <string>File name parse separator</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="tab_metadata_import_filename_separator_line_edit"/>
+                 <widget class="QLineEdit" name="tab_metadata_import_filename_separator_line_edit">
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </item>

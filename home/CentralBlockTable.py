@@ -71,6 +71,8 @@ class HomeWindowCentralBlock:
         :return: void
         """
         if self.central_block_table_lock is True: return
+        if current_row < 0 or current_column < 0: return
+        if current_row >= self.central_block_table.rowCount() or current_column >= self.central_block_table.columnCount(): return
         # print("central_block_table_new_selection")
         guid_book = self.central_block_table.item(current_row, current_column).data(99)
         if self.currentBook != guid_book:

@@ -22,11 +22,23 @@
 		"QLineEdit { background-color: rgb(100, 100, 100); }"
 	],
 
-	"dialog": [
+	"QDialog": [
 		"QDialog, QWidget{ background-color:#4B4B4B; }",
 		"QScrollArea{ background-color:#4B4B4B; }",
 		"QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
-		"QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QPushButton{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }"
+		"QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QPushButton{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+		"#tab_metadata_import_filename_template_label{ margin:0px; }",
+		"#tab_metadata_import_filename_template_combo_box{ padding:5px; margin-bottom:5px; }",
+		"#tab_metadata_import_filename_separator_label{ padding-right:5px; }"
+	],
+
+	"QLineEditPrecise": [
+		"QLineEdit{ ",
+		"border-color:rgb(99, 99, 99);",
+		"border-width: 1px;",
+		"border-style:solid;",
+		"font-size:15px; padding:0px;",
+		" }"
 	],
 
 	"QTabWidget": [
@@ -115,5 +127,7 @@
 		"QPushButton:checked { background-color: rgb(80, 80, 80); }"
 	],
 
-	"border": "QWidget { border:  #000000 1px solid; }"
+	"border": "QWidget { border:  #000000 1px solid; }",
+
+	"QComboBoxArrow": "QComboBox::down-arrow { image:none; width:0px; }"
 }

@@ -19,7 +19,7 @@ class EmptyBookWindow(QDialog):
         self.BDD = bdd
         style = self.BDD.get_param('style')
 
-        self.setStyleSheet(env_vars['styles'][style]['dialog'])
+        self.setStyleSheet(env_vars['styles'][style]['QDialog'])
         self.setWindowTitle(lng['Home/emptyBooks/WindowTitle'])
 
         self.number_label.setText(lng['Home/emptyBooks/Number'])
