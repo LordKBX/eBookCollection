@@ -18,7 +18,7 @@ cover_height = 1600
 
 
 def create_thumbnail(path: str, resize: bool = True):
-    img = Image.open(path)
+    img = Image.open(path).convert("RGB")
     img.load()
     if resize is True:
         max_h = max_w = 600
@@ -127,7 +127,7 @@ def __draw_text_on_image(img: Image, text: str, top: int, font_size: int, font_s
 
 
 def create_epub(title: str, authors: str = None, series: str = None, volume_number: float = None,
-                file_name_template: str = '%title% - %serie% - %authors%',
+                file_name_template: str = env_vars['vars']['import_file_template']['default'],
                 style=None
                 ):
     if style is None:

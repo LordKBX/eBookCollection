@@ -147,7 +147,19 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
 
                 if ret['format'] == 'EPUB':
                     vol = ret['vol']
-                    file = create_epub(ret['name'], ret['authors'], ret['serie'], vol)
+                    cover_style = {
+                        "background": self.BDD.get_param('defaultCover/background'),
+                        "pattern": self.BDD.get_param('defaultCover/pattern'),
+                        "pattern_color": self.BDD.get_param('defaultCover/pattern_color'),
+                        "title": self.BDD.get_param('defaultCover/title'),
+                        "series": self.BDD.get_param('defaultCover/series'),
+                        "authors": self.BDD.get_param('defaultCover/authors'),
+                    }
+
+                    file = create_epub(
+                        ret['name'], ret['authors'], ret['serie'], vol,
+                        file_name_template=self.BDD.get_param('import_file_template'), style=cover_style
+                    )
 
                     # load parameters for file import
                     file_name_template = self.BDD.get_param('import_file_template')
