@@ -1,7 +1,7 @@
 import os, re
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-app_directory = os.path.dirname(os.path.realpath(__file__))
+app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 app_name = "eBookCollection"
 
 env_vars = {
@@ -76,7 +76,7 @@ env_vars = {
         'styles': { }
     }
 
-directory = os.path.dirname(os.path.realpath(__file__)) + os.sep + "ressources" + os.sep + "cover_patterns"
+directory = app_directory + os.sep + "ressources" + os.sep + "cover_patterns"
 ext = "png"
 for root, directories, files in os.walk(directory, topdown=False):
     for name in files:
@@ -86,7 +86,7 @@ for root, directories, files in os.walk(directory, topdown=False):
             nm = name.replace("."+ext, "")
             env_vars['vars']['default_cover']['patterns'].append(nm)
 
-directory = os.path.dirname(os.path.realpath(__file__)) + os.sep + "ressources" + os.sep + "styles"
+directory = app_directory + os.sep + "ressources" + os.sep + "styles"
 ext = "json"
 for root, directories, files in os.walk(directory, topdown=False):
     for name in files:

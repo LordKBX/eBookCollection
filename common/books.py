@@ -1,17 +1,16 @@
-import sys, os, io, traceback, shutil, datetime, re, uuid
+import sys, os, io
 from xml.dom import minidom
 import numpy as np
-import PIL
 from PIL import Image, ImageDraw, ImageFont
 import base64
 import zipfile
+import traceback
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-import bdd
 from common.common import *
 from common.files import *
 from common.archive import *
-from vars import *
-import lang
+from common.vars import *
+from common import lang, bdd
 
 cover_width = 1200
 cover_height = 1600
@@ -338,16 +337,47 @@ def get_epub_info(path: str):
             metas = mydoc.getElementsByTagName('meta')
             cov_id = ''
             for meta in metas:
-                if meta.attributes['name'].value == 'cover': cov_id = meta.attributes['content'].value
-                if meta.attributes['name'].value == 'calibre:series': ret['series'] = meta.attributes['content'].value
-                if meta.attributes['name'].value == 'dc:series': ret['series'] = meta.attributes['content'].value
+                if meta.hasAttribute('name'):
+                    if meta.attributes['name'].value == 'cover': cov_id = meta.attributes['content'].value
+                    if meta.attributes['name'].value == 'calibre:series': ret['series'] = meta.attributes['content'].value
+                    if meta.attributes['name'].value == 'dc:series': ret['series'] = meta.attributes['content'].value
 
             items = mydoc.getElementsByTagName('item')
-            spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
+            if mydoc.getElementsByTagName('spine')[0].hasAttribute('toc'):
+                spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
+                for itm in items:
+                    if itm.attributes['id'].value == spine:
+                        ret['toc'] = itm.attributes['href'].value
+                myfile = myzip.open(base + ret['toc'])
+                mydoc = minidom.parseString(myfile.read())
+                itemrefs = mydoc.getElementsByTagName('navPoint')
+                for ref in itemrefs:
+                    id = ref.attributes['id'].value
+                    ret['chapters'].append({
+                        'id': ref.attributes['id'].value,
+                        'name': ref.getElementsByTagName('text')[0].firstChild.data,
+                        'src': base + ref.getElementsByTagName('content')[0].attributes['src'].value
+                    })
+                myfile.close()
+            else:
+                refs_list = mydoc.getElementsByTagName('spine')[0].getElementsByTagName('itemref')
+                for itemref in refs_list:
+                    idref = itemref.attributes['idref'].value
+                    for itm in items:
+                        if itm.attributes['id'].value == idref:
+                            try:
+                                chapter_file = myzip.open(base + itm.attributes['href'].value, "r")
+                                content = chapter_file.read().decode("utf8")
+                                title = re.search("<title>(.*)</title>", content)[1]
+                                ret['chapters'].append({
+                                    'id': idref,
+                                    'name': title,
+                                    'src': base + itm.attributes['href'].value
+                                })
+                            except Exception:
+                                traceback.print_exc()
 
             for itm in items:
-                if itm.attributes['id'].value == spine:
-                    ret['toc'] = itm.attributes['href'].value
                 if cov_id != '':
                     if itm.attributes['id'].value == cov_id:
                         filepath, ext = os.path.splitext(itm.attributes['href'].value)
@@ -356,6 +386,7 @@ def get_epub_info(path: str):
                             os.makedirs(tmpdir)
                         mfile = myzip.extract(base+itm.attributes['href'].value, tmpdir)
                         ret['cover'] = create_thumbnail(mfile)
+                        rmDir(tmpdir)
                         break
                 else:
                     if itm.attributes['media-type'].value in ['image/jpeg', 'image/png']:
@@ -365,21 +396,9 @@ def get_epub_info(path: str):
                             os.makedirs(tmpdir)
                         mfile = myzip.extract(base+itm.attributes['href'].value, tmpdir)
                         ret['cover'] = create_thumbnail(mfile)
+                        rmDir(tmpdir)
                         break
             myfile.close()
-
-            myfile = myzip.open(base+ret['toc'])
-            mydoc = minidom.parseString(myfile.read())
-            itemrefs = mydoc.getElementsByTagName('navPoint')
-            for ref in itemrefs:
-                id = ref.attributes['id'].value
-                ret['chapters'].append({
-                    'id': ref.attributes['id'].value,
-                    'name': ref.getElementsByTagName('text')[0].firstChild.data,
-                    'src': base+ref.getElementsByTagName('content')[0].attributes['src'].value
-                })
-            myfile.close()
-
             myzip.close()
             return ret
     except Exception:
@@ -428,7 +447,6 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         if ext in ['.epub', '.epub2', '.epub3']:  # section for EPUB files
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
             infos = get_epub_info(file)
-            print(infos)
             if infos['guid'] is not None: tmp_guid = infos['guid']
             tmp_title = infos['title']
             tmp_authors = infos['authors']
@@ -441,7 +459,6 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         elif ext in ['.cbz', '.cbr']:  # section for CBZ and CBR files
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
             ret = inflate(file, tmpdir)
-            print(ret)
             tmp_cover = create_thumbnail(listDir(tmpdir)[0])  # get path of the first image into temp dir
 
         else:
@@ -461,7 +478,6 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
             os.makedirs(end_file)
         # copy file to the destination
         end_file += clean_string_for_url(tmp_title) + ext
-        print(end_file)
         shutil.copyfile(file, end_file)
         # insert data in database
-        database.insert_book(tmp_guid, tmp_title, tmp_serie, tmp_authors, tmp_tags, get_file_size(end_file), tmp_format, end_file, tmp_cover)
+        database.insert_book(tmp_guid, tmp_title, tmp_series, tmp_authors, tmp_tags, get_file_size(end_file), tmp_format, end_file, tmp_cover)

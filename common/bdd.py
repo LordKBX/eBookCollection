@@ -1,11 +1,11 @@
 # This Python file uses the following encoding: utf-8
-import sys, os, shutil, traceback
+import sys, os, shutil, traceback, time
 import PyQt5.QtCore
 import sqlite3
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common.common import *
 from common.files import *
-from vars import *
+from common.vars import *
 
 
 def dict_factory(cursor, row):
@@ -67,6 +67,7 @@ class BDD:
                     'file_import_date' TEXT NOT NULL, 
                     'file_last_update_date' TEXT NOT NULL, 
                     'file_last_read_date' TEXT NOT NULL, 
+                    'file_hash' TEXT NOT NULL, 
                     'bookmark' TEXT)''')
 
         self.connexion.commit()
@@ -197,6 +198,7 @@ class BDD:
                     'import_date': row['file_import_date'],
                     'last_update_date': row['file_last_update_date'],
                     'last_read_date': row['file_last_read_date'],
+                    'file_hash': row['file_hash'],
                     'bookmark': row['bookmark']
                 })
 
@@ -217,17 +219,20 @@ class BDD:
         :return:
         """
         dt = time.time()
-        self.cursor.execute('''INSERT INTO books(
+        self.cursor.execute(
+                '''INSERT INTO books(
                 'guid','title','series','authors','tags','cover',
                 'import_date','last_update_date') 
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?)''',
                 (guid, title, series, authors, tags, cover, dt, dt)
             )
-        self.cursor.execute('''INSERT INTO files(
+        file_hash = hashFile(link)
+        self.cursor.execute(
+                '''INSERT INTO files(
                 'guid_file','book_id','size','format','link','file_import_date',
-                'file_last_update_date','file_last_read_date','bookmark') 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                (uid(), guid, size, format, link, dt, dt, dt, None)
+                'file_last_update_date','file_last_read_date','file_hash','bookmark') 
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (uid(), guid, size, format, link, dt, dt, dt, file_hash, None)
             )
         self.connexion.commit()
 
@@ -243,11 +248,14 @@ class BDD:
         try:
             dt = time.time()
             if file_guid is None:
-                self.cursor.execute('UPDATE books SET `'+col+'` = ?, last_update_date = ? WHERE guid = ?', (value, dt, guid))
+                self.cursor.execute(
+                    'UPDATE books SET `'+col+'` = ?, last_update_date = ? WHERE guid = ?', (value, dt, guid)
+                )
             else:
-                self.cursor.execute('UPDATE files SET `'+col+'` = ?, file_last_update_date = ? WHERE book_id = ? AND guid_file = ?',
-                                    (value, dt, guid, file_guid)
-                                    )
+                self.cursor.execute(
+                    'UPDATE files SET `'+col+'` = ?, file_last_update_date = ? WHERE book_id = ? AND guid_file = ?',
+                    (value, dt, guid, file_guid)
+                )
             self.connexion.commit()
         except Exception:
             traceback.print_exc()

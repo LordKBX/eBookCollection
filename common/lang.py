@@ -1,11 +1,9 @@
 import os
-import sys
 import re
-import imp
 import locale
 import json.decoder
 import traceback
-import vars
+import common.vars
 
 
 class Dictionary:
@@ -88,7 +86,7 @@ class Lang:
 
     def __load_langs(self):
         self.translations.clear()
-        directory = os.path.dirname(os.path.realpath(__file__)) + os.sep + "ressources" + os.sep + "langs"
+        directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__))) + os.sep + "ressources" + os.sep + "langs"
         ext = "json"
         for root, directories, files in os.walk(directory, topdown=False):
             for name in files:
@@ -102,7 +100,7 @@ class Lang:
                     decoder = json.decoder.JSONDecoder()
                     tab = decoder.decode(content)
                     self.translations[nm] = eval(
-                        content.replace('{APP_NAME}', vars.app_name)  # .replace('[', '"\\n".join([').replace(']', '])')
+                        content.replace('{APP_NAME}', common.vars.app_name)  # .replace('[', '"\\n".join([').replace(']', '])')
                     )
 
     def refresh(self):

@@ -1,13 +1,8 @@
 import uuid
 import os, sys
-import shutil
-import re
-import time
 import datetime
-import enum
-import subprocess
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from vars import *
 
 
 def is_in(objet: dict, indexes: list):
@@ -49,7 +44,6 @@ def unixtime_to_string(value: float, template: str = '%Y-%m-%d %H:%M:%S', months
     if is_utc is True:
         if '$month' in template:
             amonth = months[int(float(datetime.datetime.utcfromtimestamp(value).strftime('%m'))) - 1]
-            print(amonth)
             template = template.replace('$month', amonth)
         return datetime.datetime.utcfromtimestamp(value).strftime(template)
     else:

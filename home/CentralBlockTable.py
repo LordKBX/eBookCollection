@@ -1,5 +1,6 @@
 import json
 import traceback
+import subprocess
 from common.common import *
 from common.files import *
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
@@ -153,9 +154,16 @@ class HomeWindowCentralBlock(HomeWindowInfoPanel):
             self.currentBook = guid_book
         args = list()
         if self.BDD.get_books(guid_book)[0]['files'][0]['format'] in ['CBZ', 'CBR', 'EPUB']:
-            args.append('python')
-            args.append(self.app_directory + '/reader/main.py'.replace('/', os.sep))
-            args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
+            exe = self.app_directory + '/reader.exe'.replace('/', os.sep)
+            if os.path.isfile(exe):
+                args.append(self.app_directory + '/reader.exe'.replace('/', os.sep))
+                args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
+                args.append('debug')
+            else:
+                args.append('python')
+                args.append(self.app_directory + '/reader/reader.py'.replace('/', os.sep))
+                args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
+                args.append('debug')
         else:
             args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'])
         print(args)

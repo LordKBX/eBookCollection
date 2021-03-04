@@ -1,8 +1,8 @@
 import os, sys
 import enum
-from PyQt5 import QtCore, QtGui, QtWidgets
+
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-from vars import *
+from common.vars import *
 
 
 class QtQIconEnum(enum.Enum):

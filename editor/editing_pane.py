@@ -1,6 +1,5 @@
 import os
 import sys
-from PyQt5.Qsci import *
 import PyQt5.QtWebKitWidgets
 import PyQt5.uic
 from PyQt5.uic import *
@@ -8,9 +7,8 @@ import filetype
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from editor.syntaxHighlight import *
-import lang
 from common.books import *
-from common import dialog
+from common import dialog, lang
 import editor.xmlt
 import editor.css
 import editor.link

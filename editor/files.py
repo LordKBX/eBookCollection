@@ -1,5 +1,5 @@
 # This Python file uses the following encoding: utf-8
-import os, sys, shutil, re
+import os, sys
 import traceback
 from typing import Union
 from PyQt5.QtWidgets import *
@@ -7,9 +7,9 @@ import PyQt5.uic
 from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-import lang
+from common import lang
 import common.common, common.files, common.dialog, common.qt
-from vars import *
+from common.vars import *
 
 
 class FilesNameWindow(QDialog):

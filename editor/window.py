@@ -1,23 +1,14 @@
 import os
 import sys
-import time
-import xml.dom
-from xml.dom import minidom
-if os.name == 'nt':
-    import ctypes
 
-import PyQt5.uic
-import PyQt5.QtWidgets
-import PyQt5.QtWebKitWidgets
+if os.name == 'nt':
+    pass
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from editor.editing_pane import *
 from editor.window import *
 from editor.checkpoint import *
 from editor.files import *
 from editor.content_table_editor import *
-from vars import *
-from common.common import *
 from common.dialog import *
 from common.books import *
 from common.files import *
@@ -96,7 +87,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.btnEbookContentTable.setText('Edit Content Table')
         self.btnEbookContentTable.clicked.connect(self.load_content_table_managment)
 
-        self.webView.setHtml(self.lang['Editor']['WebViewDefaultPageContent'])
+        self.webView.setHtml(" ".join(self.lang['Editor']['WebViewDefaultPageContent']))
 
         filepath, ext = os.path.splitext(self.opened_file)
         mappdir = app_directory.replace(os.sep, '/') + '/data/'

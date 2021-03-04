@@ -6,8 +6,7 @@ import PyQt5.uic
 from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-import lang
-from vars import *
+from common.vars import *
 
 
 class EmptyBookWindow(QDialog):
@@ -57,7 +56,7 @@ class EmptyBookWindow(QDialog):
             data = {
                 "number": self.number_spin_box.value(),
                 "authors": self.authors_line_edit.text(),
-                "serie": self.serie_line_edit.text(),
+                "series": self.serie_line_edit.text(),
                 "vol": self.serie_volume_spin_box.value(),
                 "name": self.name_line_edit.text(),
                 "format": self.format_combobox.currentText()

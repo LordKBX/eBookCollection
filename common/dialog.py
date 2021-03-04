@@ -1,9 +1,8 @@
 import os, sys
-from PyQt5 import QtCore, QtGui, QtWidgets
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from lang import *
-from vars import *
-from bdd import *
+from common.lang import *
+from common.bdd import *
 
 dialogStyleBtnGreen = 'background-color: rgb(0, 153, 15); color: rgb(255, 255, 255);'
 

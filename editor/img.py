@@ -6,9 +6,9 @@ import PyQt5.uic
 from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-import lang
+from common import lang
 import common.common, common.files, common.books, common.qt
-from vars import *
+from common.vars import *
 
 
 class ImgWindow(QDialog):

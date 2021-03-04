@@ -1,0 +1,7 @@
+@echo off
+setlocal
+cd /d %~dp0
+rmdir /S /Q D:\CODES\Python\EbookCollection\test\reader
+rmdir /S /Q D:\CODES\Python\EbookCollection\test\tmp
+pyinstaller --noconfirm --onedir --console --log-level INFO --version-file D:/CODES/Python/EbookCollection/test/BUILD_READER.txt                                                         --uac-uiaccess --hidden-import PyQt5.QtWebKit --hidden-import CustomQWebView --hidden-import common --hidden-import common.lang --exclude-module PySide2                               --add-data D:/CODES/Python/EbookCollection/ressources;ressources/ --add-data D:/CODES/Python/EbookCollection/tools;tools/                                                              --add-data D:/CODES/Python/EbookCollection/data;data/ --add-data D:/CODES/Python/EbookCollection/reader/reader.ui;.                                                                    --paths D:/CODES/Python/EbookCollection       D:/CODES/Python/EbookCollection/reader/reader.py                                                                                         --distpath D:\CODES\Python\EbookCollection\test                                                                                                                                        --workpath D:\CODES\Python\EbookCollection\test\tmp\build --specpath D:\CODES\Python\EbookCollection\test\tmp
+rmdir /S /Q D:\CODES\Python\EbookCollection\test\tmp

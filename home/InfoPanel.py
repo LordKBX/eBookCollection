@@ -1,6 +1,8 @@
-import os, sys
+import os, sys, re
 import base64
 import traceback
+import PyQt5.QtCore
+import PyQt5.QtGui
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common.common import *
 
@@ -47,11 +49,11 @@ class HomeWindowInfoPanel:
             self.info_block_file_formats_value.setOpenExternalLinks(True)
             self.info_block_size_value.setText(sizes)
             try:
-                icon = QtGui.QIcon()
+                icon = PyQt5.QtGui.QIcon()
                 tbimg = book['cover'].split(',')
-                by = QtCore.QByteArray()
+                by = PyQt5.QtCore.QByteArray()
                 by.fromBase64(tbimg[1].encode('utf-8'))
-                image = QtGui.QPixmap()
+                image = PyQt5.QtGui.QPixmap()
                 image.loadFromData(base64.b64decode(tbimg[1]))
                 """
                 if tbimg[0] == 'data:image/jpeg;base64':
@@ -59,16 +61,16 @@ class HomeWindowInfoPanel:
                 if tbimg[0] == 'data:image/png;base64':
                     image.loadFromData(by, "PNG")
                 """
-                icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                icon.addPixmap(image, PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
                 self.info_block_cover.setIcon(icon)
-                self.info_block_cover.setIconSize(QtCore.QSize(160, 160))
+                self.info_block_cover.setIconSize(PyQt5.QtCore.QSize(160, 160))
                 self.info_block_cover.setToolTip("<img src='{}'/>".format(book['cover']))
             except Exception:
                 traceback.print_exc()
-                icon = QtGui.QIcon()
-                icon.addPixmap(QtGui.QPixmap(self.app_directory + '/icons/white/book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                icon = PyQt5.QtGui.QIcon()
+                icon.addPixmap(PyQt5.QtGui.QPixmap(self.app_directory + '/icons/white/book.png'), PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
                 self.info_block_cover.setIcon(icon)
-                self.info_block_cover.setIconSize(QtCore.QSize(130, 130))
+                self.info_block_cover.setIconSize(PyQt5.QtCore.QSize(130, 130))
         else:
             self.info_block_title_value.setText("")
             self.info_block_serie_value.setText("")
@@ -76,7 +78,7 @@ class HomeWindowInfoPanel:
             self.info_block_file_formats_value.setText("")
             self.info_block_size_value.setText("")
 
-            icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap(self.app_directory+'/icons/white/book.png'), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            icon = PyQt5.QtGui.QIcon()
+            icon.addPixmap(PyQt5.QtGui.QPixmap(self.app_directory+'/icons/white/book.png'), PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
             self.info_block_cover.setIcon(icon)
-            self.info_block_cover.setIconSize(QtCore.QSize(130, 130))
+            self.info_block_cover.setIconSize(PyQt5.QtCore.QSize(130, 130))

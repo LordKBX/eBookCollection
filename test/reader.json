@@ -1,0 +1,109 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "D:/CODES/Python/EbookCollection/reader/reader.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": true
+  },
+  {
+   "optionDest": "ascii",
+   "value": false
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "loglevel",
+   "value": "INFO"
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "version_file",
+   "value": "D:/CODES/Python/EbookCollection/BUILD_READER.txt"
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": true
+  },
+  {
+   "optionDest": "win_private_assemblies",
+   "value": false
+  },
+  {
+   "optionDest": "win_no_prefer_redirects",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "PyQt5.QtWebKit"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "CustomQWebView"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "common"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/CODES/Python/EbookCollection/ressources;ressources/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/CODES/Python/EbookCollection/tools;tools/"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "common.lang"
+  },
+  {
+   "optionDest": "pathex",
+   "value": "D:/CODES/Python/EbookCollection"
+  },
+  {
+   "optionDest": "excludes",
+   "value": "PySide2"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/CODES/Python/EbookCollection/data;data/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "D:/CODES/Python/EbookCollection/reader/reader.ui;."
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}

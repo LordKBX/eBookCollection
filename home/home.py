@@ -1,16 +1,14 @@
 # This Python file uses the following encoding: utf-8
 import os, sys
-from PyQt5.QtWidgets import *
 import PyQt5.QtCore
 import PyQt5.uic
 from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common.dialog import *
-from lang import *
+from common.lang import *
 from common.books import *
-import bdd
-from vars import *
+from common import bdd
 
 from home.CentralBlockTable import *
 from home.InfoPanel import *
@@ -88,7 +86,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
 
         self.show()  # Show the GUI
         try:
-            if self.argv[1] == "settings":
+            if "settings" in self.argv:
                 self.header_block_btn_settings_clicked()
         except Exception:
             ""

@@ -1,21 +1,21 @@
 import os
 import sys
+import traceback
 if os.name == 'nt':
 	import ctypes
+	# import win32gui, win32con
 
 import PyQt5.uic
 from PyQt5.uic import *
+from PyQt5 import QtWebKitWidgets
+from PyQt5 import QtCore
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from vars import *
-import lang
-from bdd import *
+from common import lang
 from common.dialog import *
 from common.books import *
 from common.archive import *
-from reader.CustomQWebView import *
-
-ui = None
+from CustomQWebView import *
 
 
 class ReaderWindow(QtWidgets.QMainWindow):
@@ -23,7 +23,7 @@ class ReaderWindow(QtWidgets.QMainWindow):
 
 	def __init__(self, parent: QtWidgets.QMainWindow):
 		super(ReaderWindow, self).__init__(parent)
-		PyQt5.uic.loadUi(app_directory + '/reader/reader2.ui'.replace('/', os.sep), self)
+		PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + "reader.ui", self)
 		self.show()
 
 	def toogle_full_screen(self):
@@ -102,6 +102,9 @@ if __name__ == "__main__":
 	if os.name == 'nt':
 		myappid = 'lordkbx.ebook_collection.reader'
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+		# if 'debug' not in sys.argv:
+		# 	the_program_to_hide = win32gui.GetForegroundWindow()
+		# 	win32gui.ShowWindow(the_program_to_hide, win32con.SW_HIDE)
 
 	ui = ReaderWindow(None)
 	ui.show()
@@ -137,7 +140,10 @@ if __name__ == "__main__":
 		WarnDialog(translation['Reader']['DialogInfoNoFileWindowTitle'], translation['Reader']['DialogInfoNoFileWindowText'], ui)
 		exit(0)
 
-	file = sys.argv[1]
+	file = ''
+	for index in range(1, len(sys.argv)):
+		if sys.argv[index] != 'debug':
+			file = sys.argv[index]
 
 	to_hide_dir = app_directory.replace(os.sep, '/') + '/data/'
 	filepath, ext = os.path.splitext(file)
@@ -145,9 +151,10 @@ if __name__ == "__main__":
 		translation['Reader']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
 		.replace(to_hide_dir, '').replace('/', ' / ').replace(ext, '')
 	)
-	destDir = app_directory + '/reader/tmp'
-	rmDir(destDir)
-	if os.path.isdir(destDir) is not True: os.mkdir(destDir)
+	destDir = os.path.expanduser('~') + os.sep + app_name + os.sep + 'reader' + os.sep + 'tmp'
+	try: rmDir(destDir)
+	except Exception: ""
+	if os.path.isdir(destDir) is not True: os.makedirs(destDir)
 	page = ''
 
 	appMode = QwwMode.CBZ
@@ -188,7 +195,6 @@ if __name__ == "__main__":
 	elif ext in ['.cbz', '.cbr']:
 		appMode = QwwMode.CBZ
 		ret = inflate(file, destDir)
-		print(ret)
 		imgList = listDir(destDir, 'jpg|jpeg|png')
 		page = destDir + "/page.xhtml"
 		file_page = open(page, "w", encoding="utf8")
@@ -256,10 +262,11 @@ if __name__ == "__main__":
 	ui.webView.setMode(appMode)
 	ui.webView.setEventHandler(ui.event_andler)
 	ui.webView.setUrl(QtCore.QUrl(page))
-	tmp_css = destDir + "/tmp.css"
-	file_page = open(tmp_css, "w", encoding="utf8")
-	file_page.write("body { -webkit-user-select: none; }")
-	file_page.close()
+
+	# tmp_css = destDir + "/tmp.css"
+	# file_page = open(tmp_css, "w", encoding="utf8")
+	# file_page.write("body { -webkit-user-select: none; }")
+	# file_page.close()
 	# ui.webView.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(tmpcss))
 	ui.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
 	ui.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)

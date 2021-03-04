@@ -1,7 +1,8 @@
-import os, sys, shutil, re
-import traceback
+import os, sys, shutil
+import hashlib
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from vars import *
+from common.vars import *
 
 
 def get_file_size(file_name: str, human_readable: bool = True):
@@ -107,3 +108,14 @@ def copyFile(src_dir: str, dest_dir: str):
 
 def rename(src_dir: str, dest_dir: str):
     shutil.move(src_dir, dest_dir)
+
+
+def hashFile(path: str):
+    BLOCKSIZE = 65536
+    hasher = hashlib.sha1()
+    with open(path, 'rb') as file:
+        buf = file.read(BLOCKSIZE)
+        while len(buf) > 0:
+            hasher.update(buf)
+            buf = file.read(BLOCKSIZE)
+    return hasher.hexdigest()

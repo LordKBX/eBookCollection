@@ -1,6 +1,5 @@
 # This Python file uses the following encoding: utf-8
 import os, sys, traceback
-from typing import Union
 from PyQt5.QtWidgets import *
 import PyQt5.sip
 import PyQt5.QtCore
@@ -12,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import common.common
 import common.files
 import common.books
-from vars import *
+from common.vars import *
 
 
 class SettingsWindow(QDialog):
