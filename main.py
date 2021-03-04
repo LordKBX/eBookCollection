@@ -3,7 +3,6 @@ import os
 if os.name == 'nt':
     import ctypes
 # sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-from vars import *
 from bdd import *
 from lang import *
 from home.home import *
@@ -24,6 +23,6 @@ if __name__ == "__main__":
         myappid = 'lordkbx.ebook_collection'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
-    Home = HomeWindow(bdd, translation, env_vars, sys.argv)
+    Home = HomeWindow(bdd, translation, sys.argv)
     Home.show()
     sys.exit(app.exec_())

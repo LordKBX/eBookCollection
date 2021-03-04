@@ -156,7 +156,7 @@ if __name__ == "__main__":
 		bookData = get_epub_info(file)
 		winTitle = translation['Reader']['WindowTitle'] + ' - '
 		first = True
-		for index in ['authors', 'serie', 'title']:
+		for index in ['authors', 'series', 'title']:
 			try:
 				if bookData[index] is not None:
 					if bookData[index].strip() != '':

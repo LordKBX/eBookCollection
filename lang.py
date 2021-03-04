@@ -102,7 +102,7 @@ class Lang:
                     decoder = json.decoder.JSONDecoder()
                     tab = decoder.decode(content)
                     self.translations[nm] = eval(
-                        content.replace('[', '"\\n".join([').replace(']', '])').replace('{APP_NAME}', vars.app_name)
+                        content.replace('{APP_NAME}', vars.app_name)  # .replace('[', '"\\n".join([').replace(']', '])')
                     )
 
     def refresh(self):

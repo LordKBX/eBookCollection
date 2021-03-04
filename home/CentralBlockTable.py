@@ -3,14 +3,20 @@ import traceback
 from common.common import *
 from common.files import *
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+from home.InfoPanel import *
 
 
-class HomeWindowCentralBlock:
+class HomeWindowCentralBlock(HomeWindowInfoPanel):
     central_block_table_cases_uid_list = []
     central_block_table_lock = False
     central_block_table_sort_previous_index = 0
     central_block_table_sort_previous_order = QtCore.Qt.AscendingOrder
     header_policy = ''
+    BDD = None
+    vars = None
+    app_directory = None
+    central_block_table = None
+    currentBook = ''
 
     def central_block_table_define_slots(self):
         """
@@ -125,7 +131,10 @@ class HomeWindowCentralBlock:
             traceback.print_exc()
 
     def central_block_table_sort_reset(self):
-        self.central_block_table.sortByColumn(self.central_block_table_sort_previous_index, self.central_block_table_sort_previous_order)
+        self.central_block_table.sortByColumn(
+            self.central_block_table_sort_previous_index,
+            self.central_block_table_sort_previous_order
+        )
 
     def central_block_table_cell_double_clicked(self, current_row, current_column):
         """
@@ -151,7 +160,7 @@ class HomeWindowCentralBlock:
             args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'])
         print(args)
         try:
-            retcode = subprocess.call(args, shell=True)
+            return_code = subprocess.call(args, shell=True)
         except Exception:
             traceback.print_exc()
 
@@ -176,7 +185,7 @@ class HomeWindowCentralBlock:
             book = self.BDD.get_books(guid_book)[0]
             book[col_type] = new_item.text()
             self.BDD.update_book(guid_book, col_type, new_item.text())
-            if col_type in ['title', 'authors', 'serie']:
+            if col_type in ['title', 'authors', 'series']:
                 index = 0
                 while index < len(book['files']):
                     old_path = book['files'][index]['link']
@@ -184,9 +193,9 @@ class HomeWindowCentralBlock:
                     if book['authors'] is not None:
                         if book['authors'].strip() != '':
                             new_path += '/' + book['authors']
-                    if book['serie'] is not None:
-                        if book['serie'].strip() != '':
-                            new_path += '/' + book['serie']
+                    if book['series'] is not None:
+                        if book['series'].strip() != '':
+                            new_path += '/' + book['series']
                     if os.path.isdir(new_path) is False:
                         os.makedirs(new_path)
                     new_path += '/' + book['title'] + '.' + book['files'][index]['format'].lower()
@@ -195,7 +204,7 @@ class HomeWindowCentralBlock:
                     self.BDD.update_book(guid_book, 'link', new_path, book['files'][index]['guid'])
                     index += 1
 
-            self.setInfoPanel(book)
+            self.set_info_panel(book)
 
             # Cleanup all empty folder in data folder
             clean_dir('./data')
@@ -255,42 +264,46 @@ class HomeWindowCentralBlock:
         self.central_block_table.setRowCount(len(books))
         for book in books:
             try:
+                list_items = [
+                    'title',
+                    'authors',
+                    'series',
+                    'tags',
+                    'import_date',
+                    'last_update_date'
+                ]
+                list_items_locked = [
+                    'import_date',
+                    'last_update_date'
+                ]
                 # Title
-                self.central_block_table.setItem(line, 0, self.new_book_table_item(book['guid'], 'title', book['title']))
-                # authors
-                self.central_block_table.setItem(line, 1, self.new_book_table_item(book['guid'], 'authors', book['authors']))
-                # serie
-                self.central_block_table.setItem(line, 2, self.new_book_table_item(book['guid'], 'serie', book['serie']))
-                # tags
-                self.central_block_table.setItem(line, 3, self.new_book_table_item(book['guid'], 'tags', book['tags'], True, book['tags'], 'str', True))
-                # imported
-                self.central_block_table.setItem(line, 4,
-                                                 self.new_book_table_item(
-                        book['guid'],
-                        'imported',
-                        unixtime_to_string(
-                            float(book['import_date']),
-                            self.lang['Time']['template']['textual_date'],
-                            self.lang['Time']['months_short']
-                        ),
-                        False,
-                        float(book['import_date']), 'float'
-                    )
-                                                 )
-                # Modified
-                self.central_block_table.setItem(line, 5,
-                                                 self.new_book_table_item(
-                        book['guid'],
-                        'modified',
-                        unixtime_to_string(
-                            float(book['last_update_date']),
-                            self.lang['Time']['template']['textual_date'],
-                            self.lang['Time']['months_short']
-                        ),
-                        False,
-                        float(book['last_update_date']), 'float'
-                    )
-                                                 )
+                col = 0
+                for case in list_items:
+                    if case not in list_items_locked:
+                        self.central_block_table.setItem(
+                            line, col,
+                            self.new_book_table_item(
+                                guid=book['guid'],  book_type=case, value=book[case],
+                                editable=True, alt=None, alt_type=None, locked=False
+                            )
+                        )
+                    else:
+                        self.central_block_table.setItem(
+                            line, col,
+                            self.new_book_table_item(
+                                guid=book['guid'],  book_type=case,
+                                value=unixtime_to_string(
+                                    float(book[case]),
+                                    self.lang['Time']['template']['textual_date'],
+                                    self.lang['Time']['months_short']
+                                ),
+                                editable=False,
+                                alt=float(book['last_update_date']),
+                                alt_type='float',
+                                locked=True
+                            )
+                        )
+                    col += 1
             except Exception:
                 traceback.print_exc()
 
@@ -302,41 +315,41 @@ class HomeWindowCentralBlock:
 
 class QTableAltItem(QtWidgets.QTableWidgetItem):
     value = 0.0
-    stype = 'float'
+    var_type = 'float'
     locked = False
 
     def setValue(self, value):
         self.value = value
 
     def setType(self, stype: str):
-        self.stype = stype
+        self.var_type = stype
 
     def lock(self, locked: bool):
         self.locked = locked
 
     def __eq__(self, other: QtWidgets.QTableWidgetItem):
         if self.locked is True: return False
-        if self.stype == 'float':
+        if self.var_type == 'float':
             return self.value == other.value
-        elif self.stype == 'str':
+        elif self.var_type == 'str':
             return self.value.lower() == other.value.lower()
         else:
             return False
 
     def __lt__(self, other: QtWidgets.QTableWidgetItem):
         if self.locked is True: return False
-        if self.stype == 'float':
+        if self.var_type == 'float':
             return self.value < other.value
-        elif self.stype == 'str':
+        elif self.var_type == 'str':
             return self.value.lower() < other.value.lower()
         else:
             return False
 
     def __gt__(self, other: QtWidgets.QTableWidgetItem):
         if self.locked is True: return False
-        if self.stype == 'float':
+        if self.var_type == 'float':
             return self.value > other.value
-        elif self.stype == 'str':
+        elif self.var_type == 'str':
             return self.value.lower() > other.value.lower()
         else:
             return False

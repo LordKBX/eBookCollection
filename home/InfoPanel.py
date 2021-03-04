@@ -20,13 +20,13 @@ class HomeWindowInfoPanel:
         if book is None: 
             passed = False
         else:
-            if not is_in(book, ['title', 'serie', 'authors', 'files']):
+            if not is_in(book, ['title', 'series', 'authors', 'files']):
                 passed = False
 
         if passed is True:
             self.current_book = book['guid']
             self.info_block_title_value.setText(book['title'])
-            self.info_block_serie_value.setText(book['serie'])
+            self.info_block_serie_value.setText(book['series'])
             self.info_block_authors_value.setText(book['authors'])
             formats = ''
             sizes = ''

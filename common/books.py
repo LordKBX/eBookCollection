@@ -294,7 +294,7 @@ def get_epub_info(path: str):
         'guid': None,
         'title': None,
         'authors': None,
-        'serie': None,
+        'series': None,
         'tags': [],
         'cover': None,
         'toc': None,
@@ -339,8 +339,8 @@ def get_epub_info(path: str):
             cov_id = ''
             for meta in metas:
                 if meta.attributes['name'].value == 'cover': cov_id = meta.attributes['content'].value
-                if meta.attributes['name'].value == 'calibre:series': ret['serie'] = meta.attributes['content'].value
-                if meta.attributes['name'].value == 'dc:series': ret['serie'] = meta.attributes['content'].value
+                if meta.attributes['name'].value == 'calibre:series': ret['series'] = meta.attributes['content'].value
+                if meta.attributes['name'].value == 'dc:series': ret['series'] = meta.attributes['content'].value
 
             items = mydoc.getElementsByTagName('item')
             spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
@@ -394,7 +394,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         tmp_guid = ''
         tmp_cover = ''
         tmp_title = uid()
-        tmp_serie = ''
+        tmp_series = ''
         tmp_authors = ''
         tmp_tags = ''
 
@@ -419,7 +419,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
             while i < len(tab_file):
                 if tab_mask[i] == '%title%': tmp_title = tab_file[i]
                 if tab_mask[i] == '%authors%': tmp_authors = tab_file[i]
-                if tab_mask[i] == '%series%': tmp_serie = tab_file[i]
+                if tab_mask[i] == '%series%': tmp_series = tab_file[i]
                 if tab_mask[i] == '%tags%': tmp_tags = tab_file[i]
                 i += 1
         except Exception:
@@ -432,7 +432,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
             if infos['guid'] is not None: tmp_guid = infos['guid']
             tmp_title = infos['title']
             tmp_authors = infos['authors']
-            tmp_serie = infos['serie']
+            tmp_series = infos['series']
             tmp_cover = infos['cover']
 
             if len(database.get_books(tmp_guid)) > 0:
@@ -454,8 +454,8 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         end_file = database.get_param('library/directory').replace('{APP_DIR}', app_directory) + os.sep
         if tmp_authors is not None:
             if tmp_authors != '': end_file += clean_string_for_url(tmp_authors) + '/'
-        if tmp_serie is not None:
-            if tmp_serie != '': end_file += clean_string_for_url(tmp_serie) + '/'
+        if tmp_series is not None:
+            if tmp_series != '': end_file += clean_string_for_url(tmp_series) + '/'
         # create final file dir path
         if os.path.isdir(end_file) is not True:
             os.makedirs(end_file)

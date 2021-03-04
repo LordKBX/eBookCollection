@@ -20,8 +20,8 @@
 		"CentralBlockTableAdded": "Ajouté le",
 		"InfoBlockTitleLabel": "Titre",
 		"InfoBlockSerieLabel": "Série",
-		"InfoBlockAuthorsLabel": "Auteur(s",
-		"InfoBlockFileFormatsLabel": "Format(s",
+		"InfoBlockAuthorsLabel": "Auteur(s)",
+		"InfoBlockFileFormatsLabel": "Format(s)",
 		"InfoBlockSizeLabel": "Taille",
 		"InfoBlockSynopsisLabel": "Synopsis",
 		"DialogConfirmDeleteBookWindowTitle": "Confirmation de suppression Ebook",
@@ -188,11 +188,7 @@
 		"eBookImportFilenameTpl": "Template de parsing nom fichier",
 		"eBookImportFilenameTplSeparator": "Séparateur nom fichier",
 
-		"AboutLabel": [
-			"{APP_NAME}\\n\\n",
-			"License MIT\\n\\n",
-			"Copyright (c) 2020-2021 Boulain Kévin"
-		],
+		"AboutLabel": "{APP_NAME}\\n\\n License MIT\\n\\n Copyright (c) 2020-2021 Boulain Kévin",
 		"AboutBtnLicense": "Licence",
 		"AboutBtnWebsite": "Site Web"
 	}

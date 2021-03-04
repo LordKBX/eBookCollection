@@ -10,6 +10,7 @@ from common.dialog import *
 from lang import *
 from common.books import *
 import bdd
+from vars import *
 
 from home.CentralBlockTable import *
 from home.InfoPanel import *
@@ -19,12 +20,12 @@ import home.empty_book
 
 
 class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
-    def __init__(self, database: bdd.BDD, translation: Lang, env_vars: dict, argv: list):
+    def __init__(self, database: bdd.BDD, translation: Lang, argv: list):
         super(HomeWindow, self).__init__()
         PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file
 
         # load vars and base objects
-        self.app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        self.app_directory = app_directory
         self.currentBook = ''
         self.BDD = database
         self.lang = translation
@@ -157,7 +158,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                     }
 
                     file = create_epub(
-                        ret['name'], ret['authors'], ret['serie'], vol,
+                        ret['name'], ret['authors'], ret['series'], vol,
                         file_name_template=self.BDD.get_param('import_file_template'), style=cover_style
                     )
 
@@ -188,8 +189,9 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                     self.app_style = self.BDD.get_param('style')
                     self.set_localisation()
                     self.set_style()
-                if self.argv[1] == "settings":
-                    sys.exit(0)
+                if self.argv.count(str) > 1:
+                    if self.argv[1] == "settings":
+                        sys.exit(0)
             except Exception:
                 traceback.print_exc()
         except Exception:
@@ -256,11 +258,10 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.sorting_block_tree.topLevelItem(1).setText(0, self.lang['Home']['SortingBlockTreeAuthors'])
         self.sorting_block_tree.topLevelItem(1).setText(1, 'authors')
         self.sorting_block_tree.topLevelItem(2).setText(0, self.lang['Home']['SortingBlockTreeSeries'])
-        self.sorting_block_tree.topLevelItem(2).setText(1, 'serie')
+        self.sorting_block_tree.topLevelItem(2).setText(1, 'series')
 
         self.sorting_block_search_label.setText(self.lang['Home']['SortingBlockSearchLabel'])
         # Panneau central
-        self.central_block_table.clear()
         self.central_block_table.setColumnCount(6)
         item = QtWidgets.QTableWidgetItem()
         item.setText(self.lang['Home']['CentralBlockTableTitle'])

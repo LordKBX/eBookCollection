@@ -52,7 +52,7 @@ class BDD:
         ret = self.cursor.fetchone()
         if ret is None:
             self.cursor.execute('''CREATE TABLE books('guid' TEXT PRIMARY KEY NOT NULL, 'title' TEXT NOT NULL, 
-                    'authors' TEXT, 'serie' TEXT, 'import_date' TEXT NOT NULL, 'last_update_date' TEXT NOT NULL, 
+                    'authors' TEXT, 'series' TEXT, 'import_date' TEXT NOT NULL, 'last_update_date' TEXT NOT NULL, 
                     'tags' TEXT, 'synopsis' TEXT, 'cover' TEXT NOT NULL)''')
 
         self.cursor.execute('''PRAGMA table_info('files')''')
@@ -140,11 +140,11 @@ class BDD:
         :return: list(str)
         """
         ret = []
-        self.cursor.execute('''SELECT serie FROM books GROUP BY serie ORDER BY serie ASC''')
+        self.cursor.execute('''SELECT series FROM books GROUP BY series ORDER BY series ASC''')
         re = self.cursor.fetchall()
         if re is not None:
             for row in re:
-                ret.append(row['serie'])
+                ret.append(row['series'])
         return ret
 
     def get_books(self, guid: str = None, search: str = None):
@@ -181,7 +181,7 @@ class BDD:
                         'guid': row['guid'],
                         'title': row['title'],
                         'authors': row['authors'],
-                        'serie': row['serie'],
+                        'series': row['series'],
                         'import_date': row['import_date'],
                         'last_update_date': row['last_update_date'],
                         'tags': row['tags'],
@@ -202,7 +202,7 @@ class BDD:
 
         return return_list
 
-    def insert_book(self, guid: str, title: str, serie: str, authors: str, tags: str, size: str, format: str, link: str, cover: str):
+    def insert_book(self, guid: str, title: str, series: str, authors: str, tags: str, size: str, format: str, link: str, cover: str):
         """
 
         :param guid:
@@ -218,10 +218,10 @@ class BDD:
         """
         dt = time.time()
         self.cursor.execute('''INSERT INTO books(
-                'guid','title','serie','authors','tags','cover',
+                'guid','title','series','authors','tags','cover',
                 'import_date','last_update_date') 
                 VALUES(?, ?, ?, ?, ?, ?, ?, ?)''',
-                (guid, title, serie, authors, tags, cover, dt, dt)
+                (guid, title, series, authors, tags, cover, dt, dt)
             )
         self.cursor.execute('''INSERT INTO files(
                 'guid_file','book_id','size','format','link','file_import_date',

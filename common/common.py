@@ -49,6 +49,7 @@ def unixtime_to_string(value: float, template: str = '%Y-%m-%d %H:%M:%S', months
     if is_utc is True:
         if '$month' in template:
             amonth = months[int(float(datetime.datetime.utcfromtimestamp(value).strftime('%m'))) - 1]
+            print(amonth)
             template = template.replace('$month', amonth)
         return datetime.datetime.utcfromtimestamp(value).strftime(template)
     else:
