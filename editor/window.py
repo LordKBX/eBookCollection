@@ -1,14 +1,12 @@
 import os
 import sys
 
-if os.name == 'nt':
-    pass
+from checkpoint import *
+from files import *
+from content_table_editor import *
+import editing_pane
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from editor.window import *
-from editor.checkpoint import *
-from editor.files import *
-from editor.content_table_editor import *
 from common.dialog import *
 from common.books import *
 from common.files import *
@@ -19,9 +17,9 @@ import common.qt
 class EditorWindow(QtWidgets.QMainWindow):
     def __init__(self, parent: QtWidgets.QMainWindow, opened_file, lang, bdd):
         super(EditorWindow, self).__init__(parent)
-        PyQt5.uic.loadUi(app_directory + '/editor/editor.ui'.replace('/', os.sep), self)
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'editor.ui'.replace('/', os.sep), self)
         self.opened_file = opened_file
-        self.tmpDir = app_directory + os.sep + 'editor' + os.sep + 'tmp'
+        self.tmpDir = os.path.expanduser('~') + os.sep + app_name + os.sep + 'reader' + os.sep + 'tmp'
         self.lang = lang
         self.BDD = bdd
         self.app_style = self.BDD.get_param('style')
@@ -96,7 +94,10 @@ class EditorWindow(QtWidgets.QMainWindow):
             .replace(mappdir, '').replace('/', ' / ').replace(ext, '')
         )
         # EditorWindow.show()
-        rmDir(self.tmpDir)
+        try:
+            rmDir(self.tmpDir)
+        except Exception:
+            ""
         if os.path.isdir(self.tmpDir) is not True:
             os.makedirs(self.tmpDir + os.sep + 'original')
             os.makedirs(self.tmpDir + os.sep + 'current')

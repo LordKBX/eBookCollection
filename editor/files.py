@@ -15,7 +15,7 @@ from common.vars import *
 class FilesNameWindow(QDialog):
     def __init__(self, parent):
         super(FilesNameWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/files_name.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'files_name.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.lang = lng
         self.setWindowTitle(lng['Editor']['FilesWindow']['FileNameWindowTitle'])
@@ -39,7 +39,7 @@ class FilesNameWindow(QDialog):
 class FilesWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(FilesWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/files.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'files.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.lang = lng
         self.setWindowTitle(lng['Editor']['FilesWindow']['WindowTitle'])

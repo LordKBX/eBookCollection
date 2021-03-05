@@ -18,6 +18,10 @@
    "value": true
   },
   {
+   "optionDest": "icon_file",
+   "value": "D:/CODES/Python/EbookCollection/ressources/icons/app_icon.ico"
+  },
+  {
    "optionDest": "ascii",
    "value": false
   },
@@ -39,7 +43,7 @@
   },
   {
    "optionDest": "version_file",
-   "value": "D:/CODES/Python/EbookCollection/BUILD_READER.txt"
+   "value": "D:/CODES/Python/EbookCollection/test/BUILD_READER.txt"
   },
   {
    "optionDest": "uac_admin",
@@ -47,7 +51,7 @@
   },
   {
    "optionDest": "uac_uiaccess",
-   "value": true
+   "value": false
   },
   {
    "optionDest": "win_private_assemblies",
@@ -95,11 +99,15 @@
   },
   {
    "optionDest": "datas",
-   "value": "D:/CODES/Python/EbookCollection/data;data/"
+   "value": "D:/CODES/Python/EbookCollection/reader/reader.ui;."
   },
   {
-   "optionDest": "datas",
-   "value": "D:/CODES/Python/EbookCollection/reader/reader.ui;."
+   "optionDest": "hiddenimports",
+   "value": "win32gui"
+  },
+  {
+   "optionDest": "hiddenimports",
+   "value": "win32con"
   }
  ],
  "nonPyinstallerOptions": {

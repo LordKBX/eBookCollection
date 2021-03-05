@@ -17,7 +17,7 @@ from common.vars import *
 class IndexNameWindow(QDialog):
     def __init__(self, parent):
         super(IndexNameWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/files_name.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'files_name.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.lang = lng
         self.setWindowTitle(lng['Editor']['ContentTableWindow']['NameWindowTitle'])
@@ -42,7 +42,7 @@ class IndexNameWindow(QDialog):
 class ContentTableWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(ContentTableWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/content_table_editor.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'content_table_editor.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.lang = lng
         self.setStyleSheet(env_vars['styles']['Dark']['fullButton'])

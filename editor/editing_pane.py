@@ -6,13 +6,13 @@ from PyQt5.uic import *
 import filetype
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from editor.syntaxHighlight import *
+from syntaxHighlight import *
 from common.books import *
 from common import dialog, lang
-import editor.xmlt
-import editor.css
-import editor.link
-import editor.img
+import xmlt
+import css
+import link
+import img
 
 
 class UIClass(QtWidgets.QWidget):
@@ -148,7 +148,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
         if is_text is True:
             block = UIClass()
             super(UIClass, block).__init__()
-            PyQt5.uic.loadUi(app_directory + '/editor/text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
+            PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
             block.setStyleSheet("""
             QPushButton{ background:transparent; }
             QPushButton:hover{ background-color:rgb(120, 120, 120); }

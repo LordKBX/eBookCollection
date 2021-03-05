@@ -5,9 +5,9 @@ if os.name == 'nt':
 	import win32gui, win32con
 
 from PyQt5.uic import *
+from window import *
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from editor.window import *
 from common.dialog import *
 from common.archive import *
 from common import lang

@@ -83,3 +83,8 @@ Thumbs.db
 /tests/home_window.pyw
 /installer/python/*
 /ressources/fonts/_old/*
+/test/editor/*
+/test/reader/*
+/test/main/*
+/test/tmp/*
+/test/build/*

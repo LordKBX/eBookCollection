@@ -13,7 +13,7 @@ from common.vars import *
 class LinkWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(LinkWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-        PyQt5.uic.loadUi(app_directory + os.sep + 'editor/link.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'link.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
         self.setWindowTitle(lng['Editor']['LinkWindow']['WindowTitle'])
         self.labelUrl.setText(lng['Editor']['LinkWindow']['labelUrl'])

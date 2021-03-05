@@ -29,7 +29,7 @@ class BDD:
         self.cursor = None
         self.__directory = self.get_param('library/directory')
         if directory is None and self.__directory is None:
-            self.__directory = app_directory + os.sep + 'data'
+            self.__directory = os.path.expanduser('~') + os.sep + app_name + os.sep + 'data'
             if os.path.isdir(self.__directory) is False:
                 os.makedirs(self.__directory)
         elif directory is not None:
