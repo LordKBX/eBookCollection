@@ -55,19 +55,23 @@ docx | X |  |
 Require Python >= 3.5.x
 Require the following complements:
 - PyQt5
-- PyQtWebKit(optional)
+- PyQtWebKit
+- Qsci
 - pysqlite3
 - lxml
 - numpy
 - six
 - Beautifulsoup4
-- pywin32(optional on windows)
+- pywin32(on windows)
+
+Required Archiver:
+- Windows => 7Zip
 
 ## Installation
 ### Windows installer: 
 Go to the Release page [Here](https://github.com/LordKBX/EbookCollection/releases), contains:
-- executable with all dependencies (full version) 
-- executable without dependencies (light version)
+- executable with scripts compiled (compiled version) 
+- executable not compiled and without dependencies (light version)
 
 ### Manualy
 #### On Windows and Mac

@@ -60,8 +60,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
-Name: "{commonprograms}\{#MyAppName}\{#MyAppName}"; Filename: "python {app}\main.py"; WorkingDir: "{app}"; IconFilename: "{app}\ressources\icons\app_icon.ico"; IconIndex: 0; Flags: createonlyiffileexists
-Name: "{commondesktop}\{#MyAppName}"; Filename: "python {app}\main.py"; WorkingDir: "{app}"; IconFilename: "{app}\ressources\icons\app_icon.ico"; IconIndex: 0; Tasks: desktopicon
+Name: "{commonprograms}\{#MyAppName}\{#MyAppName}"; Filename: "python {app}\library.py"; WorkingDir: "{app}"; IconFilename: "{app}\ressources\icons\app_icon.ico"; IconIndex: 0; Flags: createonlyiffileexists
+Name: "{commondesktop}\{#MyAppName}"; Filename: "python {app}\library.py"; WorkingDir: "{app}"; IconFilename: "{app}\ressources\icons\app_icon.ico"; IconIndex: 0; Tasks: desktopicon
 
 [UninstallDelete]
 Type: files; Name: "{app}\__pycache__\*" 

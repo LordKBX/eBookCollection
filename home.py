@@ -30,6 +30,9 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.env_vars = self.vars = env_vars['vars']
         self.argv = argv
 
+        if env_vars['tools']['archiver']['path'] is None or env_vars['tools']['archiver']['path'] == '':
+            WarnDialog("Attention", "")
+
         # load window size
         size_tx = self.BDD.get_param('library/windowSize')
         if size_tx is not None and size_tx != '':

@@ -50,7 +50,7 @@ class SettingsWindow(QDialog):
             path = '<UNKNOW>'
         self.tab_global_archiver_folder_line_edit.setText(path)
         self.tab_global_archiver_folder_test_btn.clicked.connect(self.test_archiver)
-        self.tab_global_archiver_folder_browse_btn.clicked.connect(lambda: print('tab_global_archiver_folder_browse_btn clicked'))
+        self.tab_global_archiver_folder_browse_btn.clicked.connect(self.change_archiver_folder)
 
         # METADATA tab
         default_cover_background = self.BDD.get_param('defaultCover/background')
@@ -363,3 +363,18 @@ class SettingsWindow(QDialog):
         else:
             self.tab_global_archiver_folder_line_edit.setStyleSheet(env_vars['styles'][style]['QLineEditGood'])
         return ret
+
+    def change_archiver_folder(self):
+        print("test")
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        options |= QFileDialog.Directory
+
+        dlg = QFileDialog()
+        dlg.setOptions(options)
+        dlg.setFileMode(QFileDialog.Directory)
+
+        preset = self.BDD.get_param("library_directory").replace('{APP_DIR}', app_directory)
+        folder = dlg.getExistingDirectory(self, "Choose Directory", preset).replace(app_directory, '{APP_DIR}')
+        print(folder)
+        self.tab_global_library_folder_line_edit.setText(folder)
