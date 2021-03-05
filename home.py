@@ -31,8 +31,8 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.argv = argv
 
         # load window size
-        size_tx = self.BDD.get_param('home/windowSize')
-        if size_tx is not None:
+        size_tx = self.BDD.get_param('library/windowSize')
+        if size_tx is not None and size_tx != '':
             size = eval(size_tx)
             self.resize(size[0], size[1])
 
@@ -47,7 +47,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             {'parameter': 'defaultCover/title', 'default': self.env_vars["default_cover"]["title"]},
             {'parameter': 'defaultCover/series', 'default': self.env_vars["default_cover"]["series"]},
             {'parameter': 'defaultCover/authors', 'default': self.env_vars["default_cover"]["authors"]},
-            {'parameter': 'home/lastOpenDir', 'default': app_directory},
+            {'parameter': 'library/lastOpenDir', 'default': app_directory},
             {'parameter': 'import_file_separator', 'default': self.env_vars["import_file_separator"]},
             {'parameter': 'import_file_template', 'default': self.env_vars['import_file_template']['default']},
 
@@ -93,7 +93,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         size = self.size()
         tx = [size.width(), size.height()].__str__()
-        self.BDD.set_param('home/windowSize', tx)
+        self.BDD.set_param('library/windowSize', tx)
 
     def header_block_btn_add_book_clicked(self):
         """
@@ -109,7 +109,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             options = QFileDialog.Options()
             # options |= QFileDialog.DontUseNativeDialog
             list_files, _ = QFileDialog.getOpenFileNames(
-                self, self.lang['Home']['AddBookWindowTitle'], self.BDD.get_param('home/lastOpenDir'),
+                self, self.lang['Library']['AddBookWindowTitle'], self.BDD.get_param('library/lastOpenDir'),
                 "eBook (*.epub *.epub2 *.epub3 *.cbz *.cbr *.pdf *.mobi);;Texte (*.txt *.doc *.docx *.rtf)",
                 options=options
             )
@@ -117,7 +117,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                 selected_directory = list_files[0].replace('/', os.sep)
                 selected_index = selected_directory.rindex(""+os.sep)
                 selected_directory = selected_directory[0:selected_index]
-                self.BDD.set_param('home/lastOpenDir', selected_directory)
+                self.BDD.set_param('library/lastOpenDir', selected_directory)
                 for file in list_files:
                     # Call booksTools.insert_book
                     insert_book(self.BDD, file_name_template, file_name_separator, file)
@@ -186,8 +186,8 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                     self.app_style = self.BDD.get_param('style')
                     self.set_localisation()
                     self.set_style()
-                if self.argv.count(str) > 1:
-                    if self.argv[1] == "settings":
+                if len(self.argv) > 1:
+                    if "settings" in self.argv:
                         sys.exit(0)
             except Exception:
                 traceback.print_exc()
@@ -204,10 +204,10 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             print("Bouton Delete book clické")
             if len(self.central_block_table.selectedItems()) > 0:
                 ret = WarnDialogConfirm(
-                    self.lang['Home']['DialogConfirmDeleteBookWindowTitle'],
-                    self.lang['Home']['DialogConfirmDeleteBookWindowText'],
-                    self.lang['Home']['DialogConfirmDeleteBookBtnYes'],
-                    self.lang['Home']['DialogConfirmDeleteBookBtnNo'],
+                    self.lang['Library']['DialogConfirmDeleteBookWindowTitle'],
+                    self.lang['Library']['DialogConfirmDeleteBookWindowText'],
+                    self.lang['Library']['DialogConfirmDeleteBookBtnYes'],
+                    self.lang['Library']['DialogConfirmDeleteBookBtnNo'],
                     self
                 )
 
@@ -239,57 +239,57 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         :return: void
         """
         # Titre fenêtre
-        self.setWindowTitle(self.lang['Home']['WindowTitle'])
+        self.setWindowTitle(self.lang['Library']['WindowTitle'])
         # Titres blocks
-        self.header_block.setWindowTitle(self.lang['Home']['blockHeaderTitle'])
-        self.sorting_block.setWindowTitle(self.lang['Home']['blockSortTitle'])
-        self.info_block.setWindowTitle(self.lang['Home']['blockInfoTitle'])
+        self.header_block.setWindowTitle(self.lang['Library']['blockHeaderTitle'])
+        self.sorting_block.setWindowTitle(self.lang['Library']['blockSortTitle'])
+        self.info_block.setWindowTitle(self.lang['Library']['blockInfoTitle'])
         # Boutons du bandeau
-        self.header_block_btn_add_book.setToolTip(self.lang['Home']['HeaderBlockBtnAddBook'])
-        self.header_block_btn_create_book.setToolTip(self.lang['Home']['HeaderBlockBtnCreateBook'])
-        self.header_block_btn_del_book.setToolTip(self.lang['Home']['HeaderBlockBtnDelBook'])
-        self.header_block_btn_settings.setToolTip(self.lang['Home']['HeaderBlockBtnSettings'])
+        self.header_block_btn_add_book.setToolTip(self.lang['Library']['HeaderBlockBtnAddBook'])
+        self.header_block_btn_create_book.setToolTip(self.lang['Library']['HeaderBlockBtnCreateBook'])
+        self.header_block_btn_del_book.setToolTip(self.lang['Library']['HeaderBlockBtnDelBook'])
+        self.header_block_btn_settings.setToolTip(self.lang['Library']['HeaderBlockBtnSettings'])
         # Panneau de gauche
-        self.sorting_block_tree.topLevelItem(0).setText(0, self.lang['Home']['SortingBlockTreeAll'])
+        self.sorting_block_tree.topLevelItem(0).setText(0, self.lang['Library']['SortingBlockTreeAll'])
         self.sorting_block_tree.topLevelItem(0).setText(1, 'all')
-        self.sorting_block_tree.topLevelItem(1).setText(0, self.lang['Home']['SortingBlockTreeAuthors'])
+        self.sorting_block_tree.topLevelItem(1).setText(0, self.lang['Library']['SortingBlockTreeAuthors'])
         self.sorting_block_tree.topLevelItem(1).setText(1, 'authors')
-        self.sorting_block_tree.topLevelItem(2).setText(0, self.lang['Home']['SortingBlockTreeSeries'])
+        self.sorting_block_tree.topLevelItem(2).setText(0, self.lang['Library']['SortingBlockTreeSeries'])
         self.sorting_block_tree.topLevelItem(2).setText(1, 'series')
 
-        self.sorting_block_search_label.setText(self.lang['Home']['SortingBlockSearchLabel'])
+        self.sorting_block_search_label.setText(self.lang['Library']['SortingBlockSearchLabel'])
         # Panneau central
         self.central_block_table.setColumnCount(6)
         item = QtWidgets.QTableWidgetItem()
-        item.setText(self.lang['Home']['CentralBlockTableTitle'])
+        item.setText(self.lang['Library']['CentralBlockTableTitle'])
         self.central_block_table.setHorizontalHeaderItem(0, item)
 
         item = QtWidgets.QTableWidgetItem()
-        item.setText(self.lang['Home']['CentralBlockTableAuthors'])
+        item.setText(self.lang['Library']['CentralBlockTableAuthors'])
         self.central_block_table.setHorizontalHeaderItem(1, item)
 
         item = QtWidgets.QTableWidgetItem()
-        item.setText(self.lang['Home']['CentralBlockTableSeries'])
+        item.setText(self.lang['Library']['CentralBlockTableSeries'])
         self.central_block_table.setHorizontalHeaderItem(2, item)
 
         item = QTableAltItem()
         item.lock(True)
-        item.setText(self.lang['Home']['CentralBlockTableTags'])
+        item.setText(self.lang['Library']['CentralBlockTableTags'])
         self.central_block_table.setHorizontalHeaderItem(3, item)
 
         item = QtWidgets.QTableWidgetItem()
-        item.setText(self.lang['Home']['CentralBlockTableAdded'])
+        item.setText(self.lang['Library']['CentralBlockTableAdded'])
         self.central_block_table.setHorizontalHeaderItem(4, item)
 
         item = QtWidgets.QTableWidgetItem()
-        item.setText(self.lang['Home']['CentralBlockTableModified'])
+        item.setText(self.lang['Library']['CentralBlockTableModified'])
         self.central_block_table.setHorizontalHeaderItem(5, item)
         # Panneau de info
-        self.info_block_title_label.setText(self.lang['Home']['InfoBlockTitleLabel'])
-        self.info_block_serie_label.setText(self.lang['Home']['InfoBlockSerieLabel'])
-        self.info_block_authors_label.setText(self.lang['Home']['InfoBlockAuthorsLabel'])
-        self.info_block_file_formats_label.setText(self.lang['Home']['InfoBlockFileFormatsLabel'])
-        self.info_block_size_label.setText(self.lang['Home']['InfoBlockSizeLabel'])
+        self.info_block_title_label.setText(self.lang['Library']['InfoBlockTitleLabel'])
+        self.info_block_serie_label.setText(self.lang['Library']['InfoBlockSerieLabel'])
+        self.info_block_authors_label.setText(self.lang['Library']['InfoBlockAuthorsLabel'])
+        self.info_block_file_formats_label.setText(self.lang['Library']['InfoBlockFileFormatsLabel'])
+        self.info_block_size_label.setText(self.lang['Library']['InfoBlockSizeLabel'])
 
     def set_style(self):
         self.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])

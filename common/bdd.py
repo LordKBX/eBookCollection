@@ -24,7 +24,7 @@ def dict_factory(cursor, row):
 
 class BDD:
     def __init__(self, directory: str = None):
-        self.settings = PyQt5.QtCore.QSettings("LordKBX Workshop", app_name)
+        self.settings = PyQt5.QtCore.QSettings(app_editor, app_name)
         self.connexion = None
         self.cursor = None
         self.__directory = self.get_param('library/directory')

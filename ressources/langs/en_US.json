@@ -1,7 +1,7 @@
 {
 	"Label": "English (U.S.A)",
 	"NotImplemented": "Not implemented",
-	"Home": {
+	"Library": {
 		"WindowTitle": "EbookCollection - Ebook manager",
 		"AddBookWindowTitle": "EbookCollection - New books selection",
 		"HeaderBlockBtnAddBook": "Add Ebook",
@@ -157,15 +157,24 @@
 		"TabMetadataTitle": "Metadata",
 		"TabConversionTitle": "File Conversion",
 		"TabAboutTitle": "About",
+
 		"LanguageGroupTitle": "Language",
 		"LanguageAutomatic": "< System defined >",
 		"Import": "Import",
+
 		"StyleGroupTitle": "Style",
 		"StyleLight": "Light",
 		"StyleDark": "Dark",
+
 		"LibraryGroupTitle": "Library",
 		"LibraryFolder": "Library storage folder",
 		"LibraryFolderBrowse": "Browse...",
+
+		"ArchiverGroupTitle": "Archiver",
+		"ArchiverGroupTitleNT": "7zip",
+		"ArchiverFolder": "Folder Path",
+		"ArchiverFolderTest": "Test",
+		"ArchiverFolderBrowse": "...",
 
 		"DefaultCoverGroupTitle": "Default Cover Style",
 		"DefaultCoverBackground": "Background Color",

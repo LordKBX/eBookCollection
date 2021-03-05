@@ -11,21 +11,21 @@ from common.vars import *
 class EmptyBookWindow(QDialog):
     def __init__(self, parent, bdd):
         super(EmptyBookWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-        PyQt5.uic.loadUi(app_directory + os.sep + 'home/empty_book.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'empty_book.ui'.replace('/', os.sep), self)  # Load the .ui file
 
         lng = parent.lang
         self.BDD = bdd
         style = self.BDD.get_param('style')
 
         self.setStyleSheet(env_vars['styles'][style]['QDialog'])
-        self.setWindowTitle(lng['Home/emptyBooks/WindowTitle'])
+        self.setWindowTitle(lng['Library/emptyBooks/WindowTitle'])
 
-        self.number_label.setText(lng['Home/emptyBooks/Number'])
-        self.authors_label.setText(lng['Home/emptyBooks/Authors'])
-        self.serie_label.setText(lng['Home/emptyBooks/Series'])
-        self.name_label.setText(lng['Home/emptyBooks/Name'])
-        self.format_label.setText(lng['Home/emptyBooks/Format'])
-        self.serie_volume_label.setText(lng['Home/emptyBooks/SeriesVolume'])
+        self.number_label.setText(lng['Library/emptyBooks/Number'])
+        self.authors_label.setText(lng['Library/emptyBooks/Authors'])
+        self.serie_label.setText(lng['Library/emptyBooks/Series'])
+        self.name_label.setText(lng['Library/emptyBooks/Name'])
+        self.format_label.setText(lng['Library/emptyBooks/Format'])
+        self.serie_volume_label.setText(lng['Library/emptyBooks/SeriesVolume'])
 
         self.number_spin_box.setValue(1)
         self.serie_volume_spin_box.setValue(1.0)

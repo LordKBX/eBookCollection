@@ -1,7 +1,7 @@
 {
 	"Label": "Français (France)",
 	"NotImplemented": "Partie non fonctionnelle",
-	"Home": {
+	"Library": {
 		"WindowTitle": "EbookCollection - Gestionnaire de livre numérique",
 		"AddBookWindowTitle": "EbookCollection - Selection nouveaux livres",
 		"HeaderBlockBtnAddBook": "Ajouter Livre(s)",
@@ -166,15 +166,24 @@
 		"TabMetadataTitle": "Metadata",
 		"TabConversionTitle": "Conversion de fichier",
 		"TabAboutTitle": "À propos",
+
 		"LanguageGroupTitle": "Langue",
 		"LanguageAutomatic": "< Langue système >",
 		"Import": "Importer",
+
 		"StyleGroupTitle": "Apparence",
 		"StyleLight": "Clair",
 		"StyleDark": "Foncé",
+
 		"LibraryGroupTitle": "Bibliothèque",
 		"LibraryFolder": "Dossier de stockage Bibliothèque",
 		"LibraryFolderBrowse": "Parcourir...",
+
+		"ArchiverGroupTitle": "Programme d'archivage",
+		"ArchiverGroupTitleNT": "7zip",
+		"ArchiverFolder": "Chemin du dossier",
+		"ArchiverFolderTest": "Test",
+		"ArchiverFolderBrowse": "...",
 
 		"DefaultCoverGroupTitle": "Style Couverture par défaut",
 		"DefaultCoverBackground": "Couleur Fond",

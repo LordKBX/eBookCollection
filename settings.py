@@ -33,17 +33,26 @@ class SettingsWindow(QDialog):
         self.app_style = self.BDD.get_param('style')
         self.load_languages(self.app_lang)
         self.load_styles(self.app_style)
-        self.apply_style()
-        self.apply_translation()
 
         self.dialog_tabs.setCurrentIndex(0)
 
+        #GLOBAL tab
         self.tab_global_lang_combo_box.currentIndexChanged.connect(self.change_language)
         self.tab_global_style_combo_box.currentIndexChanged.connect(self.change_style)
 
         self.tab_global_library_folder_btn.clicked.connect(self.change_library_folder)
         self.tab_global_library_folder_line_edit.setText(self.BDD.get_param('library/directory'))
 
+        path = self.BDD.get_param('archiver_dir')
+        if path is None or path == '':
+            path = env_vars['tools']['archiver']['path']
+        if path is None or path == '':
+            path = '<UNKNOW>'
+        self.tab_global_archiver_folder_line_edit.setText(path)
+        self.tab_global_archiver_folder_test_btn.clicked.connect(self.test_archiver)
+        self.tab_global_archiver_folder_browse_btn.clicked.connect(lambda: print('tab_global_archiver_folder_browse_btn clicked'))
+
+        # METADATA tab
         default_cover_background = self.BDD.get_param('defaultCover/background')
         default_cover_pattern = self.BDD.get_param('defaultCover/pattern')
         default_cover_pattern_color = self.BDD.get_param('defaultCover/pattern_color')
@@ -70,7 +79,7 @@ class SettingsWindow(QDialog):
                 nb += 1
             # print('selected = ', selected)
             combo.setCurrentIndex(selected)
-            combo.currentIndexChanged.connect(self.combo_changed)
+            combo.currentIndexChanged.connect(self.cover_combo_changed)
 
         selected = 0
         nb = 0
@@ -83,8 +92,8 @@ class SettingsWindow(QDialog):
                 selected = nb
             nb += 1
         self.tab_metadata_default_cover_pattern_combo_box.setCurrentIndex(selected)
-        self.tab_metadata_default_cover_pattern_combo_box.currentIndexChanged.connect(self.combo_changed)
-        self.combo_changed()
+        self.tab_metadata_default_cover_pattern_combo_box.currentIndexChanged.connect(self.cover_combo_changed)
+        self.cover_combo_changed()
 
         filename_template = self.BDD.get_param('import_file_template')
         selected = 0
@@ -102,6 +111,9 @@ class SettingsWindow(QDialog):
 
         self.tab_about_btn_license.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE.txt'))
         self.tab_about_btn_website.clicked.connect(lambda: os.system("start https://github.com/LordKBX/eBookCollection"))
+
+        self.apply_style()
+        self.apply_translation()
 
     def open_exec(self):
         ret = self.exec_()  # Show the GUI
@@ -232,6 +244,15 @@ class SettingsWindow(QDialog):
             self.tab_global_library_folder_label.setText(self.lng['Settings/LibraryFolder'])
             self.tab_global_library_folder_btn.setText(self.lng['Settings/LibraryFolderBrowse'])
 
+            #   archiver group
+            if os.name == 'nt':
+                self.tab_global_archiver_group_box.setTitle(self.lng['Settings/ArchiverGroupTitleNT'])
+            else:
+                self.tab_global_archiver_group_box.setTitle(self.lng['Settings/ArchiverGroupTitle'])
+            self.tab_global_archiver_folder_label.setText(self.lng['Settings/ArchiverFolder'])
+            self.tab_global_archiver_folder_test_btn.setText(self.lng['Settings/ArchiverFolderTest'])
+            self.tab_global_archiver_folder_browse_btn.setText(self.lng['Settings/ArchiverFolderBrowse'])
+
             # tab_metadata
             #   Default Cover group
             self.tab_metadata_default_cover_group_box.setTitle(self.lng['Settings/DefaultCoverGroupTitle'])
@@ -269,6 +290,7 @@ class SettingsWindow(QDialog):
                 obj.setCursor(cursor)
             if isinstance(obj, QWidget):
                 obj.setStyleSheet(env_vars['styles'][style]['QTabWidget'])
+        self.test_archiver()
 
         self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][style]['fullAltButton'])
         self.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
@@ -291,7 +313,7 @@ class SettingsWindow(QDialog):
         self.tab_global_lang_btn.setToolTip(self.lng['NotImplemented'])
         self.tab_global_style_import_btn.setToolTip(self.lng['NotImplemented'])
 
-    def combo_changed(self):
+    def cover_combo_changed(self):
         vals = {
             'background': '',
             'pattern': '',
@@ -327,3 +349,17 @@ class SettingsWindow(QDialog):
         self.tab_metadata_default_cover_preview.setToolTip(
             '<img src="data:image/png;base64,{}" width="500"/>'.format(icon_base64.decode('UTF-8'))
         )
+
+    def test_archiver(self):
+        style = self.BDD.get_param('style')
+        path = self.tab_global_archiver_folder_line_edit.text()
+        ret = False
+        if os.path.isdir(path) is True:
+            path += os.sep + env_vars['tools']['archiver'][os.name]['exe']
+            if os.path.isfile(path) is True:
+                ret = True
+        if ret is False:
+            self.tab_global_archiver_folder_line_edit.setStyleSheet(env_vars['styles'][style]['QLineEditBad'])
+        else:
+            self.tab_global_archiver_folder_line_edit.setStyleSheet(env_vars['styles'][style]['QLineEditGood'])
+        return ret

@@ -32,9 +32,9 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         sizes = []
         print('header_size_policy')
         try:
-            self.header_policy = self.BDD.get_param('home_central_table_header_size_policy')
+            self.header_policy = self.BDD.get_param('library/headers_size_policy')
             if self.header_policy is None or self.header_policy == '':
-                self.header_policy = self.vars['home_central_table_header_size_policy']
+                self.header_policy = self.vars['library']['headers_size_policy']
             print(self.header_policy)
             if self.header_policy in ['ResizeToContents', 'ResizeToContentsAndInteractive']:
                 self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
@@ -42,9 +42,9 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                 self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
             if self.header_policy == 'UserDefined':
                 self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Interactive)
-                tx = self.BDD.get_param('home_central_table_header_sizes')
+                tx = self.BDD.get_param('library/headers_size')
                 if tx is None or tx == '':
-                    sizes = json.loads(self.vars['home_central_table_header_sizes'])
+                    sizes = json.loads(self.vars['library']['headers_size'])
                 else:
                     sizes = json.loads(tx)
                 print(sizes)
@@ -71,8 +71,8 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                 i += 1
             new_size = json.dumps(sizes)
             print(new_size)
-            self.BDD.set_param('home_central_table_header_sizes', new_size)
-            self.BDD.set_param('home_central_table_header_size_policy', self.header_policy)
+            self.BDD.set_param('library/headers_size', new_size)
+            self.BDD.set_param('library/headers_size_policy', self.header_policy)
 
         except Exception:
             ""

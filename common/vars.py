@@ -1,9 +1,29 @@
-import os, re
+import os, sys, re
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+app_editor = "LordKBX Workshop"
 app_name = "eBookCollection"
 app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 app_user_directory = os.path.expanduser('~') + os.sep + app_name
+
+
+def load_path_archiver():
+    settings = QtCore.QSettings(app_editor, app_name)
+    path_archiver = None
+    if os.name == 'nt':
+        path_archiver = settings.value('archiver_dir', None, str)
+    if path_archiver is None or path_archiver == '':
+        if os.name == 'nt':
+            settings_7zip = QtCore.QSettings('HKEY_CURRENT_USER\\SOFTWARE\\7-Zip', QtCore.QSettings.NativeFormat)
+            path_archiver = settings_7zip.value('Path', None)
+            # if path_archiver is None:
+            #     path_archiver = app_directory + os.sep + 'tools' + os.sep + '7zip'
+        else:
+            path_archiver = None
+    else:
+        path_archiver = None
+    return path_archiver
+
 
 env_vars = {
         'tools': {
@@ -14,9 +34,10 @@ env_vars = {
                     'params_full': '-r 200 -scale-to 1920 -hide-annotations -jpeg -jpegopt quality=92,progressive=y,optimize=y %input% %output%'
                 }
             },
-            '7zip': {
+            'archiver': {
+                'path': load_path_archiver(),
                 'nt': {
-                    'path': app_directory + os.sep + 'tools' + os.sep + '7zip' + os.sep + '7z.exe',
+                    'exe': '7z.exe',
                     'params_deflate': 'a -tzip %output% %input%',
                     'params_inflate': 'x %input% -o%output%'
                 }
@@ -34,8 +55,10 @@ env_vars = {
                 'title_serie_authors_tags': '%title% - %series% - %authors% - %tags%'
             },
             'import_file_separator': ' - ',
-            'home_central_table_header_size_policy': 'UserDefined',  # ResizeToContents, ResizeToContentsAndInteractive, Stretch, UserDefined
-            'home_central_table_header_sizes': '[100, 100, 100, 100, 100]',  # list of collumns size
+            'library': {
+                'headers_size_policy': 'UserDefined',  # ResizeToContents, ResizeToContentsAndInteractive, Stretch, UserDefined
+                'headers_size': '[100, 100, 100, 100, 100]'  # list of collumns size
+                },
             'default_storage': os.path.expanduser('~') + os.sep + app_name + os.sep + 'data',
             'default_style': 'Dark',
             'default_language': 'auto',
@@ -78,28 +101,40 @@ env_vars = {
         'styles': { }
     }
 
-directory = app_directory + os.sep + "ressources" + os.sep + "cover_patterns"
-ext = "png"
-for root, directories, files in os.walk(directory, topdown=False):
-    for name in files:
-        if re.search("\\.({})$".format(ext), name) is None:
-            continue
-        else:
-            nm = name.replace("."+ext, "")
-            env_vars['vars']['default_cover']['patterns'].append(nm)
 
-directory = app_directory + os.sep + "ressources" + os.sep + "styles"
-ext = "json"
-for root, directories, files in os.walk(directory, topdown=False):
-    for name in files:
-        if re.search("\\.({})$".format(ext), name) is None:
-            continue
-        else:
-            nm = name.replace("."+ext, "")
-            fp = open(directory + os.sep + name, "r", encoding="utf8")
-            content = fp.read()
-            fp.close()
-            env_vars['styles'][nm] = eval(
-                content.replace('{APP_DIR}', app_directory.replace(os.sep, '/'))
-                    .replace('[', '"\\n".join([').replace(']', '])')
-            )
+def load_patterns():
+    global app_directory, env_vars
+    directory = app_directory + os.sep + "ressources" + os.sep + "cover_patterns"
+    ext = "png"
+    env_vars['vars']['default_cover']['patterns'].clear()
+    for root, directories, files in os.walk(directory, topdown=False):
+        for name in files:
+            if re.search("\\.({})$".format(ext), name) is None:
+                continue
+            else:
+                nm = name.replace("." + ext, "")
+                env_vars['vars']['default_cover']['patterns'].append(nm)
+
+
+def load_styles():
+    global app_directory, env_vars
+    directory = app_directory + os.sep + "ressources" + os.sep + "styles"
+    ext = "json"
+    env_vars['styles'].clear()
+    for root, directories, files in os.walk(directory, topdown=False):
+        for name in files:
+            if re.search("\\.({})$".format(ext), name) is None:
+                continue
+            else:
+                nm = name.replace("." + ext, "")
+                fp = open(directory + os.sep + name, "r", encoding="utf8")
+                content = fp.read()
+                fp.close()
+                env_vars['styles'][nm] = eval(
+                    content.replace('{APP_DIR}', app_directory.replace(os.sep, '/'))
+                        .replace('[', '"\\n".join([').replace(']', '])')
+                )
+
+
+load_patterns()
+load_styles()

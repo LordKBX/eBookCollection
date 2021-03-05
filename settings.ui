@@ -285,10 +285,61 @@
               <item>
                <layout class="QHBoxLayout" name="tab_global_library_hl1">
                 <item>
-                 <widget class="QLineEdit" name="tab_global_library_folder_line_edit"/>
+                 <widget class="QLineEdit" name="tab_global_library_folder_line_edit">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item>
                  <widget class="QPushButton" name="tab_global_library_folder_btn">
+                  <property name="cursor">
+                   <cursorShape>ArrowCursor</cursorShape>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::NoFocus</enum>
+                  </property>
+                  <property name="text">
+                   <string>Parcourir...</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="tab_global_archiver_group_box">
+             <property name="title">
+              <string>7zip</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QLabel" name="tab_global_archiver_folder_label">
+                <property name="text">
+                 <string>Path</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="tab_global_archiver_hl1">
+                <item>
+                 <widget class="QLineEdit" name="tab_global_archiver_folder_line_edit">
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="tab_global_archiver_folder_test_btn">
+                  <property name="text">
+                   <string>PushButton</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="tab_global_archiver_folder_browse_btn">
                   <property name="cursor">
                    <cursorShape>ArrowCursor</cursorShape>
                   </property>
@@ -313,7 +364,7 @@
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>40</height>
+               <height>10</height>
               </size>
              </property>
             </spacer>

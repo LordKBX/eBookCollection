@@ -1,6 +1,6 @@
 @echo off
 setlocal
 cd /d %~dp0
-cd .\library
+cd .\build
 .\library.exe debug
-pause
+exit

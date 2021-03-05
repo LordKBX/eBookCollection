@@ -66,22 +66,22 @@ Thumbs.db
 # Python byte code
 *.pyc
 *.pyo
+*.pyd
 
 # Binaries
 # --------
 *.dll
 *.exe
 
+
+# Binaries
 /tmp
 /*/tmp
 /data
 /tools/7zip/*
 /tools/poppler/*
-/database.db
-/home/home_ui.py
-/tools/fool.txt
-/tests/home_window.pyw
+/*.db
+*_ui.py
+/tools/*.txt
 /installer/python/*
-/ressources/fonts/_old/*
-
 /test/*/*

@@ -6,8 +6,8 @@ from common.vars import *
 
 def inflate(src: str, dest: str):
     list_args = list()  # create list argument for external command execution
-    list_args.append(env_vars['tools']['7zip'][os.name]['path'])  # insert executable path
-    temp_args = env_vars['tools']['7zip'][os.name]['params_inflate'].split(' ')  # create table of raw command arguments
+    list_args.append(env_vars['tools']['archiver']['path'] + os.sep + env_vars['tools']['archiver'][os.name]['exe'])  # insert executable path
+    temp_args = env_vars['tools']['archiver'][os.name]['params_inflate'].split(' ')  # create table of raw command arguments
     for var in temp_args:  # parse table of raw command arguments
         # insert parsed param
         list_args.append(var.replace('%input%', src).replace('%output%', dest))
@@ -17,8 +17,8 @@ def inflate(src: str, dest: str):
 
 def deflate(src: str, dest: str):
     list_args = list()  # create list argument for external command execution
-    list_args.append(env_vars['tools']['7zip'][os.name]['path'])  # insert executable path
-    temp_args = env_vars['tools']['7zip'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
+    list_args.append(env_vars['tools']['archiver']['path'] + os.sep + env_vars['tools']['archiver'][os.name]['exe'])  # insert executable path
+    temp_args = env_vars['tools']['archiver'][os.name]['params_deflate'].split(' ')  # create table of raw command arguments
     for var in temp_args:  # parse table of raw command arguments
         # insert parsed param
         list_args.append(var.replace('%input%', src).replace('%output%', dest))

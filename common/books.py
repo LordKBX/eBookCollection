@@ -236,8 +236,8 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
             content = content.replace('{{TITLE}}', title)
             content = content.replace('{{UUID}}', creation_uuid)
             content = content.replace('{{APP_NAME}}', app_name)
-            content = content.replace('{{COVER_NAME}}', local_lang['Home']['emptyBookCreation']['Cover'])
-            content = content.replace('{{CHAPTER1_NAME}}', local_lang['Home']['emptyBookCreation']['Chapter1'])
+            content = content.replace('{{COVER_NAME}}', local_lang['Library']['emptyBookCreation']['Cover'])
+            content = content.replace('{{CHAPTER1_NAME}}', local_lang['Library']['emptyBookCreation']['Chapter1'])
             file.write(content)
 
         with open(app_user_directory+os.sep+'tmp'+os.sep+'texte'+os.sep+'cover.xhtml', 'w', encoding="utf8") as file:
@@ -256,13 +256,13 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                 content = content.replace('{{SERIES}}', '')
             if authors is None or authors.strip() == '':
                 content = content.replace('{{AUTHORS}}', 'UNKWON')
-                content = content.replace('{{AUTHORS_LABEL}}', local_lang['Home']['emptyBookCreation']['Author'])
+                content = content.replace('{{AUTHORS_LABEL}}', local_lang['Library']['emptyBookCreation']['Author'])
             else:
                 content = content.replace('{{AUTHORS}}', authors)
                 if "," in authors or ";" in authors:
-                    content = content.replace('{{AUTHORS_LABEL}}', local_lang['Home']['emptyBookCreation']['Authors'])
+                    content = content.replace('{{AUTHORS_LABEL}}', local_lang['Library']['emptyBookCreation']['Authors'])
                 else:
-                    content = content.replace('{{AUTHORS_LABEL}}', local_lang['Home']['emptyBookCreation']['Author'])
+                    content = content.replace('{{AUTHORS_LABEL}}', local_lang['Library']['emptyBookCreation']['Author'])
             file.write(content)
 
         with open(app_user_directory+os.sep+'tmp'+os.sep+'texte'+os.sep+'ch01.xhtml', 'w', encoding="utf8") as file:
@@ -277,7 +277,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                       '<div class="block">Duis ullamcorper ipsum vitae tellus auctor ullamcorper. Aenean ultrices egestas neque, sit amet aliquam erat malesuada id. Maecenas venenatis purus gravida urna luctus consequat. Donec posuere, ligula nec feugiat tristique, lectus elit ultrices nisi, ut mollis risus lacus in nisi. Ut auctor lectus sed orci scelerisque, nec pellentesque tellus aliquet. Curabitur nec faucibus urna. Vestibulum congue mattis libero, vel egestas est sodales in. Curabitur tortor felis, tempus ac dictum eu, dictum non metus. Cras molestie lacinia enim, vitae auctor justo laoreet et. Suspendisse nec ullamcorper ligula. Pellentesque feugiat hendrerit velit, et sagittis dui tristique sed. Etiam ex turpis, mollis et enim ut, dapibus tempus neque. Etiam interdum molestie nisl a condimentum. Nulla faucibus ante at lacus posuere, at consectetur nunc egestas.</div>' \
                       '</body></html>'
             content = content.replace('{{LANG}}', local_lang.language)
-            content = content.replace('{{CHAPTER1_NAME}}', local_lang['Home']['emptyBookCreation']['Chapter1'])
+            content = content.replace('{{CHAPTER1_NAME}}', local_lang['Library']['emptyBookCreation']['Chapter1'])
             file.write(content)
 
         filename = file_name_template\

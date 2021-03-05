@@ -55,6 +55,22 @@
 		" }"
 	],
 
+	"QLineEditGood": [
+		"QLineEdit{ ",
+		"border-color:rgb(0, 153, 15);",
+		"border-width: 2px;",
+		"border-style:solid;",
+		" }"
+	],
+
+	"QLineEditBad": [
+		"QLineEdit{ ",
+		"border-color:rgb(234, 86, 86);",
+		"border-width: 2px;",
+		"border-style:solid;",
+		" }"
+	],
+
 	"QTabWidget": [
 		"QTabWidget { background: none; }",
 		"QTabWidget::tab-bar { background-color:#333333; color:#AAAAAA; border-right: 0; }",
