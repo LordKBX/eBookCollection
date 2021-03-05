@@ -38,7 +38,7 @@ def create_thumbnail(path: str, resize: bool = True):
 
 
 def create_cover(title: str, authors: str = None, series: str = None, volume_number: float = None,
-                 file_name: str = app_directory + os.sep + 'tmp' + os.sep + 'cover.png', style: dict = None):
+                 file_name: str = app_user_directory + os.sep + 'tmp' + os.sep + 'cover.png', style: dict = None):
     pattern_folder = app_directory + os.sep + 'ressources' + os.sep + 'cover_patterns'
     if style is None:
         style = {
@@ -80,6 +80,9 @@ def create_cover(title: str, authors: str = None, series: str = None, volume_num
     if authors is not None:
         top = __draw_text_on_image(img, authors, 1400, 80, "regular", style['authors'])
 
+    folder = os.path.dirname(os.path.realpath(file_name))
+    if os.path.isdir(folder) is False:
+        os.makedirs(folder)
     img.save(file_name, format="png")
     return file_name
 
@@ -145,25 +148,25 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
         creation_time = creation_time[0:id_point] + "+00:00"
         creation_uuid = uuid.uuid4().__str__()
 
-        create_cover(title, authors, series, volume_number, app_directory+os.sep+'tmp'+os.sep+'cover.png', style)
-        os.makedirs(app_directory+os.sep+'tmp'+os.sep+'fonts')
-        os.makedirs(app_directory+os.sep+'tmp'+os.sep+'META-INF')
-        os.makedirs(app_directory+os.sep+'tmp'+os.sep+'texte')
+        create_cover(title, authors, series, volume_number, app_user_directory+os.sep+'tmp'+os.sep+'cover.png', style)
+        os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'fonts')
+        os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'META-INF')
+        os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'texte')
 
         font_dir = app_directory+os.sep+'ressources'+os.sep+'fonts'+os.sep+'Arimo'
-        font_tmp_dir = app_directory+os.sep+'tmp'+os.sep+'fonts'
+        font_tmp_dir = app_user_directory+os.sep+'tmp'+os.sep+'fonts'
         copyFile(font_dir+os.sep+'Bold.ttf', font_tmp_dir+os.sep+'Arimo-Bold.ttf')
         copyFile(font_dir+os.sep+'Bold-Italic.ttf', font_tmp_dir+os.sep+'Arimo-Bold-Italic.ttf')
         copyFile(font_dir+os.sep+'Italic.ttf', font_tmp_dir+os.sep+'Arimo-Italic.ttf')
         copyFile(font_dir+os.sep+'Regular.ttf', font_tmp_dir+os.sep+'Arimo-Regular.ttf')
 
-        with open(app_directory+os.sep+'tmp'+os.sep+'META-INF'+os.sep+'container.xml', 'w', encoding="utf8") as file:
+        with open(app_user_directory+os.sep+'tmp'+os.sep+'META-INF'+os.sep+'container.xml', 'w', encoding="utf8") as file:
             file.write('<?xml version="1.0"?>'
                        '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">'
                        '<rootfiles><rootfile full-path="metadata.opf" media-type="application/oebps-package+xml"/>'
                        '</rootfiles></container>')
 
-        with open(app_directory+os.sep+'tmp'+os.sep+'style.css', 'w', encoding="utf8") as file:
+        with open(app_user_directory+os.sep+'tmp'+os.sep+'style.css', 'w', encoding="utf8") as file:
             file.write('@charset utf-8;@font-face{font-family:"Arimo";src:url(fonts/Arimo-Regular.ttf)}'
                        '@font-face{font-family:"Arimo";src:url(fonts/Arimo-Italic.ttf);font-style:italic}'
                        '@font-face{font-family:"Arimo";src:url(fonts/Arimo-Bold-Italic.ttf);font-weight:bold;font-style:italic}'
@@ -174,10 +177,10 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                        '.italic{font-family:"Arimo",sans-serif;font-style:italic}'
                        '.bitalic{font-family:"Arimo",sans-serif;font-style:italic;font-weight:bold}.credits{position:fixed;bottom:10px;left:10px}')
 
-        with open(app_directory+os.sep+'tmp'+os.sep+'mimetype', 'w', encoding="utf8") as file:
+        with open(app_user_directory+os.sep+'tmp'+os.sep+'mimetype', 'w', encoding="utf8") as file:
             file.write('application/epub+zip')
 
-        with open(app_directory+os.sep+'tmp'+os.sep+'metadata.opf', 'w', encoding="utf8") as file:
+        with open(app_user_directory+os.sep+'tmp'+os.sep+'metadata.opf', 'w', encoding="utf8") as file:
             content = '<?xml version="1.0" encoding="UTF-8"?><package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">' \
                       '<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">' \
                       '<dc:title>{{TITLE}}</dc:title><dc:creator opf:role="aut" opf:file-as="{{AUTHORS_FOLDER_NAME}}">{{AUTHORS}}</dc:creator>' \
@@ -218,7 +221,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
 
             file.write(content)
 
-        with open(app_directory+os.sep+'tmp'+os.sep+'toc.ncx', 'w', encoding="utf8") as file:
+        with open(app_user_directory+os.sep+'tmp'+os.sep+'toc.ncx', 'w', encoding="utf8") as file:
             content = '<?xml version=\'1.0\' encoding=\'utf-8\'?>'\
                        '<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="{{LANG}}"><head>'\
                        '<meta content="{{UUID}}" name="dtb:uid"/><meta content="2" name="dtb:depth"/>'\
@@ -237,7 +240,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
             content = content.replace('{{CHAPTER1_NAME}}', local_lang['Home']['emptyBookCreation']['Chapter1'])
             file.write(content)
 
-        with open(app_directory+os.sep+'tmp'+os.sep+'texte'+os.sep+'cover.xhtml', 'w', encoding="utf8") as file:
+        with open(app_user_directory+os.sep+'tmp'+os.sep+'texte'+os.sep+'cover.xhtml', 'w', encoding="utf8") as file:
             content = '<?xml version=\'1.0\' encoding=\'utf-8\'?>' \
                       '<html xmlns="http://www.w3.org/1999/xhtml" lang="{{LANG}}" xml:lang="{{LANG}}">' \
                       '<head><title>{{TITLE}}</title><link href="../style.css" rel="stylesheet" type="text/css"/></head>' \
@@ -262,7 +265,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                     content = content.replace('{{AUTHORS_LABEL}}', local_lang['Home']['emptyBookCreation']['Author'])
             file.write(content)
 
-        with open(app_directory+os.sep+'tmp'+os.sep+'texte'+os.sep+'ch01.xhtml', 'w', encoding="utf8") as file:
+        with open(app_user_directory+os.sep+'tmp'+os.sep+'texte'+os.sep+'ch01.xhtml', 'w', encoding="utf8") as file:
             content = '<?xml version=\'1.0\' encoding=\'utf-8\'?>' \
                       '<html xmlns="http://www.w3.org/1999/xhtml" lang="{{LANG}}" xml:lang="{{LANG}}">' \
                       '<head><title>{{CHAPTER1_NAME}}</title>' \
@@ -281,8 +284,8 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
             .replace('%title%', title)\
             .replace('%series%', series)\
             .replace('%authors%', authors)
-        output = app_directory+os.sep+'tmp'+os.sep+filename+'.epub'
-        deflate(app_directory+os.sep+'tmp'+os.sep+'*', output)
+        output = app_user_directory+os.sep+'tmp'+os.sep+filename+'.epub'
+        deflate(app_user_directory+os.sep+'tmp'+os.sep+'*', output)
         return output
     except Exception:
         return None

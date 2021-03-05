@@ -1,5 +1,5 @@
 @echo off
 setlocal
 cd /d %~dp0
-start pythonw main.py
+start pythonw library.py
 exit

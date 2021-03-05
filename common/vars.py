@@ -1,8 +1,9 @@
 import os, re
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 app_name = "eBookCollection"
+app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+app_user_directory = os.path.expanduser('~') + os.sep + app_name
 
 env_vars = {
         'tools': {
@@ -35,6 +36,7 @@ env_vars = {
             'import_file_separator': ' - ',
             'home_central_table_header_size_policy': 'UserDefined',  # ResizeToContents, ResizeToContentsAndInteractive, Stretch, UserDefined
             'home_central_table_header_sizes': '[100, 100, 100, 100, 100]',  # list of collumns size
+            'default_storage': os.path.expanduser('~') + os.sep + app_name + os.sep + 'data',
             'default_style': 'Dark',
             'default_language': 'auto',
             'default_cover': {

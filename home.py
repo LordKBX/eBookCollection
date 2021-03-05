@@ -4,23 +4,22 @@ import PyQt5.QtCore
 import PyQt5.uic
 from PyQt5.uic import *
 
-sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common.dialog import *
 from common.lang import *
 from common.books import *
 from common import bdd
 
-from home.CentralBlockTable import *
-from home.InfoPanel import *
-from home.SortingBlockTree import *
-from home.settings import *
-import home.empty_book
+from CentralBlockTable import *
+from InfoPanel import *
+from SortingBlockTree import *
+from settings import *
+import empty_book
 
 
 class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
     def __init__(self, database: bdd.BDD, translation: Lang, argv: list):
         super(HomeWindow, self).__init__()
-        PyQt5.uic.loadUi('home/home.ui', self)  # Load the .ui file
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'home.ui', self)  # Load the .ui file
 
         # load vars and base objects
         self.app_directory = app_directory
@@ -135,7 +134,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         :return: void
         """
         try:
-            empty_ui = home.empty_book.EmptyBookWindow(self, self.BDD)
+            empty_ui = empty_book.EmptyBookWindow(self, self.BDD)
             ret = empty_ui.open_exec()
             if ret is not None:
                 try:
@@ -300,4 +299,23 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.central_block_table.horizontalHeader().setStyleSheet(env_vars['styles'][self.app_style]['QTableWidget'])
         self.central_block_table.setStyleSheet(env_vars['styles'][self.app_style]['QTableWidget'])
         self.central_block_table.horizontalHeader().setSortIndicatorShown(True)
+
+        icon_names_list = ['book_add', 'book_new', 'book_del', 'settings']
+        icon_dir = {}
+
+        for name in icon_names_list:
+            icon_dir[name] = QtGui.QIcon()
+            icon_dir[name].addPixmap(
+                QtGui.QPixmap(
+                    env_vars['styles'][self.app_style]['icons'][name]
+                        .replace('{APP_DIR}', self.app_directory)
+                        .replace('/', os.sep)
+                ),
+                QtGui.QIcon.Normal, QtGui.QIcon.Off
+            )
+
+        self.header_block_btn_add_book.setIcon(icon_dir['book_add'])
+        self.header_block_btn_create_book.setIcon(icon_dir['book_new'])
+        self.header_block_btn_del_book.setIcon(icon_dir['book_del'])
+        self.header_block_btn_settings.setIcon(icon_dir['settings'])
 

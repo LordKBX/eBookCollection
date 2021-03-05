@@ -151,7 +151,7 @@ if __name__ == "__main__":
 		translation['Reader']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
 		.replace(to_hide_dir, '').replace('/', ' / ').replace(ext, '')
 	)
-	destDir = os.path.expanduser('~') + os.sep + app_name + os.sep + 'reader' + os.sep + 'tmp'
+	destDir = app_user_directory + os.sep + 'reader' + os.sep + 'tmp'
 	try: rmDir(destDir)
 	except Exception: ""
 	if os.path.isdir(destDir) is not True: os.makedirs(destDir)

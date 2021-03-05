@@ -12,6 +12,7 @@ from common.books import *
 from common.files import *
 from common.archive import *
 import common.qt
+import common.dialog
 
 
 class EditorWindow(QtWidgets.QMainWindow):
@@ -19,7 +20,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         super(EditorWindow, self).__init__(parent)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'editor.ui'.replace('/', os.sep), self)
         self.opened_file = opened_file
-        self.tmpDir = os.path.expanduser('~') + os.sep + app_name + os.sep + 'reader' + os.sep + 'tmp'
+        self.tmpDir = app_user_directory + os.sep + 'editor' + os.sep + 'tmp'
         self.lang = lang
         self.BDD = bdd
         self.app_style = self.BDD.get_param('style')
@@ -208,7 +209,7 @@ class EditorWindow(QtWidgets.QMainWindow):
 
     def save_ebook(self):
         try:
-            ret = dialog.InfoDialogConfirm(
+            ret = common.dialog.InfoDialogConfirm(
                 self.lang['Editor']['DialogConfirmSaveWindowTitle'],
                 self.lang['Editor']['DialogConfirmSaveWindowText'],
                 self.lang['Generic']['DialogBtnYes'],

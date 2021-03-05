@@ -5,7 +5,11 @@
 		"lock": "{APP_DIR}/ressources/icons/white/lock.png",
 		"unlock": "{APP_DIR}/ressources/icons/white/unlock.png",
 		"sort_up": "{APP_DIR}/ressources/icons/white/sort_up.png",
-		"sort_down": "{APP_DIR}/ressources/icons/white/sort_down.png"
+		"sort_down": "{APP_DIR}/ressources/icons/white/sort_down.png",
+		"book_add": "{APP_DIR}/ressources/icons/white/book_add.png",
+		"book_del": "{APP_DIR}/ressources/icons/white/book_del.png",
+		"book_new": "{APP_DIR}/ressources/icons/white/book_new.png",
+		"settings": "{APP_DIR}/ressources/icons/white/settings.png"
 	},
 
 	"QMainWindow": [

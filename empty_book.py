@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import *
 import PyQt5.uic
 from PyQt5.uic import *
 
-sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common.vars import *
 
 

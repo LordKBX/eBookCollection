@@ -18,7 +18,7 @@ class SettingsWindow(QDialog):
     def __init__(self, parent, bdd):
         super(SettingsWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         self.BDD = bdd
-        PyQt5.uic.loadUi(app_directory + os.sep + 'home/settings.ui'.replace('/', os.sep), self)  # Load the .ui file
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'settings.ui'.replace('/', os.sep), self)  # Load the .ui file
 
         self.color_selectors = [
             'tab_metadata_default_cover_background_combo_box',

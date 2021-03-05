@@ -91,6 +91,10 @@ QLineEdit{
         <property name="text">
          <string/>
         </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../ressources/icons/white/info.png</normaloff>../ressources/icons/white/info.png</iconset>
+        </property>
         <property name="iconSize">
          <size>
           <width>30</width>
@@ -128,6 +132,10 @@ QLineEdit{
         <property name="text">
          <string/>
         </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../ressources/icons/white/content_table.png</normaloff>../ressources/icons/white/content_table.png</iconset>
+        </property>
         <property name="iconSize">
          <size>
           <width>30</width>
@@ -164,6 +172,10 @@ QLineEdit{
         </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="icon">
+         <iconset>
+          <normaloff>../ressources/icons/white/full_screen.png</normaloff>../ressources/icons/white/full_screen.png</iconset>
         </property>
         <property name="iconSize">
          <size>

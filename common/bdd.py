@@ -2,10 +2,10 @@
 import sys, os, shutil, traceback, time
 import PyQt5.QtCore
 import sqlite3
-# sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-from common.common import *
-from common.files import *
-from common.vars import *
+
+from .common import *
+from .files import *
+from .vars import *
 
 
 def dict_factory(cursor, row):
@@ -29,7 +29,7 @@ class BDD:
         self.cursor = None
         self.__directory = self.get_param('library/directory')
         if directory is None and self.__directory is None:
-            self.__directory = os.path.expanduser('~') + os.sep + app_name + os.sep + 'data'
+            self.__directory = env_vars['vars']['default_storage']
             if os.path.isdir(self.__directory) is False:
                 os.makedirs(self.__directory)
         elif directory is not None:
@@ -38,8 +38,8 @@ class BDD:
 
         self.__directory = self.__directory.replace('{APP_DIR}', app_directory)
         if os.path.isdir(self.__directory) is False:
-            self.__directory = app_directory + os.sep + 'data'
-            self.set_param('library/directory', '{APP_DIR}' + os.sep + 'data')
+            self.__directory = env_vars['vars']['default_storage']
+            self.set_param('library/directory', env_vars['vars']['default_storage'])
         print(self.__directory)
         self.__start()
 

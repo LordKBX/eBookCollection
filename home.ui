@@ -282,7 +282,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../ressources/icons/white/book_add.png</normaloff>../ressources/icons/white/book_add.png</iconset>
+            <normaloff>ressources/icons/white/book_add.png</normaloff>ressources/icons/white/book_add.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -329,7 +329,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../ressources/icons/white/book_new.png</normaloff>../ressources/icons/white/book_new.png</iconset>
+            <normaloff>ressources/icons/white/book_new.png</normaloff>ressources/icons/white/book_new.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -376,7 +376,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../ressources/icons/white/book_del.png</normaloff>../ressources/icons/white/book_del.png</iconset>
+            <normaloff>ressources/icons/white/book_del.png</normaloff>ressources/icons/white/book_del.png</iconset>
           </property>
           <property name="iconSize">
            <size>
@@ -433,7 +433,7 @@
           </property>
           <property name="icon">
            <iconset>
-            <normaloff>../ressources/icons/white/settings.png</normaloff>../ressources/icons/white/settings.png</iconset>
+            <normaloff>ressources/icons/white/settings.png</normaloff>ressources/icons/white/settings.png</iconset>
           </property>
           <property name="iconSize">
            <size>

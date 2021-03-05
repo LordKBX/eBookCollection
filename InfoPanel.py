@@ -3,7 +3,7 @@ import base64
 import traceback
 import PyQt5.QtCore
 import PyQt5.QtGui
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
 from common.common import *
 
 

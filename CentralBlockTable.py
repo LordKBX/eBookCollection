@@ -1,13 +1,12 @@
-import json
-import traceback
-import subprocess
-from common.common import *
+import os, sys, traceback, json, subprocess
 from common.files import *
-sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
-from home.InfoPanel import *
+from common.common import *
+import SortingBlockTree
+import settings
+import InfoPanel
 
 
-class HomeWindowCentralBlock(HomeWindowInfoPanel):
+class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
     central_block_table_cases_uid_list = []
     central_block_table_lock = False
     central_block_table_sort_previous_index = 0
