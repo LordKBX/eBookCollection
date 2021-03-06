@@ -145,6 +145,9 @@ class SettingsWindow(QDialog):
             if self.BDD.get_param('import_file_separator') != template_separator:
                 self.BDD.set_param('import_file_separator', template_separator)
 
+            if self.test_archiver() is True:
+                self.BDD.set_param('archiver_dir', self.tab_global_archiver_folder_line_edit.text())
+
             return 'ok'
         else:
             self.lng.set_lang(self.app_lang)
@@ -162,8 +165,8 @@ class SettingsWindow(QDialog):
         dlg.setOptions(options)
         dlg.setFileMode(QFileDialog.Directory)
 
-        preset = self.BDD.get_param("library_directory").replace('{APP_DIR}', app_directory)
-        folder = dlg.getExistingDirectory(self, "Choose Directory", preset).replace(app_directory, '{APP_DIR}')
+        preset = self.BDD.get_param("library_directory")
+        folder = dlg.getExistingDirectory(self, "Choose Directory", preset)
         print(folder)
         self.tab_global_library_folder_line_edit.setText(folder)
 
@@ -375,6 +378,7 @@ class SettingsWindow(QDialog):
         dlg.setFileMode(QFileDialog.Directory)
 
         preset = self.BDD.get_param("library_directory").replace('{APP_DIR}', app_directory)
-        folder = dlg.getExistingDirectory(self, "Choose Directory", preset).replace(app_directory, '{APP_DIR}')
+        folder = dlg.getExistingDirectory(self, "Choose Directory", preset)
         print(folder)
-        self.tab_global_library_folder_line_edit.setText(folder)
+        self.tab_global_archiver_folder_line_edit.setText(folder)
+        self.test_archiver()

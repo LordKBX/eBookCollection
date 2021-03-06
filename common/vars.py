@@ -17,8 +17,8 @@ def load_path_archiver():
             settings_7zip = QtCore.QSettings('HKEY_CURRENT_USER\\SOFTWARE\\7-Zip', QtCore.QSettings.NativeFormat)
             path_archiver = settings_7zip.value('Path', None)
             if path_archiver is None:
-                if os.path.isdir(app_directory + os.sep + 'tools' + os.sep + '7zip') is True:
-                    path_archiver = app_directory + os.sep + 'tools' + os.sep + '7zip'
+                if os.path.isdir(app_user_directory + os.sep + 'tools' + os.sep + '7zip') is True:
+                    path_archiver = app_user_directory + os.sep + 'tools' + os.sep + '7zip'
         else:
             path_archiver = None
     else:

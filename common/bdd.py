@@ -36,7 +36,7 @@ class BDD:
             self.__directory = directory
         self.__database_filename = 'database.db'
 
-        self.__directory = self.__directory.replace('{APP_DIR}', app_directory)
+        self.__directory = self.__directory
         if os.path.isdir(self.__directory) is False:
             self.__directory = env_vars['vars']['default_storage']
             self.set_param('library/directory', env_vars['vars']['default_storage'])

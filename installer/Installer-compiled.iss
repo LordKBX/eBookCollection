@@ -35,7 +35,9 @@ PrivilegesRequired=admin
 OutputBaseFilename=setup_{#FileAppVersion}.{#FileAppBuild}_compiled 
 
 [Languages]
-Name: "english"; MessagesFile: ".\Default.isl"
+Name: "english"; MessagesFile: ".\Default.isl"   
+
+#include ReadReg(HKEY_LOCAL_MACHINE,'Software\Sherlock Software\InnoTools\Downloader','ScriptPath','');
 
 [Files]
 ;Source: "D:\CODES\Python\EbookCollection\*.pyw"; DestDir: "{app}"; Flags: ignoreversion
@@ -61,3 +63,57 @@ Type: files; Name: "{app}\data\*"
 Type: files; Name: "{app}\icons\*"
 Type: files; Name: "{app}\tmp\*"
 Type: files; Name: "{app}\tools\*"
+
+[Code] 
+const
+  SHCONTCH_NOPROGRESSBOX = 4;
+  SHCONTCH_RESPONDYESTOALL = 16;
+
+procedure UnZip(ZipPath, TargetPath: string); 
+var
+  Shell: Variant;
+  ZipFile: Variant;
+  TargetFolder: Variant;
+begin
+  Shell := CreateOleObject('Shell.Application');
+
+  ZipFile := Shell.NameSpace(ZipPath);
+  if VarIsClear(ZipFile) then
+    RaiseException(Format('ZIP file "%s" does not exist or cannot be opened', [ZipPath]));
+
+  TargetFolder := Shell.NameSpace(TargetPath);
+  if VarIsClear(TargetFolder) then
+    RaiseException(Format('Target path "%s" does not exist', [TargetPath]));
+
+  TargetFolder.CopyHere(ZipFile.Items, SHCONTCH_NOPROGRESSBOX or SHCONTCH_RESPONDYESTOALL);
+end;
+
+procedure InitializeWizard();
+begin
+  WizardForm.WelcomeLabel1.Visible := True;   
+  WizardForm.WelcomeLabel2.Visible := True;
+  
+  itd_init;
+
+  if not RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\\7-Zip') then
+  begin
+    itd_addfile('http://sd-36502.dedibox.fr/eBookCollection/7zip.zip',expandconstant('{tmp}\eBookCollection-7zip.zip'));
+  end;
+  
+  
+  //Start the download after the "Ready to install" screen is shown
+  itd_downloadafter(wpReady);
+
+end;   
+     
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+ if CurStep=ssInstall then begin //Lets install those files that were downloaded for us
+  CreateDir(expandconstant('{sd}\Users\{username}\{#MyAppName}\tools'))  
+
+  if not RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\\7-Zip') then
+  begin 
+    UnZip(expandconstant('{tmp}\eBookCollection-7zip.zip'), expandconstant('{sd}\Users\{username}\{#MyAppName}\tools'));
+  end;
+ end;
+end;
