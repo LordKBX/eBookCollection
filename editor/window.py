@@ -1,6 +1,9 @@
 from checkpoint import *
 from files import *
 from content_table_editor import *
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common.dialog import *
@@ -343,11 +346,14 @@ class EditorWindow(QtWidgets.QMainWindow):
             directory
         )
         print(chapters)
-        for index in chapters:
-            last_slash = index['src'].rindex('/') + 1
-            item = QtWidgets.QTreeWidgetItem(self.treeContentTable)
-            item.setText(0, index['name'])
-            item.setData(0, 98, index['src'][last_slash:])
-            item.setData(0, 99, directory + index['src'].replace('/', os.sep))
-            common.qt.setQTreeItemIcon(item, common.qt.QtQIconEnum.file)
-            self.treeContentTable.insertTopLevelItem(0, item)
+        for chapter in chapters:
+            try:
+                last_slash = chapter['src'].rindex('/')
+                item = QtWidgets.QTreeWidgetItem(self.treeContentTable)
+                item.setText(0, chapter['name'])
+                item.setData(0, 98, chapter['src'][last_slash+1:])
+                item.setData(0, 99, directory + chapter['src'].replace('/', os.sep))
+                common.qt.setQTreeItemIcon(item, common.qt.QtQIconEnum.file)
+                self.treeContentTable.insertTopLevelItem(0, item)
+            except Exception:
+                traceback.print_exc()

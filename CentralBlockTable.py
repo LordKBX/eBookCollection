@@ -165,6 +165,7 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         if self.currentBook != guid_book:
             try:
                 self.set_info_panel(self.BDD.get_books(guid_book)[0])
+                self.currentBook = guid_book
             except Exception:
                 traceback.print_exc()
 
