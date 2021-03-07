@@ -9,3 +9,4 @@ pysqlite3>=0.4.3
 pyperclip>=1.8.1
 filetype>=1.0.7
 QScintilla>=2.11.5
+Pillow>=7.2.0

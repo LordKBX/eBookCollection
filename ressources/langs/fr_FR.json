@@ -1,6 +1,10 @@
 {
 	"Label": "Français (France)",
 	"NotImplemented": "Partie non fonctionnelle",
+	"Global": {
+		"ArchiverErrorTitle": "Attention",
+		"ArchiverErrorText": "Dossier programme d'archivage non défini"
+	},
 	"Library": {
 		"WindowTitle": "EbookCollection - Gestionnaire de livre numérique",
 		"AddBookWindowTitle": "EbookCollection - Selection nouveaux livres",
@@ -18,6 +22,11 @@
 		"CentralBlockTableTags": "Étiquettes",
 		"CentralBlockTableModified": "Modifié le",
 		"CentralBlockTableAdded": "Ajouté le",
+		"CentralBlockTableContextMenu": {
+			"EditMetadata": "Éditer les méta données",
+			"EditBook": "Éditer l'eBook"
+		},
+
 		"InfoBlockTitleLabel": "Titre",
 		"InfoBlockSerieLabel": "Série",
 		"InfoBlockAuthorsLabel": "Auteur(s)",
@@ -28,9 +37,11 @@
 		"DialogConfirmDeleteBookWindowText": "Confirmez vous la suppression des Ebook sélectionnés ?",
 		"DialogConfirmDeleteBookBtnYes": "Oui",
 		"DialogConfirmDeleteBookBtnNo": "Non",
+
 		"blockHeaderTitle": "  Barre d'outils",
 		"blockSortTitle": "  Filtres",
 		"blockInfoTitle": "  Infos",
+
 		"emptyBooks": {
 			"WindowTitle": "Ajout de livre vide",
 			"Number": "Nombre de livre vide",
@@ -72,6 +83,19 @@
 		"DialogInfoNoFileWindowText": "Vous n'avez pas fournis d'adresse fichier",
 		"DialogInfoBadFileWindowTitle": "Erreur Fichier",
 		"DialogInfoBadFileWindowText": "Format de fichier invalide",
+
+		"BlockToolbar": {
+			"Header": "Barre d'outils",
+			"Save": "Sauvegarder livre",
+			"CheckPointLoad": "Charger point de contrôle",
+			"CheckPointCreate": "Créer point de contrôle",
+			"FileManager": "Gestion des fichiers",
+			"EditContentTable": "Table des matières"
+		},
+		"BlockFileListHeader": "Explorateur de fichiers",
+		"BlockContentTableHeader": "Table des matières",
+		"BlockPreviewHeader": "Aperçu",
+
 		"ContentTableHeader": "Table des Matières",
 		"FileTableHeader": "Explorateur de fichiers",
 		"WebViewDefaultPageContent": [

@@ -85,3 +85,4 @@ Thumbs.db
 /tools/*.txt
 /installer/python/*
 /test/*/*
+/test/°*.txt

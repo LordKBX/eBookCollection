@@ -4,6 +4,8 @@ if os.name == 'nt':
 	import ctypes
 	import win32gui, win32con
 
+import PyQt5.QtGui
+import PyQt5.QtCore
 from PyQt5.uic import *
 from window import *
 
@@ -11,14 +13,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common.dialog import *
 from common.archive import *
 from common import lang
-
-ui = None
-
-
-def eventHandler(event: dict):
-	global previousEvent, ui
-	print(event)
-
 
 if __name__ == "__main__":
 	lng = lang.Lang()
@@ -28,15 +22,14 @@ if __name__ == "__main__":
 	print(sys.argv)
 	bdd = BDD()
 
-	app_icon = QtGui.QIcon()
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon16x16.png', QtCore.QSize(16, 16))
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon24x24.png', QtCore.QSize(24, 24))
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon32x32.png', QtCore.QSize(32, 32))
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon48x48.png', QtCore.QSize(48, 48))
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon256x256.png', QtCore.QSize(256, 256))
+	app_icon = PyQt5.QtGui.QIcon()
+	for icon_index in app_icons:
+		icon_size = int(float(icon_index.replace('x', '')))
+		app_icon.addFile(app_directory + os.sep + app_icons[icon_index], QtCore.QSize(icon_size, icon_size))
+
 	app.setWindowIcon(app_icon)
 	if os.name == 'nt':
-		myappid = 'lordkbx.ebook_collection.editor'
+		myappid = app_id + '.editor'
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 		if 'debug' not in sys.argv:
 			the_program_to_hide = win32gui.GetForegroundWindow()
@@ -48,7 +41,7 @@ if __name__ == "__main__":
 				file = sys.argv[index]
 
 		if len(sys.argv) < 2:
-			WarnDialog(lng['Editor']['DialogInfoNoFileWindowTitle'], lng['Editor']['DialogInfoNoFileWindowText'], ui)
+			WarnDialog(lng['Editor']['DialogInfoNoFileWindowTitle'], lng['Editor']['DialogInfoNoFileWindowText'], None)
 			exit(0)
 
 		ui = EditorWindow(None, file, lng, bdd)

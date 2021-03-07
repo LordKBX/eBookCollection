@@ -323,7 +323,8 @@ def get_epub_info(path: str):
                     i+=1
                 base += '/'
             myfile = myzip.open(file2)
-            mydoc = minidom.parseString(myfile.read())
+            metadata_file_content = myfile.read()
+            mydoc = minidom.parseString(metadata_file_content)
 
             try: ret['guid'] = mydoc.getElementsByTagName('dc:identifier')[0].firstChild.data
             except Exception: {}
@@ -346,39 +347,40 @@ def get_epub_info(path: str):
                     if meta.attributes['name'].value == 'dc:series': ret['series'] = meta.attributes['content'].value
 
             items = mydoc.getElementsByTagName('item')
-            if mydoc.getElementsByTagName('spine')[0].hasAttribute('toc'):
-                spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
-                for itm in items:
-                    if itm.attributes['id'].value == spine:
-                        ret['toc'] = itm.attributes['href'].value
-                myfile = myzip.open(base + ret['toc'])
-                mydoc = minidom.parseString(myfile.read())
-                itemrefs = mydoc.getElementsByTagName('navPoint')
-                for ref in itemrefs:
-                    id = ref.attributes['id'].value
-                    ret['chapters'].append({
-                        'id': ref.attributes['id'].value,
-                        'name': ref.getElementsByTagName('text')[0].firstChild.data,
-                        'src': base + ref.getElementsByTagName('content')[0].attributes['src'].value
-                    })
-                myfile.close()
-            else:
-                refs_list = mydoc.getElementsByTagName('spine')[0].getElementsByTagName('itemref')
-                for itemref in refs_list:
-                    idref = itemref.attributes['idref'].value
-                    for itm in items:
-                        if itm.attributes['id'].value == idref:
-                            try:
-                                chapter_file = myzip.open(base + itm.attributes['href'].value, "r")
-                                content = chapter_file.read().decode("utf8")
-                                title = re.search("<title>(.*)</title>", content)[1]
-                                ret['chapters'].append({
-                                    'id': idref,
-                                    'name': title,
-                                    'src': base + itm.attributes['href'].value
-                                })
-                            except Exception:
-                                traceback.print_exc()
+            ret['chapters'] = parse_content_table(metadata_file_content, base, myzip)
+            # if mydoc.getElementsByTagName('spine')[0].hasAttribute('toc'):
+            #     spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
+            #     for itm in items:
+            #         if itm.attributes['id'].value == spine:
+            #             ret['toc'] = itm.attributes['href'].value
+            #     myfile = myzip.open(base + ret['toc'])
+            #     mydoc = minidom.parseString(myfile.read())
+            #     itemrefs = mydoc.getElementsByTagName('navPoint')
+            #     for ref in itemrefs:
+            #         id = ref.attributes['id'].value
+            #         ret['chapters'].append({
+            #             'id': ref.attributes['id'].value,
+            #             'name': ref.getElementsByTagName('text')[0].firstChild.data,
+            #             'src': base + ref.getElementsByTagName('content')[0].attributes['src'].value
+            #         })
+            #     myfile.close()
+            # else:
+            #     refs_list = mydoc.getElementsByTagName('spine')[0].getElementsByTagName('itemref')
+            #     for itemref in refs_list:
+            #         idref = itemref.attributes['idref'].value
+            #         for itm in items:
+            #             if itm.attributes['id'].value == idref:
+            #                 try:
+            #                     chapter_file = myzip.open(base + itm.attributes['href'].value, "r")
+            #                     content = chapter_file.read().decode("utf8")
+            #                     title = re.search("<title>(.*)</title>", content)[1]
+            #                     ret['chapters'].append({
+            #                         'id': idref,
+            #                         'name': title,
+            #                         'src': base + itm.attributes['href'].value
+            #                     })
+            #                 except Exception:
+            #                     traceback.print_exc()
 
             for itm in items:
                 if cov_id != '':
@@ -407,6 +409,61 @@ def get_epub_info(path: str):
     except Exception:
         traceback.print_exc()
     return None
+
+
+def parse_content_table(metadata_file_content: str, base: str, folder: str or zipfile.ZipFile) -> list:
+    mydoc = minidom.parseString(metadata_file_content)
+    items = mydoc.getElementsByTagName('item')
+    toc_file = ''
+    ret_list = []
+
+    if mydoc.getElementsByTagName('spine')[0].hasAttribute('toc'):
+        spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
+        for itm in items:
+            if itm.attributes['id'].value == spine:
+                toc_file = itm.attributes['href'].value
+        myfile = None
+        if isinstance(folder, zipfile.ZipFile):
+            myfile = folder.open(base + toc_file)
+        elif isinstance(folder, str):
+            myfile = open(folder + os.sep + base + toc_file)
+        mydoc = minidom.parseString(myfile.read())
+        myfile.close()
+        itemrefs = mydoc.getElementsByTagName('navPoint')
+        for ref in itemrefs:
+            id = ref.attributes['id'].value
+            ret_list.append({
+                'id': ref.attributes['id'].value,
+                'name': ref.getElementsByTagName('text')[0].firstChild.data,
+                'src': base + ref.getElementsByTagName('content')[0].attributes['src'].value
+            })
+    else:
+        refs_list = mydoc.getElementsByTagName('spine')[0].getElementsByTagName('itemref')
+        for itemref in refs_list:
+            idref = itemref.attributes['idref'].value
+            for itm in items:
+                if itm.attributes['id'].value == idref:
+                    try:
+                        chapter_file = None
+                        content = ''
+                        if isinstance(folder, zipfile.ZipFile):
+                            chapter_file = folder.open(base + itm.attributes['href'].value, "r")
+                            content = chapter_file.read().decode("utf8")
+                        elif isinstance(folder, str):
+                            chapter_file = open(
+                                folder + base + itm.attributes['href'].value.replace('/', os.sep),
+                                encoding="utf8"
+                            )
+                            content = chapter_file.read()
+                        title = re.search("<title>(.*)</title>", content)[1]
+                        ret_list.append({
+                            'id': idref,
+                            'name': title,
+                            'src': base + itm.attributes['href'].value
+                        })
+                    except Exception:
+                        traceback.print_exc()
+    return ret_list
 
 
 def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator: str, file: str):

@@ -12,6 +12,7 @@ from PyQt5 import QtCore
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common import lang
+from common.vars import *
 from common.dialog import *
 from common.books import *
 from common.archive import *
@@ -30,10 +31,10 @@ class ReaderWindow(QtWidgets.QMainWindow):
 		icon_1 = QtGui.QIcon()
 		if self.isFullScreen() is True:
 			self.showNormal()
-			icon_1.addPixmap(QtGui.QPixmap("../ressources/icons/white/full_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+			icon_1.addPixmap(QtGui.QPixmap(get_style_var(app_style, 'icons/full_screen')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		else:
 			self.showFullScreen()
-			icon_1.addPixmap(QtGui.QPixmap("../ressources/icons/white/normal_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+			icon_1.addPixmap(QtGui.QPixmap(get_style_var(app_style, 'icons/normal_screen')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 		self.buttonFullScreen.setIcon(icon_1)
 
 	def display_tree_content_table(self):
@@ -90,17 +91,22 @@ class ReaderWindow(QtWidgets.QMainWindow):
 if __name__ == "__main__":
 	translation = lang.Lang()
 	bdd = BDD()
+	app_style = bdd.get_param('style')
+	if app_style is None or app_style == '':
+		app_style = 'Dark'
+	if env_vars['tools']['archiver']['path'] is None:
+		WarnDialog(translation['Global/ArchiverErrorTitle'], translation['Global/ArchiverErrorText'])
+		sys.exit(0)
 
 	app = QtWidgets.QApplication([])
-	app_icon = QtGui.QIcon()
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon16x16.png'.replace('/', os.sep), QtCore.QSize(16, 16))
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon24x24.png'.replace('/', os.sep), QtCore.QSize(24, 24))
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon32x32.png'.replace('/', os.sep), QtCore.QSize(32, 32))
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon48x48.png'.replace('/', os.sep), QtCore.QSize(48, 48))
-	app_icon.addFile(app_directory + '/ressources/icons/app_icon256x256.png'.replace('/', os.sep), QtCore.QSize(256, 256))
+	app_icon = PyQt5.QtGui.QIcon()
+	for icon_index in app_icons:
+		icon_size = int(float(icon_index.replace('x', '')))
+		app_icon.addFile(app_directory + os.sep + app_icons[icon_index], QtCore.QSize(icon_size, icon_size))
+
 	app.setWindowIcon(app_icon)
 	if os.name == 'nt':
-		myappid = 'lordkbx.ebook_collection.reader'
+		myappid = app_id + '.reader'
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 		if 'debug' not in sys.argv:
 			the_program_to_hide = win32gui.GetForegroundWindow()
@@ -111,13 +117,13 @@ if __name__ == "__main__":
 
 	# Button FullScreen
 	icon1 = QtGui.QIcon()
-	icon1.addPixmap(QtGui.QPixmap(app_directory + "/ressources/icons/white/full_screen.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon1.addPixmap(QtGui.QPixmap(get_style_var(app_style, 'icons/full_screen')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonFullScreen.setIcon(icon1)
 	ui.buttonFullScreen.clicked.connect(ui.toogle_full_screen)
 
 	# Button Content Table
 	icon2 = QtGui.QIcon()
-	icon2.addPixmap(QtGui.QPixmap(app_directory + "/ressources/icons/white/content_table.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon2.addPixmap(QtGui.QPixmap(get_style_var(app_style, 'icons/content_table')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonContentTable.setIcon(icon2)
 	ui.buttonContentTable.clicked.connect(ui.display_tree_content_table)
 	ui.treeContentTable.setMinimumWidth(180)
@@ -125,7 +131,7 @@ if __name__ == "__main__":
 
 	# Button Info
 	icon3 = QtGui.QIcon()
-	icon3.addPixmap(QtGui.QPixmap(app_directory + "/ressources/icons/white/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+	icon3.addPixmap(QtGui.QPixmap(get_style_var(app_style, 'icons/info')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 	ui.buttonInfo.setIcon(icon3)
 	# ui.buttonInfo.clicked.connect(ui.display_tree_content_table)
 

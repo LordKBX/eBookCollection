@@ -1,9 +1,77 @@
 import os, sys, traceback, json, subprocess
+import concurrent.futures
+import PyQt5.QtCore
+import PyQt5.QtGui
+import PyQt5.QtWidgets
 from common.files import *
 from common.common import *
 import SortingBlockTree
 import settings
 import InfoPanel
+
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=50)
+executor_dir = ''
+executor_file = ''
+
+
+def wait_on_editor():
+    global executor_dir, executor_file
+    args = list()
+    exe = executor_dir + '/editor.exe'.replace('/', os.sep)
+    if os.path.isfile(exe):
+        if os.name == 'nt':
+            args.append('start')
+        args.append(executor_dir + '/editor.exe'.replace('/', os.sep))
+        args.append(executor_file.replace('/', os.sep))
+        # args.append('debug')
+    else:
+        if os.name == 'nt':
+            args.append('start')
+        args.append('python')
+        args.append(executor_dir + '/editor/editor.py'.replace('/', os.sep))
+        args.append(executor_file.replace('/', os.sep))
+        args.append('debug')
+
+    try:
+        return_code = subprocess.call(args, shell=True)
+    except Exception:
+        traceback.print_exc()
+
+
+def wait_on_reader():
+    global executor_dir, executor_file
+    args = list()
+    exe = executor_dir + '/reader.exe'.replace('/', os.sep)
+    if os.path.isfile(exe):
+        if os.name == 'nt':
+            args.append('start')
+        args.append(executor_dir + '/reader.exe'.replace('/', os.sep))
+        args.append(executor_file.replace('/', os.sep))
+        # args.append('debug')
+    else:
+        # if os.name == 'nt':
+        #     args.append('start')
+        args.append('python')
+        args.append(executor_dir + '/reader/reader.py'.replace('/', os.sep))
+        args.append(executor_file.replace('/', os.sep))
+        args.append('debug')
+
+    try:
+        return_code = subprocess.call(args, shell=True)
+    except Exception:
+        traceback.print_exc()
+
+
+def wait_on_open_ext():
+    global executor_file
+    args = list()
+    args.append('start')
+    args.append(executor_file.replace('/', os.sep))
+
+    try:
+        return_code = subprocess.call(args, shell=True)
+    except Exception:
+        traceback.print_exc()
 
 
 class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
@@ -24,6 +92,8 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         :return:
         """
         self.central_block_table.currentCellChanged.connect(self.central_block_table_new_selection)
+        self.central_block_table.setContextMenuPolicy(PyQt5.QtCore.Qt.CustomContextMenu)
+        self.central_block_table.customContextMenuRequested.connect(self.central_block_table_context_menu)
         self.central_block_table.itemChanged.connect(self.central_block_table_item_changed)
         self.central_block_table.cellDoubleClicked.connect(self.central_block_table_cell_double_clicked)
         self.central_block_table.horizontalHeader().sortIndicatorChanged.connect(self.central_block_table_sort_indicator_changed)
@@ -144,6 +214,7 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         :param current_column:
         :return: void
         """
+        global executor_dir, executor_file
         # print("--------------------------------")
         # print("central_block_table_cell_double_clicked")
         item = self.central_block_table.item(current_row, current_column)
@@ -151,25 +222,14 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         # print("Book GUID : {}".format(guid_book))
         if self.currentBook != guid_book:
             self.currentBook = guid_book
-        args = list()
-        if self.BDD.get_books(guid_book)[0]['files'][0]['format'] in ['CBZ', 'CBR', 'EPUB']:
-            exe = self.app_directory + '/reader.exe'.replace('/', os.sep)
-            if os.path.isfile(exe):
-                args.append(self.app_directory + '/reader.exe'.replace('/', os.sep))
-                args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
-                args.append('debug')
-            else:
-                args.append('python')
-                args.append(self.app_directory + '/reader/reader.py'.replace('/', os.sep))
-                args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'].replace('/', os.sep))
-                args.append('debug')
+        files = self.BDD.get_books(guid_book)[0]['files']
+        if files[0]['format'] in ['CBZ', 'CBR', 'EPUB']:
+            executor_dir = self.app_directory
+            executor_file = files[0]['link']
+            executor.submit(wait_on_reader)
         else:
-            args.append(self.BDD.get_books(guid_book)[0]['files'][0]['link'])
-        print(args)
-        try:
-            return_code = subprocess.call(args, shell=True)
-        except Exception:
-            traceback.print_exc()
+            executor_file = files[0]['link']
+            executor.submit(wait_on_open_ext)
 
     def central_block_table_item_changed(self, new_item):
         """
@@ -215,6 +275,29 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
 
             # Cleanup all empty folder in data folder
             clean_dir('./data')
+        except Exception:
+            traceback.print_exc()
+
+    def central_block_table_context_menu(self, point: PyQt5.QtCore.QPoint):
+        global executor_dir, executor_file
+        try:
+            current_row = self.central_block_table.currentRow()
+            current_column = self.central_block_table.currentColumn()
+            guid_book = self.central_block_table.item(current_row, current_column).data(99)
+            book_infos = self.BDD.get_books(guid_book)[0]
+            menu = PyQt5.QtWidgets.QMenu()
+            action0 = PyQt5.QtWidgets.QAction(self.lang['Library/CentralBlockTableContextMenu/EditMetadata'], None)
+            action0.triggered.connect(lambda: print("Edit Metadata!"))
+            menu.addAction(action0)
+            for file in book_infos['files']:
+                if file['format'] == 'EPUB':
+                    executor_dir = self.app_directory
+                    executor_file = file['link']
+                    action1 = PyQt5.QtWidgets.QAction(self.lang['Library/CentralBlockTableContextMenu/EditBook'], None)
+                    action1.triggered.connect(lambda: executor.submit(wait_on_editor))
+                    menu.addAction(action1)
+            menu.exec(PyQt5.QtGui.QCursor.pos())
+
         except Exception:
             traceback.print_exc()
 

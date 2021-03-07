@@ -1,6 +1,10 @@
 {
 	"Label": "English (U.S.A)",
 	"NotImplemented": "Not implemented",
+	"Global": {
+		"ArchiverErrorTitle": "Attention",
+		"ArchiverErrorText": "Archiver folder not defined"
+	},
 	"Library": {
 		"WindowTitle": "EbookCollection - Ebook manager",
 		"AddBookWindowTitle": "EbookCollection - New books selection",
@@ -18,6 +22,11 @@
 		"CentralBlockTableTags": "Tags",
 		"CentralBlockTableModified": "Modified",
 		"CentralBlockTableAdded": "Imported",
+		"CentralBlockTableContextMenu": {
+			"EditMetadata": "Edit Metadata",
+			"EditBook": "Edit eBook"
+		},
+
 		"InfoBlockTitleLabel": "Title",
 		"InfoBlockSerieLabel": "Serie",
 		"InfoBlockAuthorsLabel": "Author(s)",
@@ -28,9 +37,11 @@
 		"DialogConfirmDeleteBookWindowText": "Confirm Ebook remove ?",
 		"DialogConfirmDeleteBookBtnYes": "Yes",
 		"DialogConfirmDeleteBookBtnNo": "No",
+
 		"blockHeaderTitle": "  Toolbar",
 		"blockSortTitle": "  Filters",
 		"blockInfoTitle": "  Infos",
+
 		"emptyBooks": {
 			"WindowTitle": "Ajout de livre vide",
 			"Number": "Nombre de livre vide",
@@ -72,6 +83,19 @@
 		"DialogInfoNoFileWindowText": "File Path not given",
 		"DialogInfoBadFileWindowTitle": "File Error",
 		"DialogInfoBadFileWindowText": "Invalid file format",
+
+		"BlockToolbar": {
+			"Header": "Toolbar",
+			"Save": "Save eBook",
+			"CheckPointLoad": "Load session checkpoint",
+			"CheckPointCreate": "Create session checkpoint",
+			"FileManager": "File Management",
+			"EditContentTable": "Edit Content Table"
+		},
+		"BlockFileListHeader": "Files explorer",
+		"BlockContentTableHeader": "Content table",
+		"BlockPreviewHeader": "Preview",
+
 		"ContentTableHeader": "Content Table",
 		"FileTableHeader": "File Explorer",
 		"WebViewDefaultPageContent": "<?xml version=\"1.0\" encoding=\"utf-8\"?><html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"fr\"><head><title>Live Preview</title></head><body><h3>Live Preview</h3><p>You could see a here the live preview of the HTML file being edited. The preview will update automatically as you make your changes.</p><p style=\"font-size:x-small;\">Note that this is a quick preview only, this is not intended to simulate a real digital book reader. Some aspects of your eBook will not work, such as page breaks and page margins.</p></body></html>",

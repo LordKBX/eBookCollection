@@ -30,10 +30,10 @@ class EditorTabManager(QtWidgets.QTabWidget):
     def __init__(self, parent: any):
         QtWidgets.QTabWidget.__init__(self, parent)
         self.setWindowTitle("Tab Dialog")
-        self.previewWebview = None
-        self.default_page = None
-        self.previous_file = ''
         self.lang = lang.Lang()
+        self.previewWebview = None
+        self.default_page = "".join(self.lang['Editor/WebViewDefaultPageContent'])
+        self.previous_file = ''
 
     def set_preview_webview(self, webview: PyQt5.QtWebKitWidgets.QWebView, default_page: str):
         self.previewWebview = webview
@@ -368,7 +368,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             item = self.currentWidget()
             tx_edit = item.children().__getitem__(2)
             if item.property('fileExt') in ['xhtml', 'html', 'xml', 'opf', 'ncx']:
-                ret = editor.xmlt.parse(tx_edit.text())
+                ret = xmlt.parse(tx_edit.text())
                 if ret is not None:
                     dialog.WarnDialog('', 'Error found at line {}, collumn {}'.format(ret[0], ret[1]), self.parent())
                     tx_edit.setSelection(ret[0]-1, 0, ret[0]-1, ret[1])
@@ -470,11 +470,11 @@ class EditorTabManager(QtWidgets.QTabWidget):
             if sel[0] == sel[2] and sel[1] == sel[3]:
                 pos = tx_edit.getCursorPosition()
             if item.property('fileExt') in ['xml', 'opf', 'ncx']:
-                ret = editor.xmlt.prettify(tx_edit.text())
+                ret = xmlt.prettify(tx_edit.text())
                 tx_edit.selectAll(True)
                 tx_edit.replaceSelectedText(ret)
             elif item.property('fileExt') in ['css']:
-                ret = editor.css.prettifyCss(tx_edit.text())
+                ret = css.prettifyCss(tx_edit.text())
                 tx_edit.selectAll(True)
                 tx_edit.replaceSelectedText(ret)
             else:
@@ -491,7 +491,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
         block_end = '</a>'
         try:
             item = self.currentWidget()
-            window = editor.link.LinkWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp'
+            window = link.LinkWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp'
                                             + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
             selected_text = tx_edit.selectedText()
@@ -524,7 +524,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
     def img_poser(self):
         try:
             item = self.currentWidget()
-            window = editor.img.ImgWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp'
+            window = img.ImgWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp'
                                           + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
             selected_text = tx_edit.selectedText()

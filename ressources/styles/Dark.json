@@ -9,7 +9,15 @@
 		"book_add": "{APP_DIR}/ressources/icons/white/book_add.png",
 		"book_del": "{APP_DIR}/ressources/icons/white/book_del.png",
 		"book_new": "{APP_DIR}/ressources/icons/white/book_new.png",
-		"settings": "{APP_DIR}/ressources/icons/white/settings.png"
+		"settings": "{APP_DIR}/ressources/icons/white/settings.png",
+		"full_screen": "{APP_DIR}/ressources/icons/white/full_screen.png",
+		"normal_screen": "{APP_DIR}/ressources/icons/white/normal_screen.png",
+		"content_table": "{APP_DIR}/ressources/icons/white/content_table.png",
+		"info": "{APP_DIR}/ressources/icons/white/info.png",
+		"save": "{APP_DIR}/ressources/icons/white/save.png",
+		"checkpoint_load": "{APP_DIR}/ressources/icons/tmp/catalog.png",
+		"checkpoint_create": "{APP_DIR}/ressources/icons/tmp/bookmarks.png",
+		"file_manager": "{APP_DIR}/ressources/icons/tmp/tb_folder.png"
 	},
 
 	"QMainWindow": [
@@ -19,10 +27,10 @@
 		"QWidget{ background: rgba(63, 63, 63); color:white; }",
 		"QDockWidget { border: 0; margin:0; padding:0; }",
 		"QDockWidget::title { font: bold; text-align: left; background: #333333; padding-left: 5px; }",
-		"QPushButton { border:#000000 1px solid; background-color: rgb(80, 80, 80); }",
-		"QPushButton:hover { background-color: rgb(120, 120, 120); }",
-		"QPushButton:pressed { background-color: rgb(120, 120, 120); }",
-		"QPushButton:checked { background-color: rgb(150, 150, 150); }",
+		"QPushButton, QToolButton { border:#000000 1px solid; background-color: rgb(80, 80, 80); }",
+		"QPushButton:hover, QToolButton:hover { background-color: rgb(120, 120, 120); }",
+		"QPushButton:pressed, QToolButton:pressed { background-color: rgb(120, 120, 120); }",
+		"QPushButton:checked, QToolButton:checked { background-color: rgb(150, 150, 150); }",
 		"QLineEdit { background-color: rgb(100, 100, 100); }"
 	],
 
@@ -159,5 +167,7 @@
 
 	"border": "QWidget { border:  #000000 1px solid; }",
 
-	"QComboBoxArrow": "QComboBox::down-arrow { image:none; width:0px; }"
+	"QComboBoxArrow": "QComboBox::down-arrow { image:none; width:0px; }",
+
+	"QWebViewPreview": "body { background:#999999;color:#ffffff; }"
 }

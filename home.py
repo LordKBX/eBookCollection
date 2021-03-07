@@ -17,21 +17,19 @@ import empty_book
 
 
 class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
-    def __init__(self, database: bdd.BDD, translation: Lang, argv: list):
+    def __init__(self, database: bdd.BDD, translation: Lang, argv: list, env_vars: dict):
         super(HomeWindow, self).__init__()
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'home.ui', self)  # Load the .ui file
 
         # load vars and base objects
         self.app_directory = app_directory
         self.currentBook = ''
+        self.env_vars = env_vars
         self.BDD = database
         self.lang = translation
         self.tools = env_vars['tools']
         self.env_vars = self.vars = env_vars['vars']
         self.argv = argv
-
-        if env_vars['tools']['archiver']['path'] is None or env_vars['tools']['archiver']['path'] == '':
-            WarnDialog("Attention", "")
 
         # load window size
         size_tx = self.BDD.get_param('library/windowSize')
@@ -88,6 +86,9 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
 
         self.show()  # Show the GUI
         try:
+            if self.env_vars['tools']['archiver']['path'] is None:
+                WarnDialog(self.lang['Global/ArchiverErrorTitle'], self.lang['Global/ArchiverErrorText'])
+                self.header_block_btn_settings_clicked()
             if "settings" in self.argv:
                 self.header_block_btn_settings_clicked()
         except Exception:

@@ -124,7 +124,7 @@ QPushButton:checked{
     </item>
    </layout>
   </widget>
-  <widget class="QDockWidget" name="dockWidget">
+  <widget class="QDockWidget" name="dockFiles">
    <property name="minimumSize">
     <size>
      <width>160</width>
@@ -214,7 +214,7 @@ QPushButton:checked{
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_2">
+  <widget class="QDockWidget" name="dockContentTable">
    <property name="minimumSize">
     <size>
      <width>160</width>
@@ -265,7 +265,7 @@ QPushButton:checked{
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockWidget_3">
+  <widget class="QDockWidget" name="dockPreview">
    <property name="floating">
     <bool>false</bool>
    </property>
@@ -311,11 +311,11 @@ QPushButton:checked{
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockTop1">
+  <widget class="QDockWidget" name="dockTop">
    <property name="minimumSize">
     <size>
      <width>774</width>
-     <height>65</height>
+     <height>79</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -325,18 +325,18 @@ QPushButton:checked{
     </size>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetMovable|QDockWidget::DockWidgetVerticalTitleBar</set>
+    <set>QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::BottomDockWidgetArea|Qt::TopDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string notr="true">. . .</string>
+    <string notr="true">ToolBar</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>4</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_4">
+   <widget class="QWidget" name="dockTopContents">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="leftMargin">
       <number>0</number>
@@ -351,7 +351,7 @@ QPushButton:checked{
       <number>0</number>
      </property>
      <item>
-      <widget class="QToolButton" name="btnEbookSave">
+      <widget class="QToolButton" name="button_save">
        <property name="minimumSize">
         <size>
          <width>130</width>
@@ -386,7 +386,7 @@ QPushButton:checked{
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="btnEbookLoadCheckpoint">
+      <widget class="QToolButton" name="button_load_checkpoint">
        <property name="minimumSize">
         <size>
          <width>130</width>
@@ -421,7 +421,7 @@ QPushButton:checked{
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="btnEbookCreateCheckpoint">
+      <widget class="QToolButton" name="button_create_checkpoint">
        <property name="minimumSize">
         <size>
          <width>130</width>
@@ -456,7 +456,7 @@ QPushButton:checked{
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="btnEbookAddFile">
+      <widget class="QToolButton" name="button_file_manager">
        <property name="minimumSize">
         <size>
          <width>130</width>
@@ -491,7 +491,7 @@ QPushButton:checked{
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="btnEbookContentTable">
+      <widget class="QToolButton" name="button_edit_content_table">
        <property name="minimumSize">
         <size>
          <width>130</width>

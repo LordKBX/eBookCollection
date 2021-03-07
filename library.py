@@ -1,4 +1,15 @@
 # This Python file uses the following encoding: utf-8
+#             _______                       __               ______             __  __                        __      __                     
+#            /       \                     /  |             /      \           /  |/  |                      /  |    /  |                    
+#    ______  $$$$$$$  |  ______    ______  $$ |   __       /$$$$$$  |  ______  $$ |$$ |  ______    _______  _$$ |_   $$/   ______   _______  
+#   /      \ $$ |__$$ | /      \  /      \ $$ |  /  |      $$ |  $$/  /      \ $$ |$$ | /      \  /       |/ $$   |  /  | /      \ /       \ 
+#  /$$$$$$  |$$    $$< /$$$$$$  |/$$$$$$  |$$ |_/$$/       $$ |      /$$$$$$  |$$ |$$ |/$$$$$$  |/$$$$$$$/ $$$$$$/   $$ |/$$$$$$  |$$$$$$$  |
+#  $$    $$ |$$$$$$$  |$$ |  $$ |$$ |  $$ |$$   $$<        $$ |   __ $$ |  $$ |$$ |$$ |$$    $$ |$$ |        $$ | __ $$ |$$ |  $$ |$$ |  $$ |
+#  $$$$$$$$/ $$ |__$$ |$$ \__$$ |$$ \__$$ |$$$$$$  \       $$ \__/  |$$ \__$$ |$$ |$$ |$$$$$$$$/ $$ \_____   $$ |/  |$$ |$$ \__$$ |$$ |  $$ |
+#  $$       |$$    $$/ $$    $$/ $$    $$/ $$ | $$  |      $$    $$/ $$    $$/ $$ |$$ |$$       |$$       |  $$  $$/ $$ |$$    $$/ $$ |  $$ |
+#   $$$$$$$/ $$$$$$$/   $$$$$$/   $$$$$$/  $$/   $$/        $$$$$$/   $$$$$$/  $$/ $$/  $$$$$$$/  $$$$$$$/    $$$$/  $$/  $$$$$$/  $$/   $$/ 
+#                                                                                                                                            
+
 import os
 if os.name == 'nt':
     import ctypes
@@ -18,19 +29,18 @@ if __name__ == "__main__":
 
     app = PyQt5.QtWidgets.QApplication([])
     app_icon = PyQt5.QtGui.QIcon()
-    app_icon.addFile(app_directory + '/ressources/icons/app_icon16x16.png', QtCore.QSize(16, 16))
-    app_icon.addFile(app_directory + '/ressources/icons/app_icon24x24.png', QtCore.QSize(24, 24))
-    app_icon.addFile(app_directory + '/ressources/icons/app_icon32x32.png', QtCore.QSize(32, 32))
-    app_icon.addFile(app_directory + '/ressources/icons/app_icon48x48.png', QtCore.QSize(48, 48))
-    app_icon.addFile(app_directory + '/ressources/icons/app_icon256x256.png', QtCore.QSize(256, 256))
+    for icon_index in app_icons:
+        icon_size = int(float(icon_index.replace('x', '')))
+        app_icon.addFile(app_directory + os.sep + app_icons[icon_index], QtCore.QSize(icon_size, icon_size))
+
     app.setWindowIcon(app_icon)
     if os.name == 'nt':
-        myappid = 'lordkbx.ebook_collection'
+        myappid = app_id + '.library'
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
         if 'debug' not in sys.argv:
             the_program_to_hide = win32gui.GetForegroundWindow()
             win32gui.ShowWindow(the_program_to_hide, win32con.SW_HIDE)
 
-    Home = home.HomeWindow(bdd, translation, sys.argv)
+    Home = home.HomeWindow(bdd, translation, sys.argv, env_vars)
     Home.show()
     sys.exit(app.exec_())

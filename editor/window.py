@@ -1,21 +1,21 @@
-import os
-import sys
-
 from checkpoint import *
 from files import *
 from content_table_editor import *
-import editing_pane
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common.dialog import *
 from common.books import *
 from common.files import *
 from common.archive import *
+from common.vars import *
 import common.qt
 import common.dialog
 
 
 class EditorWindow(QtWidgets.QMainWindow):
+    default_page = ''
+    ebook_info = None
+
     def __init__(self, parent: QtWidgets.QMainWindow, opened_file, lang, bdd):
         super(EditorWindow, self).__init__(parent)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'editor.ui'.replace('/', os.sep), self)
@@ -24,16 +24,8 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.lang = lang
         self.BDD = bdd
         self.app_style = self.BDD.get_param('style')
-        self.default_page = self.lang['Editor']['WebViewDefaultPageContent']
-
-        self.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
-        self.btnEbookSave.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
-        self.btnEbookLoadCheckpoint.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
-        self.btnEbookCreateCheckpoint.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
-        self.btnEbookAddFile.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
-        self.btnEbookContentTable.setStyleSheet(env_vars['styles'][self.app_style]['defaultAltButton'])
-
-        self.dockTop1.setStyleSheet(env_vars['styles'][self.app_style]['defaultButton'])
+        self.apply_translation()
+        self.apply_style()
 
         # ui.tabWidget
         ad = app_directory.replace(os.sep, '/')
@@ -59,7 +51,6 @@ class EditorWindow(QtWidgets.QMainWindow):
 
         # Processing File Table
         self.treeFileTable.clear()
-        self.treeFileTable.headerItem().setText(0, self.lang['Editor']['FileTableHeader'])
         self.treeFileTable.itemDoubleClicked.connect(self.file_table_item_double_clicked)
         self.treeFileTable.setIndentation(10)
         self.treeFileTable.setCursor(QtCore.Qt.PointingHandCursor)
@@ -67,26 +58,19 @@ class EditorWindow(QtWidgets.QMainWindow):
 
         # Processing Content Table
         self.treeContentTable.clear()
-        self.treeContentTable.headerItem().setText(0, self.lang['Editor']['ContentTableHeader'])
         self.treeContentTable.currentItemChanged.connect(self.content_table_current_item_changed)
         self.treeContentTable.itemDoubleClicked.connect(self.file_table_item_double_clicked)
         self.treeContentTable.setIndentation(0)
         self.treeContentTable.setCursor(QtCore.Qt.PointingHandCursor)
 
-        # Processing global buttons
-        self.btnEbookCreateCheckpoint.setText('Create session checkpoint')
-        self.btnEbookCreateCheckpoint.clicked.connect(self.create_check_point)
-        self.btnEbookLoadCheckpoint.setText('Load session checkpoint')
-        self.btnEbookLoadCheckpoint.clicked.connect(self.load_check_point)
-        self.btnEbookSave.setText('Save Ebook')
-        self.btnEbookSave.clicked.connect(self.save_ebook)
-        self.btnEbookAddFile.setText('Files Managment')
-        self.btnEbookAddFile.clicked.connect(self.load_file_managment)
+        # Toolbar buttons
+        self.button_save.clicked.connect(self.save_ebook)
+        self.button_load_checkpoint.clicked.connect(self.load_check_point)
+        self.button_create_checkpoint.clicked.connect(self.create_check_point)
+        self.button_file_manager.clicked.connect(self.load_file_managment)
+        self.button_edit_content_table.clicked.connect(self.load_content_table_managment)
 
-        self.btnEbookContentTable.setText('Edit Content Table')
-        self.btnEbookContentTable.clicked.connect(self.load_content_table_managment)
-
-        self.webView.setHtml(" ".join(self.lang['Editor']['WebViewDefaultPageContent']))
+        self.webView.setHtml(self.default_page)
 
         filepath, ext = os.path.splitext(self.opened_file)
         mappdir = app_directory.replace(os.sep, '/') + '/data/'
@@ -104,6 +88,7 @@ class EditorWindow(QtWidgets.QMainWindow):
             os.makedirs(self.tmpDir + os.sep + 'current')
 
         if ext in ['.epub', '.epub2', '.epub3']:
+            self.ebook_info = get_epub_info(self.opened_file)
             ret = inflate(self.opened_file, self.tmpDir + os.sep + 'original')
             ret = inflate(self.opened_file, self.tmpDir + os.sep + 'current')
 
@@ -116,20 +101,59 @@ class EditorWindow(QtWidgets.QMainWindow):
                 self.lang['Editor']['DialogInfoBadFileWindowText'], self)
             exit(0)
 
+        self.file_table_load()
+        self.load_content_table()
+
+    def apply_translation(self):
+        self.default_page = "".join(self.lang['Editor']['WebViewDefaultPageContent'])
+
+        # Blocks title
+        self.dockTop.setWindowTitle(self.lang['Editor/BlockToolbar/Header'])
+        self.dockFiles.setWindowTitle(self.lang['Editor/BlockFileListHeader'])
+        self.dockContentTable.setWindowTitle(self.lang['Editor/BlockContentTableHeader'])
+        self.dockPreview.setWindowTitle(self.lang['Editor/BlockPreviewHeader'])
+
+        # Toolbar buttons
+        self.button_save.setText(self.lang['Editor/BlockToolbar/Save'])
+        self.button_load_checkpoint.setText(self.lang['Editor/BlockToolbar/CheckPointLoad'])
+        self.button_create_checkpoint.setText(self.lang['Editor/BlockToolbar/CheckPointCreate'])
+        self.button_file_manager.setText(self.lang['Editor/BlockToolbar/FileManager'])
+        self.button_edit_content_table.setText(self.lang['Editor/BlockToolbar/EditContentTable'])
+
+    def apply_style(self):
+        self.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
+        self.dockTopContents.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
+
+        icon_names_list = ['save', 'checkpoint_load', 'checkpoint_create', 'file_manager', 'content_table']
+        icon_dir = {}
+
+        for name in icon_names_list:
+            icon_dir[name] = QtGui.QIcon()
+            icon_dir[name].addPixmap(
+                QtGui.QPixmap(
+                    get_style_var(self.app_style, 'icons/'+name)
+                        .replace('{APP_DIR}', app_directory)
+                        .replace('/', os.sep)
+                ),
+                QtGui.QIcon.Normal, QtGui.QIcon.Off
+            )
+
+        self.button_save.setIcon(icon_dir['save'])
+        self.button_load_checkpoint.setIcon(icon_dir['checkpoint_load'])
+        self.button_create_checkpoint.setIcon(icon_dir['checkpoint_create'])
+        self.button_file_manager.setIcon(icon_dir['file_manager'])
+        self.button_edit_content_table.setIcon(icon_dir['content_table'])
+
         tmpcss = self.tmpDir + os.sep + "tmp.css"
-        file_page = open(tmpcss, "w", encoding="utf8")
-        file_page.write("body { background:#999999;color:#ffffff; }")
-        file_page.close()
+        with open(tmpcss, "w", encoding="utf8") as file_page:
+            file_page.write(get_style_var(self.app_style, 'QWebViewPreview'))
         self.webView.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(tmpcss))
         # self.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
         self.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
-        self.file_table_load()
-        self.load_content_table()
-
     def content_table_current_item_changed(self, current: QTreeWidgetItem, previous: QTreeWidgetItem):
-        print(current.data(0, 99))
         data = current.data(0, 99)
+        print(data)
 
     def file_table_item_double_clicked(self, current: QTreeWidgetItem, previous: QTreeWidgetItem):
         try:
@@ -306,25 +330,24 @@ class EditorWindow(QtWidgets.QMainWindow):
             traceback.print_exc()
 
     def load_content_table(self):
-        # ".ncx"
-        li = listDir(self.tmpDir + os.sep + 'current', "ncx")
-        if len(li) > 0:
-            with open(li[0], 'r', encoding="utf8") as file:
-                self.treeContentTable.clear()
-                content = file.read()
-                mydoc = minidom.parseString(content)
-                points = mydoc.getElementsByTagName('navPoint')
-                for point in points:
-                    path = self.tmpDir + os.sep + 'current' + os.sep + \
-                           point.getElementsByTagName('content')[0].attributes['src'].value.replace('/', os.sep)
-                    text = point.getElementsByTagName('text')[0].firstChild.data
-                    # print(path, text)
-                    tb = path.split(os.sep)
+        directory = self.tmpDir + os.sep + 'current' + os.sep
+        li = common.files.listDir(directory, "opf")
+        file_name = li[0][li[0].rindex(os.sep)+1:]
+        data = ''
+        with open(li[0]) as myfile:
+            data = myfile.read()
 
-                    item = QtWidgets.QTreeWidgetItem(self.treeContentTable)
-                    item.setText(0, text)
-                    item.setData(0, 98, tb[len(tb)-1])
-                    item.setData(0, 99, path)
-                    common.qt.setQTreeItemIcon(item, common.qt.QtQIconEnum.file)
-                    self.treeContentTable.insertTopLevelItem(0, item)
-                # print(items)
+        chapters = parse_content_table(
+            data,
+            li[0].replace(directory, '').replace(file_name, '').replace(os.sep, '/'),
+            directory
+        )
+        print(chapters)
+        for index in chapters:
+            last_slash = index['src'].rindex('/') + 1
+            item = QtWidgets.QTreeWidgetItem(self.treeContentTable)
+            item.setText(0, index['name'])
+            item.setData(0, 98, index['src'][last_slash:])
+            item.setData(0, 99, directory + index['src'].replace('/', os.sep))
+            common.qt.setQTreeItemIcon(item, common.qt.QtQIconEnum.file)
+            self.treeContentTable.insertTopLevelItem(0, item)

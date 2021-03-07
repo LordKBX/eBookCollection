@@ -1,17 +1,24 @@
-import os, sys, re
+import os, sys, re, traceback
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 app_editor = "LordKBX Workshop"
 app_name = "eBookCollection"
+app_id = 'lordkbx.ebook_collection'
 app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 app_user_directory = os.path.expanduser('~') + os.sep + app_name
+app_icons = {
+    'x16': 'ressources' + os.sep + 'icons' + os.sep + 'app_icon16x16.png',
+    'x24': 'ressources' + os.sep + 'icons' + os.sep + 'app_icon24x24.png',
+    'x32': 'ressources' + os.sep + 'icons' + os.sep + 'app_icon32x32.png',
+    'x48': 'ressources' + os.sep + 'icons' + os.sep + 'app_icon48x48.png',
+    'x256': 'ressources' + os.sep + 'icons' + os.sep + 'app_icon256x256.png'
+}
 
 
 def load_path_archiver():
     settings = QtCore.QSettings(app_editor, app_name)
     path_archiver = None
-    if os.name == 'nt':
-        path_archiver = settings.value('archiver_dir', None, str)
+    path_archiver = settings.value('archiver_dir', None, str)
     if path_archiver is None or path_archiver == '':
         if os.name == 'nt':
             settings_7zip = QtCore.QSettings('HKEY_CURRENT_USER\\SOFTWARE\\7-Zip', QtCore.QSettings.NativeFormat)
@@ -22,7 +29,8 @@ def load_path_archiver():
         else:
             path_archiver = None
     else:
-        path_archiver = None
+        if os.path.isdir(path_archiver) is False:
+            path_archiver = None
     return path_archiver
 
 
@@ -139,3 +147,29 @@ def load_styles():
 
 load_patterns()
 load_styles()
+
+
+def get_style_var(style: str, path: str):
+    if style is None: return None
+    if path is None: return None
+    if style.strip() == '': return None
+    if path.strip() == '': return None
+
+    if style not in env_vars['styles']:
+        lang = 'Dark'
+    if style not in env_vars['styles']:
+        return None
+    path_tab = path.split('/')
+    try:
+        base = env_vars['styles'][style]
+        for obj in path_tab:
+            if obj in base:
+                if isinstance(base[obj], dict) is True:
+                    base = base[obj]
+                else:
+                    return base[obj]
+            else:
+                return None
+    except Exception:
+        traceback.print_exc()
+        return None

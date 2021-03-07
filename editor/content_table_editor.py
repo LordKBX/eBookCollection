@@ -75,11 +75,12 @@ class ContentTableWindow(QDialog):
         self.addindex_combobox.clear()
 
         self.files = common.files.listDirTree(self.folder, 'html|xhtml')
-        # print(self.files)
+        files = common.files.listDir(self.folder, 'html|xhtml')
         self.addindex_combobox.addItem("")
-        for file in self.files['texte']:
-            # print(self.files['texte'][file].replace(self.folder, ""))
-            self.addindex_combobox.addItem(self.files['texte'][file].replace(self.folder, ""))
+
+        print(self.files)
+        for file in files:
+            self.addindex_combobox.addItem(file.replace(self.folder, ""))
 
         li = common.files.listDir(self.folder, "ncx")
         if len(li) > 0:
