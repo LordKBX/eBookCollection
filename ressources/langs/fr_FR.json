@@ -96,6 +96,8 @@
 		"BlockContentTableHeader": "Table des matières",
 		"BlockPreviewHeader": "Aperçu",
 
+		"CentralZoneEmpty": "Veuillez double clicker un fichier de l'explorateur pour l'ouvrir dans la zone d'édition",
+
 		"ContentTableHeader": "Table des Matières",
 		"FileTableHeader": "Explorateur de fichiers",
 		"WebViewDefaultPageContent": [

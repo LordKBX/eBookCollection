@@ -36,6 +36,12 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         if size_tx is not None and size_tx != '':
             size = eval(size_tx)
             self.resize(size[0], size[1])
+        # load window position
+        pos_tx = self.BDD.get_param('library/windowPos')
+        if pos_tx is not None and pos_tx != '':
+            pos = eval(pos_tx)
+            self.move(pos[0], pos[1])
+            self.pos()
 
         # load parameters
         self.app_lang = None
@@ -86,18 +92,24 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
 
         self.show()  # Show the GUI
         try:
-            if self.env_vars['tools']['archiver']['path'] is None:
+            if self.tools['archiver']['path'] is None:
                 WarnDialog(self.lang['Global/ArchiverErrorTitle'], self.lang['Global/ArchiverErrorText'])
                 self.header_block_btn_settings_clicked()
             if "settings" in self.argv:
                 self.header_block_btn_settings_clicked()
+                sys.exit(0)
         except Exception:
-            ""
+            traceback.print_exc()
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         size = self.size()
         tx = [size.width(), size.height()].__str__()
         self.BDD.set_param('library/windowSize', tx)
+
+    def moveEvent(self, a0: QtGui.QMoveEvent) -> None:
+        pos = self.pos()
+        tx = [pos.x(), pos.y()].__str__()
+        self.BDD.set_param('library/windowPos', tx)
 
     def header_block_btn_add_book_clicked(self):
         """

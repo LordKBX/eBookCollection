@@ -21,7 +21,7 @@
 	},
 
 	"QMainWindow": [
-		"QMainWindow { background-color: rgba(63, 63, 63); }",
+		"QMainWindow { background-color: rgba(63, 63, 63); color:#ffffff; }",
 		"QMainWindow::separator { background: rgba(63, 63, 63); }",
 		"QMainWindow::separator:hover { background: rgba(120, 120, 120); }",
 		"QWidget{ background: rgba(63, 63, 63); color:white; }",
@@ -48,7 +48,9 @@
 		"QDialog, QWidget{ background-color:#4B4B4B; }",
 		"QScrollArea{ background-color:#4B4B4B; }",
 		"QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
-		"QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QPushButton{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+		"QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QPushButton, QToolButton{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+		"QPushButton:hover, QToolButton:hover { background-color:#555555; color:#777777; border:#ffffff 2px solid; }",
+		"QPushButton:pressed, QToolButton:pressed, QPushButton:checked, QToolButton:checked { background-color:#999999; color:#000000; border:#ffffff 2px solid; }",
 		"#tab_metadata_import_filename_template_label{ margin:0px; }",
 		"#tab_metadata_import_filename_template_combo_box{ padding:5px; margin-bottom:5px; }",
 		"#tab_metadata_import_filename_separator_label{ padding-right:5px; }"
@@ -79,7 +81,21 @@
 		" }"
 	],
 
-	"QTabWidget": [
+	"QTabWidgetHorizontal": [
+		"QTabWidget::tab-bar { background-color:#333333; color:#AAAAAA; }",
+		"QTabBar::tab { ",
+		"    background-color:#999999; cursor:pointer; padding: 10px; border: 1px solid #333333;",
+		"    border-bottom: 0px; border-top-left-radius: 10px; border-top-right-radius: 10px;",
+		"    border-bottom: 1px solid #999999;",
+		"    }",
+		"QTabBar::tab:selected{ background-color:#004DD3; color:#ffffff; }",
+		"QTabBar::tab:hover{ background-color:#196DFF; color:#ffffff; }",
+		"QTabWidget::pane QTabBar{ padding-top:5px; }",
+		"QTabBar::close-button {  border-image: none; image: url('{APP_DIR}/ressources/icons/white/close.png'); }",
+		"QTabBar::close-button:hover {  border-image: none; image: url('{APP_DIR}/ressources/icons/black/close.png'); }"
+	],
+
+	"QTabWidgetVertical": [
 		"QTabWidget { background: none; }",
 		"QTabWidget::tab-bar { background-color:#333333; color:#AAAAAA; border-right: 0; }",
 		"QTabBar::tab { background-color:#999999; cursor:pointer; padding: 10px; border-bottom: 1px solid #ffffff; border-right: 1px solid #ffffff; }",
@@ -169,5 +185,6 @@
 
 	"QComboBoxArrow": "QComboBox::down-arrow { image:none; width:0px; }",
 
-	"QWebViewPreview": "body { background:#999999;color:#ffffff; }"
+	"QWebViewPreview": "body { background:#999999;color:#ffffff; }",
+	"EditorCentralLabel" : "QLabel { color: rgb(255, 255, 255); font-size: 30px; padding:20px; }"
 }

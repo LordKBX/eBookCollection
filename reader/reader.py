@@ -22,10 +22,34 @@ from CustomQWebView import *
 class ReaderWindow(QtWidgets.QMainWindow):
 	previousEvent = ''
 
-	def __init__(self, parent: QtWidgets.QMainWindow):
+	def __init__(self, parent: QtWidgets.QMainWindow, bdd):
 		super(ReaderWindow, self).__init__(parent)
 		PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + "reader.ui", self)
+		self.BDD = bdd
+
+		# load window size
+		size_tx = self.BDD.get_param('reader/windowSize')
+		if size_tx is not None and size_tx != '':
+			size = eval(size_tx)
+			self.resize(size[0], size[1])
+		# load window position
+		pos_tx = self.BDD.get_param('reader/windowPos')
+		if pos_tx is not None and pos_tx != '':
+			pos = eval(pos_tx)
+			self.move(pos[0], pos[1])
+			self.pos()
+
 		self.show()
+
+	def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
+		size = self.size()
+		tx = [size.width(), size.height()].__str__()
+		self.BDD.set_param('reader/windowSize', tx)
+
+	def moveEvent(self, a0: QtGui.QMoveEvent) -> None:
+		pos = self.pos()
+		tx = [pos.x(), pos.y()].__str__()
+		self.BDD.set_param('reader/windowPos', tx)
 
 	def toogle_full_screen(self):
 		icon_1 = QtGui.QIcon()
@@ -112,7 +136,7 @@ if __name__ == "__main__":
 			the_program_to_hide = win32gui.GetForegroundWindow()
 			win32gui.ShowWindow(the_program_to_hide, win32con.SW_HIDE)
 
-	ui = ReaderWindow(None)
+	ui = ReaderWindow(None, bdd)
 	ui.show()
 
 	# Button FullScreen

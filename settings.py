@@ -292,7 +292,7 @@ class SettingsWindow(QDialog):
             if isinstance(obj, (QPushButton, QComboBox)) and var_name not in ['tab_metadata_default_cover_preview']:
                 obj.setCursor(cursor)
             if isinstance(obj, QWidget):
-                obj.setStyleSheet(env_vars['styles'][style]['QTabWidget'])
+                obj.setStyleSheet(env_vars['styles'][style]['QTabWidgetVertical'])
         self.test_archiver()
 
         self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][style]['fullAltButton'])

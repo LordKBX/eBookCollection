@@ -27,6 +27,8 @@ class FileType:
 
 
 class EditorTabManager(QtWidgets.QTabWidget):
+    tmpcss = ''
+
     def __init__(self, parent: any):
         QtWidgets.QTabWidget.__init__(self, parent)
         self.setWindowTitle("Tab Dialog")
@@ -69,6 +71,10 @@ class EditorTabManager(QtWidgets.QTabWidget):
         else:
             self.previewWebview.setHtml(self.default_page)
 
+        print(self.tmpcss)
+        self.previewWebview.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(self.tmpcss))
+        self.previewWebview.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+
     def content_update(self):
         if self.currentWidget().property('fileExt') in ['xhtml', 'html', 'css', 'xml', 'opf', 'ncx']:
             old_txt = self.currentWidget().property('originalContent')
@@ -108,7 +114,9 @@ class EditorTabManager(QtWidgets.QTabWidget):
         except Exception:
             ''
 
-    def create_pane(self, title: str, path: str):
+    def create_pane(self, title: str, path: str, tmpcss: str = None):
+        if tmpcss is not None:
+            self.tmpcss = tmpcss
         data = None
         kind = filetype.guess(path)
         if kind is None:

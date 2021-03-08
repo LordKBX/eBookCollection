@@ -50,7 +50,7 @@ QPushButton:checked{
 }</string>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::AllowNestedDocks|QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="autoFillBackground">
@@ -73,6 +73,25 @@ QPushButton:checked{
      <number>1</number>
     </property>
     <item>
+     <widget class="QLabel" name="voidLabel">
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Mama Mia</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="EditorTabManager" name="tabWidget">
       <property name="minimumSize">
        <size>
@@ -80,11 +99,11 @@ QPushButton:checked{
         <height>0</height>
        </size>
       </property>
-      <property name="styleSheet">
-       <string notr="true"/>
+      <property name="focusPolicy">
+       <enum>Qt::TabFocus</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>-1</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -104,22 +123,6 @@ QPushButton:checked{
       <property name="tabBarAutoHide">
        <bool>false</bool>
       </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-       <attribute name="toolTip">
-        <string notr="true">test tip</string>
-       </attribute>
-       <attribute name="whatsThis">
-        <string notr="true">test what</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Tab 2</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
    </layout>

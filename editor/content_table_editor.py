@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 from common import lang
 import common.common, common.files, common.dialog, common.qt
 from common.vars import *
+from common.books import *
 
 
 class IndexNameWindow(QDialog):
@@ -25,8 +26,8 @@ class IndexNameWindow(QDialog):
 
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['ContentTableWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ContentTableWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
 
     def open_exec(self, text: str = None):
         if text is not None:
@@ -44,8 +45,10 @@ class ContentTableWindow(QDialog):
         super(ContentTableWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'content_table_editor.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
+        self.BDD = parent.BDD
+        self.style = self.BDD.get_param('style')
         self.lang = lng
-        self.setStyleSheet(env_vars['styles']['Dark']['fullButton'])
+        self.setStyleSheet(env_vars['styles'][self.style]['QDialog'])
 
         self.setWindowTitle(lng['Editor']['ContentTableWindow']['WindowTitle'])
         self.list_label.setText(lng['Editor']['ContentTableWindow']['ListLabel'])
@@ -57,8 +60,9 @@ class ContentTableWindow(QDialog):
 
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['ContentTableWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ContentTableWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
+        
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
 
         # self.list_content = QtWidgets.QListWidget()
 
@@ -82,21 +86,25 @@ class ContentTableWindow(QDialog):
         for file in files:
             self.addindex_combobox.addItem(file.replace(self.folder, ""))
 
-        li = common.files.listDir(self.folder, "ncx")
-        if len(li) > 0:
-            with open(li[0], 'r', encoding="utf8") as file:
-                content = file.read()
-                mydoc = minidom.parseString(content)
-                points = mydoc.getElementsByTagName('navPoint')
-                for point in points:
-                    path = point.getElementsByTagName('content')[0].attributes['src'].value.replace('/', os.sep)
-                    text = point.getElementsByTagName('text')[0].firstChild.data
+        li = common.files.listDir(self.folder, "opf")
+        data = ''
+        with open(li[0]) as myfile:
+            data = myfile.read()
+        toc_type, chapters = parse_content_table(
+            data,
+            li[0].replace(self.folder, '').replace(li[0][li[0].rindex(os.sep) + 1:], '').replace(os.sep, '/'),
+            self.folder
+        )
+        for chapter in chapters:
+            try:
+                item = QtWidgets.QListWidgetItem()
+                item.setText(chapter['name'] + " (" + chapter['src'] + ")")
+                item.setData(97, chapter['name'])
+                item.setData(98, chapter['src'])
 
-                    item = QtWidgets.QListWidgetItem()
-                    item.setText(text+" ("+path+")")
-                    item.setData(97, text)
-                    item.setData(98, path)
-                    self.list_content.insertItem(self.list_content.count(), item)
+                self.list_content.addItem(item)
+            except Exception:
+                traceback.print_exc()
 
         ret = self.exec_()
 

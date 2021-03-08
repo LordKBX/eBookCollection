@@ -14,6 +14,17 @@ from common import lang, bdd
 
 cover_width = 1200
 cover_height = 1600
+mediatypes = {
+    'txt': 'text/plain',
+    'html': 'text/html',
+    'xhtml': 'application/xhtml+xml',
+    'ncx': 'application/x-dtbncx+xml',
+    'css': 'text/css',
+    'jpg': 'image/jpeg',
+    'png': 'image/png',
+    'gif': 'image/gif',
+    'ttf': 'application/x-font-truetype',
+}
 
 
 def create_thumbnail(path: str, resize: bool = True):
@@ -347,7 +358,7 @@ def get_epub_info(path: str):
                     if meta.attributes['name'].value == 'dc:series': ret['series'] = meta.attributes['content'].value
 
             items = mydoc.getElementsByTagName('item')
-            ret['chapters'] = parse_content_table(metadata_file_content, base, myzip)
+            ret['chapters'] = parse_content_table(metadata_file_content, base, myzip)[1]
             # if mydoc.getElementsByTagName('spine')[0].hasAttribute('toc'):
             #     spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
             #     for itm in items:
@@ -411,13 +422,15 @@ def get_epub_info(path: str):
     return None
 
 
-def parse_content_table(metadata_file_content: str, base: str, folder: str or zipfile.ZipFile) -> list:
+def parse_content_table(metadata_file_content: str, base: str, folder: str or zipfile.ZipFile) -> (str, list):
     mydoc = minidom.parseString(metadata_file_content)
     items = mydoc.getElementsByTagName('item')
     toc_file = ''
+    toc_type = ''
     ret_list = []
 
-    if mydoc.getElementsByTagName('spine')[0].hasAttribute('toc'):
+    if mydoc.getElementsByTagName('spine')[0].hasAttribute('toc'):  # test if ncx file indexed
+        toc_type = 'NCX'
         spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
         for itm in items:
             if itm.attributes['id'].value == spine:
@@ -438,6 +451,7 @@ def parse_content_table(metadata_file_content: str, base: str, folder: str or zi
                 'src': base + ref.getElementsByTagName('content')[0].attributes['src'].value
             })
     else:
+        toc_type = 'METADATA'
         refs_list = mydoc.getElementsByTagName('spine')[0].getElementsByTagName('itemref')
         for itemref in refs_list:
             idref = itemref.attributes['idref'].value
@@ -463,7 +477,7 @@ def parse_content_table(metadata_file_content: str, base: str, folder: str or zi
                         })
                     except Exception:
                         traceback.print_exc()
-    return ret_list
+    return toc_type, ret_list
 
 
 def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator: str, file: str):
