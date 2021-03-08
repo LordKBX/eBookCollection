@@ -15,10 +15,20 @@ class CheckpointWindow(QDialog):
         super(CheckpointWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'checkpoint.ui'.replace('/', os.sep), self)  # Load the .ui file
         lng = lang.Lang()
+        self.BDD = parent.BDD
+        style = self.BDD.get_param('style')
         self.setWindowTitle(lng['Editor']['LinkWindow']['WindowTitle'])
+        self.setStyleSheet(env_vars['styles'][style]['QDialog'])
+
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['LinkWindow']['btnOk'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['LinkWindow']['btnCancel'])
-        self.fileTree.setStyleSheet(env_vars['styles']['Dark']['fullTreeView'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][style]['defaultButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][style]['defaultButton'])
+        cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setCursor(cursor)
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setCursor(cursor)
+
+        self.fileTree.setStyleSheet(env_vars['styles'][style]['fullTreeView'])
         self.fileTree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
         self.fileTree.itemClicked.connect(self.itemClick)
         self.folder = folder
@@ -26,7 +36,7 @@ class CheckpointWindow(QDialog):
 
     def openExec(self):
         self.fileTree.clear()
-        liste = common.files.listOnlyDir(path=self.folder, level=1, startDirs=['original'], excludeDirs=['original', 'current'])
+        liste = common.files.listing_of_directory(path=self.folder, level=1, list_base_content=['original'], list_excluded_directory=['original', 'current'])
         print(liste)
         for fold in liste:
             item = QtWidgets.QTreeWidgetItem(self.fileTree)

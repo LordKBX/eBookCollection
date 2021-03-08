@@ -12,18 +12,22 @@ class QtQIconEnum(enum.Enum):
     unlock = env_vars['styles']['Dark']['icons']['unlock']
 
 
-def setQTreeItemIcon(item: QtWidgets.QTreeWidgetItem, icon_ref: QtQIconEnum = QtQIconEnum.folder):
+def setQTreeItemIcon(item: QtWidgets.QTreeWidgetItem, icon_ref: str = QtQIconEnum.folder.value):
     icon = QtGui.QIcon()
     image = QtGui.QPixmap()
-    image.load(icon_ref.value)
+    image.load(icon_ref)
     icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
     item.setIcon(0, icon)
 
 
-def setQTreeItemFolderIcon(item: QtWidgets.QTreeWidgetItem):
-    setQTreeItemIcon(item, QtQIconEnum.folder)
+def setQTreeItemFileIcon(item: QtWidgets.QTreeWidgetItem, style='Dark'):
+    setQTreeItemIcon(item, get_style_var(style, 'icons/file'))
 
 
-def setQTreeItemLockIcon(item: QtWidgets.QTreeWidgetItem):
-    setQTreeItemIcon(item, QtQIconEnum.lock)
+def setQTreeItemFolderIcon(item: QtWidgets.QTreeWidgetItem, style='Dark'):
+    setQTreeItemIcon(item, get_style_var(style, 'icons/folder'))
+
+
+def setQTreeItemLockIcon(item: QtWidgets.QTreeWidgetItem, style='Dark'):
+    setQTreeItemIcon(item, get_style_var(style, 'icons/lock'))
 

@@ -114,7 +114,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
         except Exception:
             ''
 
-    def create_pane(self, title: str, path: str, tmpcss: str = None):
+    def create_pane(self, title: str, icon: str, path: str, tmpcss: str = None):
         if tmpcss is not None:
             self.tmpcss = tmpcss
         data = None
@@ -245,7 +245,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             block.setUrl(QtCore.QUrl(page))
             vertical_layout.addWidget(block)
 
-        self.addTab(tab, QtGui.QIcon(), title)
+        self.addTab(tab, QtGui.QIcon(QtGui.QPixmap(icon)), title)
         self.setTabsClosable(True)
         self.setCurrentIndex(self.count() - 1)
 

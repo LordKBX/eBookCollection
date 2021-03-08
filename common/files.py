@@ -3,6 +3,7 @@ import hashlib
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common.vars import *
+from common.MIME import *
 
 
 def get_file_size(file_name: str, human_readable: bool = True):
@@ -26,65 +27,86 @@ def get_file_size(file_name: str, human_readable: bool = True):
         return '{} bytes'.format(size)
 
 
-def listDir(dirName: str, ext: str = None):
+def get_file_type(file_path: str) -> str:
+    file_path = file_path.replace('/', os.sep)
+    file_tab = file_path.split(os.sep)
+    ext = file_tab[len(file_tab) - 1]
+    file_type = ""
+    end = False
+    while end is False:
+        if ext in EXT_TO_TYPE:
+            file_type = EXT_TO_TYPE[ext][0]
+            end = True
+        else:
+            try:
+                point_pos = ext.index('.', 1)
+                ext = ext[point_pos:]
+            except Exception:
+                end = True
+                file_type = "application/octet-stream"
+
+    return file_type
+
+
+def list_directory(directory_path: str, expected_extension: str = None):
     """
     Recursive function for listing files in a folder and his sub folders
 
-    :param dirName: path of the parsed dir
-    :param ext: list of extention separated by |
+    :param directory_path: path of the parsed dir
+    :param expected_extension: list of extension separated by |
     :return: list(str)
     """
-    allFiles = list()
-    for root, directories, files in os.walk(dirName, topdown=False):
+    file_list = list()
+    for root, directories, files in os.walk(directory_path, topdown=False):
         for name in files:
-            fullPath = os.path.join(root, name)
-            if ext is not None:
-                if re.search("\\.({})$".format(ext), name) is None: continue
-            allFiles.append(fullPath)
-        if ext is None:
+            full_path = os.path.join(root, name)
+            if expected_extension is not None:
+                if re.search("\\.({})$".format(expected_extension), name) is None: continue
+            file_list.append(full_path)
+        if expected_extension is None:
             for name in directories:
-                allFiles.append(os.path.join(root, name))
-    return allFiles
+                file_list.append(os.path.join(root, name))
+    return file_list
 
 
-def listOnlyDir(path: str, level: int = 1, startDirs: list = [], excludeDirs: list = []):
+def listing_of_directory(path: str, level: int = 1, list_base_content: list = [], list_excluded_directory: list = []):
     some_dir = path.rstrip(os.path.sep)
-    listDir = startDirs
+    list_of_dir = list_base_content
     if os.path.isdir(some_dir):
         num_sep = some_dir.count(os.path.sep)
         for root, dirs, files in os.walk(some_dir):
             num_sep_this = root.count(os.path.sep)
             for name in dirs:
-                if name in excludeDirs: continue
+                if name in list_excluded_directory: continue
                 if num_sep + level > num_sep_this:
-                    listDir.append(name)
-    return listDir
+                    list_of_dir.append(name)
+    return list_of_dir
 
 
-def listDirTree(dirName: str, ext: str = None):
-    listOfFile = listDir(dirName, ext)
-    listOfFile.sort()
+def list_directory_tree(base_directory: str, ext: str = None):
+    list_of_file = list_directory(base_directory, ext)
+    list_of_file.sort()
     # print(listOfFile)
 
-    treeFiles = dict()
-    for file in listOfFile:
-        recurListDirTree(file, dirName + os.sep, treeFiles)
-    return treeFiles
+    tree_files = dict()
+    for file in list_of_file:
+        __list_directory_tree_recursive(file, base_directory + os.sep, tree_files)
+    return tree_files
 
 
-def recurListDirTree(file: str, path: str, treeFiles: dict):
-    tmpl = file.replace(path, '')
-    tmpp = tmpl.split(os.sep)
+def __list_directory_tree_recursive(file: str, path: str, parent_file_tree: dict):
+    sub_path = file.replace(path, '')
+    sub_path_tab = sub_path.split(os.sep)
 
-    if isinstance(tmpp, list):
-        if len(tmpp) > 1:
-            if tmpp[0] not in treeFiles:
-                treeFiles[tmpp[0]] = dict()
-            if isinstance(treeFiles[tmpp[0]], dict):
-                recurListDirTree(file, path + tmpp[0] + os.sep, treeFiles[tmpp[0]])
+    if isinstance(sub_path_tab, list):
+        if len(sub_path_tab) > 1:
+            if sub_path_tab[0] not in parent_file_tree:
+                parent_file_tree[sub_path_tab[0]] = dict()
+            if isinstance(parent_file_tree[sub_path_tab[0]], dict):
+                __list_directory_tree_recursive(file, path + sub_path_tab[0] + os.sep, parent_file_tree[sub_path_tab[0]])
         else:
-            if os.path.isfile(file): treeFiles[tmpl] = file
-            else: treeFiles[tmpl] = dict()
+            if os.path.isfile(file): parent_file_tree[sub_path] = file
+            else: parent_file_tree[sub_path] = dict()
 
 
 def clean_dir(src_dir: str):

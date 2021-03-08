@@ -96,7 +96,7 @@
 		"BlockContentTableHeader": "Content table",
 		"BlockPreviewHeader": "Preview",
 
-		"CentralZoneEmpty": "Please double click a file in the file explorer for opening editing zone",
+		"CentralZoneEmpty": "Please double click a file in the file explorer or an index in the content table for opening it in the editing zone",
 
 		"ContentTableHeader": "Content Table",
 		"FileTableHeader": "File Explorer",

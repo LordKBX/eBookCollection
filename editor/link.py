@@ -35,7 +35,7 @@ class LinkWindow(QDialog):
         else: self.editText.setText('')
 
         self.fileTree.clear()
-        liste = common.files.listDirTree(self.folder, None)
+        liste = common.files.list_directory_tree(self.folder, None)
         for index in liste:
             item = QtWidgets.QTreeWidgetItem(self.fileTree)
             item.setText(0, index)

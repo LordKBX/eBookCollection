@@ -533,7 +533,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         elif ext in ['.cbz', '.cbr']:  # section for CBZ and CBR files
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
             ret = inflate(file, tmpdir)
-            tmp_cover = create_thumbnail(listDir(tmpdir)[0])  # get path of the first image into temp dir
+            tmp_cover = create_thumbnail(list_directory(tmpdir)[0])  # get path of the first image into temp dir
 
         else:
             print('Invalid file format')

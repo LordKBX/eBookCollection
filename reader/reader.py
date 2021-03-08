@@ -225,7 +225,7 @@ if __name__ == "__main__":
 	elif ext in ['.cbz', '.cbr']:
 		appMode = QwwMode.CBZ
 		ret = inflate(file, destDir)
-		imgList = listDir(destDir, 'jpg|jpeg|png')
+		imgList = list_directory(destDir, 'jpg|jpeg|png')
 		page = destDir + "/page.xhtml"
 		file_page = open(page, "w", encoding="utf8")
 		imgStyle = 'img{ max-width:100%; max-height:100%; display:block; margin: 0 auto; }'

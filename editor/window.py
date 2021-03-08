@@ -182,7 +182,8 @@ class EditorWindow(QtWidgets.QMainWindow):
             text = current.data(0, 98)
             print(text)
             if data != ':dir:':
-                self.tabWidget.create_pane(text, data, self.tmpcss)
+                icon = self.file_icon(data)
+                self.tabWidget.create_pane(text, icon, data, self.tmpcss)
                 self.voidLabel.setVisible(False)
                 self.tabWidget.setVisible(True)
         except Exception:
@@ -190,7 +191,7 @@ class EditorWindow(QtWidgets.QMainWindow):
 
     def file_table_load(self):
         self.treeFileTable.clear()
-        liste = listDirTree(self.tmpDir + os.sep + 'current', None)
+        liste = list_directory_tree(self.tmpDir + os.sep + 'current', None)
         # print(liste)
         for index in liste:
             item = QtWidgets.QTreeWidgetItem(self.treeFileTable)
@@ -201,6 +202,7 @@ class EditorWindow(QtWidgets.QMainWindow):
                 common.qt.setQTreeItemFolderIcon(item)
                 item = self.recur_file_table_insert(item, liste[index])
             else:
+                self.icon_file_item(item, liste[index])
                 item.setData(0, 99, liste[index])
             self.treeFileTable.insertTopLevelItem(0, item)
 
@@ -211,13 +213,38 @@ class EditorWindow(QtWidgets.QMainWindow):
             itemr.setData(0, 98, indexr)
             if isinstance(tree[indexr], dict):
                 itemr.setData(0, 99, ':dir:')
-                common.qt.setQTreeItemFolderIcon(itemr)
+                common.qt.setQTreeItemIcon(itemr, get_style_var(self.app_style, 'icons/folder'))
 
                 itemr = self.recur_file_table_insert(itemr, tree[indexr])
             else:
+                self.icon_file_item(itemr, tree[indexr])
                 itemr.setData(0, 99, tree[indexr])
             base_item.addChild(itemr)
         return base_item
+
+    def file_icon(self, file_path: str):
+        file_type = get_file_type(file_path)
+        if file_type.startswith('image/'):
+            return get_style_var(self.app_style, 'icons/image')
+        elif file_type.startswith('text/css'):
+            return get_style_var(self.app_style, 'icons/style')
+        elif file_type.startswith('application/oebps-package+xml'):  # .opf
+            return get_style_var(self.app_style, 'icons/info')
+        elif file_type.startswith('application/x-dtbncx+xml'):  # .ncx
+            return get_style_var(self.app_style, 'icons/content_table')
+        elif file_type.startswith('application/xml'):
+            return get_style_var(self.app_style, 'icons/xml')
+        elif file_type.startswith('application/x-font-truetype'):
+            return get_style_var(self.app_style, 'icons/font')
+        elif file_type.startswith('application/xhtml+xml'):
+            return get_style_var(self.app_style, 'icons/page')
+        else:
+            return get_style_var(self.app_style, 'icons/file')
+
+    def icon_file_item(self, item: QTreeWidgetItem, file_path: str):
+        icon = self.file_icon(file_path)
+        file_type = get_file_type(file_path)
+        common.qt.setQTreeItemIcon(item, icon)
 
     def on_close_tab(self, index_tab: int):
         if self.tabWidget.count() == 0:
@@ -323,7 +350,7 @@ class EditorWindow(QtWidgets.QMainWindow):
                 self.save_metada(chapters)
 
                 if self.toc_type == 'NCX':
-                    li = common.files.listDir(self.tmpDir + os.sep + 'current', "ncx")
+                    li = common.files.list_directory(self.tmpDir + os.sep + 'current', "ncx")
                     if len(li) > 0:
                         file = open(li[0], "r", encoding="utf8")
                         content = file.read()
@@ -361,12 +388,9 @@ class EditorWindow(QtWidgets.QMainWindow):
             traceback.print_exc()
 
     def load_content_table(self):
-        self.parse_content_table(self.treeContentTable)
-
-    def parse_content_table(self, parentItem):
-        parentItem.clear()
+        self.treeContentTable.clear()
         directory = self.tmpDir + os.sep + 'current' + os.sep
-        li = common.files.listDir(directory, "opf")
+        li = common.files.list_directory(directory, "opf")
         file_name = li[0][li[0].rindex(os.sep)+1:]
         data = ''
         with open(li[0]) as myfile:
@@ -387,13 +411,13 @@ class EditorWindow(QtWidgets.QMainWindow):
                 item.setText(0, chapter['name'])
                 item.setData(0, 98, chapter['src'][last_slash+1:])
                 item.setData(0, 99, directory + chapter['src'].replace('/', os.sep))
-                common.qt.setQTreeItemIcon(item, common.qt.QtQIconEnum.file)
-                parentItem.insertTopLevelItem(0, item)
+                common.qt.setQTreeItemIcon(item, get_style_var(self.app_style, 'icons/page'))
+                self.treeContentTable.insertTopLevelItem(0, item)
             except Exception:
                 traceback.print_exc()
 
     def save_metada(self, chapters: list = None):
-        li = common.files.listDir(self.tmpDir + os.sep + 'current', "opf")
+        li = common.files.list_directory(self.tmpDir + os.sep + 'current', "opf")
         if len(li) > 0:
             file = open(li[0], "r", encoding="utf8")
             content = file.read()
@@ -416,7 +440,7 @@ class EditorWindow(QtWidgets.QMainWindow):
             for i in range(0, len(refs_list)):
                 spine.removeChild(refs_list[i])
 
-            files = common.files.listDir(self.tmpDir + os.sep + 'current')
+            files = common.files.list_directory(self.tmpDir + os.sep + 'current')
             idno = 1
             list_refs = {}
             for file in files:

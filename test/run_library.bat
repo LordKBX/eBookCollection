@@ -1,6 +1,6 @@
 @echo off
 setlocal
-cd /d %~dp0
-cd .\build
-.\library.exe debug
-exit
+set aa=%~dp0%build
+echo %aa%
+cd /D %aa%
+%aa%\library.exe debug
