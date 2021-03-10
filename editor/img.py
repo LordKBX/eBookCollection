@@ -15,16 +15,18 @@ class ImgWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(ImgWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'img.ui'.replace('/', os.sep), self)  # Load the .ui file
-        lng = lang.Lang()
+        BDD = parent.BDD
+        lng = parent.lang
+        self.style = BDD.get_param('style')
         self.setWindowTitle(lng['Editor']['ImgWindow']['WindowTitle'])
         self.labelUrl.setText(lng['Editor']['ImgWindow']['labelUrl'])
         self.labelText.setText(lng['Editor']['ImgWindow']['labelText'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['ImgWindow']['btnOk'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ImgWindow']['btnCancel'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles']['Dark']['fullAltButton'])
-        self.fileTree.setStyleSheet(env_vars['styles']['Dark']['fullTreeView'])
-        self.imgButton.setStyleSheet(env_vars['styles']['Dark']['displayButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
+        self.fileTree.setStyleSheet(env_vars['styles'][self.style]['fullTreeView'])
+        self.imgButton.setStyleSheet(env_vars['styles'][self.style]['displayButton'])
         self.fileTree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
         self.fileTree.itemClicked.connect(self.itemClick)
         self.folder = folder

@@ -3,7 +3,6 @@ import sys
 import traceback
 if os.name == 'nt':
 	import ctypes
-	import win32gui, win32con
 
 import PyQt5.uic
 from PyQt5.uic import *
@@ -241,9 +240,6 @@ if __name__ == "__main__":
 	if os.name == 'nt':
 		myappid = app_id + '.reader'
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-		if 'debug' not in sys.argv:
-			the_program_to_hide = win32gui.GetForegroundWindow()
-			win32gui.ShowWindow(the_program_to_hide, win32con.SW_HIDE)
 
 	ui = ReaderWindow(None, bdd)
 	ui.show()

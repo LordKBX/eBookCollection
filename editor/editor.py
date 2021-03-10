@@ -2,7 +2,6 @@ import os
 import sys
 if os.name == 'nt':
 	import ctypes
-	import win32gui, win32con
 
 import PyQt5.QtGui
 import PyQt5.QtCore
@@ -31,9 +30,6 @@ if __name__ == "__main__":
 	if os.name == 'nt':
 		myappid = app_id + '.editor'
 		ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-		if 'debug' not in sys.argv:
-			the_program_to_hide = win32gui.GetForegroundWindow()
-			win32gui.ShowWindow(the_program_to_hide, win32con.SW_HIDE)
 	try:
 		file = ''
 		for index in range(1, len(sys.argv)):

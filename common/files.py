@@ -63,7 +63,8 @@ def list_directory(directory_path: str, expected_extension: str = None):
         for name in files:
             full_path = os.path.join(root, name)
             if expected_extension is not None:
-                if re.search("\\.({})$".format(expected_extension), name) is None: continue
+                if re.search("\\.({})$".format(expected_extension), name) is None:
+                    continue
             file_list.append(full_path)
         if expected_extension is None:
             for name in directories:

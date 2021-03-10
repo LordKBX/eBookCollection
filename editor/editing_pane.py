@@ -516,16 +516,24 @@ class EditorTabManager(QtWidgets.QTabWidget):
         block_end = '</a>'
         try:
             item = self.currentWidget()
-            window = link.LinkWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp'
-                                            + os.sep + 'current')
+            window = link.LinkWindow(self, app_user_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
             selected_text = tx_edit.selectedText()
             sel = tx_edit.getSelection()
+
+            tb1 = item.property('fileName').replace('/', os.sep).replace(
+                app_user_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep,
+                ''
+            ).split(os.sep)
+            adl = ''
+            for i in range(0, len(tb1) - 1):
+                adl += '../'
+
             if sel[0] == sel[2] and sel[1] == sel[3]:
                 ret = window.openExec()
                 if ret is not None:
                     pos = tx_edit.getCursorPosition()
-                    new_text = '<a href="' + ret['url'] + '">' + ret['text'] + '</a>'
+                    new_text = '<a href="' + adl + ret['url'] + '">' + ret['text'] + '</a>'
                     tx_edit.insertAt(new_text, pos[0], pos[1])
                     tb = new_text.split('\n')
                     tx_edit.setSelection(pos[0], pos[1], pos[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
@@ -539,7 +547,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
                 else:
                     ret = window.openExec(selected_text)
                     if ret is not None:
-                        new_text = '<a href="'+ret['url']+'">'+ret['text']+'</a>'
+                        new_text = '<a href="' + adl + ret['url'] + '">' + ret['text'] + '</a>'
                         tx_edit.replaceSelectedText(new_text)
                         tb = new_text.split('\n')
                         tx_edit.setSelection(sel[0], sel[1], sel[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
@@ -549,18 +557,17 @@ class EditorTabManager(QtWidgets.QTabWidget):
     def img_poser(self):
         try:
             item = self.currentWidget()
-            window = img.ImgWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current')
+            window = img.ImgWindow(self, app_user_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
             selected_text = tx_edit.selectedText()
             # sel = tx_edit.getSelection()
             pos = tx_edit.getCursorPosition()
             ret = window.openExec(selected_text, None)
             if ret is not None:
-                tb1 = item.property('fileName').replace(
-                    app_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep,
+                tb1 = item.property('fileName').replace('/', os.sep).replace(
+                    app_user_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep,
                     ''
                 ).split(os.sep)
-                print(tb1)
                 adl = ''
                 for i in range(0, len(tb1)-1):
                     adl += '../'

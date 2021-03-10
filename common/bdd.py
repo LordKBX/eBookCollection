@@ -175,8 +175,8 @@ class BDD:
                     ret = self.cursor.fetchall()
                 elif re.search("^file:", search):
                     file = search.replace('file:', '')
-                    self.cursor.execute("SELECT * FROM books JOIN files ON(files.book_id = books.guid) "
-                                        "WHERE files.link = '" + file + "'")
+                    print("SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE files.link = '" + file + "'")
+                    self.cursor.execute("SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE files.link = ?", [file])
                     ret = self.cursor.fetchall()
         if ret is not None:
             prev_guid = ''

@@ -13,7 +13,7 @@ def inflate(src: str, dest: str):
         # insert parsed param
         list_args.append(var.replace('%input%', src).replace('%output%', dest))
     # print(list_args)
-    return subprocess.check_output(list_args, universal_newlines=True)  # execute the command
+    return subprocess.call(list_args, shell=True)  # execute the command
 
 
 def deflate(src: str, dest: str):
@@ -24,6 +24,6 @@ def deflate(src: str, dest: str):
         # insert parsed param
         list_args.append(var.replace('%input%', src).replace('%output%', dest))
     print(list_args)
-    ret = subprocess.check_output(list_args, universal_newlines=True)  # execute the command
+    ret = subprocess.call(list_args, shell=True)  # execute the command
     print(ret)
     return ret
