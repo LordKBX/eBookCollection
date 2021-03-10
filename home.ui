@@ -26,10 +26,7 @@
    <string>HomeWindow</string>
   </property>
   <property name="autoFillBackground">
-   <bool>false</bool>
-  </property>
-  <property name="styleSheet">
-   <string notr="true">QMainWindow { background-color: rgb(0, 0, 0); }</string>
+   <bool>true</bool>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -200,6 +197,9 @@
      <width>524287</width>
      <height>95</height>
     </size>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
    </property>
    <property name="features">
     <set>QDockWidget::DockWidgetMovable</set>

@@ -308,7 +308,8 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.info_block_size_label.setText(self.lang['Library']['InfoBlockSizeLabel'])
 
     def set_style(self):
-        self.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
+        QDockStyle = get_style_var(self.app_style, 'QDockWidget').replace('../', './')
+        self.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'] + QDockStyle)
         self.header_block_contents2.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
         self.sorting_block_contents.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
         # self.central_block_table = QTableWidget()

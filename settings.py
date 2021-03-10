@@ -284,7 +284,7 @@ class SettingsWindow(QDialog):
         if style is None:
             style = self.BDD.get_param('style')
         cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
-        self.setStyleSheet(env_vars['styles'][style]['QDialog'])
+        self.setStyleSheet(get_style_var(style, 'QDialog') + get_style_var(style, 'SettingsDialogBox'))
 
         cls = self.__dir__()
         for var_name in cls:
@@ -292,20 +292,20 @@ class SettingsWindow(QDialog):
             if isinstance(obj, (QPushButton, QComboBox)) and var_name not in ['tab_metadata_default_cover_preview']:
                 obj.setCursor(cursor)
             if isinstance(obj, QWidget):
-                obj.setStyleSheet(env_vars['styles'][style]['QTabWidgetVertical'])
+                obj.setStyleSheet(get_style_var(style, 'QTabWidgetVertical'))
         self.test_archiver()
 
-        self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][style]['fullAltButton'])
+        self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(get_style_var(style, 'fullAltButton'))
         self.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
-        self.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][style]['fullAltButton'])
+        self.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(get_style_var(style, 'fullAltButton'))
         self.button_box.button(QDialogButtonBox.Cancel).setCursor(cursor)
 
-        self.tab_global.setStyleSheet(env_vars['styles'][style]['QDialog'])
-        self.tab_metadata.setStyleSheet(env_vars['styles'][style]['QDialog'])
-        self.tab_conversion.setStyleSheet(env_vars['styles'][style]['QDialog'])
-        self.tab_about.setStyleSheet(env_vars['styles'][style]['QDialog'])
+        self.tab_global.setStyleSheet(get_style_var(style, 'QDialog'))
+        self.tab_metadata.setStyleSheet(get_style_var(style, 'QDialog'))
+        self.tab_conversion.setStyleSheet(get_style_var(style, 'QDialog'))
+        self.tab_about.setStyleSheet(get_style_var(style, 'QDialog'))
 
-        self.tab_metadata_import_filename_separator_line_edit.setStyleSheet(env_vars['styles'][style]['QLineEditPrecise'])
+        self.tab_metadata_import_filename_separator_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditPrecise'))
 
         # IN DEV DISABLED CONTENT
         cursor_disabled = QtGui.QCursor(QtCore.Qt.ForbiddenCursor)
@@ -333,7 +333,7 @@ class SettingsWindow(QDialog):
             color = combo.itemData(index, 99)
             vals[selector_type] = color
             combo.setStyleSheet(
-                "QComboBox:!editable {{ color: {}; }}".format(color) + env_vars['styles'][self.app_style]['QComboBoxArrow']
+                "QComboBox:!editable {{ color: {}; }}".format(color) + get_style_var(self.app_style, 'SettingsQComboBoxArrow')
             )
 
         vals['pattern'] = self.tab_metadata_default_cover_pattern_combo_box.currentData(99)
@@ -362,9 +362,9 @@ class SettingsWindow(QDialog):
             if os.path.isfile(path) is True:
                 ret = True
         if ret is False:
-            self.tab_global_archiver_folder_line_edit.setStyleSheet(env_vars['styles'][style]['QLineEditBad'])
+            self.tab_global_archiver_folder_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditBad'))
         else:
-            self.tab_global_archiver_folder_line_edit.setStyleSheet(env_vars['styles'][style]['QLineEditGood'])
+            self.tab_global_archiver_folder_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditGood'))
         return ret
 
     def change_archiver_folder(self):

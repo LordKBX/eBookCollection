@@ -302,7 +302,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
         return None
 
 
-def get_epub_info(path: str):
+def get_epub_info(path: str, clean: bool = False) -> dict or None:
     ret = {
         'guid': None,
         'title': None,
@@ -315,6 +315,28 @@ def get_epub_info(path: str):
     }
     try:
         if os.path.isfile(path) is True:
+            if clean is False:
+                _, ext = os.path.splitext(path)
+                dir_path = os.path.dirname(os.path.realpath(path))
+                file_short = path.replace(dir_path + os.sep, '')
+                print('file_short=', file_short)
+                BDD = bdd.BDD()
+                template_file = BDD.get_param('import_file_template')
+                separator_file = BDD.get_param('import_file_separator')
+                tmp_tab_file = file_short.replace(separator_file, ' - ').replace(ext, '').split(' - ')
+                tmp_tab_template = template_file.split(' - ')
+                for index in range(0, len(tmp_tab_template)):
+                    if index >= len(tmp_tab_file):
+                        break
+                    if tmp_tab_template[index] == '%series%':
+                        ret['series'] = '??<' + tmp_tab_file[index] + '>??'
+                    if tmp_tab_template[index] == '%title%':
+                        ret['title'] = '??<' + tmp_tab_file[index] + '>??'
+                    if tmp_tab_template[index] == '%authors%':
+                        ret['authors'] = '??<' + tmp_tab_file[index] + '>??'
+                    if tmp_tab_template[index] == '%tags%':
+                        ret['tags'] = tmp_tab_file[index].split(',')
+
             myzip = zipfile.ZipFile(path, 'r')
 
             myfile = myzip.open('META-INF/container.xml')

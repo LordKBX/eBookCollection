@@ -27,7 +27,7 @@ def get_file_size(file_name: str, human_readable: bool = True):
         return '{} bytes'.format(size)
 
 
-def get_file_type(file_path: str) -> str:
+def get_file_type(file_path: str, return_extension: bool = False) -> str or (str, str):
     file_path = file_path.replace('/', os.sep)
     file_tab = file_path.split(os.sep)
     ext = file_tab[len(file_tab) - 1]
@@ -44,8 +44,10 @@ def get_file_type(file_path: str) -> str:
             except Exception:
                 end = True
                 file_type = "application/octet-stream"
-
-    return file_type
+    if return_extension is True:
+        return file_type, ext
+    else:
+        return file_type
 
 
 def list_directory(directory_path: str, expected_extension: str = None):

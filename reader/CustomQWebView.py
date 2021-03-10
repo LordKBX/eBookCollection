@@ -164,7 +164,6 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 						'value': 'next'
 					})
 
-
 	def updatePositionCbz(self, passed: int):
 		if self.nbpage + passed >= 0:
 			if (self.nbpage + passed) * super().height() >= super().page().mainFrame().contentsSize().height(): return

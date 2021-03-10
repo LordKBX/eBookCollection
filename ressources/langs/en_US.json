@@ -75,7 +75,13 @@
 		"ContentTableTxtCover": "Cover",
 		"ContentTableTxtEnd": "End",
 		"ContentTableTxtPageX": "Page {}",
-		"ContentTableTxtChapterX": "Chapter {}: {}"
+		"ContentTableTxtChapterX": "Chapter {}: {}",
+		"InfoBlockHeader": "Informations",
+		"InfoBlockText": "File: {FILE}\n\nTitle: {TITLE}\n\nSeries: {SERIES}\n\nAuthors: {AUTHORS}\n\nFormat: {FORMAT}\n\nSize: {SIZE}",
+		"ContextMenuInfo": "Show eBook informations",
+		"ContextMenuCT": "Show Content Table",
+		"ContextMenuCopyText": "Copy text",
+		"ContextMenuCopyHTML": "Copy HTML code"
 	},
 	"Editor": {
 		"WindowTitle": "EbookCollection: Editor",
@@ -139,6 +145,33 @@
 			"NameWindowLabel": "Name",
 			"btnOk": "Ok",
 			"btnCancel": "Cancel"
+		},
+		"EditPane": {
+			"Save": "Save File in session",
+			"Undo": "Undo",
+			"Redo": "Redo",
+			"Cut": "Cut",
+			"Copy": "Copy",
+			"Paste": "Paste",
+			"Debug": "Debug document",
+			"Comment": "Comment selection",
+			"Prettify": "Prettify File",
+			"Bold": "Bold",
+			"Italic": "Italic",
+			"Underline": "Underline",
+			"Strikethrough": "Strikethrough",
+			"Sub": "Put text in sub line",
+			"Sup": "Put text in super line",
+			"TextColor": "Text Color",
+			"BackColor": "Back Color",
+			"AlignLeft": "Align Left",
+			"AlignCenter": "Align Center",
+			"AlignRight": "Align Right",
+			"Align Justify": "Align Justify",
+			"List": "List",
+			"NumericList": "Numeric List",
+			"Link": "Link",
+			"Image": "Image"
 		}
 	},
 	"Time": {

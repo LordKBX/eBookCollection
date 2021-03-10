@@ -21,11 +21,22 @@ from CustomQWebView import *
 
 class ReaderWindow(QtWidgets.QMainWindow):
 	previousEvent = ''
+	isEpub = False
 
 	def __init__(self, parent: QtWidgets.QMainWindow, bdd):
 		super(ReaderWindow, self).__init__(parent)
-		PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + "reader.ui", self)
+
+		if hasattr(sys, 'frozen'):
+			basis = sys.executable
+		else:
+			basis = sys.argv[0]
+		baseDir = os.path.split(basis)[0]
+
+		PyQt5.uic.loadUi(baseDir + os.sep + "reader.ui", self)
 		self.BDD = bdd
+		self.style = self.BDD.get_param('style')
+		self.translation = lang.Lang()
+		self.translation.set_lang(self.BDD.get_param('lang'))
 
 		# load window size
 		size_tx = self.BDD.get_param('reader/windowSize')
@@ -38,6 +49,12 @@ class ReaderWindow(QtWidgets.QMainWindow):
 			pos = eval(pos_tx)
 			self.move(pos[0], pos[1])
 			self.pos()
+
+		QDockStyle = get_style_var(self.style, 'QDockWidget')
+		if baseDir.endswith('/reader') is False: QDockStyle = QDockStyle.replace('../', './')
+		self.setStyleSheet(get_style_var(self.style, 'QMainWindow') + QDockStyle)
+
+		self.hide_info_text_browser()
 
 		self.show()
 
@@ -62,11 +79,16 @@ class ReaderWindow(QtWidgets.QMainWindow):
 		self.buttonFullScreen.setIcon(icon_1)
 
 	def display_tree_content_table(self):
-		size_int = 0
-		if self.buttonContentTable.isChecked():
-			size_int = 180
-		self.treeContentTable.setMinimumWidth(size_int)
-		self.treeContentTable.setMaximumWidth(size_int)
+		self.dockWidgetContentTable.setVisible(True)
+
+	def display_info_text_browser(self):
+		self.dockWidgetInfo.setVisible(True)
+
+	def hide_tree_content_table(self):
+		self.dockWidgetContentTable.setVisible(False)
+
+	def hide_info_text_browser(self):
+		self.dockWidgetInfo.setVisible(False)
 
 	def content_table_current_item_changed(self, current: QtWidgets.QTreeWidgetItem, previous: QtWidgets.QTreeWidgetItem):
 		data = current.data(0, 99)
@@ -84,8 +106,11 @@ class ReaderWindow(QtWidgets.QMainWindow):
 				page_url = destDir + "/" + td[1]
 				page_url = 'file:///' + page_url.replace("\\", '/')
 				self.webView.setUrl(QtCore.QUrl(page_url))
+				# self.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
+				# self.webView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+				# self.webView.customContextMenuRequested.connect(self.set_context_menu)
 
-	def event_andler(self, event: dir):
+	def event_handler(self, event: dir):
 		try:
 			evt = '{}'.format(event)
 			if event['type'] == 'pageChange':
@@ -110,11 +135,95 @@ class ReaderWindow(QtWidgets.QMainWindow):
 			self.previousEvent = evt
 		except Exception:
 			traceback.print_exc()
+			
+	def set_context_menu(self):
+		try:
+			menu = QtWidgets.QMenu()
+			if self.dockWidgetInfo.isVisible() is False:
+				action0 = QtWidgets.QAction(self.translation['Reader/ContextMenuInfo'], None)
+				action0.triggered.connect(lambda: self.display_info_text_browser())
+				menu.addAction(action0)
+
+			if self.dockWidgetContentTable.isVisible() is False:
+				action1 = QtWidgets.QAction(self.translation['Reader/ContextMenuCT'], None)
+				action1.triggered.connect(lambda: self.display_tree_content_table())
+				menu.addAction(action1)
+			if self.isEpub is True:
+				if len(menu.actions()) > 0:
+					menu.addSeparator()
+				action2 = QtWidgets.QAction(self.translation['Reader/ContextMenuCopyText'], None)
+				action2.triggered.connect(lambda: self.copy_data_to_clipboard())
+				menu.addAction(action2)
+				action3 = QtWidgets.QAction(self.translation['Reader/ContextMenuCopyHTML'], None)
+				action3.triggered.connect(lambda: self.copy_data_to_clipboard(False))
+				menu.addAction(action3)
+			if len(menu.actions()) > 0:
+				menu.exec(PyQt5.QtGui.QCursor.pos())
+
+		except Exception:
+			traceback.print_exc()
+
+	def copy_data_to_clipboard(self, text: bool = True):
+		cb = QtWidgets.QApplication.clipboard()
+		if text is True:
+			text = self.webView.page().mainFrame().page().selectedText()
+			cb.setText(text, mode=cb.Clipboard)
+		else:
+			html = self.webView.page().mainFrame().page().selectedHtml()
+			cb.setText(html, mode=cb.Clipboard)
+
+	def set_info_text(self, file_path) -> bool:
+		file_path = file_path.replace('./', app_directory).replace('/', os.sep)
+		if os.path.isfile(file_path) is False:
+			return False
+		data = self.BDD.get_books(search="file:" + file_path)
+		if len(data) > 0:
+			infoData = self.translation['Reader/InfoBlockText']\
+				.replace('{FILE}', file_path)\
+				.replace('{TITLE}', data[0]['title'])\
+				.replace('{SERIES}', data[0]['series'])\
+				.replace('{AUTHORS}', data[0]['authors'])\
+				.replace('{FORMAT}', data[0]['files'][0]['format'])\
+				.replace('{SIZE}', data[0]['files'][0]['size'])
+			self.infoTextBrowser.setText(infoData)
+			return True
+		else:
+			filepath, ext = os.path.splitext(file_path)
+			if ext in ['.epub', '.epub2', '.epub3']:
+				self.isEpub = True
+				bookData = get_epub_info(file_path, True)
+				title = series = authors = ''
+				if bookData['title'] is not None and bookData['title'].startswith('??<') is False:
+					title = bookData['title']
+				if bookData['series'] is not None and bookData['series'].startswith('??<') is False:
+					series = bookData['series']
+				if bookData['authors'] is not None and bookData['authors'].startswith('??<') is False:
+					authors = bookData['authors']
+				infoData = self.translation['Reader/InfoBlockText']\
+					.replace('{FILE}', file_path)\
+					.replace('{TITLE}', title)\
+					.replace('{SERIES}', series)\
+					.replace('{AUTHORS}', authors)\
+					.replace('{FORMAT}', ext[1:].upper())\
+					.replace('{SIZE}', get_file_size(file_path))
+				self.infoTextBrowser.setText(infoData)
+				return True
+			else:
+				infoData = self.translation['Reader/InfoBlockText']\
+					.replace('{FILE}', file_path)\
+					.replace('{TITLE}', '')\
+					.replace('{SERIES}', '')\
+					.replace('{AUTHORS}', '')\
+					.replace('{FORMAT}', ext[1:].upper())\
+					.replace('{SIZE}', get_file_size(file_path))
+				self.infoTextBrowser.setText(infoData)
+		return False
 
 
 if __name__ == "__main__":
-	translation = lang.Lang()
 	bdd = BDD()
+	translation = lang.Lang()
+	translation.set_lang(bdd.get_param('lang'))
 	app_style = bdd.get_param('style')
 	if app_style is None or app_style == '':
 		app_style = 'Dark'
@@ -139,35 +248,17 @@ if __name__ == "__main__":
 	ui = ReaderWindow(None, bdd)
 	ui.show()
 
-	# Button FullScreen
-	icon1 = QtGui.QIcon()
-	icon1.addPixmap(QtGui.QPixmap(get_style_var(app_style, 'icons/full_screen')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-	ui.buttonFullScreen.setIcon(icon1)
-	ui.buttonFullScreen.clicked.connect(ui.toogle_full_screen)
-
-	# Button Content Table
-	icon2 = QtGui.QIcon()
-	icon2.addPixmap(QtGui.QPixmap(get_style_var(app_style, 'icons/content_table')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-	ui.buttonContentTable.setIcon(icon2)
-	ui.buttonContentTable.clicked.connect(ui.display_tree_content_table)
-	ui.treeContentTable.setMinimumWidth(180)
-	ui.treeContentTable.setMaximumWidth(180)
-
-	# Button Info
-	icon3 = QtGui.QIcon()
-	icon3.addPixmap(QtGui.QPixmap(get_style_var(app_style, 'icons/info')), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-	ui.buttonInfo.setIcon(icon3)
-	# ui.buttonInfo.clicked.connect(ui.display_tree_content_table)
-
 	# Processing Content Table
 	ui.treeContentTable.clear()
-	ui.treeContentTable.headerItem().setText(0, translation['Reader']['ContentTableHeader'])
 	ui.treeContentTable.currentItemChanged.connect(ui.content_table_current_item_changed)
 	ui.treeContentTable.setIndentation(0)
 	ui.treeContentTable.setCursor(QtCore.Qt.PointingHandCursor)
 
+	ui.dockWidgetContentTable.setWindowTitle(translation['Reader/ContentTableHeader'])
+	ui.dockWidgetInfo.setWindowTitle(translation['Reader/InfoBlockHeader'])
+
 	if len(sys.argv) < 2:
-		WarnDialog(translation['Reader']['DialogInfoNoFileWindowTitle'], translation['Reader']['DialogInfoNoFileWindowText'], ui)
+		WarnDialog(translation['Reader/DialogInfoNoFileWindowTitle'], translation['Reader/DialogInfoNoFileWindowText'], ui)
 		exit(0)
 
 	file = ''
@@ -178,7 +269,7 @@ if __name__ == "__main__":
 	to_hide_dir = app_directory.replace(os.sep, '/') + '/data/'
 	filepath, ext = os.path.splitext(file)
 	ui.setWindowTitle(
-		translation['Reader']['WindowTitle'] + ' - ' + file.replace(os.sep, '/')
+		translation['Reader/WindowTitle'] + ' - ' + file.replace(os.sep, '/')
 		.replace(to_hide_dir, '').replace('/', ' / ').replace(ext, '')
 	)
 	destDir = app_user_directory + os.sep + 'reader' + os.sep + 'tmp'
@@ -186,12 +277,17 @@ if __name__ == "__main__":
 	except Exception: ""
 	if os.path.isdir(destDir) is not True: os.makedirs(destDir)
 	page = ''
+	infoData = ''
+	print(file.replace('./', app_directory))
+	file = file.replace('./', app_directory)
+
+	ui.set_info_text(file)
 
 	appMode = QwwMode.CBZ
 	if ext in ['.epub', '.epub2', '.epub3']:
 		appMode = QwwMode.EPUB
-		bookData = get_epub_info(file)
-		winTitle = translation['Reader']['WindowTitle'] + ' - '
+		bookData = get_epub_info(file, True)
+		winTitle = translation['Reader/WindowTitle'] + ' - '
 		first = True
 		for index in ['authors', 'series', 'title']:
 			try:
@@ -263,7 +359,7 @@ if __name__ == "__main__":
 		page = 'file:///' + page.replace("\\", '/')
 
 		item = QtWidgets.QTreeWidgetItem(ui.treeContentTable)
-		item.setText(0, translation['Reader']['ContentTableTxtCover'])
+		item.setText(0, translation['Reader/ContentTableTxtCover'])
 		item.setData(0, 99, "cover")
 		ui.treeContentTable.insertTopLevelItem(0, item)
 
@@ -271,35 +367,37 @@ if __name__ == "__main__":
 		max_pages = len(imgList)
 		while i < max_pages - 1:
 			item = QtWidgets.QTreeWidgetItem(ui.treeContentTable)
-			item.setText(0, translation['Reader']['ContentTableTxtPageX'].format(i))
+			item.setText(0, translation['Reader/ContentTableTxtPageX'].format(i))
 			item.setData(0, 99, "page:{}".format(i))
 			ui.treeContentTable.insertTopLevelItem(0, item)
 			i += 1
 
 		item = QtWidgets.QTreeWidgetItem(ui.treeContentTable)
-		item.setText(0, translation['Reader']['ContentTableTxtEnd'])
+		item.setText(0, translation['Reader/ContentTableTxtEnd'])
 		item.setData(0, 99, "end")
 		ui.treeContentTable.insertTopLevelItem(0, item)
 		ui.treeContentTable.setCurrentItem(ui.treeContentTable.topLevelItem(0), 0)
 	else:
 		WarnDialog(
-			translation['Reader']['DialogInfoBadFileWindowTitle'],
-			translation['Reader']['DialogInfoBadFileWindowText'],
+			translation['Reader/DialogInfoBadFileWindowTitle'],
+			translation['Reader/DialogInfoBadFileWindowText'],
 			ui
 		)
 		exit(0)
 
 	ui.webView.setMode(appMode)
-	ui.webView.setEventHandler(ui.event_andler)
+	ui.webView.setEventHandler(ui.event_handler)
 	ui.webView.setUrl(QtCore.QUrl(page))
+
+	ui.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
+	ui.webView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+	ui.webView.customContextMenuRequested.connect(ui.set_context_menu)
 
 	# tmp_css = destDir + "/tmp.css"
 	# file_page = open(tmp_css, "w", encoding="utf8")
 	# file_page.write("body { -webkit-user-select: none; }")
 	# file_page.close()
 	# ui.webView.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(tmpcss))
-	ui.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
-	ui.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 	app.exec_()
 	rmDir(destDir)
 	sys.exit(0)

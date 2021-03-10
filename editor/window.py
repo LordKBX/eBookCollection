@@ -166,8 +166,8 @@ class EditorWindow(QtWidgets.QMainWindow):
 
         self.tmpcss = self.tmpDir + os.sep + "tmp.css"
         with open(self.tmpcss, "w", encoding="utf8") as file_page:
-            print('tmpcss = ' + get_style_var(self.app_style, 'QWebViewPreview'))
-            file_page.write(get_style_var(self.app_style, 'QWebViewPreview'))
+            print('tmpcss = ' + get_style_var(self.app_style, 'EditorQWebViewPreview'))
+            file_page.write(get_style_var(self.app_style, 'EditorQWebViewPreview'))
 
         self.tabWidget.setStyleSheet(get_style_var(self.app_style, 'QTabWidgetHorizontal'))
         self.tabWidget.setBackgroundRole(QtGui.QPalette.ColorRole(QtGui.QPalette.Light))
@@ -183,7 +183,7 @@ class EditorWindow(QtWidgets.QMainWindow):
             print(text)
             if data != ':dir:':
                 icon = self.file_icon(data)
-                self.tabWidget.create_pane(text, icon, data, self.tmpcss)
+                self.tabWidget.create_pane(text, icon, data, self, self.tmpcss)
                 self.voidLabel.setVisible(False)
                 self.tabWidget.setVisible(True)
         except Exception:
@@ -226,17 +226,17 @@ class EditorWindow(QtWidgets.QMainWindow):
         file_type = get_file_type(file_path)
         if file_type.startswith('image/'):
             return get_style_var(self.app_style, 'icons/image')
-        elif file_type.startswith('text/css'):
+        elif file_type == 'text/css':
             return get_style_var(self.app_style, 'icons/style')
-        elif file_type.startswith('application/oebps-package+xml'):  # .opf
+        elif file_type == 'application/oebps-package+xml':  # .opf
             return get_style_var(self.app_style, 'icons/info')
-        elif file_type.startswith('application/x-dtbncx+xml'):  # .ncx
+        elif file_type == 'application/x-dtbncx+xml':  # .ncx
             return get_style_var(self.app_style, 'icons/content_table')
-        elif file_type.startswith('application/xml'):
+        elif file_type == 'application/xml':
             return get_style_var(self.app_style, 'icons/xml')
-        elif file_type.startswith('application/x-font-truetype'):
+        elif file_type == 'application/x-font-truetype':
             return get_style_var(self.app_style, 'icons/font')
-        elif file_type.startswith('application/xhtml+xml'):
+        elif file_type == 'application/xhtml+xml':
             return get_style_var(self.app_style, 'icons/page')
         else:
             return get_style_var(self.app_style, 'icons/file')

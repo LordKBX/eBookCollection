@@ -3,12 +3,11 @@ import sys
 import PyQt5.QtWebKitWidgets
 import PyQt5.uic
 from PyQt5.uic import *
-import filetype
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from syntaxHighlight import *
 from common.books import *
-from common import dialog, lang
+from common import dialog, vars
 import xmlt
 import css
 import link
@@ -28,14 +27,16 @@ class FileType:
 
 class EditorTabManager(QtWidgets.QTabWidget):
     tmpcss = ''
+    lang = None
+    BDD = None
+    style = None
 
     def __init__(self, parent: any):
         QtWidgets.QTabWidget.__init__(self, parent)
         self.setWindowTitle("Tab Dialog")
-        self.lang = lang.Lang()
         self.previewWebview = None
-        self.default_page = "".join(self.lang['Editor/WebViewDefaultPageContent'])
         self.previous_file = ''
+        self.default_page = ''
 
     def set_preview_webview(self, webview: PyQt5.QtWebKitWidgets.QWebView, default_page: str):
         self.previewWebview = webview
@@ -46,13 +47,9 @@ class EditorTabManager(QtWidgets.QTabWidget):
             return
         item = self.currentWidget()
         file_dir = item.property('fileName').replace(item.property('fileShortName'), '')
-        print('fileDir = ' + file_dir)
-        print('fileName = ' + item.property('fileName'))
-        print('fileShortName = ' + item.property('fileShortName'))
         scroll = None
         if self.previous_file == item.property('fileName'):
             scroll = self.previewWebview.page().currentFrame().scrollPosition()
-            print(scroll)
         self.previous_file = item.property('fileName')
         if item.property('fileType') in [] or item.property('fileExt') in ['xhtml', 'html']:
             try:
@@ -71,7 +68,6 @@ class EditorTabManager(QtWidgets.QTabWidget):
         else:
             self.previewWebview.setHtml(self.default_page)
 
-        print(self.tmpcss)
         self.previewWebview.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(self.tmpcss))
         self.previewWebview.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
@@ -84,7 +80,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             if old_txt != new_txt:
                 icon = QtGui.QIcon()
                 image = QtGui.QPixmap()
-                image.load(app_directory.replace(os.sep, '/') + '/icons/white/edit.png')
+                image.load(vars.get_style_var(self.style, 'icons/edit'))
                 icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
                 self.setTabIcon(index, icon)
             else:
@@ -114,30 +110,46 @@ class EditorTabManager(QtWidgets.QTabWidget):
         except Exception:
             ''
 
-    def create_pane(self, title: str, icon: str, path: str, tmpcss: str = None):
+    def create_pane(self, title: str, icon: str, path: str, parent, tmpcss: str = None):
+        if self.lang is None:
+            self.lang = parent.lang
+            self.BDD = parent.BDD
+            self.style = style = self.BDD.get_param('style')
         if tmpcss is not None:
             self.tmpcss = tmpcss
         data = None
-        kind = filetype.guess(path)
-        if kind is None:
-            fn, ext = os.path.splitext(path)
-            kind = FileType(ext[1:], 'text/plain')
+        is_text = None
+        file_type, file_ext = get_file_type(path, True)
+        list_type_ok = [
+            'text/css',
+            'application/oebps-package+xml',
+            'application/x-dtbncx+xml',
+            'application/xml',
+            'application/xhtml+xml',
+            'text/plain',
+            'image/jpeg', 'image/png', 'image/gif', 'image/bmp'
+        ]
+        if file_type == "application/octet-stream":
             try:
                 file = open(path, "r", encoding="utf8")
                 data = file.read()
                 file.close()
+                file_type = 'text/plain'
+                is_text = True
             except Exception:
-                file = open(path, "rb")
+                ""
+
+        if file_type not in list_type_ok:
+            return
+
+        if data is None:
+            if file_type in ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']:
+                is_text = False
+                data = create_thumbnail(path, False)
+            else:
+                file = open(path, "r", encoding="utf8")
                 data = file.read()
                 file.close()
-                kind = FileType('bin', 'binary')
-
-        is_text = True
-        if kind.mime in ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']:
-            is_text = False
-            data = create_thumbnail(path, False)
-        if kind.mime == 'binary':
-            is_text = False
         if data is None:
             return
 
@@ -145,24 +157,25 @@ class EditorTabManager(QtWidgets.QTabWidget):
         # tab.setObjectName("tab")
         tab.setProperty('fileName', path)
         tab.setProperty('fileShortName', path.replace(os.path.dirname(path), '')[1:])
-        tab.setProperty('fileType', kind.mime)
-        tab.setProperty('fileExt', kind.extension)
+        tab.setProperty('fileType', file_type)
+        tab.setProperty('fileExt', file_ext[1:])
+        tab.setProperty('fileIcon', icon)
         if is_text is True:
             tab.setProperty('originalContent', data)
         vertical_layout = QtWidgets.QVBoxLayout(tab)
         vertical_layout.setContentsMargins(0, 0, 0, 0)
         vertical_layout.setSpacing(1)
 
-        if is_text is True:
+        if is_text is False:
+            block = PyQt5.QtWebKitWidgets.QWebView()
+            page = 'file:///' + path.replace(os.sep, '/')
+            block.setUrl(QtCore.QUrl(page))
+            vertical_layout.addWidget(block)
+        else:
             block = UIClass()
             super(UIClass, block).__init__()
             PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
-            block.setStyleSheet("""
-            QPushButton{ background:transparent; }
-            QPushButton:hover{ background-color:rgb(120, 120, 120); }
-            QPushButton:pressed{ background-color:rgb(120, 120, 120); }
-            QPushButton:checked{ background-color:rgb(150, 150, 150);}
-            """)
+            block.setStyleSheet(common.vars.get_style_var(style, 'EditorEditPaneButtons'))
             try:
                 block.setMaximumHeight(85)
                 block.setMinimumHeight(85)
@@ -195,37 +208,16 @@ class EditorTabManager(QtWidgets.QTabWidget):
             try:
                 text_edit = None
                 if tab.property('fileExt') in ['xhtml', 'html']:
-                    text_edit = SimplePythonEditor(QsciLexerHTML(), tab)
+                    text_edit = SimplePythonEditor(QsciLexerHTML(), tab, vars.env_vars['styles'][style])
                 elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
-                    text_edit = SimplePythonEditor(QsciLexerXML(), tab)
-                    text_edit.elexer.setColor(QtGui.QColor.fromRgb(255, 255, 255), QsciLexerXML.Default)
-                    text_edit.elexer.setColor(QtGui.QColor('#000080'), QsciLexerXML.Tag)
-                    text_edit.elexer.setColor(QtGui.QColor('#000080'), QsciLexerXML.UnknownTag)
+                    text_edit = SimplePythonEditor(QsciLexerXML(), tab, vars.env_vars['styles'][style])
                 elif tab.property('fileExt') in ['css']:
                     text_edit = SimplePythonEditor(QsciLexerCSS(), tab)
                 else:
-                    text_edit = SimplePythonEditor(None, tab)
-                    text_edit.setColor(QColor("#ffffff"))
-                    text_edit.setPaper(QColor("#A6A6A6"))
+                    text_edit = SimplePythonEditor(None, tab, vars.env_vars['styles'][style])
 
                 if text_edit.elexer is not None:
-                    text_edit.elexer.setDefaultPaper(QColor("#A6A6A6"))
-                    text_edit.elexer.setDefaultColor(QColor("#ffffff"))
-                    text_edit.elexer.setPaper(QColor("#A6A6A6"))
                     text_edit.setObjectName("textEdit")
-                    text_edit.setCaretLineBackgroundColor(QColor("#BBBBBB"))
-
-                font = QFont()
-                font.setFamily('Courier')
-                font.setFixedPitch(True)
-                font.setPointSize(10)
-                text_edit.setFont(font)
-                text_edit.setMarginsFont(font)
-                font_metrics = QFontMetrics(font)
-                text_edit.setMarginWidth(0, font_metrics.width("00000") + 1)
-                text_edit.setMarginsBackgroundColor(QColor("#333333"))
-                text_edit.setMarginsForegroundColor(QColor("#ffffff"))
-                text_edit.setFolding(QsciScintilla.BoxedTreeFoldStyle)
 
                 text_edit.setText(data)
                 text_edit.textChanged.connect(lambda: self.content_update())
@@ -239,70 +231,91 @@ class EditorTabManager(QtWidgets.QTabWidget):
                 shortcut.activated.connect(self.duplication)
             except Exception:
                 traceback.print_exc()
-        else:
-            block = PyQt5.QtWebKitWidgets.QWebView()
-            page = 'file:///' + path.replace(os.sep, '/')
-            block.setUrl(QtCore.QUrl(page))
-            vertical_layout.addWidget(block)
 
         self.addTab(tab, QtGui.QIcon(QtGui.QPixmap(icon)), title)
         self.setTabsClosable(True)
         self.setCurrentIndex(self.count() - 1)
 
         try:
-            block.btnSave.setToolTip('Save File in session')
             block.btnSave.clicked.connect(self.save_file)
-            block.btnUndo.setToolTip('Undo')
             block.btnUndo.clicked.connect(lambda: text_edit.undo())
-            block.btnRedo.setToolTip('Redo')
             block.btnRedo.clicked.connect(lambda: text_edit.redo())
-            block.btnCut.setToolTip('Cut')
             block.btnCut.clicked.connect(lambda: text_edit.cut())
-            block.btnCopy.setToolTip('Copy')
             block.btnCopy.clicked.connect(lambda: text_edit.copy())
-            block.btnPaste.setToolTip('Paste')
             block.btnPaste.clicked.connect(lambda: text_edit.paste())
-            block.btnDebug.setToolTip('Debug Document')
             block.btnDebug.clicked.connect(self.debug_text)
-            block.btnComment.setToolTip('Comment')
             block.btnComment.clicked.connect(self.comment_text)
-            block.btnPrettify.setToolTip('Prettify File')
             block.btnPrettify.clicked.connect(self.prettify_text)
-
-            block.btnBold.setToolTip('Bold')
             block.btnBold.clicked.connect(lambda: self.block_paster_text('<b>', '</b>'))
-            block.btnItalic.setToolTip('Italic')
             block.btnItalic.clicked.connect(lambda: self.block_paster_text('<i>', '</i>'))
-            block.btnUnderline.setToolTip('Underline')
             block.btnUnderline.clicked.connect(lambda: self.block_paster_text('<u>', '</u>'))
-            block.btnStrikethrough.setToolTip('Strikethrough')
             block.btnStrikethrough.clicked.connect(lambda: self.block_paster_text('<s>', '</s>'))
-            block.btnSub.setToolTip('Sub')
             block.btnSub.clicked.connect(lambda: self.block_paster_text('<sub>', '</sub>'))
-            block.btnSup.setToolTip('Sup')
             block.btnSup.clicked.connect(lambda: self.block_paster_text('<sup>', '</sup>'))
-            block.btnTextColor.setToolTip('Text Color')
             block.btnTextColor.clicked.connect(self.claim_text_color)
-            block.btnBackColor.setToolTip('Back Color')
             block.btnBackColor.clicked.connect(self.claim_back_color)
-            block.btnAlignLeft.setToolTip('Align Left')
             block.btnAlignLeft.clicked.connect(lambda: self.block_paster_text('<div style="text-align:left;">', '</div>'))
-            block.btnAlignCenter.setToolTip('Align Center')
             block.btnAlignCenter.clicked.connect(lambda: self.block_paster_text('<div style="text-align:center;">', '</div>'))
-            block.btnAlignRight.setToolTip('Align Right')
             block.btnAlignRight.clicked.connect(lambda: self.block_paster_text('<div style="text-align:right;">', '</div>'))
-            block.btnAlignJustify.setToolTip('Align Justify')
             block.btnAlignJustify.clicked.connect(lambda: self.block_paster_text('<div style="text-align:justify;">', '</div>'))
-            block.btnList.setToolTip('List')
             block.btnList.clicked.connect(lambda: self.block_list('ul'))
-            block.btnNumList.setToolTip('Numeric List')
             block.btnNumList.clicked.connect(lambda: self.block_list('ol'))
-            block.btnLink.setToolTip('Link')
             block.btnLink.clicked.connect(self.link_poser)
-            block.btnImg.setToolTip('Image')
             block.btnImg.clicked.connect(self.img_poser)
         except Exception:
-            {}
+            traceback.print_exc()
+
+        block.btnSave.setToolTip(self.lang['Editor/EditPane/Save'])
+        block.btnUndo.setToolTip(self.lang['Editor/EditPane/Undo'])
+        block.btnRedo.setToolTip(self.lang['Editor/EditPane/Redo'])
+        block.btnCut.setToolTip(self.lang['Editor/EditPane/Cut'])
+        block.btnCopy.setToolTip(self.lang['Editor/EditPane/Copy'])
+        block.btnPaste.setToolTip(self.lang['Editor/EditPane/Paste'])
+        block.btnDebug.setToolTip(self.lang['Editor/EditPane/Debug'])
+        block.btnComment.setToolTip(self.lang['Editor/EditPane/Comment'])
+        block.btnPrettify.setToolTip(self.lang['Editor/EditPane/Prettify'])
+        block.btnBold.setToolTip(self.lang['Editor/EditPane/Bold'])
+        block.btnItalic.setToolTip(self.lang['Editor/EditPane/Italic'])
+        block.btnUnderline.setToolTip(self.lang['Editor/EditPane/Underline'])
+        block.btnStrikethrough.setToolTip(self.lang['Editor/EditPane/Strikethrough'])
+        block.btnSub.setToolTip(self.lang['Editor/EditPane/Sub'])
+        block.btnSup.setToolTip(self.lang['Editor/EditPane/Sup'])
+        block.btnTextColor.setToolTip(self.lang['Editor/EditPane/TextColor'])
+        block.btnBackColor.setToolTip(self.lang['Editor/EditPane/BackColor'])
+        block.btnAlignLeft.setToolTip(self.lang['Editor/EditPane/AlignLeft'])
+        block.btnAlignCenter.setToolTip(self.lang['Editor/EditPane/AlignCenter'])
+        block.btnAlignRight.setToolTip(self.lang['Editor/EditPane/AlignRight'])
+        block.btnAlignJustify.setToolTip(self.lang['Editor/EditPane/AlignJustify'])
+        block.btnList.setToolTip(self.lang['Editor/EditPane/List'])
+        block.btnNumList.setToolTip(self.lang['Editor/EditPane/NumericList'])
+        block.btnLink.setToolTip(self.lang['Editor/EditPane/Link'])
+        block.btnImg.setToolTip(self.lang['Editor/EditPane/Image'])
+
+        block.btnSave.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/save'))))
+        block.btnUndo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/undo'))))
+        block.btnRedo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/redo'))))
+        block.btnCut.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/cut'))))
+        block.btnCopy.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/copy'))))
+        block.btnPaste.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/paste'))))
+        block.btnDebug.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/debug'))))
+        block.btnComment.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/comment'))))
+        block.btnPrettify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/prettify'))))
+        block.btnBold.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/bold'))))
+        block.btnItalic.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/italic'))))
+        block.btnUnderline.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/underline'))))
+        block.btnStrikethrough.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/strike_through'))))
+        block.btnSub.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sub'))))
+        block.btnSup.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sup'))))
+        block.btnTextColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/text_color'))))
+        block.btnBackColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/back_color'))))
+        block.btnAlignLeft.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_left'))))
+        block.btnAlignCenter.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_center'))))
+        block.btnAlignRight.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_right'))))
+        block.btnAlignJustify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_justify'))))
+        block.btnList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list'))))
+        block.btnNumList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list_ordered'))))
+        block.btnLink.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/link'))))
+        block.btnImg.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/image'))))
 
     def save_file(self, evt):
         try:
@@ -310,13 +323,17 @@ class EditorTabManager(QtWidgets.QTabWidget):
             new_text = item.children().__getitem__(2).text()
             old_text = item.property('originalContent')
             file_name = item.property('fileName')
+            icon = item.property('fileIcon')
             if old_text != new_text:
                 print('Save')
                 file = open(file_name, 'w', encoding="utf8")
                 file.write(new_text)
                 file.close()
                 item.setProperty('originalContent', new_text)
-                self.setTabIcon(self.currentIndex(), QtGui.QIcon())
+                if icon is None:
+                    self.setTabIcon(self.currentIndex(), QtGui.QIcon())
+                else:
+                    self.setTabIcon(self.currentIndex(), QtGui.QIcon(QtGui.QPixmap(icon)))
             else:
                 print('NO DIF')
         except Exception:
@@ -532,8 +549,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
     def img_poser(self):
         try:
             item = self.currentWidget()
-            window = img.ImgWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp'
-                                          + os.sep + 'current')
+            window = img.ImgWindow(self.parent(), app_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
             selected_text = tx_edit.selectedText()
             # sel = tx_edit.getSelection()
