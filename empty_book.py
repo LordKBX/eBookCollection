@@ -6,6 +6,7 @@ import PyQt5.uic
 from PyQt5.uic import *
 
 from common.vars import *
+from common.lang import *
 
 
 class EmptyBookWindow(QDialog):
@@ -13,9 +14,10 @@ class EmptyBookWindow(QDialog):
         super(EmptyBookWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'empty_book.ui'.replace('/', os.sep), self)  # Load the .ui file
 
-        lng = parent.lang
+        lng = Lang()
         self.BDD = bdd
         style = self.BDD.get_param('style')
+        lng.set_lang(self.BDD.get_param('lang'))
 
         self.setStyleSheet(env_vars['styles'][style]['QDialog'])
         self.setWindowTitle(lng['Library/emptyBooks/WindowTitle'])

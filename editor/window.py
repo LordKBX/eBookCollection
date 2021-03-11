@@ -49,6 +49,7 @@ class EditorWindow(QtWidgets.QMainWindow):
             self.pos()
 
         self.app_style = self.BDD.get_param('style')
+        self.lang.set_lang(self.BDD.get_param('lang'))
         self.apply_translation()
         self.apply_style()
 

@@ -41,7 +41,7 @@ class BDD:
             self.__directory = env_vars['vars']['default_storage']
             self.set_param('library/directory', env_vars['vars']['default_storage'])
         print(self.__directory)
-        self.__start()
+        # self.__start()
 
     def __start(self):
         self.connexion = sqlite3.connect(self.__directory + os.sep + self.__database_filename)
@@ -92,7 +92,8 @@ class BDD:
         try:
             if os.path.isdir(new_folder) is False:
                 return
-            self.close()
+            if self.connexion is not None:
+                self.close()
             copyDir(self.__directory, new_folder)
             rmDir(self.__directory)
             self.__directory = new_folder
@@ -126,6 +127,8 @@ class BDD:
 
         :return: list(str)
         """
+        if self.connexion is None:
+            self.__start()
         ret = []
         self.cursor.execute('''SELECT authors FROM books GROUP BY authors ORDER BY authors ASC''')
         rows = self.cursor.fetchall()
@@ -140,6 +143,8 @@ class BDD:
 
         :return: list(str)
         """
+        if self.connexion is None:
+            self.__start()
         ret = []
         self.cursor.execute('''SELECT series FROM books GROUP BY series ORDER BY series ASC''')
         re = self.cursor.fetchall()
@@ -156,6 +161,8 @@ class BDD:
         :param search: research patern
         :return: list(dict)
         """
+        if self.connexion is None:
+            self.__start()
         return_list = []
         ret = None
         if guid is None and search is None:
@@ -223,6 +230,8 @@ class BDD:
         :param cover:
         :return:
         """
+        if self.connexion is None:
+            self.__start()
         dt = time.time()
         self.cursor.execute(
                 '''INSERT INTO books(
@@ -250,6 +259,8 @@ class BDD:
         :param file_guid:
         :return:
         """
+        if self.connexion is None:
+            self.__start()
         try:
             dt = time.time()
             if file_guid is None:
@@ -272,6 +283,8 @@ class BDD:
         :param file_guid:
         :return:
         """
+        if self.connexion is None:
+            self.__start()
         try:
             dt = time.time()
             if file_guid is None:

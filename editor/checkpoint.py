@@ -14,14 +14,15 @@ class CheckpointWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(CheckpointWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'checkpoint.ui'.replace('/', os.sep), self)  # Load the .ui file
-        lng = lang.Lang()
         self.BDD = parent.BDD
         style = self.BDD.get_param('style')
-        self.setWindowTitle(lng['Editor']['LinkWindow']['WindowTitle'])
+        lng = lang.Lang()
+        lng.set_lang(self.BDD.get_param('lang'))
+        self.setWindowTitle(lng['Editor/ChechpointWindow/WindowTitle'])
         self.setStyleSheet(env_vars['styles'][style]['QDialog'])
 
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['LinkWindow']['btnOk'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['LinkWindow']['btnCancel'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor/LinkWindow/btnOk'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor/LinkWindow/btnCancel'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][style]['defaultButton'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][style]['defaultButton'])
         cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)

@@ -43,13 +43,13 @@
 		"blockInfoTitle": "  Infos",
 
 		"emptyBooks": {
-			"WindowTitle": "Ajout de livre vide",
-			"Number": "Nombre de livre vide",
-			"Authors": "Auteur(s)",
-			"Series": "Série",
-			"SeriesVolume": "N° du/premier tome",
-			"Name": "Nom du/des livre(s)",
-			"Format": "Format de fichier"
+			"WindowTitle": "Add empty eBook",
+			"Number": "Quantity",
+			"Authors": "Authors",
+			"Series": "Series",
+			"SeriesVolume": "Volume number",
+			"Name": "eBook(s) title",
+			"Format": "File format"
 		},
 		"emptyBookCreation": {
 			"Cover": "Cover",
@@ -111,6 +111,11 @@
 		"DialogConfirmSaveWindowText": "Do you confirm saving the file changes ?",
 		"DialogCreateCheckpointWindowTitle": "Create session checkpoint",
 		"DialogCreateCheckpointWindowText": "Checkpoint {} successfuly created",
+		"ChechpointWindow": {
+			"WindowTitle": "Load Checkpoint",
+			"btnOk": "Ok",
+			"btnCancel": "Cancel"
+		},
 		"LinkWindow": {
 			"WindowTitle": "Add/modify link",
 			"labelUrl": "Link URL",
@@ -172,6 +177,17 @@
 			"NumericList": "Numeric List",
 			"Link": "Link",
 			"Image": "Image"
+		},
+		"ColorPicker": {
+			"WindowTitle": "Color Picker",
+			"Palette": "Color palette",
+			"ChromaGraph": "Chroma Graph",
+			"RgbBox": "RGB",
+			"RgbR": "R",
+			"RgbG": "G",
+			"RgbB": "B",
+			"RgbHexa": "Hexa",
+			"Preview": "Color Preview"
 		}
 	},
 	"Time": {
@@ -247,7 +263,7 @@
 		"eBookImportFilenameTpl": "File name parse template",
 		"eBookImportFilenameTplSeparator": "File name parse separator",
 
-		"AboutLabel": "{APP_NAME}\\n\\n License MIT\\n\\n Copyright (c) 2020-2021 Boulain Kévin",
+		"AboutLabel": "{APP_NAME}\n\n License MIT\n\n Copyright (c) 2020-2021 Boulain Kévin",
 		"AboutBtnLicense": "License",
 		"AboutBtnWebsite": "Web Site"
 	}

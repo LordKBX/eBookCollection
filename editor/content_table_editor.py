@@ -19,15 +19,12 @@ class IndexNameWindow(QDialog):
     def __init__(self, parent):
         super(IndexNameWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'files_name.ui'.replace('/', os.sep), self)  # Load the .ui file
-        lng = lang.Lang()
-        self.lang = lng
+        lng = parent.lang
         self.setWindowTitle(lng['Editor']['ContentTableWindow']['NameWindowTitle'])
         self.label.setText(lng['Editor']['ContentTableWindow']['NameWindowLabel'])
 
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['ContentTableWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ContentTableWindow']['btnCancel'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
 
     def open_exec(self, text: str = None):
         if text is not None:
@@ -44,9 +41,10 @@ class ContentTableWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(ContentTableWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'content_table_editor.ui'.replace('/', os.sep), self)  # Load the .ui file
-        lng = lang.Lang()
         self.BDD = parent.BDD
         self.style = self.BDD.get_param('style')
+        lng = lang.Lang()
+        lng.set_lang(self.BDD.get_param('lang'))
         self.lang = lng
         self.setStyleSheet(env_vars['styles'][self.style]['QDialog'])
 

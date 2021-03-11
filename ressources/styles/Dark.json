@@ -232,5 +232,23 @@
 	"EditorQsciDefaultTextColor": "#ffffff",
 	"EditorQsciDefaultBackgroundColor": "#A6A6A6",
 	"EditorQsciXMLDefaultTextColor": "#ffffff",
-	"EditorQsciXMLDefaultTagColor": "#ffffff"
+	"EditorQsciXMLDefaultTagColor": "#ffffff",
+
+	"EditorColorPicker": [
+		"QDialog, QWidget{ background-color:#4B4B4B; }",
+		"QScrollArea{ background-color:#4B4B4B; }",
+		"QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
+		"QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+		"QPushButton, QToolButton { background-color:#333333; color:#777777; font-size:5px; min-height:16px; height:16px; width:16px; }",
+		"QPushButton { font-size:15px; min-height:35px; height:35px; width:100%;}",
+		"QPushButton:hover, QToolButton:hover { background-color:#555555; color:#777777; border:#000000 1px solid; }",
+		"QPushButton:pressed, QToolButton:pressed, QPushButton:checked, QToolButton:checked { background-color:#999999; color:#000000; border:#000000 1px solid; }"
+	],
+
+	"EditorColorPickerFullAltButton": [
+		"* { background-color: #666666; color: #ffffff; font-size:15px; min-height:30px; height:30px; width:100%; margin-right:1px; }",
+		"*:hover { background-color: rgb(120, 120, 120); }",
+		"*:pressed { background-color: rgb(120, 120, 120); }",
+		"*:checked { background-color: rgb(150, 150, 150); }"
+	]
 }

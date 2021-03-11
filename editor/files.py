@@ -45,9 +45,10 @@ class FilesWindow(QDialog):
     def __init__(self, parent, folder: str):
         super(FilesWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'files.ui'.replace('/', os.sep), self)  # Load the .ui file
-        lng = lang.Lang()
         self.BDD = parent.BDD
         self.style = self.BDD.get_param('style')
+        lng = lang.Lang()
+        lng.set_lang(self.BDD.get_param('lang'))
         self.lng = lng
         self.setWindowTitle(lng['Editor']['FilesWindow']['WindowTitle'])
         self.setStyleSheet(env_vars['styles'][self.style]['QDialog'] + env_vars['styles'][self.style]['EditorFileDialogAdditional'])

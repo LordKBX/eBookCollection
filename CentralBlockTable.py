@@ -19,14 +19,10 @@ def wait_on_editor():
     args = list()
     exe = executor_dir + '/editor.exe'.replace('/', os.sep)
     if os.path.isfile(exe):
-        if os.name == 'nt':
-            args.append('start')
         args.append(executor_dir + '/editor.exe'.replace('/', os.sep))
         args.append(executor_file.replace('/', os.sep))
-        # args.append('debug')
+        args.append('debug')
     else:
-        if os.name == 'nt':
-            args.append('start')
         args.append('python')
         args.append(executor_dir + '/editor/editor.py'.replace('/', os.sep))
         args.append(executor_file.replace('/', os.sep))

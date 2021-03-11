@@ -90,24 +90,40 @@ class ReaderWindow(QtWidgets.QMainWindow):
 		self.dockWidgetInfo.setVisible(False)
 
 	def content_table_current_item_changed(self, current: QtWidgets.QTreeWidgetItem, previous: QtWidgets.QTreeWidgetItem):
-		data = current.data(0, 99)
-		if appMode.value == QwwMode.CBZ.value:
-			if data == 'cover':
-				self.webView.updatePositionCbzStart()
-			elif data == 'end':
-				self.webView.updatePositionCbzEnd()
-			elif re.search('^page:', data) is not None:
-				td = data.split(':')
-				self.webView.updatePositionCbzByPage(int(float(td[1])))
-		elif appMode.value == QwwMode.EPUB.value:
-			if re.search('^chapter:', data) is not None:
-				td = data.split(':')
-				page_url = destDir + "/" + td[1]
-				page_url = 'file:///' + page_url.replace("\\", '/')
-				self.webView.setUrl(QtCore.QUrl(page_url))
-				# self.webView.page().mainFrame().setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
-				# self.webView.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-				# self.webView.customContextMenuRequested.connect(self.set_context_menu)
+		try:
+			data = current.data(0, 99)
+			if appMode.value == QwwMode.CBZ.value:
+				if data == 'cover':
+					self.webView.updatePositionCbzStart()
+				elif data == 'end':
+					self.webView.updatePositionCbzEnd()
+				elif re.search('^page:', data) is not None:
+					td = data.split(':')
+					self.webView.updatePositionCbzByPage(int(float(td[1])))
+			elif appMode.value == QwwMode.EPUB.value:
+				if re.search('^chapter:', data) is not None:
+					td = data.split(':')
+					page_url = destDir + "/" + td[1]
+					page_url2 = 'file:///' + page_url.replace("\\", '/')
+
+					# New
+					fdata =''
+					with open(page_url, 'rt', encoding='utf8') as pfile:
+						fdata = pfile.read()
+					last_slash = -1
+					try: last_slash = td[1].rindex('/')
+					except Exception: ""
+					file_dir = destDir.replace(os.sep, '/') + '/' + td[1][0:last_slash]
+					txe = fdata\
+						.replace('<head>', '<head><base href="file:///' + destDir.replace(os.sep, '/') + '">')\
+						.replace('="/', '="file:///' + destDir.replace(os.sep, '/') + '/')\
+						.replace('="../', '="file:///' + file_dir + '/../')
+					self.webView.page().currentFrame().setHtml(txe)
+
+					# OLD
+					# self.webView.setUrl(QtCore.QUrl(page_url2))
+		except Exception:
+			traceback.print_exc()
 
 	def event_handler(self, event: dir):
 		try:
@@ -281,6 +297,7 @@ if __name__ == "__main__":
 
 	appMode = QwwMode.CBZ
 	if ext in ['.epub', '.epub2', '.epub3']:
+		ui.isEpub = True
 		appMode = QwwMode.EPUB
 		bookData = get_epub_info(file, True)
 		winTitle = translation['Reader/WindowTitle'] + ' - '

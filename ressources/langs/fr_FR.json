@@ -120,6 +120,11 @@
 		"DialogConfirmSaveWindowText": "Confirmez vous la sauvegarde du fichier ?",
 		"DialogCreateCheckpointWindowTitle": "Création checkpoint session",
 		"DialogCreateCheckpointWindowText": "Checkpoint {} crée avec success",
+		"ChechpointWindow": {
+			"WindowTitle": "Charger point de contrôle session",
+			"btnOk": "Ok",
+			"btnCancel": "Cancel"
+		},
 		"LinkWindow": {
 			"WindowTitle": "Ajout/Modification lien",
 			"labelUrl": "URL du lien",
@@ -181,6 +186,17 @@
 			"NumericList": "Numeric List",
 			"Link": "Link",
 			"Image": "Image"
+		},
+		"ColorPicker": {
+			"WindowTitle": "Selecteur de couleur",
+			"Palette": "Palette",
+			"ChromaGraph": "Graph Chromatique",
+			"RgbBox": "RVB",
+			"RgbR": "R",
+			"RgbG": "V",
+			"RgbB": "B",
+			"RgbHexa": "Hexa",
+			"Preview": "Aperçus Couleur"
 		}
 	},
 	"Time": {
@@ -256,7 +272,7 @@
 		"eBookImportFilenameTpl": "Template de parsing nom fichier",
 		"eBookImportFilenameTplSeparator": "Séparateur nom fichier",
 
-		"AboutLabel": "{APP_NAME}\\n\\n License MIT\\n\\n Copyright (c) 2020-2021 Boulain Kévin",
+		"AboutLabel": "{APP_NAME}\n\n License MIT\n\n Copyright (c) 2020-2021 Boulain Kévin",
 		"AboutBtnLicense": "Licence",
 		"AboutBtnWebsite": "Site Web"
 	}

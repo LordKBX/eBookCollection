@@ -12,6 +12,7 @@ import xmlt
 import css
 import link
 import img
+import color_picker
 
 
 class UIClass(QtWidgets.QWidget):
@@ -30,6 +31,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
     lang = None
     BDD = None
     style = None
+    destDir = ''
 
     def __init__(self, parent: any):
         QtWidgets.QTabWidget.__init__(self, parent)
@@ -51,15 +53,15 @@ class EditorTabManager(QtWidgets.QTabWidget):
         if self.previous_file == item.property('fileName'):
             scroll = self.previewWebview.page().currentFrame().scrollPosition()
         self.previous_file = item.property('fileName')
-        if item.property('fileType') in [] or item.property('fileExt') in ['xhtml', 'html']:
+        type_ok = ['text/css', 'application/oebps-package+xml', 'application/x-dtbncx+xml', 'application/xml',
+                   'application/xhtml+xml', 'text/plain']
+        if item.property('fileType') in type_ok:
             try:
                 txe = item.children().__getitem__(2).text()
                 txe = txe\
-                    .replace('<head>', '<head><base href="file:///'+file_dir.replace(os.sep, '/')+'">')
-                #     .replace(' href="../', ' href="')\
-                #     .replace(' src="../', ' src="')\
-                #     .replace(' href="', ' href="file:///'+fileDir.replace(os.sep, '/')+'/')\
-                #     .replace(' src="', ' src="file:///'+fileDir.replace(os.sep, '/')+'/')
+                    .replace('<head>', '<head><base href="file:///'+file_dir.replace(os.sep, '/')+'">')\
+                    .replace('="/', '="file:///' + self.destDir.replace(os.sep, '/') + '/') \
+                    .replace('="../', '="file:///' + file_dir.replace(os.sep, '/') + '../')
                 self.previewWebview.page().currentFrame().setHtml(txe)
                 if scroll is not None:
                     self.previewWebview.page().currentFrame().setScrollPosition(scroll)
@@ -115,6 +117,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             self.lang = parent.lang
             self.BDD = parent.BDD
             self.style = style = self.BDD.get_param('style')
+            self.destDir = parent.tmpDir
         if tmpcss is not None:
             self.tmpcss = tmpcss
         data = None
@@ -175,7 +178,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             block = UIClass()
             super(UIClass, block).__init__()
             PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
-            block.setStyleSheet(common.vars.get_style_var(style, 'EditorEditPaneButtons'))
+            block.setStyleSheet(common.vars.get_style_var(self.style, 'EditorEditPaneButtons'))
             try:
                 block.setMaximumHeight(85)
                 block.setMinimumHeight(85)
@@ -208,13 +211,13 @@ class EditorTabManager(QtWidgets.QTabWidget):
             try:
                 text_edit = None
                 if tab.property('fileExt') in ['xhtml', 'html']:
-                    text_edit = SimplePythonEditor(QsciLexerHTML(), tab, vars.env_vars['styles'][style])
+                    text_edit = SimplePythonEditor(QsciLexerHTML(), tab, vars.env_vars['styles'][self.style])
                 elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
-                    text_edit = SimplePythonEditor(QsciLexerXML(), tab, vars.env_vars['styles'][style])
+                    text_edit = SimplePythonEditor(QsciLexerXML(), tab, vars.env_vars['styles'][self.style])
                 elif tab.property('fileExt') in ['css']:
                     text_edit = SimplePythonEditor(QsciLexerCSS(), tab)
                 else:
-                    text_edit = SimplePythonEditor(None, tab, vars.env_vars['styles'][style])
+                    text_edit = SimplePythonEditor(None, tab, vars.env_vars['styles'][self.style])
 
                 if text_edit.elexer is not None:
                     text_edit.setObjectName("textEdit")
@@ -381,8 +384,8 @@ class EditorTabManager(QtWidgets.QTabWidget):
 
     def claim_color(self):
         try:
-            color = QtWidgets.QColorDialog.getColor(QtGui.QColor.fromRgb(0, 0, 0), self)
-            if color.isValid() is True:
+            color = color_picker.ColorPicker(self).getColor()
+            if color is not None:
                 return color
         except Exception:
             traceback.print_exc()
