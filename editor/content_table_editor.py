@@ -27,14 +27,17 @@ class IndexNameWindow(QDialog):
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ContentTableWindow']['btnCancel'])
 
     def open_exec(self, text: str = None):
-        if text is not None:
-            self.line_edit.setText(text)
-        ret = self.exec_()
-        if ret == 1:
-            print('name = ', self.line_edit.text())
-            return self.line_edit.text()
-        else:
-            return None
+        try:
+            if text is not None:
+                self.line_edit.setText(text)
+            ret = self.exec_()
+            if ret == 1:
+                print('name = ', self.line_edit.text())
+                return self.line_edit.text()
+            else:
+                return None
+        except Exception:
+            traceback.print_exc()
 
 
 class ContentTableWindow(QDialog):
@@ -73,52 +76,55 @@ class ContentTableWindow(QDialog):
         self.files = []
 
     def open_exec(self, text: str = None, url: str = None):
-        self.list_content.clear()
-        self.addindex_combobox.clear()
+        try:
+            self.list_content.clear()
+            self.addindex_combobox.clear()
 
-        self.files = common.files.list_directory_tree(self.folder, 'html|xhtml')
-        files = common.files.list_directory(self.folder, 'html|xhtml')
-        self.addindex_combobox.addItem("")
+            self.files = common.files.list_directory_tree(self.folder, 'html|xhtml')
+            files = common.files.list_directory(self.folder, 'html|xhtml')
+            self.addindex_combobox.addItem("")
 
-        print(self.files)
-        for file in files:
-            self.addindex_combobox.addItem(file.replace(self.folder, ""))
+            print(self.files)
+            for file in files:
+                self.addindex_combobox.addItem(file.replace(self.folder, ""))
 
-        li = common.files.list_directory(self.folder, "opf")
-        data = ''
-        with open(li[0]) as myfile:
-            data = myfile.read()
-        toc_type, chapters = parse_content_table(
-            data,
-            li[0].replace(self.folder, '').replace(li[0][li[0].rindex(os.sep) + 1:], '').replace(os.sep, '/'),
-            self.folder
-        )
-        for chapter in chapters:
-            try:
-                item = QtWidgets.QListWidgetItem()
-                item.setText(chapter['name'] + " (" + chapter['src'] + ")")
-                item.setData(97, chapter['name'])
-                item.setData(98, chapter['src'])
+            li = common.files.list_directory(self.folder, "opf")
+            data = ''
+            with open(li[0]) as myfile:
+                data = myfile.read()
+            toc_type, chapters = parse_content_table(
+                data,
+                li[0].replace(self.folder, '').replace(li[0][li[0].rindex(os.sep) + 1:], '').replace(os.sep, '/'),
+                self.folder
+            )
+            for chapter in chapters:
+                try:
+                    item = QtWidgets.QListWidgetItem()
+                    item.setText(chapter['name'] + " (" + chapter['src'] + ")")
+                    item.setData(97, chapter['name'])
+                    item.setData(98, chapter['src'])
 
-                self.list_content.addItem(item)
-            except Exception:
-                traceback.print_exc()
+                    self.list_content.addItem(item)
+                except Exception:
+                    traceback.print_exc()
 
-        ret = self.exec_()
+            ret = self.exec_()
 
-        content_table = []
-        max = self.list_content.count()
-        i = 0
-        while i < max:
-            child = self.list_content.item(i)
-            content_table.append({'name': child.data(97), 'url': child.data(98).replace("\\", "/")})
-            i += 1
+            content_table = []
+            max = self.list_content.count()
+            i = 0
+            while i < max:
+                child = self.list_content.item(i)
+                content_table.append({'name': child.data(97), 'url': child.data(98).replace("\\", "/")})
+                i += 1
 
-        print(content_table)
-        if ret == 1:
-            return content_table
-        else:
-            return None
+            print(content_table)
+            if ret == 1:
+                return content_table
+            else:
+                return None
+        except Exception:
+            traceback.print_exc()
 
     def new_index(self):
         # self.addindex_line_edit = QLineEdit()

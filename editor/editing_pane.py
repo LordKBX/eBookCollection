@@ -59,7 +59,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             try:
                 txe = item.children().__getitem__(2).text()
                 txe = txe\
-                    .replace('<head>', '<head><base href="file:///'+file_dir.replace(os.sep, '/')+'">')\
+                    .replace('<head>', '<head><base href="file:///'+self.destDir.replace(os.sep, '/')+'/">')\
                     .replace('="/', '="file:///' + self.destDir.replace(os.sep, '/') + '/') \
                     .replace('="../', '="file:///' + file_dir.replace(os.sep, '/') + '../')
                 self.previewWebview.page().currentFrame().setHtml(txe)
@@ -113,212 +113,221 @@ class EditorTabManager(QtWidgets.QTabWidget):
             ''
 
     def create_pane(self, title: str, icon: str, path: str, parent, tmpcss: str = None):
-        if self.lang is None:
-            self.lang = parent.lang
-            self.BDD = parent.BDD
-            self.style = style = self.BDD.get_param('style')
-            self.destDir = parent.tmpDir
-        if tmpcss is not None:
-            self.tmpcss = tmpcss
-        data = None
-        is_text = None
-        file_type, file_ext = get_file_type(path, True)
-        list_type_ok = [
-            'text/css',
-            'application/oebps-package+xml',
-            'application/x-dtbncx+xml',
-            'application/xml',
-            'application/xhtml+xml',
-            'text/plain',
-            'image/jpeg', 'image/png', 'image/gif', 'image/bmp'
-        ]
-        if file_type == "application/octet-stream":
-            try:
-                file = open(path, "r", encoding="utf8")
-                data = file.read()
-                file.close()
-                file_type = 'text/plain'
-                is_text = True
-            except Exception:
-                ""
-
-        if file_type not in list_type_ok:
-            return
-
-        if data is None:
-            if file_type in ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']:
-                is_text = False
-                data = create_thumbnail(path, False)
-            else:
-                file = open(path, "r", encoding="utf8")
-                data = file.read()
-                file.close()
-        if data is None:
-            return
-
-        tab = QtWidgets.QWidget()
-        # tab.setObjectName("tab")
-        tab.setProperty('fileName', path)
-        tab.setProperty('fileShortName', path.replace(os.path.dirname(path), '')[1:])
-        tab.setProperty('fileType', file_type)
-        tab.setProperty('fileExt', file_ext[1:])
-        tab.setProperty('fileIcon', icon)
-        if is_text is True:
-            tab.setProperty('originalContent', data)
-        vertical_layout = QtWidgets.QVBoxLayout(tab)
-        vertical_layout.setContentsMargins(0, 0, 0, 0)
-        vertical_layout.setSpacing(1)
-
-        if is_text is False:
-            block = PyQt5.QtWebKitWidgets.QWebView()
-            page = 'file:///' + path.replace(os.sep, '/')
-            block.setUrl(QtCore.QUrl(page))
-            vertical_layout.addWidget(block)
-        else:
-            block = UIClass()
-            super(UIClass, block).__init__()
-            PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
-            block.setStyleSheet(common.vars.get_style_var(self.style, 'EditorEditPaneButtons'))
-            try:
-                block.setMaximumHeight(85)
-                block.setMinimumHeight(85)
-                block.setFixedHeight(85)
-                if tab.property('fileExt') not in ['xhtml', 'html', 'css', 'xml', 'opf', 'ncx']:
-                    self.clear_layout(block.horizon1_1)
-                    self.clear_layout(block.horizon2)
-                    self.clear_layout(block.horizon3)
-                    block.setMaximumHeight(30)
-                    block.setMinimumHeight(30)
-                    block.setFixedHeight(30)
-                elif tab.property('fileExt') in ['css', 'xml', 'opf', 'ncx']:
-                    if tab.property('fileExt') in ['css']:
-                        block.btnDebug.setMinimumHeight(0)
-                        block.btnDebug.setMaximumWidth(0)
-                        block.btnDebug.setMinimumHeight(0)
-                        block.btnDebug.setMaximumWidth(0)
-                        block.btnDebug.setFixedHeight(0)
-                        block.btnDebug.setFixedWidth(0)
-                    self.clear_layout(block.horizon2)
-                    self.clear_layout(block.horizon3)
-                    block.setMaximumHeight(30)
-                    block.setMinimumHeight(30)
-                    block.setFixedHeight(30)
-            except Exception:
-                traceback.print_exc()
-
-            vertical_layout.addWidget(block)
-
-            try:
-                text_edit = None
-                if tab.property('fileExt') in ['xhtml', 'html']:
-                    text_edit = SimplePythonEditor(QsciLexerHTML(), tab, vars.env_vars['styles'][self.style])
-                elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
-                    text_edit = SimplePythonEditor(QsciLexerXML(), tab, vars.env_vars['styles'][self.style])
-                elif tab.property('fileExt') in ['css']:
-                    text_edit = SimplePythonEditor(QsciLexerCSS(), tab)
-                else:
-                    text_edit = SimplePythonEditor(None, tab, vars.env_vars['styles'][self.style])
-
-                if text_edit.elexer is not None:
-                    text_edit.setObjectName("textEdit")
-
-                text_edit.setText(data)
-                text_edit.textChanged.connect(lambda: self.content_update())
-
-                vertical_layout.addWidget(text_edit)
-
-                shortcut = QtWidgets.QShortcut(QtCore.Qt.ControlModifier | QtCore.Qt.Key_S, text_edit)
-                shortcut.activated.connect(lambda: self.save_file(None))
-
-                shortcut = QtWidgets.QShortcut(QtCore.Qt.ControlModifier | QtCore.Qt.Key_D, text_edit)
-                shortcut.activated.connect(self.duplication)
-            except Exception:
-                traceback.print_exc()
-
-        self.addTab(tab, QtGui.QIcon(QtGui.QPixmap(icon)), title)
-        self.setTabsClosable(True)
-        self.setCurrentIndex(self.count() - 1)
-
         try:
-            block.btnSave.clicked.connect(self.save_file)
-            block.btnUndo.clicked.connect(lambda: text_edit.undo())
-            block.btnRedo.clicked.connect(lambda: text_edit.redo())
-            block.btnCut.clicked.connect(lambda: text_edit.cut())
-            block.btnCopy.clicked.connect(lambda: text_edit.copy())
-            block.btnPaste.clicked.connect(lambda: text_edit.paste())
-            block.btnDebug.clicked.connect(self.debug_text)
-            block.btnComment.clicked.connect(self.comment_text)
-            block.btnPrettify.clicked.connect(self.prettify_text)
-            block.btnBold.clicked.connect(lambda: self.block_paster_text('<b>', '</b>'))
-            block.btnItalic.clicked.connect(lambda: self.block_paster_text('<i>', '</i>'))
-            block.btnUnderline.clicked.connect(lambda: self.block_paster_text('<u>', '</u>'))
-            block.btnStrikethrough.clicked.connect(lambda: self.block_paster_text('<s>', '</s>'))
-            block.btnSub.clicked.connect(lambda: self.block_paster_text('<sub>', '</sub>'))
-            block.btnSup.clicked.connect(lambda: self.block_paster_text('<sup>', '</sup>'))
-            block.btnTextColor.clicked.connect(self.claim_text_color)
-            block.btnBackColor.clicked.connect(self.claim_back_color)
-            block.btnAlignLeft.clicked.connect(lambda: self.block_paster_text('<div style="text-align:left;">', '</div>'))
-            block.btnAlignCenter.clicked.connect(lambda: self.block_paster_text('<div style="text-align:center;">', '</div>'))
-            block.btnAlignRight.clicked.connect(lambda: self.block_paster_text('<div style="text-align:right;">', '</div>'))
-            block.btnAlignJustify.clicked.connect(lambda: self.block_paster_text('<div style="text-align:justify;">', '</div>'))
-            block.btnList.clicked.connect(lambda: self.block_list('ul'))
-            block.btnNumList.clicked.connect(lambda: self.block_list('ol'))
-            block.btnLink.clicked.connect(self.link_poser)
-            block.btnImg.clicked.connect(self.img_poser)
+            if self.count() > 0:
+                for i in range(0, self.count()):
+                    if self.tabToolTip(i) == path:
+                        self.setCurrentIndex(i)
+                        return
+            if self.lang is None:
+                self.lang = parent.lang
+                self.BDD = parent.BDD
+                self.style = style = self.BDD.get_param('style')
+                self.destDir = parent.tmpDir + os.sep + 'current'
+            if tmpcss is not None:
+                self.tmpcss = tmpcss
+            data = None
+            is_text = None
+            file_type, file_ext = get_file_type(path, True)
+            list_type_ok = [
+                'text/css',
+                'application/oebps-package+xml',
+                'application/x-dtbncx+xml',
+                'application/xml',
+                'application/xhtml+xml',
+                'text/plain',
+                'image/jpeg', 'image/png', 'image/gif', 'image/bmp'
+            ]
+            if file_type == "application/octet-stream":
+                try:
+                    file = open(path, "r", encoding="utf8")
+                    data = file.read()
+                    file.close()
+                    file_type = 'text/plain'
+                    is_text = True
+                except Exception:
+                    ""
+
+            if file_type not in list_type_ok:
+                return
+
+            if data is None:
+                if file_type in ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']:
+                    is_text = False
+                    data = create_thumbnail(path, False)
+                else:
+                    file = open(path, "r", encoding="utf8")
+                    data = file.read()
+                    file.close()
+            if data is None:
+                return
+
+            tab = QtWidgets.QWidget()
+            # tab.setObjectName("tab")
+            tab.setProperty('fileName', path)
+            tab.setProperty('fileShortName', path.replace(os.path.dirname(path), '')[1:])
+            tab.setProperty('fileType', file_type)
+            tab.setProperty('fileExt', file_ext[1:])
+            tab.setProperty('fileIcon', icon)
+            if is_text is True:
+                tab.setProperty('originalContent', data)
+            vertical_layout = QtWidgets.QVBoxLayout(tab)
+            vertical_layout.setContentsMargins(0, 0, 0, 0)
+            vertical_layout.setSpacing(1)
+
+            if is_text is False:
+                block = PyQt5.QtWebKitWidgets.QWebView()
+                page = 'file:///' + path.replace(os.sep, '/')
+                block.setUrl(QtCore.QUrl(page))
+                vertical_layout.addWidget(block)
+            else:
+                block = UIClass()
+                super(UIClass, block).__init__()
+                PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
+                block.setStyleSheet(common.vars.get_style_var(self.style, 'EditorEditPaneButtons'))
+                try:
+                    block.setMaximumHeight(85)
+                    block.setMinimumHeight(85)
+                    block.setFixedHeight(85)
+                    if tab.property('fileExt') not in ['xhtml', 'html', 'css', 'xml', 'opf', 'ncx']:
+                        self.clear_layout(block.horizon1_1)
+                        self.clear_layout(block.horizon2)
+                        self.clear_layout(block.horizon3)
+                        block.setMaximumHeight(30)
+                        block.setMinimumHeight(30)
+                        block.setFixedHeight(30)
+                    elif tab.property('fileExt') in ['css', 'xml', 'opf', 'ncx']:
+                        if tab.property('fileExt') in ['css']:
+                            block.btnDebug.setMinimumHeight(0)
+                            block.btnDebug.setMaximumWidth(0)
+                            block.btnDebug.setMinimumHeight(0)
+                            block.btnDebug.setMaximumWidth(0)
+                            block.btnDebug.setFixedHeight(0)
+                            block.btnDebug.setFixedWidth(0)
+                        self.clear_layout(block.horizon2)
+                        self.clear_layout(block.horizon3)
+                        block.setMaximumHeight(30)
+                        block.setMinimumHeight(30)
+                        block.setFixedHeight(30)
+                except Exception:
+                    traceback.print_exc()
+
+                vertical_layout.addWidget(block)
+
+                try:
+                    text_edit = None
+                    if tab.property('fileExt') in ['xhtml', 'html']:
+                        text_edit = SimplePythonEditor(QsciLexerHTML(), tab, vars.env_vars['styles'][self.style])
+                    elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
+                        text_edit = SimplePythonEditor(QsciLexerXML(), tab, vars.env_vars['styles'][self.style])
+                    elif tab.property('fileExt') in ['css']:
+                        text_edit = SimplePythonEditor(QsciLexerCSS(), tab)
+                    else:
+                        text_edit = SimplePythonEditor(None, tab, vars.env_vars['styles'][self.style])
+
+                    if text_edit.elexer is not None:
+                        text_edit.setObjectName("textEdit")
+
+                    text_edit.setText(data)
+                    text_edit.textChanged.connect(lambda: self.content_update())
+
+                    vertical_layout.addWidget(text_edit)
+
+                    shortcut = QtWidgets.QShortcut(QtCore.Qt.ControlModifier | QtCore.Qt.Key_S, text_edit)
+                    shortcut.activated.connect(lambda: self.save_file(None))
+
+                    shortcut = QtWidgets.QShortcut(QtCore.Qt.ControlModifier | QtCore.Qt.Key_D, text_edit)
+                    shortcut.activated.connect(self.duplication)
+                except Exception:
+                    traceback.print_exc()
+
+            self.addTab(tab, QtGui.QIcon(QtGui.QPixmap(icon)), title)
+            self.setTabsClosable(True)
+            self.setCurrentIndex(self.count() - 1)
+            self.setTabToolTip(self.count() - 1, path)
+
+            try:
+                block.btnSave.clicked.connect(self.save_file)
+                block.btnUndo.clicked.connect(lambda: text_edit.undo())
+                block.btnRedo.clicked.connect(lambda: text_edit.redo())
+                block.btnCut.clicked.connect(lambda: text_edit.cut())
+                block.btnCopy.clicked.connect(lambda: text_edit.copy())
+                block.btnPaste.clicked.connect(lambda: text_edit.paste())
+                block.btnDebug.clicked.connect(self.debug_text)
+                block.btnComment.clicked.connect(self.comment_text)
+                block.btnPrettify.clicked.connect(self.prettify_text)
+                block.btnBold.clicked.connect(lambda: self.block_paster_text('<b>', '</b>'))
+                block.btnItalic.clicked.connect(lambda: self.block_paster_text('<i>', '</i>'))
+                block.btnUnderline.clicked.connect(lambda: self.block_paster_text('<u>', '</u>'))
+                block.btnStrikethrough.clicked.connect(lambda: self.block_paster_text('<s>', '</s>'))
+                block.btnSub.clicked.connect(lambda: self.block_paster_text('<sub>', '</sub>'))
+                block.btnSup.clicked.connect(lambda: self.block_paster_text('<sup>', '</sup>'))
+                block.btnTextColor.clicked.connect(self.claim_text_color)
+                block.btnBackColor.clicked.connect(self.claim_back_color)
+                block.btnAlignLeft.clicked.connect(lambda: self.block_paster_text('<div style="text-align:left;">', '</div>'))
+                block.btnAlignCenter.clicked.connect(lambda: self.block_paster_text('<div style="text-align:center;">', '</div>'))
+                block.btnAlignRight.clicked.connect(lambda: self.block_paster_text('<div style="text-align:right;">', '</div>'))
+                block.btnAlignJustify.clicked.connect(lambda: self.block_paster_text('<div style="text-align:justify;">', '</div>'))
+                block.btnList.clicked.connect(lambda: self.block_list('ul'))
+                block.btnNumList.clicked.connect(lambda: self.block_list('ol'))
+                block.btnLink.clicked.connect(self.link_poser)
+                block.btnImg.clicked.connect(self.img_poser)
+            except Exception:
+                traceback.print_exc()
+
+            block.btnSave.setToolTip(self.lang['Editor/EditPane/Save'])
+            block.btnUndo.setToolTip(self.lang['Editor/EditPane/Undo'])
+            block.btnRedo.setToolTip(self.lang['Editor/EditPane/Redo'])
+            block.btnCut.setToolTip(self.lang['Editor/EditPane/Cut'])
+            block.btnCopy.setToolTip(self.lang['Editor/EditPane/Copy'])
+            block.btnPaste.setToolTip(self.lang['Editor/EditPane/Paste'])
+            block.btnDebug.setToolTip(self.lang['Editor/EditPane/Debug'])
+            block.btnComment.setToolTip(self.lang['Editor/EditPane/Comment'])
+            block.btnPrettify.setToolTip(self.lang['Editor/EditPane/Prettify'])
+            block.btnBold.setToolTip(self.lang['Editor/EditPane/Bold'])
+            block.btnItalic.setToolTip(self.lang['Editor/EditPane/Italic'])
+            block.btnUnderline.setToolTip(self.lang['Editor/EditPane/Underline'])
+            block.btnStrikethrough.setToolTip(self.lang['Editor/EditPane/Strikethrough'])
+            block.btnSub.setToolTip(self.lang['Editor/EditPane/Sub'])
+            block.btnSup.setToolTip(self.lang['Editor/EditPane/Sup'])
+            block.btnTextColor.setToolTip(self.lang['Editor/EditPane/TextColor'])
+            block.btnBackColor.setToolTip(self.lang['Editor/EditPane/BackColor'])
+            block.btnAlignLeft.setToolTip(self.lang['Editor/EditPane/AlignLeft'])
+            block.btnAlignCenter.setToolTip(self.lang['Editor/EditPane/AlignCenter'])
+            block.btnAlignRight.setToolTip(self.lang['Editor/EditPane/AlignRight'])
+            block.btnAlignJustify.setToolTip(self.lang['Editor/EditPane/AlignJustify'])
+            block.btnList.setToolTip(self.lang['Editor/EditPane/List'])
+            block.btnNumList.setToolTip(self.lang['Editor/EditPane/NumericList'])
+            block.btnLink.setToolTip(self.lang['Editor/EditPane/Link'])
+            block.btnImg.setToolTip(self.lang['Editor/EditPane/Image'])
+
+            block.btnSave.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/save'))))
+            block.btnUndo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/undo'))))
+            block.btnRedo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/redo'))))
+            block.btnCut.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/cut'))))
+            block.btnCopy.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/copy'))))
+            block.btnPaste.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/paste'))))
+            block.btnDebug.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/debug'))))
+            block.btnComment.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/comment'))))
+            block.btnPrettify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/prettify'))))
+            block.btnBold.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/bold'))))
+            block.btnItalic.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/italic'))))
+            block.btnUnderline.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/underline'))))
+            block.btnStrikethrough.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/strike_through'))))
+            block.btnSub.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sub'))))
+            block.btnSup.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sup'))))
+            block.btnTextColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/text_color'))))
+            block.btnBackColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/back_color'))))
+            block.btnAlignLeft.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_left'))))
+            block.btnAlignCenter.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_center'))))
+            block.btnAlignRight.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_right'))))
+            block.btnAlignJustify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_justify'))))
+            block.btnList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list'))))
+            block.btnNumList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list_ordered'))))
+            block.btnLink.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/link'))))
+            block.btnImg.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/image'))))
         except Exception:
             traceback.print_exc()
-
-        block.btnSave.setToolTip(self.lang['Editor/EditPane/Save'])
-        block.btnUndo.setToolTip(self.lang['Editor/EditPane/Undo'])
-        block.btnRedo.setToolTip(self.lang['Editor/EditPane/Redo'])
-        block.btnCut.setToolTip(self.lang['Editor/EditPane/Cut'])
-        block.btnCopy.setToolTip(self.lang['Editor/EditPane/Copy'])
-        block.btnPaste.setToolTip(self.lang['Editor/EditPane/Paste'])
-        block.btnDebug.setToolTip(self.lang['Editor/EditPane/Debug'])
-        block.btnComment.setToolTip(self.lang['Editor/EditPane/Comment'])
-        block.btnPrettify.setToolTip(self.lang['Editor/EditPane/Prettify'])
-        block.btnBold.setToolTip(self.lang['Editor/EditPane/Bold'])
-        block.btnItalic.setToolTip(self.lang['Editor/EditPane/Italic'])
-        block.btnUnderline.setToolTip(self.lang['Editor/EditPane/Underline'])
-        block.btnStrikethrough.setToolTip(self.lang['Editor/EditPane/Strikethrough'])
-        block.btnSub.setToolTip(self.lang['Editor/EditPane/Sub'])
-        block.btnSup.setToolTip(self.lang['Editor/EditPane/Sup'])
-        block.btnTextColor.setToolTip(self.lang['Editor/EditPane/TextColor'])
-        block.btnBackColor.setToolTip(self.lang['Editor/EditPane/BackColor'])
-        block.btnAlignLeft.setToolTip(self.lang['Editor/EditPane/AlignLeft'])
-        block.btnAlignCenter.setToolTip(self.lang['Editor/EditPane/AlignCenter'])
-        block.btnAlignRight.setToolTip(self.lang['Editor/EditPane/AlignRight'])
-        block.btnAlignJustify.setToolTip(self.lang['Editor/EditPane/AlignJustify'])
-        block.btnList.setToolTip(self.lang['Editor/EditPane/List'])
-        block.btnNumList.setToolTip(self.lang['Editor/EditPane/NumericList'])
-        block.btnLink.setToolTip(self.lang['Editor/EditPane/Link'])
-        block.btnImg.setToolTip(self.lang['Editor/EditPane/Image'])
-
-        block.btnSave.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/save'))))
-        block.btnUndo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/undo'))))
-        block.btnRedo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/redo'))))
-        block.btnCut.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/cut'))))
-        block.btnCopy.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/copy'))))
-        block.btnPaste.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/paste'))))
-        block.btnDebug.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/debug'))))
-        block.btnComment.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/comment'))))
-        block.btnPrettify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/prettify'))))
-        block.btnBold.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/bold'))))
-        block.btnItalic.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/italic'))))
-        block.btnUnderline.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/underline'))))
-        block.btnStrikethrough.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/strike_through'))))
-        block.btnSub.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sub'))))
-        block.btnSup.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sup'))))
-        block.btnTextColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/text_color'))))
-        block.btnBackColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/back_color'))))
-        block.btnAlignLeft.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_left'))))
-        block.btnAlignCenter.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_center'))))
-        block.btnAlignRight.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_right'))))
-        block.btnAlignJustify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_justify'))))
-        block.btnList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list'))))
-        block.btnNumList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list_ordered'))))
-        block.btnLink.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/link'))))
-        block.btnImg.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/image'))))
 
     def save_file(self, evt):
         try:

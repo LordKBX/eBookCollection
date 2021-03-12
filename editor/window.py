@@ -70,11 +70,10 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.treeFileTable.setStyleSheet(env_vars['styles'][self.app_style]['fullTreeView'])
 
         # Processing Content Table
-        self.treeContentTable.clear()
-        self.treeContentTable.currentItemChanged.connect(self.content_table_current_item_changed)
-        self.treeContentTable.itemDoubleClicked.connect(self.file_table_item_double_clicked)
-        self.treeContentTable.setIndentation(0)
+        # self.treeContentTable = QListWidget()
         self.treeContentTable.setCursor(QtCore.Qt.PointingHandCursor)
+        self.treeContentTable.currentItemChanged.connect(self.content_table_current_item_changed)
+        self.treeContentTable.itemDoubleClicked.connect(self.content_table_item_double_clicked)
 
         # Toolbar buttons
         self.button_save.clicked.connect(self.save_ebook)
@@ -173,14 +172,32 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.tabWidget.setStyleSheet(get_style_var(self.app_style, 'QTabWidgetHorizontal'))
         self.tabWidget.setBackgroundRole(QtGui.QPalette.ColorRole(QtGui.QPalette.Light))
 
-    def content_table_current_item_changed(self, current: QTreeWidgetItem, previous: QTreeWidgetItem):
-        data = current.data(0, 99)
-        print(data)
+    def content_table_current_item_changed(self, current: QListWidgetItem):
+        if current is None:
+            return
+        try:
+            data = current.data(99)
+            print(data)
+        except Exception:
+            traceback.print_exc()
 
     def file_table_item_double_clicked(self, current: QTreeWidgetItem, previous: QTreeWidgetItem):
         try:
             data = current.data(0, 99)
             text = current.data(0, 98)
+            if data != ':dir:':
+                icon = self.file_icon(data)
+                self.tabWidget.create_pane(text, icon, data, self, self.tmpcss)
+                self.voidLabel.setVisible(False)
+                self.tabWidget.setVisible(True)
+        except Exception:
+            traceback.print_exc()
+
+    def content_table_item_double_clicked(self, current: QListWidgetItem):
+        try:
+            print('current = ', current)
+            data = current.data(99)
+            text = current.data(98)
             print(text)
             if data != ':dir:':
                 icon = self.file_icon(data)
@@ -348,7 +365,7 @@ class EditorWindow(QtWidgets.QMainWindow):
                 chapters = []
                 for obj in ret:
                     chapters.append(obj['url'][1:])
-                self.save_metada(chapters)
+                opf = self.save_metada(chapters)
 
                 if self.toc_type == 'NCX':
                     li = common.files.list_directory(self.tmpDir + os.sep + 'current', "ncx")
@@ -384,101 +401,120 @@ class EditorWindow(QtWidgets.QMainWindow):
                         file = open(li[0], "wt", encoding="utf8")
                         file.write(mydoc.toprettyxml().replace("\r", "").replace("\n", "").replace("  ", "").replace(">\t", ">\n\t"))
                         file.close()
-                self.load_content_table()
+
+                self.load_content_table(opf)
         except Exception:
             traceback.print_exc()
 
-    def load_content_table(self):
-        self.treeContentTable.clear()
-        directory = self.tmpDir + os.sep + 'current' + os.sep
-        li = common.files.list_directory(directory, "opf")
-        file_name = li[0][li[0].rindex(os.sep)+1:]
-        data = ''
-        with open(li[0]) as myfile:
-            data = myfile.read()
-
-        self.toc_type, chapters = parse_content_table(
-            data,
-            li[0].replace(directory, '').replace(file_name, '').replace(os.sep, '/'),
-            directory
-        )
-        for chapter in chapters:
-            try:
+    def load_content_table(self, data: str = None):
+        try:
+            print('---------------------------------------------------------')
+            self.treeContentTable.clear()
+            file_name = ''
+            file_path = ''
+            directory = self.tmpDir + os.sep + 'current' + os.sep
+            if data is None:
+                li = common.files.list_directory(directory, "opf")
+                file_name = li[0][li[0].rindex(os.sep)+1:]
+                file_path = li[0]
+                with open(li[0]) as myfile:
+                    data = myfile.read()
+            self.toc_type, chapters = parse_content_table(
+                data,
+                file_path.replace(directory, '').replace(file_name, '').replace(os.sep, '/'),
+                directory
+            )
+            for chapter in chapters:
                 try:
-                    last_slash = chapter['src'].rindex('/')
-                except ValueError:
-                    last_slash = - 1
-                item = QtWidgets.QTreeWidgetItem(self.treeContentTable)
-                item.setText(0, chapter['name'])
-                item.setData(0, 98, chapter['src'][last_slash+1:])
-                item.setData(0, 99, directory + chapter['src'].replace('/', os.sep))
-                common.qt.setQTreeItemIcon(item, get_style_var(self.app_style, 'icons/page'))
-                self.treeContentTable.insertTopLevelItem(0, item)
-            except Exception:
-                traceback.print_exc()
+                    try:
+                        last_slash = chapter['src'].rindex('/')
+                    except ValueError:
+                        last_slash = - 1
+                    item = QtWidgets.QListWidgetItem(self.treeContentTable)
+                    item.setText(chapter['name'])
+                    item.setData(98, chapter['src'][last_slash+1:])
+                    item.setData(99, directory + chapter['src'].replace('/', os.sep))
+                    icon = QtGui.QIcon()
+                    image = QtGui.QPixmap()
+                    image.load(get_style_var(self.app_style, 'icons/page'))
+                    icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                    item.setIcon(icon)
+
+                    self.treeContentTable.addItem(item)
+                except Exception:
+                    traceback.print_exc()
+        except IOError:
+            print("File not open")
+        except Exception:
+            traceback.print_exc()
 
     def save_metada(self, chapters: list = None):
-        li = common.files.list_directory(self.tmpDir + os.sep + 'current', "opf")
-        if len(li) > 0:
-            file = open(li[0], "r", encoding="utf8")
-            content = file.read()
-            file.close()
-            print(content)
-            mydoc = minidom.parseString(content)
+        try:
+            li = common.files.list_directory(self.tmpDir + os.sep + 'current', "opf")
+            if len(li) > 0:
+                content = ''
+                with open(li[0], "r", encoding="utf8") as file:
+                    content = file.read()
+                # print(content)
+                mydoc = minidom.parseString(content)
 
-            manifest = mydoc.getElementsByTagName('manifest')[0]
-            items = mydoc.getElementsByTagName('item')
-            for i in range(0, len(items)):
-                manifest.removeChild(items[i])
+                manifest = mydoc.getElementsByTagName('manifest')[0]
+                items = mydoc.getElementsByTagName('item')
+                for i in range(0, len(items)):
+                    manifest.removeChild(items[i])
 
-            spine = mydoc.getElementsByTagName('spine')[0]
-            toc = None
-            try:
-                toc = spine.attributes['toc'].value
-            except Exception:
-                ""
-            refs_list = mydoc.getElementsByTagName('item')
-            for i in range(0, len(refs_list)):
-                spine.removeChild(refs_list[i])
+                spine = mydoc.getElementsByTagName('spine')[0]
+                toc = None
+                try:
+                    toc = spine.attributes['toc'].value
+                except Exception:
+                    ""
+                refs_list = mydoc.getElementsByTagName('item')
+                for i in range(0, len(refs_list)):
+                    spine.removeChild(refs_list[i])
 
-            files = common.files.list_directory(self.tmpDir + os.sep + 'current')
-            idno = 1
-            list_refs = {}
-            for file in files:
-                path = file.replace(self.tmpDir + os.sep + 'current' + os.sep, '')
-                tp = path.split('.')
-                ext = None
-                if len(tp) > 1 and "META-INF" not in path:
-                    ext = tp[len(tp) - 1].lower()
-                    mtype = 'text/plain'
-                    try:
-                        mtype = mediatypes[ext]
-                    except Exception:
-                        ""
-                    item = mydoc.createElement('item')
-                    item.setAttribute('id', 'id{}'.format(idno))
-                    item.setAttribute('href', path)
-                    item.setAttribute('media-type', mtype)
-                    manifest.appendChild(item)
+                files = common.files.list_directory(self.tmpDir + os.sep + 'current')
+                idno = 1
+                list_refs = {}
+                for file in files:
+                    path = file.replace(self.tmpDir + os.sep + 'current' + os.sep, '')
+                    tp = path.split('.')
+                    ext = None
+                    if len(tp) > 1 and "META-INF" not in path:
+                        ext = tp[len(tp) - 1].lower()
+                        mtype = 'text/plain'
+                        try:
+                            mtype = mediatypes[ext]
+                        except Exception:
+                            ""
+                        item = mydoc.createElement('item')
+                        item.setAttribute('id', 'id{}'.format(idno))
+                        item.setAttribute('href', path)
+                        item.setAttribute('media-type', mtype)
+                        manifest.appendChild(item)
 
-                    if ext in ['ncx']:
-                        spine.attributes['toc'].value = 'id{}'.format(idno)
-                    if ext in ['xhtml', 'html']:
-                        itemref = mydoc.createElement('itemref')
-                        itemref.setAttribute('idref', 'id{}'.format(idno))
-                        if chapters is None:
-                            spine.appendChild(itemref)
-                        else:
-                            list_refs[path] = itemref
+                        if ext in ['ncx']:
+                            spine.attributes['toc'].value = 'id{}'.format(idno)
+                        if ext in ['xhtml', 'html']:
+                            itemref = mydoc.createElement('itemref')
+                            itemref.setAttribute('idref', 'id{}'.format(idno))
+                            if chapters is None:
+                                spine.appendChild(itemref)
+                            else:
+                                list_refs[path] = itemref
 
-                    idno += 1
-            if chapters is not None:
-                print(list_refs)
-                for chapter in chapters:
-                    if chapter in list_refs:
-                        spine.appendChild(list_refs[chapter])
+                        idno += 1
+                if chapters is not None:
+                    # print(list_refs)
+                    for chapter in chapters:
+                        if chapter in list_refs:
+                            spine.appendChild(list_refs[chapter])
 
-            mydoc.toprettyxml()
-            file = open(li[0], "wt", encoding="utf8")
-            file.write(mydoc.toprettyxml().replace("\r", "").replace("\n", "").replace("  ", "").replace(">\t", ">\n\t"))
-            file.close()
+                mydoc.toprettyxml()
+                ret = mydoc.toprettyxml().replace("\r", "").replace("\n", "").replace("  ", "").replace(">\t", ">\n\t")
+                with open(li[0], "wt", encoding="utf8") as file:
+                    file.write(ret)
+                return ret
+        except Exception:
+            traceback.print_exc()
+            return None
