@@ -175,10 +175,10 @@ class BDD:
                                     "WHERE guid = '"+guid+"'")
                 ret = self.cursor.fetchall()
             elif search is not None:
-                if re.search("^authors:", search) or re.search("^serie:", search):
+                if re.search("^authors:", search) or re.search("^series:", search):
                     tab = search.split(':')
                     self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) "
-                                        "WHERE " + tab[0] + " = '" + tab[1] + "'")
+                                        "WHERE " + tab[0] + " = ?", [tab[1]])
                     ret = self.cursor.fetchall()
                 elif re.search("^file:", search):
                     file = search.replace('file:', '')

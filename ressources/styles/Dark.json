@@ -235,14 +235,15 @@
 	"EditorQsciXMLDefaultTagColor": "#ffffff",
 
 	"EditorColorPicker": [
-		"QDialog, QWidget{ background-color:#4B4B4B; }",
-		"QScrollArea{ background-color:#4B4B4B; }",
+		"QDialog{ background-color:#4B4B4B; }",
 		"QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
 		"QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
-		"QPushButton, QToolButton { background-color:#333333; color:#777777; font-size:5px; min-height:16px; height:16px; width:16px; }",
-		"QPushButton { font-size:15px; min-height:35px; height:35px; width:100%;}",
-		"QPushButton:hover, QToolButton:hover { background-color:#555555; color:#777777; border:#000000 1px solid; }",
-		"QPushButton:pressed, QToolButton:pressed, QPushButton:checked, QToolButton:checked { background-color:#999999; color:#000000; border:#000000 1px solid; }"
+		"QGroupBox::title{ color:#999999; padding:2px; }"
+	],
+
+	"EditorColorPickerColorBtn": [
+		"*{ background-color:%1; color:%2; border-width:1px; }",
+		"*:hover, *:pressed{ border-color:#ffffff; border-style:inset;  }"
 	],
 
 	"EditorColorPickerFullAltButton": [

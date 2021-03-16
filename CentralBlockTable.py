@@ -268,6 +268,7 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                     self.BDD.update_book(guid_book, 'link', new_path, book['files'][index]['guid'])
                     index += 1
 
+            self.sorting_block_tree_load_data()
             self.set_info_panel(book)
 
             # Cleanup all empty folder in data folder

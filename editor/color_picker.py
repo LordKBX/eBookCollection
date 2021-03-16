@@ -114,7 +114,7 @@ class RgbPicker(QtWidgets.QLabel):
 
 class ColorPicker(QtWidgets.QDialog):
     def __init__(self, parent: any = None):
-        super(ColorPicker, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+        super(ColorPicker, self).__init__(None, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'color_picker.ui'.replace('/', os.sep), self)
         self.lang = lang.Lang()
         self.BDD = parent.BDD
@@ -126,10 +126,10 @@ class ColorPicker(QtWidgets.QDialog):
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(self.lang['Editor/FilesWindow/btnOk'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(self.lang['Editor/FilesWindow/btnCancel'])
         cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][self.style]['EditorColorPickerFullAltButton'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setCursor(cursor)
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][self.style]['EditorColorPickerFullAltButton'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setCursor(cursor)
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][self.style]['EditorColorPickerFullAltButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][self.style]['EditorColorPickerFullAltButton'])
 
         self.paletteLabel.setText(self.lang['Editor/ColorPicker/Palette'])
         self.chromaGraphLabel.setText(self.lang['Editor/ColorPicker/ChromaGraph'])
@@ -159,14 +159,28 @@ class ColorPicker(QtWidgets.QDialog):
                 "#C0C0C0", "#606060", "#7F3F3F", "#7F593F", "#7F743F", "#6D7F3F", "#527F3F", "#3F7F47",
                 "#3F7F62", "#3F7F7F", "#3F647F", "#3F497F", "#503F7F", "#6B3F7F", "#7F3F76", "#7F3F5B"
             ]
+
             for i in range(0, len(paletteColors)):
                 name = 'pal'
-                if i < 9:
-                    name += '0'
+                if i < 9: name += '0'
                 name += '{}'.format(i+1)
-                getattr(self, name).setStyleSheet("QToolButton{ background-color:%s; }" % paletteColors[i])
-                getattr(self, name).setToolTip("%s" % paletteColors[i])
-                getattr(self, name).clicked.connect(self.__palette_set_color)
+                button = QtWidgets.QPushButton()
+                button.setObjectName(name)
+                button.setFixedWidth(16)
+                button.setFixedHeight(16)
+                button.setCursor(cursor)
+                button.setText("█")
+                button.setStyleSheet(
+                    get_style_var(self.style, 'EditorColorPickerColorBtn')
+                        .replace('%1', paletteColors[i])
+                        .replace('%2', paletteColors[i])
+                        .replace('%3', self.__invert_color(QtGui.QColor(paletteColors[i])).name())
+                )
+                button.setToolTip("%s" % paletteColors[i])
+                button.clicked.connect(self.__palette_set_color)
+                row = int(float(i / 16))
+                print(i, row)
+                self.gridLayout.addWidget(button, row, i - (row * 16))
             self.__set_color(QtGui.QColor(paletteColors[0]))
 
             self.RGB_R_SLIDER.valueChanged.connect(lambda: self.__update_color('R', 'SLIDER'))
@@ -178,6 +192,20 @@ class ColorPicker(QtWidgets.QDialog):
 
         except Exception:
             traceback.print_exc()
+
+    def __invert_color(self, ColourToInvert: QtGui.QColor) -> QColor:
+        RGBMAX = 255
+        R = RGBMAX - ColourToInvert.red()
+        G = RGBMAX - ColourToInvert.green()
+        B = RGBMAX - ColourToInvert.blue()
+
+        if ColourToInvert.red() + 50 > R > ColourToInvert.red() - 50:
+            R = 255
+        if ColourToInvert.green() + 50 > G > ColourToInvert.green() - 50:
+            G = 255
+        if ColourToInvert.blue() + 50 > B > ColourToInvert.blue() - 50:
+            B = 255
+        return QtGui.QColor.fromRgb(R, G, B)
         
     def __palette_set_color(self):
         try:

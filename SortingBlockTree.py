@@ -24,7 +24,7 @@ class HomeWindowSortingBlockTree:
         for serie in series:
             item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(2))
             item.setText(0, serie)
-            item.setText(1, 'serie:{}'.format(serie))
+            item.setText(1, 'series:{}'.format(serie))
 
     def sorting_block_tree_item_activated(self, item, column):
         try:
@@ -37,7 +37,7 @@ class HomeWindowSortingBlockTree:
             self.central_block_table.clearSelection()
             if filter == 'all':
                 self.load_books(self.BDD.get_books())
-            elif re.search("^authors:", filter) or re.search("^serie:", filter):
+            elif re.search("^authors:", filter) or re.search("^series:", filter):
                 self.load_books(self.BDD.get_books(None, filter))
             else:
                 return
