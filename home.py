@@ -317,15 +317,14 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.central_block_table.setStyleSheet(env_vars['styles'][self.app_style]['QTableWidget'])
         self.central_block_table.horizontalHeader().setSortIndicatorShown(True)
 
-        icon_names_list = ['book_add', 'book_new', 'book_del', 'settings']
+        icon_names_list = ['book_add', 'book_new', 'book_del', 'settings', 'search']
         icon_dir = {}
 
         for name in icon_names_list:
             icon_dir[name] = QtGui.QIcon()
             icon_dir[name].addPixmap(
                 QtGui.QPixmap(
-                    env_vars['styles'][self.app_style]['icons'][name]
-                        .replace('{APP_DIR}', self.app_directory)
+                    get_style_var(self.app_style, 'icons/'+name)
                         .replace('/', os.sep)
                 ),
                 QtGui.QIcon.Normal, QtGui.QIcon.Off
@@ -335,4 +334,5 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.header_block_btn_create_book.setIcon(icon_dir['book_new'])
         self.header_block_btn_del_book.setIcon(icon_dir['book_del'])
         self.header_block_btn_settings.setIcon(icon_dir['settings'])
+        self.sorting_block_search_button.setIcon(icon_dir['search'])
 

@@ -396,7 +396,10 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                 traceback.print_exc()
 
             line += 1
-        self.set_info_panel(None)
+        if line > 0:
+            self.set_info_panel(books[0])
+        else:
+            self.set_info_panel(None)
         self.central_block_table_sort_reset()
         self.central_block_table.setCurrentCell(0, 0)
 

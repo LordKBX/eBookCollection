@@ -36,6 +36,7 @@
 		"prettify": "{APP_DIR}/ressources/icons/tmp/beautify.png",
 		"redo": "{APP_DIR}/ressources/icons/tmp/edit-redo.png",
 		"save": "{APP_DIR}/ressources/icons/white/save.png",
+		"search": "{APP_DIR}/ressources/icons/tmp/search.png",
 		"settings": "{APP_DIR}/ressources/icons/white/settings.png",
 		"sort_down": "{APP_DIR}/ressources/icons/white/sort_down.png",
 		"sort_up": "{APP_DIR}/ressources/icons/white/sort_up.png",
