@@ -253,7 +253,7 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                 index = 0
                 while index < len(book['files']):
                     old_path = book['files'][index]['link']
-                    new_path = 'data'
+                    new_path = self.BDD.get_param('library/directory').replace('{APP_DIR}', app_directory)
                     if book['authors'] is not None:
                         if book['authors'].strip() != '':
                             new_path += '/' + book['authors']
