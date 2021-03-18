@@ -15,10 +15,10 @@ This application is designed for managing eBooks
 |***docx***|X|||
 
 ## Features
-- add eBook in database
-- open eBook
-- modify eBook
-- modify eBook metadata(support for title, series and authors)
+- eBook import in database
+- eBook reader, if file not supported open file with default application
+- eBook editor
+- edit eBook metadata(support for title, series and authors)
 - modify eBook storage directory if metadata updated
 - Settings window
     - Global
@@ -31,6 +31,7 @@ This application is designed for managing eBooks
     - About tab
 
 ## Planed Features
+- Library sub window metadata edition
 - File conversion
 - Settings window
     - Global
@@ -41,7 +42,7 @@ This application is designed for managing eBooks
         - import Conversion module
         - modify parameters of Conversion modules
 
-- synchronize eBook library with mobile terminal (in a far future)
+- Synchronize eBook library with mobile terminal (in a far future)
     - incompatible terminal software would only have the eBook file copied
     - compatible terminal software would have
         - full metadata information's

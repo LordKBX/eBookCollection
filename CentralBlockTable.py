@@ -332,11 +332,11 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         item.setToolTip(value)
         return item
 
-    def load_books(self, books: list):
+    def load_books(self, books: list) -> None:
         """
         load book list into the Central Block Table Widget
 
-        :param books: list(dir)
+        :param books: list(dict)
         :return: void
         """
         self.central_block_table_cases_uid_list.clear()

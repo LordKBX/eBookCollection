@@ -3,8 +3,21 @@ import re
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
+class LibrarySortingFilter:
+    def __init__(self, filter_type: str = '*', filter_data: str = None):
+        self.type = filter_type
+        self.data = filter_data
+
+    def __str__(self):
+        return self.type+':{}'.format(self.data)
+
+    def __repr__(self):
+        return self.__str__()
+
+
 class HomeWindowSortingBlockTree:
     sorting_block_tree_actual_filter = 'all'
+    sorting_block_tree_actual_filters = []
 
     def sorting_block_tree_init(self):
         self.sorting_block_tree.itemClicked.connect(self.sorting_block_tree_item_activated)
@@ -35,35 +48,108 @@ class HomeWindowSortingBlockTree:
         except Exception:
             traceback.print_exc()
 
-    def sorting_block_tree_set_filter(self, filter):
+    def sorting_block_tree_set_filter(self, filter: str = None) -> None:
+        if filter is None or filter.strip() == '':
+            return
+        filter_tab = [filter]
+        if filter == 'all' or filter == '*':
+            self.sorting_block_tree_actual_filters.clear()
+            self.sorting_block_tree_actual_filters.append(LibrarySortingFilter('*', None))
+        else:
+            self.sorting_block_tree_del_filter('*', False)
+            filter_tab = filter.split(':')
+            found = False
+            for index in range(0, len(self.sorting_block_tree_actual_filters)):
+                if self.sorting_block_tree_actual_filters[index].type == filter_tab[0]:
+                    self.sorting_block_tree_actual_filters[index].data = filter_tab[1]
+                    found = True
+            if found is False:
+                self.sorting_block_tree_actual_filters.append(LibrarySortingFilter(filter_tab[0], filter_tab[1]))
+        self.sorting_block_tree_parse_filters()
+
+    def sorting_block_tree_del_filter(self, filter: str = None, filter_print: bool = True) -> bool:
+        if filter is None or filter.strip() == '':
+            return False
+        ender = -1
+        for index in range(0, len(self.sorting_block_tree_actual_filters)):
+            if self.sorting_block_tree_actual_filters[index].type == filter:
+                ender = index
+                break
+        if ender >= 0:
+            self.sorting_block_tree_actual_filters.pop(ender)
+        if filter_print is True:
+            self.sorting_block_tree_parse_filters()
+        return True
+
+    def sorting_block_tree_del_filter_button(self) -> None:
+        filter = self.sender().property('filter')
+        self.sorting_block_tree_del_filter(filter)
+
+    def sorting_block_tree_parse_filters(self) -> None:
         try:
             self.central_block_table.clearSelection()
-            if filter == 'all' or filter == '*':
-                filter = '*'
-                self.load_books(self.BDD.get_books())
-            elif re.search("^authors:", filter) or re.search("^series:", filter):
-                self.load_books(self.BDD.get_books(None, filter))
-            elif re.search("^search:", filter):
-                self.load_books(self.BDD.get_books(None, filter))
+            all = False
+            if len(self.sorting_block_tree_actual_filters) < 1:
+                all = True
             else:
-                return
-            self.sorting_block_tree_actual_filter = filter
-            # self.sorting_block_search_value.setText(filter)
-
-            alayout = QtWidgets.QHBoxLayout()
-            alabel = QtWidgets.QLabel()
-            alabel.setText(filter)
-            alabel.setMaximumHeight(20)
-            alayout.addWidget(alabel)
-            if filter != '*':
-                abutton = QtWidgets.QPushButton()
-                abutton.setText("X")
-                abutton.setMinimumSize(20, 20)
-                abutton.setMaximumSize(20, 20)
-                abutton.clicked.connect(lambda: self.sorting_block_tree_set_filter('all'))
-                alayout.addWidget(abutton)
+                for filter in self.sorting_block_tree_actual_filters:
+                    if filter.type == '*':
+                        all = True
+                        break
             self.clearLayout(self.sorting_block_search_zone)
-            self.sorting_block_search_zone.addLayout(alayout)
+            if all is True:
+                self.load_books(self.BDD.get_books())
+
+                alayout = QtWidgets.QHBoxLayout()
+                alabel = QtWidgets.QLabel()
+                alabel.setText('*')
+                alabel.setMaximumHeight(20)
+                alayout.addWidget(alabel)
+                self.sorting_block_search_zone.addLayout(alayout)
+            else:
+                for filter in self.sorting_block_tree_actual_filters:
+                    alayout = QtWidgets.QHBoxLayout()
+                    alabel = QtWidgets.QLabel()
+                    alabel.setText(filter.type + ':' + filter.data)
+                    alabel.setMaximumHeight(20)
+                    alayout.addWidget(alabel)
+
+                    abutton = QtWidgets.QPushButton()
+                    abutton.setText("X")
+                    abutton.setProperty('filter', filter.type)
+                    abutton.setMinimumSize(20, 20)
+                    abutton.setMaximumSize(20, 20)
+                    abutton.clicked.connect(self.sorting_block_tree_del_filter_button)
+                    alayout.addWidget(abutton)
+                    self.sorting_block_search_zone.addLayout(alayout)
+                if len(self.sorting_block_tree_actual_filters) < 2:
+                    if filter.type == '*':
+                        self.load_books(self.BDD.get_books())
+                    elif filter.type in ['authors', 'series', 'search']:
+                        self.load_books(self.BDD.get_books(None, filter.type + ':' + filter.data))
+                    else:
+                        return
+                else:
+                    books = self.BDD.get_books()
+                    end_books = []
+                    for book in books:
+                        ok = True
+                        for filter in self.sorting_block_tree_actual_filters:
+                            if filter.type == 'authors':
+                                if book['authors'] != filter.data: ok = False
+                            if filter.type == 'series':
+                                if book['series'] != filter.data: ok = False
+                            if filter.type == 'search':
+                                fd = filter.data.lower()
+                                i = book['title'].lower()
+                                s = book['series'].lower()
+                                a = book['authors'].lower()
+                                t = book['tags'].lower()
+                                if fd not in i and fd not in s and fd not in a and fd not in t:
+                                    ok = False
+                        if ok is True:
+                            end_books.append(book)
+                    self.load_books(end_books)
         except Exception:
             traceback.print_exc()
 

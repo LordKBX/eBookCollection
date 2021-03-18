@@ -187,8 +187,8 @@ class BDD:
                 elif re.search("^search:", search):
                     item = tab[1].lower()
                     self.cursor.execute(
-                        "SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE books.title LIKE ? OR books.series LIKE ? OR books.authors LIKE ?",
-                        ['%'+item+'%', '%'+item+'%', '%'+item+'%']
+                        "SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE books.title LIKE ? OR books.series LIKE ? OR books.authors LIKE ? OR books.tags LIKE ?",
+                        ['%'+item+'%', '%'+item+'%', '%'+item+'%', '%'+item+'%']
                     )
                     ret = self.cursor.fetchall()
         if ret is not None:
