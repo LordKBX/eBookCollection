@@ -23,7 +23,9 @@ This application is designed for managing eBooks
 - Settings window
     - Global
         - change language
+        - import language
         - change style
+        - import style
         - modify library folder
     - Metadata
         - change default eBook cover style
@@ -34,9 +36,6 @@ This application is designed for managing eBooks
 - Library sub window metadata edition
 - File conversion
 - Settings window
-    - Global
-        - import language pack
-        - import style pack
     - Conversion
         - default module CBZ to EPUB
         - import Conversion module
