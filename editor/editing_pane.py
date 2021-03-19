@@ -217,13 +217,13 @@ class EditorTabManager(QtWidgets.QTabWidget):
                 try:
                     text_edit = None
                     if tab.property('fileExt') in ['xhtml', 'html']:
-                        text_edit = SimplePythonEditor(QsciLexerHTML(), tab, vars.env_vars['styles'][self.style])
+                        text_edit = SimplePythonEditor(QsciLexerHTML(), tab, vars.get_style(self.style))
                     elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
-                        text_edit = SimplePythonEditor(QsciLexerXML(), tab, vars.env_vars['styles'][self.style])
+                        text_edit = SimplePythonEditor(QsciLexerXML(), tab, vars.get_style(self.style))
                     elif tab.property('fileExt') in ['css']:
                         text_edit = SimplePythonEditor(QsciLexerCSS(), tab)
                     else:
-                        text_edit = SimplePythonEditor(None, tab, vars.env_vars['styles'][self.style])
+                        text_edit = SimplePythonEditor(None, tab, vars.get_style(self.style))
 
                     if text_edit.elexer is not None:
                         text_edit.setObjectName("textEdit")

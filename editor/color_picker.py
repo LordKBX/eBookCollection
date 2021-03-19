@@ -128,8 +128,8 @@ class ColorPicker(QtWidgets.QDialog):
         cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setCursor(cursor)
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setCursor(cursor)
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][self.style]['EditorColorPickerFullAltButton'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][self.style]['EditorColorPickerFullAltButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(get_style_var(self.style, 'EditorColorPickerFullAltButton'))
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(get_style_var(self.style, 'EditorColorPickerFullAltButton'))
 
         self.paletteLabel.setText(self.lang['Editor/ColorPicker/Palette'])
         self.chromaGraphLabel.setText(self.lang['Editor/ColorPicker/ChromaGraph'])

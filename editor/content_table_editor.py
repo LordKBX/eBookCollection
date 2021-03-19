@@ -49,7 +49,7 @@ class ContentTableWindow(QDialog):
         lng = lang.Lang()
         lng.set_lang(self.BDD.get_param('lang'))
         self.lang = lng
-        self.setStyleSheet(env_vars['styles'][self.style]['QDialog'])
+        self.setStyleSheet(get_style_var(self.style,'QDialog'))
 
         self.setWindowTitle(lng['Editor']['ContentTableWindow']['WindowTitle'])
         self.list_label.setText(lng['Editor']['ContentTableWindow']['ListLabel'])
@@ -62,8 +62,8 @@ class ContentTableWindow(QDialog):
         self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor']['ContentTableWindow']['btnOk'])
         self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor']['ContentTableWindow']['btnCancel'])
         
-        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
-        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][self.style]['fullAltButton'])
+        self.button_box.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(get_style_var(self.style, 'fullAltButton'))
+        self.button_box.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(get_style_var(self.style, 'fullAltButton'))
 
         # self.list_content = QtWidgets.QListWidget()
 

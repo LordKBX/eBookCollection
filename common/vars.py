@@ -1,5 +1,6 @@
 import os, sys, re, traceback
 from PyQt5 import QtCore, QtGui, QtWidgets
+import json.decoder
 
 app_editor = "LordKBX Workshop"
 app_name = "eBookCollection"
@@ -13,6 +14,7 @@ app_icons = {
     'x48': 'ressources' + os.sep + 'icons' + os.sep + 'app_icon48x48.png',
     'x256': 'ressources' + os.sep + 'icons' + os.sep + 'app_icon256x256.png'
 }
+__default_style = 'Dark'
 
 
 def load_path_archiver():
@@ -127,36 +129,69 @@ def load_patterns():
 
 def load_styles():
     global app_directory, env_vars
-    directory = app_directory + os.sep + "ressources" + os.sep + "styles"
-    ext = "json"
-    env_vars['styles'].clear()
-    for root, directories, files in os.walk(directory, topdown=False):
-        for name in files:
-            if re.search("\\.({})$".format(ext), name) is None:
-                continue
-            else:
-                nm = name.replace("." + ext, "")
-                fp = open(directory + os.sep + name, "r", encoding="utf8")
-                content = fp.read()
-                fp.close()
-                env_vars['styles'][nm] = eval(
-                    content.replace('{APP_DIR}', app_directory.replace(os.sep, '/'))
-                        .replace('[', '"\\n".join([').replace(']', '])')
-                )
+    try:
+        directory = app_directory + os.sep + "ressources" + os.sep + "styles"
+        directory2 = app_user_directory + os.sep + "imports" + os.sep + "styles"
+        ext = "json"
+        # env_vars['styles'].clear()
+        for folder in [directory, directory2]:
+            for root, directories, files in os.walk(folder, topdown=False):
+                for name in files:
+                    if re.search("\\.({})$".format(ext), name) is None:
+                        continue
+                    else:
+                        try:
+                            nm = name.replace("." + ext, "")
+                            if nm in env_vars['styles']:
+                                continue
+                            fp = open(folder + os.sep + name, "r", encoding="utf8")
+                            content = fp.read()
+                            fp.close()
+
+                            # test JSON validity
+                            decoder = json.decoder.JSONDecoder()
+                            tab = decoder.decode(content)
+
+                            env_vars['styles'][nm] = eval(
+                                content.replace('{APP_DIR}', app_directory.replace(os.sep, '/'))
+                                    .replace('[', '"\\n".join([').replace(']', '])')
+                            )
+                        except Exception:
+                            traceback.print_exc()
+    except Exception:
+        traceback.print_exc()
 
 
-load_patterns()
-load_styles()
+def get_styles() -> list:
+    global env_vars
+    ret = []
+    for style in env_vars['styles']:
+        ret.append(style)
+    return ret
 
 
-def get_style_var(style: str, path: str):
+def get_style(style: str):
+    global env_vars, __default_style
     if style is None: return None
+    if style.strip() == '': return None
+
+    if style not in env_vars['styles']:
+        style = __default_style
+    if style not in env_vars['styles']:
+        return None
+    return env_vars['styles'][style]
+
+
+def get_style_var(style: str = None, path: str = None):
+    global env_vars, __default_style
+    if style is None:
+        style = __default_style
     if path is None: return None
     if style.strip() == '': return None
     if path.strip() == '': return None
 
     if style not in env_vars['styles']:
-        lang = 'Dark'
+        style = __default_style
     if style not in env_vars['styles']:
         return None
     path_tab = path.split('/')
@@ -173,3 +208,7 @@ def get_style_var(style: str, path: str):
     except Exception:
         traceback.print_exc()
         return None
+
+
+load_patterns()
+load_styles()

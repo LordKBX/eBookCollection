@@ -6,10 +6,10 @@ from common.vars import *
 
 
 class QtQIconEnum(enum.Enum):
-    folder = env_vars['styles']['Dark']['icons']['folder']
-    file = env_vars['styles']['Dark']['icons']['file']
-    lock = env_vars['styles']['Dark']['icons']['lock']
-    unlock = env_vars['styles']['Dark']['icons']['unlock']
+    folder = get_style_var(path='icons/folder')
+    file = get_style_var(path='icons/file')
+    lock = get_style_var(path='icons/lock')
+    unlock = get_style_var(path='icons/unlock')
 
 
 def setQTreeItemIcon(item: QtWidgets.QTreeWidgetItem, icon_ref: str = QtQIconEnum.folder.value):

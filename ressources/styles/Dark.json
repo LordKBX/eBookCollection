@@ -89,7 +89,7 @@
 		"QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
 		"QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
 		"QPushButton, QToolButton { background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; min-height:35px; height:35px; width:100%;}",
-		"QPushButton:hover, QToolButton:hover { background-color:#555555; color:#777777; border:#ffffff 2px solid; }",
+		"QPushButton:hover, QToolButton:hover { background-color:#555555; color:#ffffff; border:#ffffff 2px solid; }",
 		"QPushButton:pressed, QToolButton:pressed, QPushButton:checked, QToolButton:checked { background-color:#999999; color:#000000; border:#ffffff 2px solid; }",
 		"#tab_metadata_import_filename_template_label{ margin:0px; }",
 		"#tab_metadata_import_filename_template_combo_box{ padding:5px; margin-bottom:5px; }",
@@ -168,7 +168,7 @@
 	],
 
 	"fullAltButton": [
-		"* { background-color: #666666; color: #ffffff; padding: 10px; }",
+		"* { background-color: #666666; color: #ffffff; font-size:15px; min-height:35px; height:35px; }",
 		"*:hover { background-color: rgb(120, 120, 120); }",
 		"*:pressed { background-color: rgb(120, 120, 120); }",
 		"*:checked { background-color: rgb(150, 150, 150); }"

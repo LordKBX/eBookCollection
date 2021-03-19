@@ -235,11 +235,13 @@
 
 		"LanguageGroupTitle": "Language",
 		"LanguageAutomatic": "< System defined >",
+		"LanguageImportTitle": "Import translation file",
 		"Import": "Import",
 
 		"StyleGroupTitle": "Style",
 		"StyleLight": "Light",
 		"StyleDark": "Dark",
+		"StyleImportTitle": "Import style file",
 
 		"LibraryGroupTitle": "Library",
 		"LibraryFolder": "Library storage folder",

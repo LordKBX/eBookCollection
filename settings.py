@@ -6,6 +6,7 @@ import PyQt5.QtCore
 import PyQt5.QtGui
 import PyQt5.uic
 from PyQt5.uic import *
+import zipfile
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import common.common
@@ -39,6 +40,9 @@ class SettingsWindow(QDialog):
         #GLOBAL tab
         self.tab_global_lang_combo_box.currentIndexChanged.connect(self.change_language)
         self.tab_global_style_combo_box.currentIndexChanged.connect(self.change_style)
+
+        self.tab_global_lang_btn.clicked.connect(self.import_lang)
+        self.tab_global_style_import_btn.clicked.connect(self.import_style)
 
         self.tab_global_library_folder_btn.clicked.connect(self.change_library_folder)
         self.tab_global_library_folder_line_edit.setText(self.BDD.get_param('library/directory'))
@@ -155,6 +159,76 @@ class SettingsWindow(QDialog):
             self.BDD.set_param('style', self.app_style)
             return None
 
+    def import_lang(self):
+        dest_dir = app_user_directory + os.sep + "imports" + os.sep + "langs"
+        try:
+            options = QFileDialog.Options()
+            # options |= QFileDialog.DontUseNativeDialog
+            list_files, _ = QFileDialog.getOpenFileNames(
+                self, self.lng['Settings/LanguageImportTitle'], app_directory,
+                "eBook Collection language file (*.ebclang)",
+                options=options
+            )
+            print(list_files)
+            for file in list_files:
+                myzip = zipfile.ZipFile(file, 'r')
+                myfile = myzip.open('mimetype')
+                mimetype = myfile.read().decode('utf8')
+                myfile.close()
+                if mimetype == 'application/ebook+collection+lang':
+                    file_list = myzip.namelist()
+                    for fi in file_list:
+                        if fi.endswith('.json') is True:
+                            myfile = myzip.open(fi)
+                            data = myfile.read().decode('utf8')
+                            myfile.close()
+                            try: os.makedirs(dest_dir)
+                            except Exception: pass
+                            fd = open(dest_dir + os.sep + fi, 'w', encoding='utf8')
+                            fd.write(data)
+                            fd.close()
+                            break
+            self.lng.refresh()
+            self.load_languages(self.lng.language)
+        except Exception:
+            traceback.print_exc()
+
+    def import_style(self):
+        dest_dir = app_user_directory + os.sep + "imports" + os.sep + "styles"
+        try:
+            options = QFileDialog.Options()
+            # options |= QFileDialog.DontUseNativeDialog
+            list_files, _ = QFileDialog.getOpenFileNames(
+                self, self.lng['Settings/StyleImportTitle'], app_directory,
+                "eBook Collection language file (*.ebcstyle)",
+                options=options
+            )
+            style = ''
+            for file in list_files:
+                myzip = zipfile.ZipFile(file, 'r')
+                myfile = myzip.open('mimetype')
+                mimetype = myfile.read().decode('utf8')
+                myfile.close()
+                if mimetype == 'application/ebook+collection+style':
+                    file_list = myzip.namelist()
+                    for fi in file_list:
+                        if fi.endswith('.json') is True:
+                            style = fi.replace('.json', '')
+                            myfile = myzip.open(fi)
+                            data = myfile.read().decode('utf8')
+                            myfile.close()
+                            try: os.makedirs(dest_dir)
+                            except Exception: pass
+                            fd = open(dest_dir + os.sep + fi, 'w', encoding='utf8')
+                            fd.write(data)
+                            fd.close()
+                            break
+            load_styles()
+            self.tab_global_style_combo_box.addItem(style)
+            self.tab_global_style_combo_box.setItemData(self.tab_global_style_combo_box.count() - 1, style, 99)
+        except Exception:
+            traceback.print_exc()
+
     def change_library_folder(self):
         print("test")
         options = QFileDialog.Options()
@@ -187,19 +261,26 @@ class SettingsWindow(QDialog):
         self.tab_global_lang_combo_box.setCurrentIndex(sel)
 
     def load_styles(self, selected_style: str = None):
-        self.tab_global_style_combo_box.clear()
-        i = 0
-        sel = 0
-        for style in env_vars['styles']:
-            st = self.lng['Settings/Style'+style]
-            if st is None:
+        try:
+            load_styles()
+            if selected_style is None:
+                selected_style = self.BDD.get_param('style')
+            while self.tab_global_style_combo_box.count() > 0:
+                self.tab_global_style_combo_box.removeItem(0)
+            i = 0
+            sel = 0
+            for style in get_styles():
                 st = style
-            self.tab_global_style_combo_box.addItem(st)
-            self.tab_global_style_combo_box.setItemData(self.tab_global_style_combo_box.count() - 1, style, 99)
-            if selected_style == style:
-                sel = i
-            i += 1
-        self.tab_global_style_combo_box.setCurrentIndex(sel)
+                if self.lng['Settings/Style'+style] is not None:
+                    st = self.lng['Settings/Style'+style]
+                self.tab_global_style_combo_box.addItem(st)
+                self.tab_global_style_combo_box.setItemData(self.tab_global_style_combo_box.count() - 1, style, 99)
+                if selected_style == style:
+                    sel = i
+                i += 1
+            self.tab_global_style_combo_box.setCurrentIndex(sel)
+        except Exception:
+            traceback.print_exc()
 
     def change_language(self):
         index = self.tab_global_lang_combo_box.currentIndex()
@@ -237,9 +318,9 @@ class SettingsWindow(QDialog):
             self.tab_global_style_import_btn.setText(self.lng['Settings/Import'])
             for index in range(0, self.tab_global_style_combo_box.count()):
                 data = self.tab_global_style_combo_box.itemData(index, 99)
-                st = self.lng["Settings/Style" + data]
-                if st is None:
-                    st = data
+                st = data
+                if self.lng["Settings/Style" + data] is not None:
+                    st = self.lng["Settings/Style" + data]
                 self.tab_global_style_combo_box.setItemText(index, st)
 
             #   Library group
@@ -311,10 +392,10 @@ class SettingsWindow(QDialog):
         cursor_disabled = QtGui.QCursor(QtCore.Qt.ForbiddenCursor)
         # self.tab_global_lang_btn.setDisabled(True)
         # self.tab_global_style_import_btn.setDisabled(True)
-        self.tab_global_lang_btn.setCursor(cursor_disabled)
-        self.tab_global_style_import_btn.setCursor(cursor_disabled)
-        self.tab_global_lang_btn.setToolTip(self.lng['NotImplemented'])
-        self.tab_global_style_import_btn.setToolTip(self.lng['NotImplemented'])
+        # self.tab_global_lang_btn.setCursor(cursor_disabled)
+        # self.tab_global_style_import_btn.setCursor(cursor_disabled)
+        # self.tab_global_lang_btn.setToolTip(self.lng['NotImplemented'])
+        # self.tab_global_style_import_btn.setToolTip(self.lng['NotImplemented'])
 
     def cover_combo_changed(self):
         vals = {

@@ -309,12 +309,12 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
 
     def set_style(self):
         QDockStyle = get_style_var(self.app_style, 'QDockWidget').replace('../', './')
-        self.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'] + QDockStyle)
-        self.header_block_contents2.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
-        self.sorting_block_contents.setStyleSheet(env_vars['styles'][self.app_style]['QMainWindow'])
+        self.setStyleSheet(get_style_var(self.app_style, 'QMainWindow') + QDockStyle)
+        self.header_block_contents2.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
+        self.sorting_block_contents.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
         # self.central_block_table = QTableWidget()
-        self.central_block_table.horizontalHeader().setStyleSheet(env_vars['styles'][self.app_style]['QTableWidget'])
-        self.central_block_table.setStyleSheet(env_vars['styles'][self.app_style]['QTableWidget'])
+        self.central_block_table.horizontalHeader().setStyleSheet(get_style_var(self.app_style, 'QTableWidget'))
+        self.central_block_table.setStyleSheet(get_style_var(self.app_style, 'QTableWidget'))
         self.central_block_table.horizontalHeader().setSortIndicatorShown(True)
 
         icon_names_list = ['book_add', 'book_new', 'book_del', 'settings', 'search']

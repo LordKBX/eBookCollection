@@ -244,11 +244,13 @@
 
 		"LanguageGroupTitle": "Langue",
 		"LanguageAutomatic": "< Langue système >",
+		"LanguageImportTitle": "Importer fichier de traduction",
 		"Import": "Importer",
 
 		"StyleGroupTitle": "Apparence",
 		"StyleLight": "Clair",
 		"StyleDark": "Foncé",
+		"StyleImportTitle": "Importer fichier de style",
 
 		"LibraryGroupTitle": "Bibliothèque",
 		"LibraryFolder": "Dossier de stockage Bibliothèque",

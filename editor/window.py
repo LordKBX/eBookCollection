@@ -67,7 +67,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.treeFileTable.itemDoubleClicked.connect(self.file_table_item_double_clicked)
         self.treeFileTable.setIndentation(10)
         self.treeFileTable.setCursor(QtCore.Qt.PointingHandCursor)
-        self.treeFileTable.setStyleSheet(env_vars['styles'][self.app_style]['fullTreeView'])
+        self.treeFileTable.setStyleSheet(get_style_var(self.app_style, 'fullTreeView'))
 
         # Processing Content Table
         # self.treeContentTable = QListWidget()

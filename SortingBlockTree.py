@@ -19,7 +19,11 @@ class HomeWindowSortingBlockTree:
     sorting_block_tree_actual_filter = 'all'
     sorting_block_tree_actual_filters = []
 
-    def sorting_block_tree_init(self):
+    def sorting_block_tree_init(self) -> None:
+        """
+        sorting_block_tree_init
+        :return: None
+        """
         self.sorting_block_tree.itemClicked.connect(self.sorting_block_tree_item_activated)
         self.sorting_block_search_button.clicked.connect(self.sorting_block_tree_toogle_search_zone)
         self.sorting_block_search_edit.setMaximumWidth(0)
@@ -163,7 +167,7 @@ class HomeWindowSortingBlockTree:
                 else:
                     self.clearLayout(item.layout())
 
-    def sorting_block_tree_toogle_search_zone(self):
+    def sorting_block_tree_toogle_search_zone(self) -> None:
         w = self.sorting_block_search_edit.width()
         if w <= 0:
             self.sorting_block_search_edit.setMaximumWidth(999999)

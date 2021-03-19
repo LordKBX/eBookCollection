@@ -19,17 +19,17 @@ class CheckpointWindow(QDialog):
         lng = lang.Lang()
         lng.set_lang(self.BDD.get_param('lang'))
         self.setWindowTitle(lng['Editor/ChechpointWindow/WindowTitle'])
-        self.setStyleSheet(env_vars['styles'][style]['QDialog'])
+        self.setStyleSheet(get_style_var(style, 'QDialog'))
 
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setText(lng['Editor/LinkWindow/btnOk'])
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setText(lng['Editor/LinkWindow/btnCancel'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][style]['defaultButton'])
-        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][style]['defaultButton'])
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setStyleSheet(get_style_var(style, 'defaultButton'))
+        self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setStyleSheet(get_style_var(style, 'defaultButton'))
         cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok).setCursor(cursor)
         self.buttonBox.button(QtWidgets.QDialogButtonBox.Cancel).setCursor(cursor)
 
-        self.fileTree.setStyleSheet(env_vars['styles'][style]['fullTreeView'])
+        self.fileTree.setStyleSheet(get_style_var(style, 'fullTreeView'))
         self.fileTree.headerItem().setText(0, lng['Editor']['FileTableHeader'])
         self.fileTree.itemClicked.connect(self.itemClick)
         self.folder = folder

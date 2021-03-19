@@ -19,7 +19,7 @@ class EmptyBookWindow(QDialog):
         style = self.BDD.get_param('style')
         lng.set_lang(self.BDD.get_param('lang'))
 
-        self.setStyleSheet(env_vars['styles'][style]['QDialog'])
+        self.setStyleSheet(get_style_var(style, 'QDialog'))
         self.setWindowTitle(lng['Library/emptyBooks/WindowTitle'])
 
         self.number_label.setText(lng['Library/emptyBooks/Number'])
@@ -39,9 +39,9 @@ class EmptyBookWindow(QDialog):
         self.button_box.button(QDialogButtonBox.Cancel).setText(lng['Editor/FilesWindow/btnCancel'])
 
         cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
-        self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(env_vars['styles'][style]['fullAltButton'])
+        self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(get_style_var(style, 'fullAltButton'))
         self.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
-        self.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(env_vars['styles'][style]['fullAltButton'])
+        self.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(get_style_var(style, 'fullAltButton'))
         self.button_box.button(QDialogButtonBox.Cancel).setCursor(cursor)
 
     def open_exec(self, file_formats: [str] = None):
