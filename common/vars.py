@@ -1,6 +1,9 @@
 import os, sys, re, traceback
 from PyQt5 import QtCore, QtGui, QtWidgets
 import json.decoder
+import json.encoder
+from jsonschema import validate
+from common.json_shema import JSONSchemaGenerator
 
 app_editor = "LordKBX Workshop"
 app_name = "eBookCollection"
@@ -15,6 +18,9 @@ app_icons = {
     'x256': 'ressources' + os.sep + 'icons' + os.sep + 'app_icon256x256.png'
 }
 __default_style = 'Dark'
+debug = False
+if "python" in sys.argv[0].lower():
+    debug = True
 
 
 def load_path_archiver():
@@ -109,7 +115,247 @@ env_vars = {
                 'authors': '#000000'
             }
         },
-        'styles': { }
+        'styles': {
+            "Dark": {
+                "icons": {
+                    "align_center": "{APP_DIR}/ressources/icons/tmp/format-justify-center.png",
+                    "align_justify": "{APP_DIR}/ressources/icons/tmp/format-justify-fill.png",
+                    "align_left": "{APP_DIR}/ressources/icons/tmp/format-justify-left.png",
+                    "align_right": "{APP_DIR}/ressources/icons/tmp/format-justify-right.png",
+                    "back_color": "{APP_DIR}/ressources/icons/tmp/format-fill-color.png",
+                    "bold": "{APP_DIR}/ressources/icons/tmp/format-text-bold.png",
+                    "book_add": "{APP_DIR}/ressources/icons/white/book_add.png",
+                    "book_del": "{APP_DIR}/ressources/icons/white/book_del.png",
+                    "book_new": "{APP_DIR}/ressources/icons/white/book_new.png",
+                    "checkpoint_create": "{APP_DIR}/ressources/icons/tmp/bookmarks.png",
+                    "checkpoint_load": "{APP_DIR}/ressources/icons/tmp/catalog.png",
+                    "close": "{APP_DIR}/ressources/icons/white/close.png",
+                    "comment": "{APP_DIR}/ressources/icons/white/comment.png",
+                    "content_table": "{APP_DIR}/ressources/icons/white/content_table.png",
+                    "copy": "{APP_DIR}/ressources/icons/tmp/edit-copy.png",
+                    "cut": "{APP_DIR}/ressources/icons/tmp/edit-cut.png",
+                    "debug": "{APP_DIR}/ressources/icons/tmp/debug.png",
+                    "edit": "{APP_DIR}/ressources/icons/white/edit.png",
+                    "file": "{APP_DIR}/ressources/icons/white/file.png",
+                    "file_manager": "{APP_DIR}/ressources/icons/tmp/tb_folder.png",
+                    "folder": "{APP_DIR}/ressources/icons/white/folder.png",
+                    "font": "{APP_DIR}/ressources/icons/tmp/font.png",
+                    "full_screen": "{APP_DIR}/ressources/icons/white/full_screen.png",
+                    "image": "{APP_DIR}/ressources/icons/tmp/view-image.png",
+                    "info": "{APP_DIR}/ressources/icons/white/info.png",
+                    "italic": "{APP_DIR}/ressources/icons/tmp/format-text-italic.png",
+                    "link": "{APP_DIR}/ressources/icons/tmp/insert-link.png",
+                    "list": "{APP_DIR}/ressources/icons/tmp/format-list-unordered.png",
+                    "list_ordered": "{APP_DIR}/ressources/icons/tmp/format-list-ordered.png",
+                    "lock": "{APP_DIR}/ressources/icons/white/lock.png",
+                    "normal_screen": "{APP_DIR}/ressources/icons/white/normal_screen.png",
+                    "page": "{APP_DIR}/ressources/icons/tmp/view.png",
+                    "paste": "{APP_DIR}/ressources/icons/tmp/edit-paste.png",
+                    "prettify": "{APP_DIR}/ressources/icons/tmp/beautify.png",
+                    "redo": "{APP_DIR}/ressources/icons/tmp/edit-redo.png",
+                    "save": "{APP_DIR}/ressources/icons/white/save.png",
+                    "search": "{APP_DIR}/ressources/icons/tmp/search.png",
+                    "settings": "{APP_DIR}/ressources/icons/white/settings.png",
+                    "sort_down": "{APP_DIR}/ressources/icons/white/sort_down.png",
+                    "sort_up": "{APP_DIR}/ressources/icons/white/sort_up.png",
+                    "strike_through": "{APP_DIR}/ressources/icons/tmp/format-text-strikethrough.png",
+                    "style": "{APP_DIR}/ressources/icons/tmp/lookfeel.png",
+                    "sub": "{APP_DIR}/ressources/icons/tmp/format-text-subscript.png",
+                    "sup": "{APP_DIR}/ressources/icons/tmp/format-text-superscript.png",
+                    "text_color": "{APP_DIR}/ressources/icons/tmp/format-text-color.png",
+                    "underline": "{APP_DIR}/ressources/icons/tmp/format-text-underline.png",
+                    "undo": "{APP_DIR}/ressources/icons/tmp/edit-undo.png",
+                    "unlock": "{APP_DIR}/ressources/icons/white/unlock.png",
+                    "xml": "{APP_DIR}/ressources/icons/white/xml.png"
+                },
+                "QMainWindow": [
+                    "QMainWindow { background-color: rgb(63, 63, 63); color:#ffffff; }",
+                    "QMainWindow::separator { background: rgb(63, 63, 63); }",
+                    "QMainWindow::separator:hover { background: rgb(120, 120, 120); }",
+                    "QWidget{ background: rgb(63, 63, 63); color:white; }",
+                    "QPushButton, QToolButton { border:#000000 1px solid; background-color: rgb(80, 80, 80); }",
+                    "QPushButton:hover, QToolButton:hover { background-color: rgb(120, 120, 120); }",
+                    "QPushButton:pressed, QToolButton:pressed { background-color: rgb(120, 120, 120); }",
+                    "QPushButton:checked, QToolButton:checked { background-color: rgb(150, 150, 150); }",
+                    "QLineEdit { background-color: rgb(100, 100, 100); }"],
+                "QDockWidget": [
+                    "QDockWidget { ",
+                    "    background-color: rgb(63, 63, 63) !important;",
+                    "    titlebar-close-icon: url(\"../ressources/icons/white/close.png\") !important;",
+                    "    titlebar-normal-icon: url(\"../ressources/icons/white/content_table.png\") !important;",
+                    "}",
+                    "QDockWidget::close-button, QDockWidget::float-button { background-color: #333333 !important; min-height:20px; min-width:20px; height:20px; width:20px; cursor:pointer; }",
+                    "QDockWidget::close-button:hover, QDockWidget::float-button:hover { background-color: #666666 !important; }",
+                    "QDockWidget::close-button:pressed, QDockWidget::float-button:pressed { background-color: #444444 !important;  }",
+                    "QDockWidget::title { font: bold; text-align: left; background-color: #333333; padding: 0px; height:30px; }"
+                ],
+                "QMessageBox": [
+                    "QMessageBox { background-color: rgb(62, 62, 62); color: rgb(255, 255, 255); }",
+                    "QWidget{ background-color: rgb(62, 62, 62); color: rgb(255, 255, 255); }",
+                    "QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
+                    "QPushButton{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }"
+                ],
+                "QMessageBoxBtnGeneric": "QPushButton{ background-color: rgb(90, 90, 90); color: rgb(255, 255, 255); }",
+                "QMessageBoxBtnRed": "QPushButton{ background-color: rgb(234, 86, 86); color: rgb(255, 255, 255); }",
+                "QMessageBoxBtnGreen": "QPushButton{ background-color: rgb(0, 153, 15); color: rgb(255, 255, 255); }",
+                "QDialog": [
+                    "QDialog, QWidget{ background-color:#4B4B4B; }",
+                    "QScrollArea{ background-color:#4B4B4B; }",
+                    "QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
+                    "QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+                    "QPushButton, QToolButton { background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; min-height:35px; height:35px; width:100%;}",
+                    "QPushButton:hover, QToolButton:hover { background-color:#555555; color:#ffffff; border:#ffffff 2px solid; }",
+                    "QPushButton:pressed, QToolButton:pressed, QPushButton:checked, QToolButton:checked { background-color:#999999; color:#000000; border:#ffffff 2px solid; }",
+                    "#tab_metadata_import_filename_template_label{ margin:0px; }",
+                    "#tab_metadata_import_filename_template_combo_box{ padding:5px; margin-bottom:5px; }",
+                    "#tab_metadata_import_filename_separator_label{ padding-right:5px; }"
+                ],
+                "QTabWidgetHorizontal": [
+                    "QTabWidget::tab-bar { background-color:#333333; color:#AAAAAA; }",
+                    "QTabBar::tab { ",
+                    "    background-color:#999999; cursor:pointer; padding: 10px; border: 1px solid #333333;",
+                    "    border-bottom: 0px; border-top-left-radius: 10px; border-top-right-radius: 10px;",
+                    "    border-bottom: 1px solid #999999;",
+                    "    }",
+                    "QTabBar::tab:selected{ background-color:#004DD3; color:#ffffff; }",
+                    "QTabBar::tab:hover{ background-color:#196DFF; color:#ffffff; }",
+                    "QTabWidget::pane QTabBar{ padding-top:5px; }",
+                    "QTabBar::close-button {  border-image: none; image: url('{APP_DIR}/ressources/icons/white/close.png'); }",
+                    "QTabBar::close-button:hover {  border-image: none; image: url('{APP_DIR}/ressources/icons/black/close.png'); }"
+                ],
+                "QTabWidgetVertical": [
+                    "QTabWidget { background: none; }",
+                    "QTabWidget::tab-bar { background-color:#333333; color:#AAAAAA; border-right: 0; }",
+                    "QTabBar::tab { background-color:#999999; cursor:pointer; padding: 10px; border-bottom: 1px solid #ffffff; border-right: 1px solid #ffffff; }",
+                    "QTabBar::tab:selected{ background-color:#004DD3; color:#ffffff; }",
+                    "QTabBar::tab:hover{ background-color:#196DFF; color:#ffffff; }",
+                    "QTabWidget::pane QTabBar{ /* border-bottom: 1px solid #999999; */ }"
+                ],
+                "fullTreeView": [
+                    "QTreeView{ background-color:#888888; }",
+                    "QHeaderView::section { background-color:#4B4B4B; color:#ffffff; }",
+                    "QTreeView::branch:has-siblings:!adjoins-item {}",
+                    "QTreeView::branch:has-siblings:adjoins-item {}",
+                    "QTreeView::branch:!has-children:!has-siblings:adjoins-item {}",
+                    "QTreeView::branch:has-children:!has-siblings:closed, QTreeView::branch:closed:has-children:has-siblings",
+                    "    { border-image: none; image: url('{APP_DIR}/ressources/icons/white/tree_closed.png'); }",
+                    "QTreeView::branch:open:has-children:!has-siblings, QTreeView::branch:open:has-children:has-siblings",
+                    "    { border-image: none; image: url('{APP_DIR}/ressources/icons/white/tree_opened.png'); }"
+                ],
+                "partialTreeView": [
+                    "QTreeView{ background-color:  #888888; }",
+                    "::section { background-color:  #4B4B4B; }",
+                    "QTreeWidget::item { padding-left: 2px; }",
+                    "QTreeWidget::item:hover, QTreeWidget::branch:hover{ color: rgb(43, 179, 246); cursor: pointer; }",
+                    "QTreeWidget::item:selected { background-color: rgb(0, 85, 255); color: white; }"
+                ],
+                "QTableWidget": [
+                    "QHeaderView{ background-color: #333333; color: black; border-color:#000000; }",
+                    "QHeaderView::section { background-color: #333333; color: white; font-size: 12px; padding:3px; }",
+                    "QHeaderView::down-arrow { image: url('{APP_DIR}/ressources/icons/white/sort_down.png'); width: 20px; height:20px; margin-right:5px; }",
+                    "QHeaderView::up-arrow { image: url('{APP_DIR}/ressources/icons/white/sort_up.png'); width: 20px; height:20px; margin-right:5px; }",
+                    "QTableWidget::item { padding: 0px; background-color: gray; color: black; }",
+                    "QTableWidget::item:alternate { background-color: lightgray; }",
+                    "QTableWidget::item:hover { background-color: skyblue; }",
+                    "QTableWidget::item:selected { background-color: #0094FF; color: black; }"
+                ],
+                "partialTreeViewItemColorNew": "#5972FF",
+                "partialTreeViewItemColorDel": "#FF324E",
+                "partialTreeViewItemColorMod": "#EFC91C",
+                "defaultButton": [
+                    "QPushButton, QToolButton { background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; min-height:35px; height:35px; width:100%; }",
+                    "QPushButton:hover, QToolButton:hover { background-color:#555555; color:#777777; border:#ffffff 2px solid; }",
+                    "QPushButton:pressed, QToolButton:pressed, QPushButton:checked, QToolButton:checked { background-color:#999999; color:#000000; border:#ffffff 2px solid; }"
+                ],
+                "fullButton": [
+                    "QPushButton { background-color: rgb(80, 80, 80); }",
+                    "QPushButton:hover { background-color: rgb(120, 120, 120); }",
+                    "QPushButton:pressed { background-color: rgb(120, 120, 120); }",
+                    "QPushButton:checked { background-color: rgb(150, 150, 150); }"
+                ],
+                "fullAltButton": [
+                    "* { background-color: #666666; color: #ffffff; font-size:15px; min-height:35px; height:35px; }",
+                    "*:hover { background-color: rgb(120, 120, 120); }",
+                    "*:pressed { background-color: rgb(120, 120, 120); }",
+                    "*:checked { background-color: rgb(150, 150, 150); }"
+                ],
+                "invisibleButton": [
+                    "QPushButton { background: transparent; }",
+                    "QPushButton:hover { background: transparent; }",
+                    "QPushButton:pressed { background: transparent; }",
+                    "QPushButton:checked { background: transparent; }"
+                ],
+                "displayButton": [
+                    "QPushButton { border:#000000 1px solid; background-color: rgb(80, 80, 80); }",
+                    "QPushButton:hover { background-color: rgb(80, 80, 80); }",
+                    "QPushButton:pressed { background-color: rgb(80, 80, 80); }",
+                    "QPushButton:checked { background-color: rgb(80, 80, 80); }"
+                ],
+                "SettingsDialogBox": "QPushButton, QToolButton { min-height:20px; height:20px; width:100%; }",
+                "SettingsQLineEditPrecise": [
+                    "QLineEdit{ ",
+                    "border-color:rgb(99, 99, 99);",
+                    "border-width: 1px;",
+                    "border-style:solid;",
+                    "font-size:15px; padding:0px;",
+                    " }"
+                ],
+                "SettingsQLineEditGood": [
+                    "QLineEdit{ ",
+                    "border-color:rgb(0, 153, 15);",
+                    "border-width: 2px;",
+                    "border-style:solid;",
+                    " }"
+                ],
+                "SettingsQLineEditBad": [
+                    "QLineEdit{ ",
+                    "border-color:rgb(234, 86, 86);",
+                    "border-width: 2px;",
+                    "border-style:solid;",
+                    " }"
+                ],
+                "SettingsQComboBoxArrow": "QComboBox::down-arrow { image:none; width:0px; }",
+                "EditorQWebViewPreview": "body { background:#999999;color:#ffffff; }",
+                "EditorCentralLabel": "QLabel { color: rgb(255, 255, 255); font-size: 30px; padding:20px; }",
+                "EditorFileDialogAdditional": "QPushButton, QToolButton { height:70px;}",
+                "EditorEditPaneButtons": [
+                    "QPushButton, QToolButton { background: transparent; }",
+                    "QPushButton:hover, QToolButton:hover { background-color: rgb(120, 120, 120); }",
+                    "QPushButton:pressed, QToolButton:pressed { background-color: rgb(120, 120, 120); }",
+                    "QPushButton:checked, QToolButton:checked { background-color: rgb(150, 150, 150); }"
+                ],
+                "EditorQsciFont": "{APP_DIR}/ressources/fonts/Arimo/Regular.ttf",
+                "EditorQsciMarginsBackgroundColor": "#333333",
+                "EditorQsciMarginsForegroundColor": "#ffffff",
+                "EditorQsciMarkerBackgroundColor": "#ee1111",
+                "EditorQsciFoldMarginColor1": "#cccccc",
+                "EditorQsciFoldMarginColor2": "#333333",
+                "EditorQsciCaretLineBackgroundColor": "#BBBBBB",
+                "EditorQsciDefaultTextColor": "#ffffff",
+                "EditorQsciDefaultBackgroundColor": "#A6A6A6",
+                "EditorQsciXMLDefaultTextColor": "#ffffff",
+                "EditorQsciXMLDefaultTagColor": "#ffffff",
+
+                "EditorColorPicker": [
+                    "QDialog{ background-color:#4B4B4B; }",
+                    "QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
+                    "QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+                    "QGroupBox::title{ color:#999999; padding:2px; }"
+                ],
+                "EditorColorPickerColorBtn": [
+                    "*{ background-color:%1; color:%2; border-width:1px; }",
+                    "*:hover, *:pressed{ border-color:#ffffff; border-style:inset;  }"
+                ],
+                "EditorColorPickerFullAltButton": [
+                    "* { background-color: #666666; color: #ffffff; font-size:15px; min-height:30px; height:30px; width:100%; margin-right:1px; }",
+                    "*:hover { background-color: rgb(120, 120, 120); }",
+                    "*:pressed { background-color: rgb(120, 120, 120); }",
+                    "*:checked { background-color: rgb(150, 150, 150); }"
+                ]
+            }
+
+        },
+        'plugins': { }
     }
 
 
@@ -128,10 +374,20 @@ def load_patterns():
 
 
 def load_styles():
-    global app_directory, env_vars
+    global app_directory, app_user_directory, env_vars
     try:
         directory = app_directory + os.sep + "ressources" + os.sep + "styles"
         directory2 = app_user_directory + os.sep + "imports" + os.sep + "styles"
+
+        jssgenerator = JSONSchemaGenerator()
+        encoder = json.encoder.JSONEncoder()
+        tab = encoder.encode(env_vars['styles']['Dark'])
+        jssgenerator.load(tab)
+        schema = jssgenerator.generate()
+        if debug is True:
+            with open(app_directory + os.sep + "doc" + os.sep + "packages" + os.sep + "style" + os.sep + 'style.json_schema', 'wt', encoding='utf8') as file:
+                file.write(json.dumps(schema, indent=4))
+
         ext = "json"
         # env_vars['styles'].clear()
         for folder in [directory, directory2]:
@@ -151,6 +407,8 @@ def load_styles():
                             # test JSON validity
                             decoder = json.decoder.JSONDecoder()
                             tab = decoder.decode(content)
+                            # test package JSON schema
+                            validate(instance=tab, schema=schema)
 
                             env_vars['styles'][nm] = eval(
                                 content.replace('{APP_DIR}', app_directory.replace(os.sep, '/'))
@@ -202,7 +460,10 @@ def get_style_var(style: str = None, path: str = None):
                 if isinstance(base[obj], dict) is True:
                     base = base[obj]
                 else:
-                    return base[obj]
+                    if isinstance(base[obj], list) is True:
+                        return "".join(base[obj]).replace('{APP_DIR}', app_directory.replace(os.sep, '/'))
+                    else:
+                        return base[obj].replace('{APP_DIR}', app_directory.replace(os.sep, '/'))
             else:
                 return None
     except Exception:
@@ -210,5 +471,138 @@ def get_style_var(style: str = None, path: str = None):
         return None
 
 
+def load_plugins():
+    global app_directory, app_user_directory, env_vars
+    try:
+        schema = {
+            "$id": "https://example.com/entry-schema",
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "description": "JSON Schema for package file",
+            "type": "object",
+            "properties": {
+                "context": {
+                    "type": "object",
+                    "properties": {
+                        "app": {"type": "string"},
+                        "archetype": {"type": "string"},
+                        "interfaces": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "archetype": {"type": "string"},
+                                    "target": {"type": "string"},
+                                    "restriction": {"type": "string"},
+                                    "label": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "lang": {"type": "string"},
+                                                "content": {"type": "string"}
+                                            },
+                                            "required": ["lang", "content"]
+                                        }
+                                    }
+                                },
+                                "required": ["archetype", "target", "restriction", "label"]
+                            },
+                            "uniqueItems": True
+                        },
+                        "command": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {"type": "string"},
+                            "uniqueItems": True
+                        }
+                    },
+                    "required": ["app", "archetype", "interfaces", "command"]
+                },
+                "settings": {
+                    "type": "array",
+                    "minItems": 0,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "label": {
+                                "type": "array",
+                                "minItems": 0,
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "lang": {"type": "string"},
+                                        "content": {"type": "string"}
+                                    },
+                                    "required": ["lang", "content"]
+                                }
+                            },
+                            "archetype": {"type": "string"},
+                            "value": {"type": ["string", "number", "boolean"]}
+                        },
+                        "required": ["name", "label", "archetype", "value"]
+                    },
+                    "uniqueItems": True
+                },
+                "manifest": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {"type": "string"},
+                    "uniqueItems": True
+                }
+            },
+            "required": ["context", "settings", "manifest"]
+        }
+        settings = QtCore.QSettings(app_editor, app_name)
+        directory = app_user_directory + os.sep + "imports" + os.sep + "plugins"
+
+        if debug is True:
+            with open(app_directory + os.sep + "doc" + os.sep + "packages" + os.sep + "plugin" + os.sep + 'example.package.json_schema', 'wt', encoding='utf8') as file:
+                file.write(json.dumps(schema, indent=4))
+
+        ext = "json"
+        # env_vars['styles'].clear()
+        for root, directories, files in os.walk(directory, topdown=False):
+            for name in directories:
+                try:
+                    print('plugin:', name)
+                    dir = directory + os.sep + name
+                    print('dir:', dir)
+                    package_file = dir + os.sep + 'package.json'
+                    print('package_file:', package_file)
+
+                    if os.path.isfile(package_file) is True:
+                        fp = open(package_file, "rt", encoding="utf8")
+                        content = fp.read()
+                        fp.close()
+                        content = content.replace('{plugin_dir}', dir.replace(os.sep, os.sep + os.sep))\
+                            .replace('{os.sep}', os.sep + os.sep)
+
+                        # test id valid JSON
+                        decoder = json.decoder.JSONDecoder()
+                        tab = decoder.decode(content)
+                        # test package JSON schema
+                        validate(instance=tab, schema=schema)
+
+                        data = eval(content)
+                        # print(data)
+                        env_vars['plugins'][name] = data
+                        for variable in data['settings']:
+                            # print('VARIABLE: ', variable)
+                            value = settings.value('plugins/'+name+'/'+variable['name'], None, str)
+                            # print('VARIABLE VALUE: ', value)
+                            if value is not None and value != '':
+                                variable['value'] = value
+                            else:
+                                # print('SET VALUE: ', variable['value'])
+                                settings.setValue('plugins/'+name+'/'+variable['name'], variable['value'])
+                except Exception:
+                    traceback.print_exc()
+    except Exception:
+        traceback.print_exc()
+
+
 load_patterns()
 load_styles()
+load_plugins()

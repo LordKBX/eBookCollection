@@ -60,12 +60,8 @@ def wait_on_reader():
 
 def wait_on_open_ext():
     global executor_file
-    args = list()
-    args.append('start')
-    args.append(executor_file.replace('/', os.sep))
-
     try:
-        return_code = subprocess.call(args, shell=True)
+        os.system('"'+executor_file.replace('/', os.sep)+'"')
     except Exception:
         traceback.print_exc()
 

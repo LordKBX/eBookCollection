@@ -1,0 +1,137 @@
+{
+    "$id": "https://example.com/entry-schema",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "JSON Schema for package file",
+    "type": "object",
+    "properties": {
+        "context": {
+            "type": "object",
+            "properties": {
+                "app": {
+                    "type": "string"
+                },
+                "archetype": {
+                    "type": "string"
+                },
+                "interfaces": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "archetype": {
+                                "type": "string"
+                            },
+                            "target": {
+                                "type": "string"
+                            },
+                            "restriction": {
+                                "type": "string"
+                            },
+                            "label": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "lang": {
+                                            "type": "string"
+                                        },
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "lang",
+                                        "content"
+                                    ]
+                                }
+                            }
+                        },
+                        "required": [
+                            "archetype",
+                            "target",
+                            "restriction",
+                            "label"
+                        ]
+                    },
+                    "uniqueItems": true
+                },
+                "command": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    },
+                    "uniqueItems": true
+                }
+            },
+            "required": [
+                "app",
+                "archetype",
+                "interfaces",
+                "command"
+            ]
+        },
+        "settings": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "label": {
+                        "type": "array",
+                        "minItems": 0,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "lang": {
+                                    "type": "string"
+                                },
+                                "content": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "lang",
+                                "content"
+                            ]
+                        }
+                    },
+                    "archetype": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": [
+                            "string",
+                            "number",
+                            "boolean"
+                        ]
+                    }
+                },
+                "required": [
+                    "name",
+                    "label",
+                    "archetype",
+                    "value"
+                ]
+            },
+            "uniqueItems": true
+        },
+        "manifest": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "string"
+            },
+            "uniqueItems": true
+        }
+    },
+    "required": [
+        "context",
+        "settings",
+        "manifest"
+    ]
+}

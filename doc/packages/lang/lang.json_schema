@@ -1,0 +1,704 @@
+{
+    "type": "object",
+    "properties": {
+        "Label": {
+            "type": "string"
+        },
+        "NotImplemented": {
+            "type": "string"
+        },
+        "Global": {
+            "type": "object",
+            "properties": {
+                "ArchiverErrorTitle": {
+                    "type": "string"
+                },
+                "ArchiverErrorText": {
+                    "type": "string"
+                }
+            }
+        },
+        "Library": {
+            "type": "object",
+            "properties": {
+                "WindowTitle": {
+                    "type": "string"
+                },
+                "AddBookWindowTitle": {
+                    "type": "string"
+                },
+                "HeaderBlockBtnAddBook": {
+                    "type": "string"
+                },
+                "HeaderBlockBtnCreateBook": {
+                    "type": "string"
+                },
+                "HeaderBlockBtnDelBook": {
+                    "type": "string"
+                },
+                "HeaderBlockBtnSettings": {
+                    "type": "string"
+                },
+                "SortingBlockTreeAll": {
+                    "type": "string"
+                },
+                "SortingBlockTreeSeries": {
+                    "type": "string"
+                },
+                "SortingBlockTreeAuthors": {
+                    "type": "string"
+                },
+                "SortingBlockSearchLabel": {
+                    "type": "string"
+                },
+                "CentralBlockTableTitle": {
+                    "type": "string"
+                },
+                "CentralBlockTableAuthors": {
+                    "type": "string"
+                },
+                "CentralBlockTableSeries": {
+                    "type": "string"
+                },
+                "CentralBlockTableTags": {
+                    "type": "string"
+                },
+                "CentralBlockTableModified": {
+                    "type": "string"
+                },
+                "CentralBlockTableAdded": {
+                    "type": "string"
+                },
+                "CentralBlockTableContextMenu": {
+                    "type": "object",
+                    "properties": {
+                        "EditMetadata": {
+                            "type": "string"
+                        },
+                        "EditBook": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "InfoBlockTitleLabel": {
+                    "type": "string"
+                },
+                "InfoBlockSerieLabel": {
+                    "type": "string"
+                },
+                "InfoBlockAuthorsLabel": {
+                    "type": "string"
+                },
+                "InfoBlockFileFormatsLabel": {
+                    "type": "string"
+                },
+                "InfoBlockSizeLabel": {
+                    "type": "string"
+                },
+                "InfoBlockSynopsisLabel": {
+                    "type": "string"
+                },
+                "DialogConfirmDeleteBookWindowTitle": {
+                    "type": "string"
+                },
+                "DialogConfirmDeleteBookWindowText": {
+                    "type": "string"
+                },
+                "DialogConfirmDeleteBookBtnYes": {
+                    "type": "string"
+                },
+                "DialogConfirmDeleteBookBtnNo": {
+                    "type": "string"
+                },
+                "blockHeaderTitle": {
+                    "type": "string"
+                },
+                "blockSortTitle": {
+                    "type": "string"
+                },
+                "blockInfoTitle": {
+                    "type": "string"
+                },
+                "emptyBooks": {
+                    "type": "object",
+                    "properties": {
+                        "WindowTitle": {
+                            "type": "string"
+                        },
+                        "Number": {
+                            "type": "string"
+                        },
+                        "Authors": {
+                            "type": "string"
+                        },
+                        "Series": {
+                            "type": "string"
+                        },
+                        "SeriesVolume": {
+                            "type": "string"
+                        },
+                        "Name": {
+                            "type": "string"
+                        },
+                        "Format": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "emptyBookCreation": {
+                    "type": "object",
+                    "properties": {
+                        "Cover": {
+                            "type": "string"
+                        },
+                        "Chapter1": {
+                            "type": "string"
+                        },
+                        "Author": {
+                            "type": "string"
+                        },
+                        "Authors": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "Generic": {
+            "type": "object",
+            "properties": {
+                "DialogBtnOk": {
+                    "type": "string"
+                },
+                "DialogBtnSave": {
+                    "type": "string"
+                },
+                "DialogBtnYes": {
+                    "type": "string"
+                },
+                "DialogBtnNo": {
+                    "type": "string"
+                },
+                "DialogBtnCancel": {
+                    "type": "string"
+                }
+            }
+        },
+        "Reader": {
+            "type": "object",
+            "properties": {
+                "WindowTitle": {
+                    "type": "string"
+                },
+                "DialogInfoNoFileWindowTitle": {
+                    "type": "string"
+                },
+                "DialogInfoNoFileWindowText": {
+                    "type": "string"
+                },
+                "DialogInfoBadFileWindowTitle": {
+                    "type": "string"
+                },
+                "DialogInfoBadFileWindowText": {
+                    "type": "string"
+                },
+                "ContentTableHeader": {
+                    "type": "string"
+                },
+                "ContentTableTxtCover": {
+                    "type": "string"
+                },
+                "ContentTableTxtEnd": {
+                    "type": "string"
+                },
+                "ContentTableTxtPageX": {
+                    "type": "string"
+                },
+                "ContentTableTxtChapterX": {
+                    "type": "string"
+                },
+                "InfoBlockHeader": {
+                    "type": "string"
+                },
+                "InfoBlockText": {
+                    "type": "string"
+                },
+                "ContextMenuInfo": {
+                    "type": "string"
+                },
+                "ContextMenuCT": {
+                    "type": "string"
+                },
+                "ContextMenuCopyText": {
+                    "type": "string"
+                },
+                "ContextMenuCopyHTML": {
+                    "type": "string"
+                }
+            }
+        },
+        "Editor": {
+            "type": "object",
+            "properties": {
+                "WindowTitle": {
+                    "type": "string"
+                },
+                "DialogInfoNoFileWindowTitle": {
+                    "type": "string"
+                },
+                "DialogInfoNoFileWindowText": {
+                    "type": "string"
+                },
+                "DialogInfoBadFileWindowTitle": {
+                    "type": "string"
+                },
+                "DialogInfoBadFileWindowText": {
+                    "type": "string"
+                },
+                "BlockToolbar": {
+                    "type": "object",
+                    "properties": {
+                        "Header": {
+                            "type": "string"
+                        },
+                        "Save": {
+                            "type": "string"
+                        },
+                        "CheckPointLoad": {
+                            "type": "string"
+                        },
+                        "CheckPointCreate": {
+                            "type": "string"
+                        },
+                        "FileManager": {
+                            "type": "string"
+                        },
+                        "EditContentTable": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "BlockFileListHeader": {
+                    "type": "string"
+                },
+                "BlockContentTableHeader": {
+                    "type": "string"
+                },
+                "BlockPreviewHeader": {
+                    "type": "string"
+                },
+                "CentralZoneEmpty": {
+                    "type": "string"
+                },
+                "ContentTableHeader": {
+                    "type": "string"
+                },
+                "FileTableHeader": {
+                    "type": "string"
+                },
+                "WebViewDefaultPageContent": {
+                    "type": "array",
+                    "minItems": 0,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "DialogConfirmSaveWindowTitle": {
+                    "type": "string"
+                },
+                "DialogConfirmSaveWindowText": {
+                    "type": "string"
+                },
+                "DialogCreateCheckpointWindowTitle": {
+                    "type": "string"
+                },
+                "DialogCreateCheckpointWindowText": {
+                    "type": "string"
+                },
+                "ChechpointWindow": {
+                    "type": "object",
+                    "properties": {
+                        "WindowTitle": {
+                            "type": "string"
+                        },
+                        "btnOk": {
+                            "type": "string"
+                        },
+                        "btnCancel": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "LinkWindow": {
+                    "type": "object",
+                    "properties": {
+                        "WindowTitle": {
+                            "type": "string"
+                        },
+                        "labelUrl": {
+                            "type": "string"
+                        },
+                        "labelText": {
+                            "type": "string"
+                        },
+                        "btnOk": {
+                            "type": "string"
+                        },
+                        "btnCancel": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "ImgWindow": {
+                    "type": "object",
+                    "properties": {
+                        "WindowTitle": {
+                            "type": "string"
+                        },
+                        "labelUrl": {
+                            "type": "string"
+                        },
+                        "labelText": {
+                            "type": "string"
+                        },
+                        "btnOk": {
+                            "type": "string"
+                        },
+                        "btnCancel": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "FilesWindow": {
+                    "type": "object",
+                    "properties": {
+                        "WindowTitle": {
+                            "type": "string"
+                        },
+                        "ImportWindowTitle": {
+                            "type": "string"
+                        },
+                        "FileNameWindowTitle": {
+                            "type": "string"
+                        },
+                        "FileNameWindowLabel": {
+                            "type": "string"
+                        },
+                        "btnOk": {
+                            "type": "string"
+                        },
+                        "btnCancel": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "ContentTableWindow": {
+                    "type": "object",
+                    "properties": {
+                        "WindowTitle": {
+                            "type": "string"
+                        },
+                        "ListLabel": {
+                            "type": "string"
+                        },
+                        "AddIndexLabel": {
+                            "type": "string"
+                        },
+                        "AddIndexPlaceholder": {
+                            "type": "string"
+                        },
+                        "ModifyIndexLabel": {
+                            "type": "string"
+                        },
+                        "BtnRename": {
+                            "type": "string"
+                        },
+                        "BtnDelete": {
+                            "type": "string"
+                        },
+                        "NameWindowTitle": {
+                            "type": "string"
+                        },
+                        "NameWindowLabel": {
+                            "type": "string"
+                        },
+                        "btnOk": {
+                            "type": "string"
+                        },
+                        "btnCancel": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "EditPane": {
+                    "type": "object",
+                    "properties": {
+                        "Save": {
+                            "type": "string"
+                        },
+                        "Undo": {
+                            "type": "string"
+                        },
+                        "Redo": {
+                            "type": "string"
+                        },
+                        "Cut": {
+                            "type": "string"
+                        },
+                        "Copy": {
+                            "type": "string"
+                        },
+                        "Paste": {
+                            "type": "string"
+                        },
+                        "Debug": {
+                            "type": "string"
+                        },
+                        "Comment": {
+                            "type": "string"
+                        },
+                        "Prettify": {
+                            "type": "string"
+                        },
+                        "Bold": {
+                            "type": "string"
+                        },
+                        "Italic": {
+                            "type": "string"
+                        },
+                        "Underline": {
+                            "type": "string"
+                        },
+                        "Strikethrough": {
+                            "type": "string"
+                        },
+                        "Sub": {
+                            "type": "string"
+                        },
+                        "Sup": {
+                            "type": "string"
+                        },
+                        "TextColor": {
+                            "type": "string"
+                        },
+                        "BackColor": {
+                            "type": "string"
+                        },
+                        "AlignLeft": {
+                            "type": "string"
+                        },
+                        "AlignCenter": {
+                            "type": "string"
+                        },
+                        "AlignRight": {
+                            "type": "string"
+                        },
+                        "Align Justify": {
+                            "type": "string"
+                        },
+                        "List": {
+                            "type": "string"
+                        },
+                        "NumericList": {
+                            "type": "string"
+                        },
+                        "Link": {
+                            "type": "string"
+                        },
+                        "Image": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "ColorPicker": {
+                    "type": "object",
+                    "properties": {
+                        "WindowTitle": {
+                            "type": "string"
+                        },
+                        "Palette": {
+                            "type": "string"
+                        },
+                        "ChromaGraph": {
+                            "type": "string"
+                        },
+                        "RgbBox": {
+                            "type": "string"
+                        },
+                        "RgbR": {
+                            "type": "string"
+                        },
+                        "RgbG": {
+                            "type": "string"
+                        },
+                        "RgbB": {
+                            "type": "string"
+                        },
+                        "RgbHexa": {
+                            "type": "string"
+                        },
+                        "Preview": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "Time": {
+            "type": "object",
+            "properties": {
+                "template": {
+                    "type": "object",
+                    "properties": {
+                        "numeric_date": {
+                            "type": "string"
+                        },
+                        "numeric_datetime": {
+                            "type": "string"
+                        },
+                        "textual_date": {
+                            "type": "string"
+                        },
+                        "textual_datetime": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "months_short": {
+                    "type": "array",
+                    "minItems": 0,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "months_full": {
+                    "type": "array",
+                    "minItems": 0,
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "Settings": {
+            "type": "object",
+            "properties": {
+                "WindowTitle": {
+                    "type": "string"
+                },
+                "TabGlobalTitle": {
+                    "type": "string"
+                },
+                "TabMetadataTitle": {
+                    "type": "string"
+                },
+                "TabConversionTitle": {
+                    "type": "string"
+                },
+                "TabAboutTitle": {
+                    "type": "string"
+                },
+                "LanguageGroupTitle": {
+                    "type": "string"
+                },
+                "LanguageAutomatic": {
+                    "type": "string"
+                },
+                "LanguageImportTitle": {
+                    "type": "string"
+                },
+                "Import": {
+                    "type": "string"
+                },
+                "StyleGroupTitle": {
+                    "type": "string"
+                },
+                "StyleLight": {
+                    "type": "string"
+                },
+                "StyleDark": {
+                    "type": "string"
+                },
+                "StyleImportTitle": {
+                    "type": "string"
+                },
+                "LibraryGroupTitle": {
+                    "type": "string"
+                },
+                "LibraryFolder": {
+                    "type": "string"
+                },
+                "LibraryFolderBrowse": {
+                    "type": "string"
+                },
+                "ArchiverGroupTitle": {
+                    "type": "string"
+                },
+                "ArchiverGroupTitleNT": {
+                    "type": "string"
+                },
+                "ArchiverFolder": {
+                    "type": "string"
+                },
+                "ArchiverFolderTest": {
+                    "type": "string"
+                },
+                "ArchiverFolderBrowse": {
+                    "type": "string"
+                },
+                "DefaultCoverGroupTitle": {
+                    "type": "string"
+                },
+                "DefaultCoverBackground": {
+                    "type": "string"
+                },
+                "DefaultCoverPattern": {
+                    "type": "string"
+                },
+                "DefaultCoverPatternColor": {
+                    "type": "string"
+                },
+                "DefaultCoverTitle": {
+                    "type": "string"
+                },
+                "DefaultCoverSeries": {
+                    "type": "string"
+                },
+                "DefaultCoverAuthors": {
+                    "type": "string"
+                },
+                "eBookImportGroupTitle": {
+                    "type": "string"
+                },
+                "eBookImportFilenameTpl": {
+                    "type": "string"
+                },
+                "eBookImportFilenameTplSeparator": {
+                    "type": "string"
+                },
+                "AboutLabel": {
+                    "type": "string"
+                },
+                "AboutBtnLicense": {
+                    "type": "string"
+                },
+                "AboutBtnWebsite": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "required": [
+        "Label",
+        "NotImplemented",
+        "Global",
+        "Library",
+        "Generic",
+        "Reader",
+        "Editor",
+        "Time",
+        "Settings"
+    ],
+    "$id": "https://example.com/entry-schema",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

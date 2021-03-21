@@ -255,7 +255,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         :return: void
         """
         # Titre fenêtre
-        self.setWindowTitle(self.lang['Library']['WindowTitle'])
+        self.setWindowTitle(self.lang['Library/WindowTitle'])
         # Titres blocks
         self.header_block.setWindowTitle(self.lang['Library']['blockHeaderTitle'])
         self.sorting_block.setWindowTitle(self.lang['Library']['blockSortTitle'])

@@ -55,7 +55,7 @@ def create_cover(title: str, authors: str = None, series: str = None, volume_num
         style = {
             "background": "#ffffff",
             "pattern": "01",
-            "pattern_color": "black",
+            "pattern_color": "#000000",
             "title": "#000000",
             "series": "#0000ff",
             "authors": "#000000",
@@ -506,9 +506,9 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
     file = file.replace('/', os.sep)
     if os.path.isfile(file) is True:
         # list of var for future injection into database
-        tmp_guid = ''
+        tmp_guid = uid()
         tmp_cover = ''
-        tmp_title = uid()
+        tmp_title = file
         tmp_series = ''
         tmp_authors = ''
         tmp_tags = ''
@@ -558,8 +558,9 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
             tmp_cover = create_thumbnail(list_directory(tmpdir)[0])  # get path of the first image into temp dir
 
         else:
-            print('Invalid file format')
-            return
+            tmp_cover = create_thumbnail(create_cover(tmp_title, tmp_authors, tmp_series, style=None))
+            # print('Invalid file format')
+            # return
 
         # shutil.rmtree(tmpdir)  # delete temp dir
 

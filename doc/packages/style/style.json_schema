@@ -1,0 +1,469 @@
+{
+    "type": "object",
+    "properties": {
+        "icons": {
+            "type": "object",
+            "properties": {
+                "align_center": {
+                    "type": "string"
+                },
+                "align_justify": {
+                    "type": "string"
+                },
+                "align_left": {
+                    "type": "string"
+                },
+                "align_right": {
+                    "type": "string"
+                },
+                "back_color": {
+                    "type": "string"
+                },
+                "bold": {
+                    "type": "string"
+                },
+                "book_add": {
+                    "type": "string"
+                },
+                "book_del": {
+                    "type": "string"
+                },
+                "book_new": {
+                    "type": "string"
+                },
+                "checkpoint_create": {
+                    "type": "string"
+                },
+                "checkpoint_load": {
+                    "type": "string"
+                },
+                "close": {
+                    "type": "string"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "content_table": {
+                    "type": "string"
+                },
+                "copy": {
+                    "type": "string"
+                },
+                "cut": {
+                    "type": "string"
+                },
+                "debug": {
+                    "type": "string"
+                },
+                "edit": {
+                    "type": "string"
+                },
+                "file": {
+                    "type": "string"
+                },
+                "file_manager": {
+                    "type": "string"
+                },
+                "folder": {
+                    "type": "string"
+                },
+                "font": {
+                    "type": "string"
+                },
+                "full_screen": {
+                    "type": "string"
+                },
+                "image": {
+                    "type": "string"
+                },
+                "info": {
+                    "type": "string"
+                },
+                "italic": {
+                    "type": "string"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "list": {
+                    "type": "string"
+                },
+                "list_ordered": {
+                    "type": "string"
+                },
+                "lock": {
+                    "type": "string"
+                },
+                "normal_screen": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "string"
+                },
+                "paste": {
+                    "type": "string"
+                },
+                "prettify": {
+                    "type": "string"
+                },
+                "redo": {
+                    "type": "string"
+                },
+                "save": {
+                    "type": "string"
+                },
+                "search": {
+                    "type": "string"
+                },
+                "settings": {
+                    "type": "string"
+                },
+                "sort_down": {
+                    "type": "string"
+                },
+                "sort_up": {
+                    "type": "string"
+                },
+                "strike_through": {
+                    "type": "string"
+                },
+                "style": {
+                    "type": "string"
+                },
+                "sub": {
+                    "type": "string"
+                },
+                "sup": {
+                    "type": "string"
+                },
+                "text_color": {
+                    "type": "string"
+                },
+                "underline": {
+                    "type": "string"
+                },
+                "undo": {
+                    "type": "string"
+                },
+                "unlock": {
+                    "type": "string"
+                },
+                "xml": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "align_center",
+                "align_justify",
+                "align_left",
+                "align_right",
+                "back_color",
+                "bold",
+                "book_add",
+                "book_del",
+                "book_new",
+                "checkpoint_create",
+                "checkpoint_load",
+                "close",
+                "comment",
+                "content_table",
+                "copy",
+                "cut",
+                "debug",
+                "edit",
+                "file",
+                "file_manager",
+                "folder",
+                "font",
+                "full_screen",
+                "image",
+                "info",
+                "italic",
+                "link",
+                "list",
+                "list_ordered",
+                "lock",
+                "normal_screen",
+                "page",
+                "paste",
+                "prettify",
+                "redo",
+                "save",
+                "search",
+                "settings",
+                "sort_down",
+                "sort_up",
+                "strike_through",
+                "style",
+                "sub",
+                "sup",
+                "text_color",
+                "underline",
+                "undo",
+                "unlock",
+                "xml"
+            ]
+        },
+        "QMainWindow": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "QDockWidget": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "QMessageBox": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "QMessageBoxBtnGeneric": {
+            "type": "string"
+        },
+        "QMessageBoxBtnRed": {
+            "type": "string"
+        },
+        "QMessageBoxBtnGreen": {
+            "type": "string"
+        },
+        "QDialog": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "QTabWidgetHorizontal": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "QTabWidgetVertical": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "fullTreeView": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "partialTreeView": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "QTableWidget": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "partialTreeViewItemColorNew": {
+            "type": "string"
+        },
+        "partialTreeViewItemColorDel": {
+            "type": "string"
+        },
+        "partialTreeViewItemColorMod": {
+            "type": "string"
+        },
+        "defaultButton": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "fullButton": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "fullAltButton": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "invisibleButton": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "displayButton": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "SettingsDialogBox": {
+            "type": "string"
+        },
+        "SettingsQLineEditPrecise": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "SettingsQLineEditGood": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "SettingsQLineEditBad": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "SettingsQComboBoxArrow": {
+            "type": "string"
+        },
+        "EditorQWebViewPreview": {
+            "type": "string"
+        },
+        "EditorCentralLabel": {
+            "type": "string"
+        },
+        "EditorFileDialogAdditional": {
+            "type": "string"
+        },
+        "EditorEditPaneButtons": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "EditorQsciFont": {
+            "type": "string"
+        },
+        "EditorQsciMarginsBackgroundColor": {
+            "type": "string"
+        },
+        "EditorQsciMarginsForegroundColor": {
+            "type": "string"
+        },
+        "EditorQsciMarkerBackgroundColor": {
+            "type": "string"
+        },
+        "EditorQsciFoldMarginColor1": {
+            "type": "string"
+        },
+        "EditorQsciFoldMarginColor2": {
+            "type": "string"
+        },
+        "EditorQsciCaretLineBackgroundColor": {
+            "type": "string"
+        },
+        "EditorQsciDefaultTextColor": {
+            "type": "string"
+        },
+        "EditorQsciDefaultBackgroundColor": {
+            "type": "string"
+        },
+        "EditorQsciXMLDefaultTextColor": {
+            "type": "string"
+        },
+        "EditorQsciXMLDefaultTagColor": {
+            "type": "string"
+        },
+        "EditorColorPicker": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "EditorColorPickerColorBtn": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "EditorColorPickerFullAltButton": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": [
+        "icons",
+        "QMainWindow",
+        "QDockWidget",
+        "QMessageBox",
+        "QMessageBoxBtnGeneric",
+        "QMessageBoxBtnRed",
+        "QMessageBoxBtnGreen",
+        "QDialog",
+        "QTabWidgetHorizontal",
+        "QTabWidgetVertical",
+        "fullTreeView",
+        "partialTreeView",
+        "QTableWidget",
+        "partialTreeViewItemColorNew",
+        "partialTreeViewItemColorDel",
+        "partialTreeViewItemColorMod",
+        "defaultButton",
+        "fullButton",
+        "fullAltButton",
+        "invisibleButton",
+        "displayButton",
+        "SettingsDialogBox",
+        "SettingsQLineEditPrecise",
+        "SettingsQLineEditGood",
+        "SettingsQLineEditBad",
+        "SettingsQComboBoxArrow",
+        "EditorQWebViewPreview",
+        "EditorCentralLabel",
+        "EditorFileDialogAdditional",
+        "EditorEditPaneButtons",
+        "EditorQsciFont",
+        "EditorQsciMarginsBackgroundColor",
+        "EditorQsciMarginsForegroundColor",
+        "EditorQsciMarkerBackgroundColor",
+        "EditorQsciFoldMarginColor1",
+        "EditorQsciFoldMarginColor2",
+        "EditorQsciCaretLineBackgroundColor",
+        "EditorQsciDefaultTextColor",
+        "EditorQsciDefaultBackgroundColor",
+        "EditorQsciXMLDefaultTextColor",
+        "EditorQsciXMLDefaultTagColor",
+        "EditorColorPicker",
+        "EditorColorPickerColorBtn",
+        "EditorColorPickerFullAltButton"
+    ],
+    "$id": "https://example.com/entry-schema",
+    "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
