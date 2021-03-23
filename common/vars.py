@@ -1,9 +1,11 @@
-import os, sys, re, traceback
+import os, sys, re, traceback, subprocess
 from PyQt5 import QtCore, QtGui, QtWidgets
 import json.decoder
 import json.encoder
 from jsonschema import validate
 from common.json_shema import JSONSchemaGenerator
+import common.archive
+import common.files
 
 app_editor = "LordKBX Workshop"
 app_name = "eBookCollection"
@@ -471,64 +473,29 @@ def get_style_var(style: str = None, path: str = None):
         return None
 
 
-def load_plugins():
-    global app_directory, app_user_directory, env_vars
-    try:
-        schema = {
-            "$id": "https://example.com/entry-schema",
-            "$schema": "https://json-schema.org/draft/2020-12/schema",
-            "description": "JSON Schema for package file",
+plugin_package_app_types = ['library', 'reader', 'editor']
+plugin_package_schema = {
+    "$id": "https://example.com/entry-schema",
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "description": "JSON Schema for package file",
+    "type": "object",
+    "properties": {
+        "context": {
             "type": "object",
             "properties": {
-                "context": {
-                    "type": "object",
-                    "properties": {
-                        "app": {"type": "string"},
-                        "archetype": {"type": "string"},
-                        "interfaces": {
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "archetype": {"type": "string"},
-                                    "target": {"type": "string"},
-                                    "restriction": {"type": "string"},
-                                    "label": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "lang": {"type": "string"},
-                                                "content": {"type": "string"}
-                                            },
-                                            "required": ["lang", "content"]
-                                        }
-                                    }
-                                },
-                                "required": ["archetype", "target", "restriction", "label"]
-                            },
-                            "uniqueItems": True
-                        },
-                        "command": {
-                            "type": "array",
-                            "minItems": 1,
-                            "items": {"type": "string"},
-                            "uniqueItems": True
-                        }
-                    },
-                    "required": ["app", "archetype", "interfaces", "command"]
-                },
-                "settings": {
+                "app": {"type": "string"},
+                "archetype": {"type": "string"},
+                "interfaces": {
                     "type": "array",
-                    "minItems": 0,
+                    "minItems": 1,
                     "items": {
                         "type": "object",
                         "properties": {
-                            "name": {"type": "string"},
+                            "archetype": {"type": "string"},
+                            "target": {"type": "string"},
+                            "restriction": {"type": "string"},
                             "label": {
                                 "type": "array",
-                                "minItems": 0,
                                 "items": {
                                     "type": "object",
                                     "properties": {
@@ -537,23 +504,67 @@ def load_plugins():
                                     },
                                     "required": ["lang", "content"]
                                 }
-                            },
-                            "archetype": {"type": "string"},
-                            "value": {"type": ["string", "number", "boolean"]}
+                            }
                         },
-                        "required": ["name", "label", "archetype", "value"]
+                        "required": ["archetype", "target", "restriction", "label"]
                     },
                     "uniqueItems": True
                 },
-                "manifest": {
+                "commands": {
                     "type": "array",
                     "minItems": 1,
-                    "items": {"type": "string"},
+                    "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {"type": "string"},
+                        "uniqueItems": True
+                    },
                     "uniqueItems": True
                 }
             },
-            "required": ["context", "settings", "manifest"]
+            "required": ["app", "archetype", "interfaces", "commands"]
+        },
+        "settings": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "label": {
+                        "type": "array",
+                        "minItems": 0,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "lang": {"type": "string"},
+                                "content": {"type": "string"}
+                            },
+                            "required": ["lang", "content"]
+                        }
+                    },
+                    "archetype": {"type": "string"},
+                    "value": {"type": ["string", "number", "boolean"]}
+                },
+                "required": ["name", "label", "archetype", "value"]
+            },
+            "uniqueItems": True
+        },
+        "manifest": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"type": "string"},
+            "uniqueItems": True
         }
+    },
+    "required": ["context", "settings", "manifest"]
+}
+
+
+def load_plugins():
+    global app_directory, app_user_directory, env_vars
+    try:
+        schema = plugin_package_schema
         settings = QtCore.QSettings(app_editor, app_name)
         directory = app_user_directory + os.sep + "imports" + os.sep + "plugins"
 
@@ -588,6 +599,7 @@ def load_plugins():
                         data = eval(content)
                         # print(data)
                         env_vars['plugins'][name] = data
+                        env_vars['plugins'][name]['name'] = name
                         for variable in data['settings']:
                             # print('VARIABLE: ', variable)
                             value = settings.value('plugins/'+name+'/'+variable['name'], None, str)
@@ -601,6 +613,116 @@ def load_plugins():
                     traceback.print_exc()
     except Exception:
         traceback.print_exc()
+
+
+def list_plugins() -> list:
+    return env_vars['plugins'].copy()
+
+
+def get_plugin(name: str) -> dict:
+    try:
+        return env_vars['plugins'][name].copy()
+    except Exception:
+        traceback.print_exc()
+        return None
+
+
+def get_plugins(app: str = None, archetype: str = None, target: str = None, restriction: str = None) -> list:
+    if app is None:
+        return []
+    if app.strip() == '':
+        return []
+    if archetype is not None:
+        archetype = archetype.strip()
+        if archetype == '':
+            archetype = None
+    ret = []
+    if target is not None:
+        target = target.strip()
+        if target == '':
+            target = None
+    if restriction is not None:
+        restriction = restriction.strip()
+        if restriction == '':
+            restriction = None
+    for name in env_vars['plugins']:
+        if env_vars['plugins'][name]['context']['app'] == app:
+            for option in env_vars['plugins'][name]['context']['interfaces']:
+                ok = True
+                if archetype is not None:
+                    ok = False
+                    if option['archetype'] == archetype:
+                        ok = True
+                        if target is not None:
+                            ok = False
+                            if target == option['target']:
+                                ok = True
+                        if restriction is not None:
+                            ok = False
+                            if restriction == option['restriction']:
+                                ok = True
+                if ok is True:
+                    ret.append({
+                        'name': name,
+                        'archetype': env_vars['plugins'][name]['context']['archetype'],
+                        'commands': env_vars['plugins'][name]['context']['commands'],
+                        'interface': option,
+                        'setting': env_vars['plugins'][name]['settings']
+                    })
+    return ret
+
+
+def plugin_exec(name: str = None, args: dict = None) -> str:
+    print('plugin_exec')
+    ret = ''
+    try:
+        if name is None: return
+        if name.strip() == '': return
+        if name not in env_vars['plugins']: return
+        plug = env_vars['plugins'][name.strip()]
+        settings = {}
+        for opt in plug['settings']:
+            settings[opt['name']] = opt['value']
+        if args is not None:
+            for id in args:
+                if id in settings or id in ['input', 'output', 'output2']:
+                    settings[id] = args[id]
+        for cmdl in plug['context']['commands']:
+            if [':eval:', ':makedir:', ':rmdir:', ':zip:', ':return:'].__contains__(cmdl[0]) is True:
+                for line in range(1, len(cmdl)):
+                    for opt in settings:
+                        if opt in ['input', 'output', 'output2']:
+                            cmdl[line] = cmdl[line].replace('%' + opt + '%', settings[opt])
+                        else:
+                            cmdl[line] = cmdl[line].replace('{' + opt + '}', settings[opt])
+                if cmdl[0] == ':eval:':
+                    print('start eval=', cmdl[1])
+                    eval(cmdl[1])
+                if cmdl[0] == ':makedir:':
+                    print('start makedir=', cmdl[1])
+                    os.makedirs(cmdl[1])
+                if cmdl[0] == ':rmdir:':
+                    print('start rmdir=', cmdl[1])
+                    common.files.rmDir(cmdl[1])
+                if cmdl[0] == ':zip:':
+                    print('start zip=', cmdl[1])
+                    common.archive.deflate(cmdl[1], cmdl[2])
+                if cmdl[0] == ':return:':
+                    print('return=', cmdl[1])
+                    ret = cmdl[1]
+            else:
+                for line in range(0, len(cmdl)):
+                    for opt in settings:
+                        if opt in ['input', 'output', 'output2']:
+                            cmdl[line] = cmdl[line].replace('%' + opt + '%', settings[opt])
+                        else:
+                            cmdl[line] = cmdl[line].replace('{' + opt + '}', settings[opt])
+                print('cdm=', cmdl)
+                return_code = subprocess.call(cmdl, shell=True)
+            print('- end command')
+    except Exception:
+        traceback.print_exc()
+    return ret
 
 
 load_patterns()

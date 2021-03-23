@@ -33,8 +33,18 @@
 		"InfoBlockFileFormatsLabel": "Format(s)",
 		"InfoBlockSizeLabel": "Taille",
 		"InfoBlockSynopsisLabel": "Synopsis",
+
+		"InfoBlockLinkContestMenu": {
+			"open": "Ouvrir avec application par défaut",
+			"edit": "Éditer",
+			"delete": "Supprimer",
+			"deleteBook": "Supprimer le livre"
+		},
+
 		"DialogConfirmDeleteBookWindowTitle": "Confirmation de suppression Ebook",
+		"DialogConfirmDeleteBookWindowTitle2": "Confirmation de suppression fichier",
 		"DialogConfirmDeleteBookWindowText": "Confirmez vous la suppression des Ebook sélectionnés ?",
+		"DialogConfirmDeleteBookWindowText2": "Confirmez vous la suppression du fichier sélectionné ?",
 		"DialogConfirmDeleteBookBtnYes": "Oui",
 		"DialogConfirmDeleteBookBtnNo": "Non",
 
@@ -239,7 +249,7 @@
 		"WindowTitle": "Réglages",
 		"TabGlobalTitle": "Général",
 		"TabMetadataTitle": "Metadata",
-		"TabConversionTitle": "Conversion de fichier",
+		"TabPluginsTitle": "Extensions",
 		"TabAboutTitle": "À propos",
 
 		"LanguageGroupTitle": "Langue",

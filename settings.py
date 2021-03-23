@@ -35,7 +35,8 @@ class SettingsWindow(QDialog):
         self.load_languages(self.app_lang)
         self.load_styles(self.app_style)
 
-        self.dialog_tabs.setCurrentIndex(0)
+        if debug is False:
+            self.dialog_tabs.setCurrentIndex(0)
 
         #GLOBAL tab
         self.tab_global_lang_combo_box.currentIndexChanged.connect(self.change_language)
@@ -304,7 +305,7 @@ class SettingsWindow(QDialog):
             # Tabs
             self.dialog_tabs.setTabText(0, self.lng['Settings/TabGlobalTitle'])
             self.dialog_tabs.setTabText(1, self.lng['Settings/TabMetadataTitle'])
-            self.dialog_tabs.setTabText(2, self.lng['Settings/TabConversionTitle'])
+            self.dialog_tabs.setTabText(2, self.lng['Settings/TabPluginsTitle'])
             self.dialog_tabs.setTabText(3, self.lng['Settings/TabAboutTitle'])
 
             # tab_global
@@ -358,6 +359,7 @@ class SettingsWindow(QDialog):
             self.tab_about_btn_website.setText(self.lng['Settings/AboutBtnWebsite'])
             self.tab_about_label.setText(self.lng['Settings/AboutLabel'])
 
+            self.load_plugins_tab()
         except Exception:
             traceback.print_exc()
 
@@ -383,7 +385,7 @@ class SettingsWindow(QDialog):
 
         self.tab_global.setStyleSheet(get_style_var(style, 'QDialog'))
         self.tab_metadata.setStyleSheet(get_style_var(style, 'QDialog'))
-        self.tab_conversion.setStyleSheet(get_style_var(style, 'QDialog'))
+        self.tab_plugins.setStyleSheet(get_style_var(style, 'QDialog'))
         self.tab_about.setStyleSheet(get_style_var(style, 'QDialog'))
 
         self.tab_metadata_import_filename_separator_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditPrecise'))
@@ -463,3 +465,69 @@ class SettingsWindow(QDialog):
         print(folder)
         self.tab_global_archiver_folder_line_edit.setText(folder)
         self.test_archiver()
+
+    def load_plugins_tab(self):
+        plugs = list_plugins()
+        # self.tab_plugins_scroll_area2 = QScrollArea()
+        self.tab_plugins_scroll_area2.widget().deleteLater()
+        if self.tab_plugins_scroll_area2.layout() is None:
+            self.tab_plugins_scroll_area2.setLayout(QVBoxLayout())
+
+        for plug in plugs:
+            # plugin = plugs[plug]
+            print(plug)
+            box = QGroupBox()
+            box.setTitle(plug)
+            box.setLayout(QVBoxLayout())
+
+            lines = []
+            lines.append(['For', plugs[plug]['context']['app']])
+            arct = [plugs[plug]['context']['archetype']]
+            try: arct = plugs[plug]['context']['archetype'].split(':')
+            except Exception: pass
+            lines.append(['Type', arct[0]])
+
+            for line in lines:
+                l1 = QHBoxLayout()
+                l1.addWidget(QLabel(line[0]))
+                l1.addWidget(QLabel(line[1]))
+                l1.addStretch(1)
+                box.layout().addLayout(l1)
+
+            l2 = QHBoxLayout()
+            pb1 = QPushButton()
+            pb1.setText('UNINSTALL')
+            pb1.setProperty('plugin', plug)
+            pb1.clicked.connect(self.uninstall_plugin)
+            l2.addWidget(pb1)
+            pb2 = QPushButton()
+            pb2.setText('SETTINGS')
+            pb2.setProperty('plugin', plug)
+            pb2.clicked.connect(self.plugin_settings_open)
+            l2.addWidget(pb2)
+            # l2.addStretch(1)
+            box.layout().addLayout(l2)
+
+            self.tab_plugins_scroll_area2.layout().addWidget(box)
+        self.tab_plugins_scroll_area2.layout().addStretch(1)
+
+    def uninstall_plugin(self):
+        plugin_name = self.sender().property('plugin')
+        print('uninstall', plugin_name)
+
+    def plugin_settings_open(self):
+        plugin_name = self.sender().property('plugin')
+        print('plugin_settings_open', plugin_name)
+        plug = get_plugin(plugin_name)
+        if plug is not None:
+            settings = plug['settings']
+            print(settings)
+            ui = QDialog(self, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+            style = self.BDD.get_param('style')
+            ui.setStyleSheet(get_style_var(style, 'QDialog') + get_style_var(style, 'SettingsDialogBox'))
+
+            PyQt5.uic.loadUi(
+                os.path.dirname(os.path.realpath(__file__)) + os.sep + 'settings_plugin_params.ui'.replace('/', os.sep),
+                ui
+            )
+            ui.exec_()

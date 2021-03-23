@@ -98,10 +98,33 @@
                 "InfoBlockSynopsisLabel": {
                     "type": "string"
                 },
+                "InfoBlockLinkContestMenu": {
+                    "type": "object",
+                    "properties": {
+                        "open": {
+                            "type": "string"
+                        },
+                        "edit": {
+                            "type": "string"
+                        },
+                        "delete": {
+                            "type": "string"
+                        },
+                        "deleteBook": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "DialogConfirmDeleteBookWindowTitle": {
                     "type": "string"
                 },
+                "DialogConfirmDeleteBookWindowTitle2": {
+                    "type": "string"
+                },
                 "DialogConfirmDeleteBookWindowText": {
+                    "type": "string"
+                },
+                "DialogConfirmDeleteBookWindowText2": {
                     "type": "string"
                 },
                 "DialogConfirmDeleteBookBtnYes": {
@@ -592,7 +615,7 @@
                 "TabMetadataTitle": {
                     "type": "string"
                 },
-                "TabConversionTitle": {
+                "TabPluginsTitle": {
                     "type": "string"
                 },
                 "TabAboutTitle": {

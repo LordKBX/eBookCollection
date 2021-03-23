@@ -56,11 +56,16 @@
                     },
                     "uniqueItems": true
                 },
-                "command": {
+                "commands": {
                     "type": "array",
                     "minItems": 1,
                     "items": {
-                        "type": "string"
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "string"
+                        },
+                        "uniqueItems": true
                     },
                     "uniqueItems": true
                 }
@@ -69,7 +74,7 @@
                 "app",
                 "archetype",
                 "interfaces",
-                "command"
+                "commands"
             ]
         },
         "settings": {

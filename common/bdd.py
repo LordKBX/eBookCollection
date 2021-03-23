@@ -222,16 +222,17 @@ class BDD:
 
         return return_list
 
-    def insert_book(self, guid: str, title: str, series: str, authors: str, tags: str, size: str, format: str, link: str, cover: str):
+    def insert_book(self, guid: str, title: str = None, series: str = None, authors: str = None,
+                    tags: str = None, size: str = None, file_format: str = None, link: str = None, cover: str = None):
         """
 
         :param guid:
         :param title:
-        :param serie:
+        :param series:
         :param authors:
         :param tags:
         :param size:
-        :param format:
+        :param file_format:
         :param link:
         :param cover:
         :return:
@@ -239,21 +240,24 @@ class BDD:
         if self.connexion is None:
             self.__start()
         dt = time.time()
-        self.cursor.execute(
-                '''INSERT INTO books(
-                'guid','title','series','authors','tags','cover',
-                'import_date','last_update_date') 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?)''',
-                (guid, title, series, authors, tags, cover, dt, dt)
-            )
-        file_hash = hashFile(link)
-        self.cursor.execute(
-                '''INSERT INTO files(
-                'guid_file','book_id','size','format','link','file_import_date',
-                'file_last_update_date','file_last_read_date','file_hash','bookmark') 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                (uid(), guid, size, format, link, dt, dt, dt, file_hash, None)
-            )
+        if title is not None and title.strip() != '':
+            self.cursor.execute(
+                    '''INSERT INTO books(
+                    'guid','title','series','authors','tags','cover',
+                    'import_date','last_update_date') 
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?)''',
+                    (guid, title, series, authors, tags, cover, dt, dt)
+                )
+        if link is not None:
+            link = link.replace('/', os.sep)
+            file_hash = hashFile(link)
+            self.cursor.execute(
+                    '''INSERT INTO files(
+                    'guid_file','book_id','size','format','link','file_import_date',
+                    'file_last_update_date','file_last_read_date','file_hash','bookmark') 
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                    (uid(), guid, size, file_format, link, dt, dt, dt, file_hash, None)
+                )
         self.connexion.commit()
 
     def update_book(self, guid: str, col: str, value: str, file_guid: str = None):
@@ -282,20 +286,28 @@ class BDD:
         except Exception:
             traceback.print_exc()
 
-    def delete_book(self, guid: str, file_guid: str = None):
+    def delete_book(self, guid: str = None, file_guid: str = None):
         """
 
         :param guid:
         :param file_guid:
         :return:
         """
+        if guid is None and file_guid is None:
+            return None
+        if guid is not None and guid.strip() == '':
+            return None
+        if file_guid is not None and file_guid.strip() == '':
+            return None
         if self.connexion is None:
             self.__start()
         try:
             dt = time.time()
-            if file_guid is None:
+            if guid is not None and file_guid is None:
                 self.cursor.execute('DELETE FROM books WHERE guid = \'{}\''.format(guid))
                 self.cursor.execute('DELETE FROM files WHERE book_id = \'{}\''.format(guid))
+            elif guid is None and file_guid is not None:
+                self.cursor.execute('DELETE FROM files WHERE guid_file = \'{}\' OR link = \'{}\''.format(file_guid, file_guid))
             else:
                 self.cursor.execute('DELETE FROM files WHERE book_id = ? AND guid_file = ?', (guid, file_guid))
             self.connexion.commit()

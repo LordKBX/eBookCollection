@@ -290,8 +290,62 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                     action1 = PyQt5.QtWidgets.QAction(self.lang['Library/CentralBlockTableContextMenu/EditBook'], None)
                     action1.triggered.connect(lambda: executor.submit(wait_on_editor))
                     menu.addAction(action1)
+
+                plugs = common.vars.get_plugins('library', 'contextMenu', 'central_block_table', file['format'])
+                for plug in plugs:
+                    lg = self.lang.test_lang()
+                    tx = None
+                    for label in plug['interface']['label']:
+                        if label['lang'] == self.lang.default_language and tx is None:
+                            tx = label['content']
+                        if label['lang'] == lg:
+                            tx = label['content']
+                    action2 = PyQt5.QtWidgets.QAction(tx, None)
+                    action2.setProperty('plugin', plug['name'])
+                    action2.setProperty('book_id', guid_book)
+                    tt = [plug['archetype']]
+                    try:
+                        tt = plug['archetype'].split(':')
+                    except Exception:
+                        pass
+                    action2.setProperty('archetype', tt[0])
+                    if tt[0] == 'conversion':
+                        tt2 = ['.', 'conv']
+                        try:
+                            tt2 = tt[1].split('-')
+                            action2.setProperty('end_format', tt2[1])
+                        except Exception:
+                            action2.setProperty('end_format', 'CONV')
+                        pf = file['link'].replace('/', os.sep)
+                        rp = pf.rindex('.')
+                        action2.setProperty('args', {
+                            'input': pf,
+                            'output': os.path.dirname(os.path.realpath(pf)),
+                            'output2': pf[:rp]
+                        })
+                    else:
+                        action2.setProperty('args', {})
+                    # plugin_exec(executor_dir, {'input': executor_file, 'output': executor_file2})
+                    action2.triggered.connect(self.context_menu_plugin_exec)
+                    menu.addAction(action2)
             menu.exec(PyQt5.QtGui.QCursor.pos())
 
+        except Exception:
+            traceback.print_exc()
+
+    def context_menu_plugin_exec(self):
+        try:
+            plugin = self.sender().property('plugin')
+            archetype = self.sender().property('archetype')
+            args = self.sender().property('args')
+            ret = common.vars.plugin_exec(plugin, args)
+            print('archetype=', archetype)
+            if archetype == 'conversion':
+                book_id = self.sender().property('book_id')
+                end_format = self.sender().property('end_format')
+                file_size = get_file_size(ret)
+                self.BDD.insert_book(book_id, file_format=end_format, size=file_size, link=ret)
+                self.set_info_panel(self.BDD.get_books(book_id)[0])
         except Exception:
             traceback.print_exc()
 

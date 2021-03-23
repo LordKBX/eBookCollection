@@ -43,10 +43,10 @@ class Dictionary:
 
 
 class Lang:
-    __default_language = 'en_US'
+    default_language = 'en_US'
     language = None
     translations = dict()
-    translations[__default_language] = {
+    translations[default_language] = {
         "Label": "English (U.S.A)",
         "NotImplemented": "Not implemented",
         "Global": {
@@ -81,8 +81,18 @@ class Lang:
             "InfoBlockFileFormatsLabel": "Format(s)",
             "InfoBlockSizeLabel": "Size",
             "InfoBlockSynopsisLabel": "Synopsis",
+
+            "InfoBlockLinkContestMenu": {
+                "open": "Open file with default application",
+                "edit": "Edit file",
+                "delete": "Delete file",
+                "deleteBook": "Delete book"
+            },
+
             "DialogConfirmDeleteBookWindowTitle": "Delete Ebook",
+            "DialogConfirmDeleteBookWindowTitle2": "Delete Ebook file",
             "DialogConfirmDeleteBookWindowText": "Confirm Ebook remove ?",
+            "DialogConfirmDeleteBookWindowText2": "Confirm file remove ?",
             "DialogConfirmDeleteBookBtnYes": "Yes",
             "DialogConfirmDeleteBookBtnNo": "No",
 
@@ -263,7 +273,7 @@ class Lang:
             "WindowTitle": "Settings",
             "TabGlobalTitle": "Global",
             "TabMetadataTitle": "Metadata",
-            "TabConversionTitle": "File Conversion",
+            "TabPluginsTitle": "Plugins",
             "TabAboutTitle": "About",
 
             "LanguageGroupTitle": "Language",
@@ -315,7 +325,7 @@ class Lang:
         :param value: index
         :return: str|None
         """
-        ln = self.__test_lang(self.language)
+        ln = self.test_lang(self.language)
         try:
             if '/' in value:
                 return self.get(value, ln)
@@ -332,7 +342,7 @@ class Lang:
             return None
 
     def get(self, path: str, lang: str = None, compress: bool = True) -> str:
-        lang = self.__test_lang(lang)
+        lang = self.test_lang(lang)
         if lang not in self.translations:
             return None
         path_tab = path.split('/')
@@ -358,7 +368,7 @@ class Lang:
             traceback.print_exc()
             return None
 
-    def __test_lang(self, language_code: str = None) -> str:
+    def test_lang(self, language_code: str = None) -> str:
         if language_code is None:
             language_code = self.language
         if language_code == 'auto':
@@ -373,7 +383,7 @@ class Lang:
                     passed = True
                     break
             if passed is False:
-                language_code = self.__default_language
+                language_code = self.default_language
         return language_code
 
     def __load_langs(self) -> None:
@@ -384,7 +394,7 @@ class Lang:
         jssgenerator = JSONSchemaGenerator()
         encoder = json.encoder.JSONEncoder()
         print(self.translations)
-        tab = encoder.encode(self.translations[self.__default_language])
+        tab = encoder.encode(self.translations[self.default_language])
         jssgenerator.load(tab)
         schema = jssgenerator.generate()
         if common.vars.debug is True:
