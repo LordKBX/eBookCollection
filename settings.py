@@ -370,7 +370,6 @@ class SettingsWindow(QDialog):
             self.tab_about_label.setText(self.lng['Settings/AboutLabel'])
 
             self.load_plugins_tab()
-            self.load_plugins_tab()
         except Exception:
             traceback.print_exc()
 
@@ -476,6 +475,7 @@ class SettingsWindow(QDialog):
             plugs = list_plugins()
 
             self.clear_layout(self.tab_plugins_list_zone)
+            self.tab_plugins_scroll_area1.repaint()
 
             for plug in plugs:
                 # plugin = plugs[plug]
@@ -682,12 +682,23 @@ class SettingsWindow(QDialog):
     def clear_layout(self, layout: QLayout):
         if layout is None:
             return
-        while layout.count() != 0:
-            child = layout.takeAt(0)
-            if child.layout() is not None:
-                self.clear_layout(child.layout())
-                child.widget().deleteLater()
-            elif child.widget() is not None:
-                child.widget().deleteLater()
+        print('layout.count()=', layout.count())
+        r = []
+        i = layout.count()
+        while i > 0:
+            i -= 1
+            r.append(i)
+        print('range=', r)
+
+        for i in r:
+            child = layout.itemAt(i)
+            print(child)
+            if isinstance(child, QWidgetItem):
+                try:
+                    child.widget().deleteLater()
+                except Exception:
+                    traceback.print_exc()
+            elif isinstance(child, QLayoutItem):
+                layout.removeItem(child)
             del child
 
