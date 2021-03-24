@@ -67,6 +67,11 @@ Require the following complements:
 Required Archiver:
 - Windows => 7Zip
 
+## Additional Packages
+[lang](https://github.com/LordKBX/eBookCollection/tree/main/packages/lang)
+[style](https://github.com/LordKBX/eBookCollection/tree/main/packages/style)
+[plugin](https://github.com/LordKBX/eBookCollection/tree/main/packages/plugin)
+
 ## Additional Packages examples
 - [lang](https://github.com/LordKBX/eBookCollection/raw/main/test/example%20lang%20package.ebclang)
 - [style](https://github.com/LordKBX/eBookCollection/raw/main/test/example%20style%20package.ebcstyle)
