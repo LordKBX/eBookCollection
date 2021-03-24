@@ -280,6 +280,9 @@ class Lang:
             "LanguageAutomatic": "< System defined >",
             "LanguageImportTitle": "Import translation file",
             "Import": "Import",
+            "ImportErrorTitle": "ERROR",
+            "ImportErrorFileType": "File type invalid",
+            "ImportErrorFileCorrupted": "File corrupted",
 
             "StyleGroupTitle": "Style",
             "StyleLight": "Light",
@@ -310,7 +313,18 @@ class Lang:
 
             "AboutLabel": "{APP_NAME}\n\n License MIT\n\n Copyright (c) 2020-2021 Boulain Kévin",
             "AboutBtnLicense": "License",
-            "AboutBtnWebsite": "Web Site"
+            "AboutBtnWebsite": "Web Site",
+
+            "pluginsSettingsButton": "Settings",
+            "pluginsUninstallButton": "Uninstall",
+            "pluginsSettingsTitle": "Settings of plugin-in '{}'",
+            "pluginsForApp": "For App {}",
+            "pluginsArchetype": "Type {}",
+
+            "DialogConfirmDeletePluginWindowTitle": "Uninstall Plug-in",
+            "DialogConfirmDeletePluginWindowText": "Confirm Plug-in Uninstall ?",
+            "DialogConfirmDeletePluginBtnYes": "Yes",
+            "DialogConfirmDeletePluginBtnNo": "No"
         }
     }
 

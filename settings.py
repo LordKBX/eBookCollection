@@ -7,15 +7,20 @@ import PyQt5.QtGui
 import PyQt5.uic
 from PyQt5.uic import *
 import zipfile
+import jsonschema
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import common.common
 import common.files
 import common.books
+import common.dialog
+import common.archive
 from common.vars import *
 
 
 class SettingsWindow(QDialog):
+    verticalSpacer = None
+
     def __init__(self, parent, bdd):
         super(SettingsWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
         self.BDD = bdd
@@ -113,6 +118,8 @@ class SettingsWindow(QDialog):
             )
         self.tab_metadata_import_filename_template_combo_box.setCurrentIndex(selected)
         self.tab_metadata_import_filename_separator_line_edit.setText(self.BDD.get_param('import_file_separator'))
+
+        self.tab_plugins_import.clicked.connect(self.install_plugin)
 
         self.tab_about_btn_license.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE.txt'))
         self.tab_about_btn_website.clicked.connect(lambda: os.system("start https://github.com/LordKBX/eBookCollection"))
@@ -353,12 +360,16 @@ class SettingsWindow(QDialog):
             self.tab_metadata_import_filename_template_label.setText(self.lng['Settings/eBookImportFilenameTpl'])
             self.tab_metadata_import_filename_separator_label.setText(self.lng['Settings/eBookImportFilenameTplSeparator'])
 
+            # tab_plugins
+            self.tab_plugins_import.setText(self.lng['Settings/Import'])
+
             # tab_about
             #   About group
             self.tab_about_btn_license.setText(self.lng['Settings/AboutBtnLicense'])
             self.tab_about_btn_website.setText(self.lng['Settings/AboutBtnWebsite'])
             self.tab_about_label.setText(self.lng['Settings/AboutLabel'])
 
+            self.load_plugins_tab()
             self.load_plugins_tab()
         except Exception:
             traceback.print_exc()
@@ -389,15 +400,7 @@ class SettingsWindow(QDialog):
         self.tab_about.setStyleSheet(get_style_var(style, 'QDialog'))
 
         self.tab_metadata_import_filename_separator_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditPrecise'))
-
-        # IN DEV DISABLED CONTENT
-        cursor_disabled = QtGui.QCursor(QtCore.Qt.ForbiddenCursor)
-        # self.tab_global_lang_btn.setDisabled(True)
-        # self.tab_global_style_import_btn.setDisabled(True)
-        # self.tab_global_lang_btn.setCursor(cursor_disabled)
-        # self.tab_global_style_import_btn.setCursor(cursor_disabled)
-        # self.tab_global_lang_btn.setToolTip(self.lng['NotImplemented'])
-        # self.tab_global_style_import_btn.setToolTip(self.lng['NotImplemented'])
+        self.cover_combo_changed()
 
     def cover_combo_changed(self):
         vals = {
@@ -467,67 +470,224 @@ class SettingsWindow(QDialog):
         self.test_archiver()
 
     def load_plugins_tab(self):
-        plugs = list_plugins()
-        # self.tab_plugins_scroll_area2 = QScrollArea()
-        self.tab_plugins_scroll_area2.widget().deleteLater()
-        if self.tab_plugins_scroll_area2.layout() is None:
-            self.tab_plugins_scroll_area2.setLayout(QVBoxLayout())
+        try:
+            style = self.BDD.get_param('style')
+            cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+            plugs = list_plugins()
 
-        for plug in plugs:
-            # plugin = plugs[plug]
-            print(plug)
-            box = QGroupBox()
-            box.setTitle(plug)
-            box.setLayout(QVBoxLayout())
+            self.clear_layout(self.tab_plugins_list_zone)
 
-            lines = []
-            lines.append(['For', plugs[plug]['context']['app']])
-            arct = [plugs[plug]['context']['archetype']]
-            try: arct = plugs[plug]['context']['archetype'].split(':')
-            except Exception: pass
-            lines.append(['Type', arct[0]])
+            for plug in plugs:
+                # plugin = plugs[plug]
+                print(plug)
+                box = QGroupBox()
+                box.setTitle(plug)
+                box.setLayout(QVBoxLayout())
 
-            for line in lines:
-                l1 = QHBoxLayout()
-                l1.addWidget(QLabel(line[0]))
-                l1.addWidget(QLabel(line[1]))
-                l1.addStretch(1)
-                box.layout().addLayout(l1)
+                lines = []
+                line_style = ""
+                if plugs[plug]['context']['app'] == 'library':
+                    line_style = "background-color:#66ff66;color:#000000;"
+                elif plugs[plug]['context']['app'] == 'reader':
+                    line_style = "background-color:#ff6666;color:#ffffff;"
+                elif plugs[plug]['context']['app'] == 'editor':
+                    line_style = "background-color:#6666ff;color:#ffffff;"
+                lines.append(
+                    self.lng['Settings/pluginsForApp']
+                        .format('<span style="'+line_style+'">&nbsp;'+plugs[plug]['context']['app']+' </span>')
+                )
+                arct = [plugs[plug]['context']['archetype']]
+                try: arct = plugs[plug]['context']['archetype'].split(':')
+                except Exception: pass
+                line_style = "background-color:#00AEFF;color:#000000;"
+                lines.append(self.lng['Settings/pluginsArchetype'].format('<span style="'+line_style+'">&nbsp;'+arct[0]+' </span>'))
 
-            l2 = QHBoxLayout()
-            pb1 = QPushButton()
-            pb1.setText('UNINSTALL')
-            pb1.setProperty('plugin', plug)
-            pb1.clicked.connect(self.uninstall_plugin)
-            l2.addWidget(pb1)
-            pb2 = QPushButton()
-            pb2.setText('SETTINGS')
-            pb2.setProperty('plugin', plug)
-            pb2.clicked.connect(self.plugin_settings_open)
-            l2.addWidget(pb2)
-            # l2.addStretch(1)
-            box.layout().addLayout(l2)
+                for line in lines:
+                    l1 = QHBoxLayout()
+                    la1 = QLabel(line)
+                    la1.setMinimumHeight(25)
+                    l1.addWidget(la1)
+                    l1.addStretch(1)
+                    box.layout().addLayout(l1)
 
-            self.tab_plugins_scroll_area2.layout().addWidget(box)
-        self.tab_plugins_scroll_area2.layout().addStretch(1)
+                l2 = QHBoxLayout()
+                pb1 = QPushButton()
+                pb1.setText(self.lng['Settings/pluginsUninstallButton'])
+                pb1.setCursor(cursor)
+                pb1.setMinimumHeight(25)
+                # pb1.setStyleSheet(get_style_var(style, 'fullButton'))
+                pb1.setProperty('plugin', plug)
+                pb1.clicked.connect(self.uninstall_plugin)
+                l2.addWidget(pb1)
+                pb2 = QPushButton()
+                pb2.setText(self.lng['Settings/pluginsSettingsButton'])
+                pb2.setCursor(cursor)
+                pb2.setMinimumHeight(25)
+                # pb2.setStyleSheet(get_style_var(style, 'fullButton'))
+                pb2.setProperty('plugin', plug)
+                pb2.clicked.connect(self.plugin_settings_open)
+                l2.addWidget(pb2)
+                # l2.addStretch(1)
+                box.layout().addLayout(l2)
+
+                self.tab_plugins_list_zone.addWidget(box)
+            # self.tab_plugins_list_zone.addItem(QSpacerItem(10, 99999999, QSizePolicy.Maximum, QSizePolicy.Maximum))
+        except Exception:
+            traceback.print_exc()
+
+    def install_plugin(self):
+        print('install a plugin')
+        options = QFileDialog.Options()
+        # options |= QFileDialog.DontUseNativeDialog
+        list_files, _ = QFileDialog.getOpenFileNames(
+            self, self.lng['Settings/StyleImportTitle'], app_directory,
+            "eBook Collection plug-in file (*.ebcplugin)",
+            options=options
+        )
+        style = ''
+        try:
+            for file in list_files:
+                file = file.replace('/', os.sep)
+                file_name = file[file.rindex(os.sep)+1:].replace('.ebcplugin', '')
+                myzip = zipfile.ZipFile(file, 'r')
+                myfile = myzip.open('mimetype')
+                mimetype = myfile.read().decode('utf8')
+                myfile.close()
+                if mimetype != 'application/ebook+collection+plugin':
+                    common.dialog.WarnDialog(self.lng['Settings/ImportErrorTitle'], self.lng['Settings/ImportErrorFileType'])
+                    return
+
+                myfile = myzip.open('package.json')
+                package = myfile.read().decode('utf8')
+                myfile.close()
+
+                # test id valid JSON
+                decoder = json.decoder.JSONDecoder()
+                tab = decoder.decode(package)
+                # test package JSON schema
+                jsonschema.validate(instance=tab, schema=plugin_package_schema)
+
+                dest_dir = app_user_directory + os.sep + "imports" + os.sep + "plugins" + os.sep + file_name
+                common.archive.inflate(file, dest_dir)
+
+            load_plugins()
+            self.load_plugins_tab()
+        except Exception:
+            traceback.print_exc()
+            common.dialog.WarnDialog(self.lng['Settings/ImportErrorTitle'], self.lng['Settings/ImportErrorFileCorrupted'])
 
     def uninstall_plugin(self):
-        plugin_name = self.sender().property('plugin')
-        print('uninstall', plugin_name)
+        try:
+            plugin_name = self.sender().property('plugin')
+            print('uninstall', plugin_name)
+            dest_dir = app_user_directory + os.sep + "imports" + os.sep + "plugins" + os.sep + plugin_name
+            if os.path.isdir(dest_dir) is True:
+                ret = common.dialog.WarnDialogConfirm(
+                        self.lng['Settings/DialogConfirmDeletePluginWindowTitle'],
+                        self.lng['Settings/DialogConfirmDeletePluginWindowText'],
+                        self.lng['Settings/DialogConfirmDeletePluginBtnYes'],
+                        self.lng['Settings/DialogConfirmDeletePluginBtnNo'],
+                        self
+                    )
+                if ret is True:
+                    common.files.rmDir(dest_dir)
+                    load_plugins()
+                    self.load_plugins_tab()
+        except Exception:
+            traceback.print_exc()
 
     def plugin_settings_open(self):
-        plugin_name = self.sender().property('plugin')
-        print('plugin_settings_open', plugin_name)
-        plug = get_plugin(plugin_name)
-        if plug is not None:
-            settings = plug['settings']
-            print(settings)
-            ui = QDialog(self, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-            style = self.BDD.get_param('style')
-            ui.setStyleSheet(get_style_var(style, 'QDialog') + get_style_var(style, 'SettingsDialogBox'))
+        try:
+            plugin_name = self.sender().property('plugin')
+            print('plugin_settings_open', plugin_name)
+            plug = get_plugin(plugin_name)
+            if plug is not None:
+                settings = plug['settings']
+                print(settings)
+                ui = QDialog(self, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+                style = self.BDD.get_param('style')
+                PyQt5.uic.loadUi(
+                    os.path.dirname(os.path.realpath(__file__)) + os.sep + 'settings_plugin_params.ui'.replace('/', os.sep),
+                    ui
+                )
 
-            PyQt5.uic.loadUi(
-                os.path.dirname(os.path.realpath(__file__)) + os.sep + 'settings_plugin_params.ui'.replace('/', os.sep),
-                ui
-            )
-            ui.exec_()
+                cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+                ui.setStyleSheet(get_style_var(style, 'QDialog') + get_style_var(style, 'SettingsDialogBox'))
+                ui.button_box.button(QDialogButtonBox.Ok).setStyleSheet(get_style_var(style, 'fullAltButton'))
+                ui.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
+                ui.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(get_style_var(style, 'fullAltButton'))
+                ui.button_box.button(QDialogButtonBox.Cancel).setCursor(cursor)
+
+                ui.setWindowTitle(self.lng['Settings/pluginsSettingsTitle'].format(plugin_name))
+
+                if ui.scrollArea.layout() is not None:
+                    ui.scrollArea.widget().deleteLater()
+                if ui.scrollArea.layout() is None:
+                    ui.scrollArea.setLayout(QVBoxLayout())
+
+                ui_params = {}
+                language = self.lng.test_lang()
+
+                for param in settings:
+                    block = QVBoxLayout()
+                    l1 = QHBoxLayout()
+                    lab = param['name']
+                    for tx in param['label']:
+                        if tx['lang'] == language:
+                            lab = tx['content']
+
+                    la1 = QLabel(lab)
+                    l1.addWidget(la1)
+                    if param['archetype'] == 'int' or param['archetype'] == 'float':
+                        if param['archetype'] == 'int': ui_params[param['name']] = QSpinBox()
+                        else: ui_params[param['name']] = QDoubleSpinBox()
+
+                        if 'min' in param: ui_params[param['name']].setMinimum(param['min'])
+                        else: ui_params[param['name']].setMinimum(0)
+
+                        if 'max' in param: ui_params[param['name']].setMaximum(param['max'])
+                        else: ui_params[param['name']].setMaximum(2147483647)
+
+                        if param['archetype'] == 'int': ui_params[param['name']].setValue(int(float(param['value'])))
+                        else: ui_params[param['name']].setValue(float(param['value']))
+
+                        l1.addWidget(ui_params[param['name']])
+                    else:
+                        ui_params[param['name']] = QLineEdit()
+                        ui_params[param['name']].setText(param['value'])
+                        l1.addWidget(ui_params[param['name']])
+
+                    ui.scrollArea.layout().addLayout(l1)
+                ui.scrollArea.layout().addStretch(1)
+
+                ret = ui.exec_()
+                print(ret)
+                if ret == 1:
+                    settings = QtCore.QSettings(app_editor, app_name)
+                    for param in ui_params:
+                        value = ''
+                        if isinstance(ui_params[param], QLineEdit):
+                            value = ui_params[param].text()
+                        elif isinstance(ui_params[param], QSpinBox):
+                            value = ui_params[param].value()
+                        elif isinstance(ui_params[param], QDoubleSpinBox):
+                            value = ui_params[param].value()
+                        settings.setValue('plugins/' + plugin_name + '/' + param, value)
+                        print(param, '=', value)
+
+
+        except Exception:
+            traceback.print_exc()
+
+    def clear_layout(self, layout: QLayout):
+        if layout is None:
+            return
+        while layout.count() != 0:
+            child = layout.takeAt(0)
+            if child.layout() is not None:
+                self.clear_layout(child.layout())
+                child.widget().deleteLater()
+            elif child.widget() is not None:
+                child.widget().deleteLater()
+            del child
+

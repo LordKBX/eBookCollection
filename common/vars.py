@@ -2,7 +2,7 @@ import os, sys, re, traceback, subprocess
 from PyQt5 import QtCore, QtGui, QtWidgets
 import json.decoder
 import json.encoder
-from jsonschema import validate
+import jsonschema
 from common.json_shema import JSONSchemaGenerator
 import common.archive
 import common.files
@@ -410,7 +410,7 @@ def load_styles():
                             decoder = json.decoder.JSONDecoder()
                             tab = decoder.decode(content)
                             # test package JSON schema
-                            validate(instance=tab, schema=schema)
+                            jsonschema.validate(instance=tab, schema=schema)
 
                             env_vars['styles'][nm] = eval(
                                 content.replace('{APP_DIR}', app_directory.replace(os.sep, '/'))
@@ -544,7 +544,9 @@ plugin_package_schema = {
                         }
                     },
                     "archetype": {"type": "string"},
-                    "value": {"type": ["string", "number", "boolean"]}
+                    "value": {"type": ["string", "number", "boolean"]},
+                    "min": {"type": "number"},
+                    "max": {"type": "number"}
                 },
                 "required": ["name", "label", "archetype", "value"]
             },
@@ -573,7 +575,7 @@ def load_plugins():
                 file.write(json.dumps(schema, indent=4))
 
         ext = "json"
-        # env_vars['styles'].clear()
+        env_vars['plugins'].clear()
         for root, directories, files in os.walk(directory, topdown=False):
             for name in directories:
                 try:
@@ -594,7 +596,7 @@ def load_plugins():
                         decoder = json.decoder.JSONDecoder()
                         tab = decoder.decode(content)
                         # test package JSON schema
-                        validate(instance=tab, schema=schema)
+                        jsonschema.validate(instance=tab, schema=schema)
 
                         data = eval(content)
                         # print(data)

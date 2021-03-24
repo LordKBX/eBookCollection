@@ -633,6 +633,15 @@
                 "Import": {
                     "type": "string"
                 },
+                "ImportErrorTitle": {
+                    "type": "string"
+                },
+                "ImportErrorFileType": {
+                    "type": "string"
+                },
+                "ImportErrorFileCorrupted": {
+                    "type": "string"
+                },
                 "StyleGroupTitle": {
                     "type": "string"
                 },
@@ -706,6 +715,33 @@
                     "type": "string"
                 },
                 "AboutBtnWebsite": {
+                    "type": "string"
+                },
+                "pluginsSettingsButton": {
+                    "type": "string"
+                },
+                "pluginsUninstallButton": {
+                    "type": "string"
+                },
+                "pluginsSettingsTitle": {
+                    "type": "string"
+                },
+                "pluginsForApp": {
+                    "type": "string"
+                },
+                "pluginsArchetype": {
+                    "type": "string"
+                },
+                "DialogConfirmDeletePluginWindowTitle": {
+                    "type": "string"
+                },
+                "DialogConfirmDeletePluginWindowText": {
+                    "type": "string"
+                },
+                "DialogConfirmDeletePluginBtnYes": {
+                    "type": "string"
+                },
+                "DialogConfirmDeletePluginBtnNo": {
                     "type": "string"
                 }
             }

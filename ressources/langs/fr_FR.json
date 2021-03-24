@@ -256,6 +256,9 @@
 		"LanguageAutomatic": "< Langue système >",
 		"LanguageImportTitle": "Importer fichier de traduction",
 		"Import": "Importer",
+		"ImportErrorTitle": "ERROR",
+		"ImportErrorFileType": "File type invalid",
+		"ImportErrorFileCorrupted": "File corrupted",
 
 		"StyleGroupTitle": "Apparence",
 		"StyleLight": "Clair",
@@ -286,6 +289,17 @@
 
 		"AboutLabel": "{APP_NAME}\n\n License MIT\n\n Copyright (c) 2020-2021 Boulain Kévin",
 		"AboutBtnLicense": "Licence",
-		"AboutBtnWebsite": "Site Web"
+		"AboutBtnWebsite": "Site Web",
+
+		"pluginsSettingsButton": "Paramètres",
+		"pluginsUninstallButton": "Dé-installer",
+		"pluginsSettingsTitle": "Paramètres extension '{}'",
+		"pluginsForApp": "Application {}",
+		"pluginsArchetype": "Type {}",
+
+		"DialogConfirmDeletePluginWindowTitle": "Dé-installation Plug-in",
+		"DialogConfirmDeletePluginWindowText": "Confirmez vous la Dé-installation du Plug-in ?",
+		"DialogConfirmDeletePluginBtnYes": "Oui",
+		"DialogConfirmDeletePluginBtnNo": "Non"
 	}
 }
