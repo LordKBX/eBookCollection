@@ -411,9 +411,12 @@ class Lang:
         tab = encoder.encode(self.translations[self.default_language])
         jssgenerator.load(tab)
         schema = jssgenerator.generate()
-        if common.vars.debug is True:
-            with open(common.vars.app_directory + os.sep + "doc" + os.sep + "packages" + os.sep + "lang" + os.sep + "lang.json_schema", 'wt', encoding='utf8') as file:
-                file.write(json.dumps(schema, indent=4))
+        try:
+            if common.vars.debug is True:
+                with open(common.vars.app_directory + os.sep + "doc" + os.sep + "packages" + os.sep + "lang" + os.sep + "lang.json_schema", 'wt', encoding='utf8') as file:
+                    file.write(json.dumps(schema, indent=4))
+        except Exception:
+            traceback.print_exc()
 
         ext = "json"
         for dir in [directory, directory2]:

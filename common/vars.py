@@ -386,9 +386,12 @@ def load_styles():
         tab = encoder.encode(env_vars['styles']['Dark'])
         jssgenerator.load(tab)
         schema = jssgenerator.generate()
-        if debug is True:
-            with open(app_directory + os.sep + "doc" + os.sep + "packages" + os.sep + "style" + os.sep + 'style.json_schema', 'wt', encoding='utf8') as file:
-                file.write(json.dumps(schema, indent=4))
+        try:
+            if debug is True:
+                with open(app_directory + os.sep + "doc" + os.sep + "packages" + os.sep + "style" + os.sep + 'style.json_schema', 'wt', encoding='utf8') as file:
+                    file.write(json.dumps(schema, indent=4))
+        except Exception:
+            traceback.print_exc()
 
         ext = "json"
         # env_vars['styles'].clear()
@@ -570,9 +573,12 @@ def load_plugins():
         settings = QtCore.QSettings(app_editor, app_name)
         directory = app_user_directory + os.sep + "imports" + os.sep + "plugins"
 
-        if debug is True:
-            with open(app_directory + os.sep + "doc" + os.sep + "packages" + os.sep + "plugin" + os.sep + 'example.package.json_schema', 'wt', encoding='utf8') as file:
-                file.write(json.dumps(schema, indent=4))
+        try:
+            if debug is True:
+                with open(app_directory + os.sep + "doc" + os.sep + "packages" + os.sep + "plugin" + os.sep + 'example.package.json_schema', 'wt', encoding='utf8') as file:
+                    file.write(json.dumps(schema, indent=4))
+        except Exception:
+            traceback.print_exc()
 
         ext = "json"
         env_vars['plugins'].clear()
