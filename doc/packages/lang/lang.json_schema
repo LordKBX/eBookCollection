@@ -184,6 +184,14 @@
                             "type": "string"
                         }
                     }
+                },
+                "Metadata": {
+                    "type": "object",
+                    "properties": {
+                        "WindowTitle": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },

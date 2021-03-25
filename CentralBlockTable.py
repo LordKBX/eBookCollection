@@ -5,6 +5,7 @@ import PyQt5.QtGui
 import PyQt5.QtWidgets
 from common.files import *
 from common.common import *
+from common.vars import *
 import SortingBlockTree
 import settings
 import InfoPanel
@@ -275,13 +276,17 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
     def central_block_table_context_menu(self, point: PyQt5.QtCore.QPoint):
         global executor_dir, executor_file
         try:
+            # self.central_block_table = QtWidgets.QTableWidget()
+            selection = self.central_block_table.selectedRanges()[0]
+            selection = [selection.topRow(), selection.bottomRow()]
+            print(selection)
             current_row = self.central_block_table.currentRow()
             current_column = self.central_block_table.currentColumn()
             guid_book = self.central_block_table.item(current_row, current_column).data(99)
             book_infos = self.BDD.get_books(guid_book)[0]
             menu = PyQt5.QtWidgets.QMenu()
             action0 = PyQt5.QtWidgets.QAction(self.lang['Library/CentralBlockTableContextMenu/EditMetadata'], None)
-            action0.triggered.connect(lambda: print("Edit Metadata!"))
+            action0.triggered.connect(self.metadata_window_load)
             menu.addAction(action0)
             for file in book_infos['files']:
                 if file['format'] == 'EPUB':
@@ -452,7 +457,6 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
             self.set_info_panel(None)
         self.central_block_table_sort_reset()
         self.central_block_table.setCurrentCell(0, 0)
-
 
 class QTableAltItem(QtWidgets.QTableWidgetItem):
     value = 0.0

@@ -3,6 +3,8 @@ import sys, os, shutil, traceback, time
 import PyQt5.QtCore
 import sqlite3
 
+from typing import List
+
 from .common import *
 from .files import *
 from .vars import *
@@ -23,6 +25,36 @@ def dict_factory(cursor, row):
 
 
 class BDD:
+    # /!\ DO NOT PUT 'NOT NULL' ON NUMERIC COLUMN, CREATE ERROR IN AUTOMATIC TABLE MIGRATION
+    tables = {
+        'books': [
+            {'name': 'guid',             'type': 'TEXT',        'ext': 'TEXT PRIMARY KEY NOT NULL'},
+            {'name': 'title',            'type': 'TEXT',        'ext': 'TEXT NOT NULL'},
+            {'name': 'authors',          'type': 'TEXT',        'ext': 'TEXT'},
+            {'name': 'series',           'type': 'TEXT',        'ext': 'TEXT'},
+            {'name': 'series_vol',       'type': 'NUMERIC',     'ext': 'NUMERIC DEFAULT 0'},
+            {'name': 'tags',             'type': 'TEXT',        'ext': 'TEXT'},
+            {'name': 'synopsis',         'type': 'TEXT',        'ext': 'TEXT'},
+            {'name': 'cover',            'type': 'TEXT',        'ext': 'TEXT NOT NULL'},
+            {'name': 'import_date',      'type': 'NUMERIC',     'ext': 'NUMERIC DEFAULT 0'},
+            {'name': 'last_update_date', 'type': 'NUMERIC',     'ext': 'NUMERIC DEFAULT 0'}
+        ],
+        'files': [
+            {'name': 'guid_file',               'type': 'TEXT',         'ext': 'TEXT PRIMARY KEY NOT NULL'},
+            {'name': 'book_id',                 'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
+            {'name': 'size',                    'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
+            {'name': 'format',                  'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
+            {'name': 'link',                    'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
+            {'name': 'file_hash',               'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
+            {'name': 'editors',                 'type': 'TEXT',         'ext': 'TEXT'},
+            {'name': 'langs',                   'type': 'TEXT',         'ext': 'TEXT'},
+            {'name': 'bookmark',                'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
+            {'name': 'file_import_date',        'type': 'NUMERIC',      'ext': 'NUMERIC DEFAULT 0'},
+            {'name': 'file_last_update_date',   'type': 'NUMERIC',      'ext': 'NUMERIC DEFAULT 0'},
+            {'name': 'file_last_read_date',     'type': 'NUMERIC',      'ext': 'NUMERIC DEFAULT 0'}
+        ]
+    }
+
     def __init__(self, directory: str = None):
         self.settings = PyQt5.QtCore.QSettings(app_editor, app_name)
         self.connexion = None
@@ -43,32 +75,74 @@ class BDD:
         print(self.__directory)
         # self.__start()
 
+    def __create_table_request(self, table: str, alt_name: str = None) -> str or None:
+        if table not in self.tables: return None
+        if alt_name is not None and alt_name.strip() != '':
+            ret = 'CREATE TABLE '+alt_name.strip()+'('
+        else:
+            ret = 'CREATE TABLE '+table+'('
+        i = 0
+        for line in self.tables[table]:
+            if i > 0: ret += ', '
+            ret += '\'' + line['name'] + '\' ' + line['ext']
+            i += 1
+        ret += ')'
+        return ret
+
+    def __test_table(self, table: str, request_ret: list) -> bool:
+        if table not in self.tables: return None
+        for line in self.tables[table]:
+            line_ok = False
+            for req_line in request_ret:
+                if req_line['name'] == line['name']:
+                    if req_line['type'] == line['type']:
+                        line_ok = True
+                        break
+            if line_ok is False:
+                return False
+        return True
+    
+    def __auto_refit_table(self, table: str, request_ret: list):
+        if table not in self.tables: return None
+        alt_tab = table + '_alt'
+        cols = ''
+        for req_line in request_ret:
+            if cols != '':
+                cols += ','
+            cols += '"' + req_line['name'] + '"'
+        self.cursor.execute(self.__create_table_request(table, alt_tab))
+        '''INSERT INTO "main"."sqlb_temp_table_26" SELECT "guid_file","book_id","size","format","link","file_import_date",
+        "file_last_update_date","file_last_read_date","file_hash","bookmark" FROM "main"."files";'''
+        print('INSERT INTO "main"."'+alt_tab+'" SELECT '+cols+' FROM "main"."'+table+'"')
+        self.cursor.execute('INSERT INTO "main"."'+alt_tab+'" SELECT '+cols+' FROM "main"."'+table+'"')
+        self.cursor.execute("PRAGMA defer_foreign_keys = '1'")
+        self.cursor.execute('DROP TABLE "main"."'+table+'"')
+        self.cursor.execute('ALTER TABLE "main"."'+alt_tab+'" RENAME TO "'+table+'"')
+        self.connexion.commit()
+
     def __start(self):
+        ctb = self.__create_table_request('books')
+        ctf = self.__create_table_request('files')
+
         self.connexion = sqlite3.connect(self.__directory + os.sep + self.__database_filename)
         self.connexion.row_factory = dict_factory
         self.cursor = self.connexion.cursor()
 
-        self.cursor.execute('''PRAGMA table_info('books')''')
-        ret = self.cursor.fetchone()
-        if ret is None:
-            self.cursor.execute('''CREATE TABLE books('guid' TEXT PRIMARY KEY NOT NULL, 'title' TEXT NOT NULL, 
-                    'authors' TEXT, 'series' TEXT, 'import_date' TEXT NOT NULL, 'last_update_date' TEXT NOT NULL, 
-                    'tags' TEXT, 'synopsis' TEXT, 'cover' TEXT NOT NULL)''')
+        self.cursor.execute('''PRAGMA table_xinfo('books')''')
+        ret = self.cursor.fetchall()
+        if len(ret) == 0:
+            self.cursor.execute(ctb)
+        else:
+            if self.__test_table('books', ret) is False:
+                self.__auto_refit_table('books', ret)
 
-        self.cursor.execute('''PRAGMA table_info('files')''')
-        ret = self.cursor.fetchone()
+        self.cursor.execute('''PRAGMA table_xinfo('files')''')
+        ret = self.cursor.fetchall()
         if ret is None:
-            self.cursor.execute('''CREATE TABLE files(
-                    'guid_file' TEXT PRIMARY KEY NOT NULL, 
-                    'book_id' TEXT NOT NULL, 
-                    'size' TEXT NOT NULL, 
-                    'format' TEXT NOT NULL, 
-                    'link' TEXT NOT NULL, 
-                    'file_import_date' TEXT NOT NULL, 
-                    'file_last_update_date' TEXT NOT NULL, 
-                    'file_last_read_date' TEXT NOT NULL, 
-                    'file_hash' TEXT NOT NULL, 
-                    'bookmark' TEXT)''')
+            self.cursor.execute(ctf)
+        else:
+            if self.__test_table('files', ret) is False:
+                self.__auto_refit_table('files', ret)
 
         self.connexion.commit()
 
@@ -153,11 +227,11 @@ class BDD:
                 ret.append(row['series'])
         return ret
 
-    def get_books(self, guid: str = None, search: str = None):
+    def get_books(self, guid: str or List[str] = None, search: str = None):
         """
         get registred book in database
 
-        :param guid: guid of the book
+        :param guid: guid or list of guid of the book(s)
         :param search: research patern
         :return: list(dict)
         """
@@ -171,8 +245,18 @@ class BDD:
             ret = self.cursor.fetchall()
         else:
             if guid is not None:
-                self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) "
-                                    "WHERE guid = '"+guid+"'")
+                if isinstance(guid, str):
+                    self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) "
+                                        "WHERE guid = '"+guid+"'")
+                elif isinstance(guid, list):
+                    guil = ''
+                    for gu in guid:
+                        if guil != '':
+                            guil += ','
+                        guil += '\'' + gu + '\''
+                    query = "SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE guid IN ("+guil+")"
+                    print(query)
+                    self.cursor.execute(query)
                 ret = self.cursor.fetchall()
             elif search is not None:
                 tab = search.split(':')
@@ -201,6 +285,7 @@ class BDD:
                         'title': row['title'],
                         'authors': row['authors'],
                         'series': row['series'],
+                        'series_vol': row['series_vol'],
                         'import_date': row['import_date'],
                         'last_update_date': row['last_update_date'],
                         'tags': row['tags'],

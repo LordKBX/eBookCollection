@@ -13,10 +13,11 @@ from CentralBlockTable import *
 from InfoPanel import *
 from SortingBlockTree import *
 from settings import *
+from metadata import *
 import empty_book
 
 
-class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree):
+class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree, MetadataWindow):
     def __init__(self, database: bdd.BDD, translation: Lang, argv: list, env_vars: dict):
         super(HomeWindow, self).__init__()
         PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'home.ui', self)  # Load the .ui file

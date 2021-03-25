@@ -204,7 +204,7 @@ env_vars = {
                     "QDialog, QWidget{ background-color:#4B4B4B; }",
                     "QScrollArea{ background-color:#4B4B4B; }",
                     "QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
-                    "QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+                    "QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QDateEdit{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
                     "QPushButton, QToolButton { background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; min-height:35px; height:35px; width:100%;}",
                     "QPushButton:hover, QToolButton:hover { background-color:#555555; color:#ffffff; border:#ffffff 2px solid; }",
                     "QPushButton:pressed, QToolButton:pressed, QPushButton:checked, QToolButton:checked { background-color:#999999; color:#000000; border:#ffffff 2px solid; }",

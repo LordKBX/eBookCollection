@@ -66,6 +66,10 @@
 			"Chapter1": "Chapitre 1",
 			"Author": "Auteur:",
 			"Authors": "Auteurs:"
+		},
+
+		"Metadata": {
+			"WindowTitle": "Editing Metadata"
 		}
 	},
 	"Generic": {

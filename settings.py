@@ -617,6 +617,8 @@ class SettingsWindow(QDialog):
                 ui.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
                 ui.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(get_style_var(style, 'fullAltButton'))
                 ui.button_box.button(QDialogButtonBox.Cancel).setCursor(cursor)
+                ui.button_box.button(QDialogButtonBox.Ok).setText(self.lng.get('Generic/DialogBtnSave'))
+                ui.button_box.button(QDialogButtonBox.Cancel).setText(self.lng.get('Generic/DialogBtnCancel'))
 
                 ui.setWindowTitle(self.lng['Settings/pluginsSettingsTitle'].format(plugin_name))
 
@@ -682,13 +684,11 @@ class SettingsWindow(QDialog):
     def clear_layout(self, layout: QLayout):
         if layout is None:
             return
-        print('layout.count()=', layout.count())
         r = []
         i = layout.count()
         while i > 0:
             i -= 1
             r.append(i)
-        print('range=', r)
 
         for i in r:
             child = layout.itemAt(i)

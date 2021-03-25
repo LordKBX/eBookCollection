@@ -114,6 +114,9 @@ class Lang:
                 "Chapter1": "Chapters 1",
                 "Author": "Author:",
                 "Authors": "Authors:"
+            },
+            "Metadata": {
+                "WindowTitle": "Editing Metadata"
             }
         },
         "Generic": {
