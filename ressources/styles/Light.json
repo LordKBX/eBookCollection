@@ -96,6 +96,12 @@
 		"#tab_metadata_import_filename_separator_label{ padding-right:5px; }"
 	],
 
+	"QDialogTextSizeAlt": [
+		"QLabel{ font-size:12px; }",
+		"QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QDateEdit{ font-size:12px; padding:5px; }",
+		"QPushButton, QToolButton { font-size:12px; min-height:25px; height:25px; }"
+	],
+
 	"QTabWidgetHorizontal": [
 		"QTabWidget::tab-bar { background-color:#333333; color:#AAAAAA; }",
 		"QTabBar::tab { ",

@@ -208,7 +208,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                       '<item href="fonts/Arial-Italic.ttf" id="font_i" media-type="application/x-font-truetype"/>' \
                       '<item href="fonts/Arial-Regular.ttf" id="font_r" media-type="application/x-font-truetype"/>' \
                       '</manifest><spine toc="ncx"><itemref idref="page_00"/><itemref idref="page_01"/></spine><guide/></package>'
-            content = content.replace('{{LANG}}', local_lang.language)
+            content = content.replace('{{LANG}}', local_lang.test_lang())
             content = content.replace('{{TITLE}}', title)
             content = content.replace('{{UUID}}', creation_uuid)
             if authors is None or authors.strip() == '':
@@ -243,7 +243,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                        '<content src="texte/cover.xhtml"/></navPoint><navPoint id="num_02" playOrder="2">'\
                        '<navLabel><text>{{CHAPTER1_NAME}}</text></navLabel><content src="texte/ch01.xhtml"/></navPoint>'\
                        '</navMap></ncx>'
-            content = content.replace('{{LANG}}', local_lang.language)
+            content = content.replace('{{LANG}}', local_lang.test_lang())
             content = content.replace('{{TITLE}}', title)
             content = content.replace('{{UUID}}', creation_uuid)
             content = content.replace('{{APP_NAME}}', app_name)
@@ -256,7 +256,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                       '<html xmlns="http://www.w3.org/1999/xhtml" lang="{{LANG}}" xml:lang="{{LANG}}">' \
                       '<head><title>{{TITLE}}</title><link href="../style.css" rel="stylesheet" type="text/css"/></head>' \
                       '<body><h1>{{TITLE}}</h1><h2 class="italic">{{SERIES}}</h2><div class="credits"><b>{{AUTHORS_LABEL}}</b>{{AUTHORS}}</div></body></html>'
-            content = content.replace('{{LANG}}', local_lang.language)
+            content = content.replace('{{LANG}}', local_lang.test_lang())
             content = content.replace('{{TITLE}}', title)
             if series is not None:
                 tx = series
@@ -287,7 +287,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
                       '<div class="block">In consectetur tellus vel malesuada porttitor. Proin commodo molestie nisi, eu placerat nunc hendrerit eget. Proin nec tortor sed diam facilisis varius. Donec sed libero neque. Vestibulum non nulla felis. Fusce tempor, lectus consectetur laoreet auctor, neque dui bibendum ex, sed finibus erat neque non ipsum. Mauris sodales nisl sed est posuere pulvinar sed ut orci. Donec a blandit lectus. Suspendisse porttitor ut justo eget placerat. Proin lobortis est venenatis, viverra orci ac, ornare odio. Pellentesque ut scelerisque felis.</div>' \
                       '<div class="block">Duis ullamcorper ipsum vitae tellus auctor ullamcorper. Aenean ultrices egestas neque, sit amet aliquam erat malesuada id. Maecenas venenatis purus gravida urna luctus consequat. Donec posuere, ligula nec feugiat tristique, lectus elit ultrices nisi, ut mollis risus lacus in nisi. Ut auctor lectus sed orci scelerisque, nec pellentesque tellus aliquet. Curabitur nec faucibus urna. Vestibulum congue mattis libero, vel egestas est sodales in. Curabitur tortor felis, tempus ac dictum eu, dictum non metus. Cras molestie lacinia enim, vitae auctor justo laoreet et. Suspendisse nec ullamcorper ligula. Pellentesque feugiat hendrerit velit, et sagittis dui tristique sed. Etiam ex turpis, mollis et enim ut, dapibus tempus neque. Etiam interdum molestie nisl a condimentum. Nulla faucibus ante at lacus posuere, at consectetur nunc egestas.</div>' \
                       '</body></html>'
-            content = content.replace('{{LANG}}', local_lang.language)
+            content = content.replace('{{LANG}}', local_lang.test_lang())
             content = content.replace('{{CHAPTER1_NAME}}', local_lang['Library']['emptyBookCreation']['Chapter1'])
             file.write(content)
 
@@ -311,7 +311,9 @@ def get_epub_info(path: str, clean: bool = False) -> dict or None:
         'tags': [],
         'cover': None,
         'toc': None,
-        'chapters': list()
+        'chapters': list(),
+        'lang': None,
+        'editors': None
     }
     try:
         if os.path.isfile(path) is True:
@@ -359,11 +361,15 @@ def get_epub_info(path: str, clean: bool = False) -> dict or None:
             metadata_file_content = myfile.read()
             mydoc = minidom.parseString(metadata_file_content)
 
+            try: ret['lang'] = mydoc.getElementsByTagName('dc:language')[0].firstChild.data
+            except Exception: {}
             try: ret['guid'] = mydoc.getElementsByTagName('dc:identifier')[0].firstChild.data
             except Exception: {}
             try: ret['title'] = mydoc.getElementsByTagName('dc:title')[0].firstChild.data
             except Exception: {}
             try: ret['authors'] = mydoc.getElementsByTagName('dc:creator')[0].firstChild.data
+            except Exception: {}
+            try: ret['editors'] = mydoc.getElementsByTagName('dc:publisher')[0].firstChild.data
             except Exception: {}
             try:
                 subjects = mydoc.getElementsByTagName('dc:subject')
@@ -381,39 +387,6 @@ def get_epub_info(path: str, clean: bool = False) -> dict or None:
 
             items = mydoc.getElementsByTagName('item')
             ret['chapters'] = parse_content_table(metadata_file_content, base, myzip)[1]
-            # if mydoc.getElementsByTagName('spine')[0].hasAttribute('toc'):
-            #     spine = mydoc.getElementsByTagName('spine')[0].attributes['toc'].value
-            #     for itm in items:
-            #         if itm.attributes['id'].value == spine:
-            #             ret['toc'] = itm.attributes['href'].value
-            #     myfile = myzip.open(base + ret['toc'])
-            #     mydoc = minidom.parseString(myfile.read())
-            #     itemrefs = mydoc.getElementsByTagName('navPoint')
-            #     for ref in itemrefs:
-            #         id = ref.attributes['id'].value
-            #         ret['chapters'].append({
-            #             'id': ref.attributes['id'].value,
-            #             'name': ref.getElementsByTagName('text')[0].firstChild.data,
-            #             'src': base + ref.getElementsByTagName('content')[0].attributes['src'].value
-            #         })
-            #     myfile.close()
-            # else:
-            #     refs_list = mydoc.getElementsByTagName('spine')[0].getElementsByTagName('itemref')
-            #     for itemref in refs_list:
-            #         idref = itemref.attributes['idref'].value
-            #         for itm in items:
-            #             if itm.attributes['id'].value == idref:
-            #                 try:
-            #                     chapter_file = myzip.open(base + itm.attributes['href'].value, "r")
-            #                     content = chapter_file.read().decode("utf8")
-            #                     title = re.search("<title>(.*)</title>", content)[1]
-            #                     ret['chapters'].append({
-            #                         'id': idref,
-            #                         'name': title,
-            #                         'src': base + itm.attributes['href'].value
-            #                     })
-            #                 except Exception:
-            #                     traceback.print_exc()
 
             for itm in items:
                 if cov_id != '':
@@ -512,6 +485,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         tmp_series = ''
         tmp_authors = ''
         tmp_tags = ''
+        tmp_lang = ''
 
         filepath, ext = os.path.splitext(file)  # Get file path and extension
         tmp_format = ext[1:].upper()  # assign file type into var for future injection into database
@@ -544,6 +518,7 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
             infos = get_epub_info(file)
             if infos['guid'] is not None: tmp_guid = infos['guid']
+            tmp_lang = infos['lang']
             tmp_title = infos['title']
             tmp_authors = infos['authors']
             tmp_series = infos['series']
@@ -567,9 +542,10 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         # build final file path
         end_file = database.get_param('library/directory').replace('{APP_DIR}', app_directory) + os.sep
         if tmp_authors is not None:
-            if tmp_authors != '': end_file += clean_string_for_url(tmp_authors) + '/'
+            if tmp_authors != '': end_file += clean_string_for_url(tmp_authors) + os.sep
         if tmp_series is not None:
-            if tmp_series != '': end_file += clean_string_for_url(tmp_series) + '/'
+        # if tmp_series is not None and tmp_authors not in tmp_series:
+            if tmp_series != '': end_file += clean_string_for_url(tmp_series) + os.sep
         # create final file dir path
         if os.path.isdir(end_file) is not True:
             os.makedirs(end_file)
@@ -577,4 +553,4 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         end_file += clean_string_for_url(tmp_title) + ext
         shutil.copyfile(file, end_file)
         # insert data in database
-        database.insert_book(tmp_guid, tmp_title, tmp_series, tmp_authors, tmp_tags, get_file_size(end_file), tmp_format, end_file, tmp_cover)
+        database.insert_book(tmp_guid, tmp_title, tmp_series, tmp_authors, tmp_tags, get_file_size(end_file), tmp_format, end_file, tmp_cover, tmp_lang)

@@ -6,7 +6,6 @@ if os.name == 'nt':
 
 import PyQt5.uic
 from PyQt5.uic import *
-from PyQt5 import QtWebKitWidgets
 from PyQt5 import QtCore
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))

@@ -45,10 +45,36 @@ class HomeWindowInfoPanel:
 
         if passed is True:
             try:
+                boldind_list = [
+                    self.info_block_title_label,
+                    self.info_block_serie_label,
+                    self.info_block_authors_label,
+                    self.info_block_file_formats_label,
+                    self.info_block_size_label
+                ]
+                for elm in boldind_list:
+                    elm.setProperty('bold', True)
+                    elm.style().unpolish(elm)
+                    elm.style().polish(elm)
+
                 self.current_book = book['guid']
                 self.info_block_title_value.setText(book['title'])
                 self.info_block_serie_value.setText(book['series'])
                 self.info_block_authors_value.setText(book['authors'])
+
+                # info_block_synopsis
+                self.metadata_window_clear_layout(self.info_block_synopsis.layout())
+                la0 = QtWidgets.QLabel('Synopsis')
+                la0.setProperty('bold', True)
+                self.info_block_synopsis.layout().addWidget(la0)
+
+                spacer1 = QtWidgets.QSpacerItem(10, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
+                self.info_block_synopsis.layout().addItem(spacer1)
+
+                la1 = QtWidgets.QLabel(book['synopsis'])
+                la1.setWordWrap(True)
+                self.info_block_synopsis.layout().addWidget(la1)
+
                 formats = ''
                 sizes = ''
                 self.info_panel_current_nb_files = len(book['files'])
@@ -61,7 +87,8 @@ class HomeWindowInfoPanel:
                         link = 'file:///' + self.app_directory.replace(os.sep, '/') + '/' + link
                         # link = self.app_directory.replace(os.sep, '/') + '/' + link
                     # elif re.search("^(http|https)://", link): {}
-                    # else: link = 'file:///' + link
+                    else:
+                        link = 'file:///' + link.replace(os.sep, '/')
                     link = link.replace(' ', '%20')
                     formats += '<a href="' + link + '" style="color: rgb(255, 255, 255);">' + file['format'] + '</a>'
                     sizes += file['size']
@@ -92,7 +119,7 @@ class HomeWindowInfoPanel:
             except Exception:
                 traceback.print_exc()
                 icon = PyQt5.QtGui.QIcon()
-                icon.addPixmap(PyQt5.QtGui.QPixmap(self.app_directory + '/icons/white/book.png'), PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
+                icon.addPixmap(PyQt5.QtGui.QPixmap(self.app_directory + '/ressources/icons/white/book.png'), PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
                 self.info_block_cover.setIcon(icon)
                 self.info_block_cover.setIconSize(PyQt5.QtCore.QSize(130, 130))
         else:

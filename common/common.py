@@ -1,6 +1,7 @@
 import uuid
 import os, sys
 import datetime
+import string
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -53,12 +54,18 @@ def unixtime_to_string(value: float, template: str = '%Y-%m-%d %H:%M:%S', months
         return datetime.datetime.fromtimestamp(value).strftime(template)
 
 
-def clean_string_for_url(string: str):
-    return string\
+def clean_string_for_url(path: str):
+    printable = set(string.printable)
+    return ''.join(filter(lambda x: x in printable, path))\
         .replace(':', '_')\
         .replace(';', '_')\
         .replace('\\', '_')\
         .replace('/', '_')\
         .replace('"', '_')\
         .replace(',', '_')\
-        .replace('?', '_')
+        .replace('?', '_')\
+        .replace('*', '_')\
+        .replace('<', '_')\
+        .replace('>', '_')\
+        .replace('|', '_')\
+        .replace(' ', '_')

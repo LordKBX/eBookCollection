@@ -241,6 +241,13 @@
                 "type": "string"
             }
         },
+        "QDialogTextSizeAlt": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
         "QTabWidgetHorizontal": {
             "type": "array",
             "minItems": 0,
@@ -427,6 +434,7 @@
         "QMessageBoxBtnRed",
         "QMessageBoxBtnGreen",
         "QDialog",
+        "QDialogTextSizeAlt",
         "QTabWidgetHorizontal",
         "QTabWidgetVertical",
         "fullTreeView",

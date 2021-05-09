@@ -253,10 +253,10 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                     new_path = self.BDD.get_param('library/directory').replace('{APP_DIR}', app_directory)
                     if book['authors'] is not None:
                         if book['authors'].strip() != '':
-                            new_path += '/' + book['authors']
+                            new_path += '/' + clean_string_for_url(book['authors'])
                     if book['series'] is not None:
                         if book['series'].strip() != '':
-                            new_path += '/' + book['series']
+                            new_path += '/' + clean_string_for_url(book['series'])
                     if os.path.isdir(new_path) is False:
                         os.makedirs(new_path)
                     new_path += '/' + book['title'] + '.' + book['files'][index]['format'].lower()

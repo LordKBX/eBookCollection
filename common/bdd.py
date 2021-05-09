@@ -25,34 +25,95 @@ def dict_factory(cursor, row):
 
 
 class BDD:
-    # /!\ DO NOT PUT 'NOT NULL' ON NUMERIC COLUMN, CREATE ERROR IN AUTOMATIC TABLE MIGRATION
+    # /!\ FOR PREVENTING AUTO MIGRATION ERROR FOLLOW THE RULES :
+    # - DO NOT PUT 'NOT NULL' ON NUMERIC COLUMN
+    # - IF YOU ADD A COLUMN PUT IT AT THE END OF THE CONCERNED TABLE
+    # - DO NOT RENAME A COLUMN
+    # - DO NOT DELETE A COLUMN
     tables = {
+        'versions': [
+            {'name': 'name', 'type': 'TEXT', 'ext': 'TEXT PRIMARY KEY NOT NULL'},
+            {'name': 'version', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 1'}
+        ],
         'books': [
-            {'name': 'guid',             'type': 'TEXT',        'ext': 'TEXT PRIMARY KEY NOT NULL'},
-            {'name': 'title',            'type': 'TEXT',        'ext': 'TEXT NOT NULL'},
-            {'name': 'authors',          'type': 'TEXT',        'ext': 'TEXT'},
-            {'name': 'series',           'type': 'TEXT',        'ext': 'TEXT'},
-            {'name': 'series_vol',       'type': 'NUMERIC',     'ext': 'NUMERIC DEFAULT 0'},
-            {'name': 'tags',             'type': 'TEXT',        'ext': 'TEXT'},
-            {'name': 'synopsis',         'type': 'TEXT',        'ext': 'TEXT'},
-            {'name': 'cover',            'type': 'TEXT',        'ext': 'TEXT NOT NULL'},
-            {'name': 'import_date',      'type': 'NUMERIC',     'ext': 'NUMERIC DEFAULT 0'},
-            {'name': 'last_update_date', 'type': 'NUMERIC',     'ext': 'NUMERIC DEFAULT 0'}
+            {'name': 'table_version', 'type': 'CONTROL', 'ext': '2'},
+            {'name': 'guid', 'type': 'TEXT', 'ext': 'TEXT PRIMARY KEY NOT NULL'},
+            {'name': 'title', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+            {'name': 'authors', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+            {'name': 'series', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+            {'name': 'tags', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+            {'name': 'synopsis', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+            {'name': 'cover', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+            {'name': 'import_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
+            {'name': 'last_update_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
+            {'name': 'series_vol', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'}
         ],
         'files': [
-            {'name': 'guid_file',               'type': 'TEXT',         'ext': 'TEXT PRIMARY KEY NOT NULL'},
-            {'name': 'book_id',                 'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
-            {'name': 'size',                    'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
-            {'name': 'format',                  'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
-            {'name': 'link',                    'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
-            {'name': 'file_hash',               'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
-            {'name': 'editors',                 'type': 'TEXT',         'ext': 'TEXT'},
-            {'name': 'langs',                   'type': 'TEXT',         'ext': 'TEXT'},
-            {'name': 'bookmark',                'type': 'TEXT',         'ext': 'TEXT NOT NULL'},
-            {'name': 'file_import_date',        'type': 'NUMERIC',      'ext': 'NUMERIC DEFAULT 0'},
-            {'name': 'file_last_update_date',   'type': 'NUMERIC',      'ext': 'NUMERIC DEFAULT 0'},
-            {'name': 'file_last_read_date',     'type': 'NUMERIC',      'ext': 'NUMERIC DEFAULT 0'}
+            {'name': 'table_version', 'type': 'CONTROL', 'ext': '3'},
+            {'name': 'guid_file', 'type': 'TEXT', 'ext': 'TEXT PRIMARY KEY NOT NULL'},
+            {'name': 'book_id', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+            {'name': 'size', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+            {'name': 'format', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+            {'name': 'link', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+            {'name': 'file_hash', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+            {'name': 'bookmark', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+            {'name': 'file_import_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
+            {'name': 'file_last_update_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
+            {'name': 'file_last_read_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
+            {'name': 'editors', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+            {'name': 'lang', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+            {'name': 'publication_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'}
         ]
+    }
+    old_tables = {
+        'versions': {
+            1: [
+                {'name': 'name', 'type': 'TEXT', 'ext': 'TEXT PRIMARY KEY NOT NULL'},
+                {'name': 'version', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 1'}
+            ]
+        },
+        'books': {
+            1: [
+                {'name': 'guid', 'type': 'TEXT', 'ext': 'TEXT PRIMARY KEY NOT NULL'},
+                {'name': 'title', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'authors', 'type': 'TEXT', 'ext': 'TEXT'},
+                {'name': 'serie', 'type': 'TEXT', 'ext': 'TEXT'},
+                {'name': 'tags', 'type': 'TEXT', 'ext': 'TEXT'},
+                {'name': 'synopsis', 'type': 'TEXT', 'ext': 'TEXT'},
+                {'name': 'cover', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'import_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'},
+                {'name': 'last_update_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'}
+            ]
+        },
+        'files': {
+            1: [
+                {'name': 'guid_file', 'type': 'TEXT', 'ext': 'TEXT PRIMARY KEY NOT NULL'},
+                {'name': 'book_id', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'size', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'format', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'link', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'file_hash', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'bookmark', 'type': 'TEXT', 'ext': 'TEXT'},
+                {'name': 'file_import_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'},
+                {'name': 'file_last_update_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'},
+                {'name': 'file_last_read_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'}
+            ],
+            2: [
+                {'name': 'table_version', 'type': 'CONTROL', 'ext': '2'},
+                {'name': 'guid_file', 'type': 'TEXT', 'ext': 'TEXT PRIMARY KEY NOT NULL'},
+                {'name': 'book_id', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'size', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'format', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'link', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'file_hash', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'bookmark', 'type': 'TEXT', 'ext': 'TEXT'},
+                {'name': 'file_import_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'},
+                {'name': 'file_last_update_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'},
+                {'name': 'file_last_read_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'},
+                {'name': 'editors', 'type': 'TEXT', 'ext': 'TEXT'},
+                {'name': 'lang', 'type': 'TEXT', 'ext': 'TEXT'}
+            ]
+        }
     }
 
     def __init__(self, directory: str = None):
@@ -76,22 +137,29 @@ class BDD:
         # self.__start()
 
     def __create_table_request(self, table: str, alt_name: str = None) -> str or None:
-        if table not in self.tables: return None
+        if table not in self.tables:
+            return None
         if alt_name is not None and alt_name.strip() != '':
-            ret = 'CREATE TABLE '+alt_name.strip()+'('
+            ret = 'CREATE TABLE ' + alt_name.strip() + '('
         else:
-            ret = 'CREATE TABLE '+table+'('
+            ret = 'CREATE TABLE ' + table + '('
         i = 0
+        ver = 0
         for line in self.tables[table]:
+            if line['name'] == 'table_version':
+                ver = int(float(line['ext']))
+                continue
             if i > 0: ret += ', '
             ret += '\'' + line['name'] + '\' ' + line['ext']
             i += 1
         ret += ')'
-        return ret
+        return ret, ver
 
     def __test_table(self, table: str, request_ret: list) -> bool:
         if table not in self.tables: return None
         for line in self.tables[table]:
+            if line['name'] == 'table_version':
+                continue
             line_ok = False
             for req_line in request_ret:
                 if req_line['name'] == line['name']:
@@ -101,48 +169,77 @@ class BDD:
             if line_ok is False:
                 return False
         return True
-    
-    def __auto_refit_table(self, table: str, request_ret: list):
+
+    def __auto_refit_table(self, table: str):
         if table not in self.tables: return None
-        alt_tab = table + '_alt'
-        cols = ''
-        for req_line in request_ret:
-            if cols != '':
-                cols += ','
-            cols += '"' + req_line['name'] + '"'
-        self.cursor.execute(self.__create_table_request(table, alt_tab))
-        '''INSERT INTO "main"."sqlb_temp_table_26" SELECT "guid_file","book_id","size","format","link","file_import_date",
-        "file_last_update_date","file_last_read_date","file_hash","bookmark" FROM "main"."files";'''
-        print('INSERT INTO "main"."'+alt_tab+'" SELECT '+cols+' FROM "main"."'+table+'"')
-        self.cursor.execute('INSERT INTO "main"."'+alt_tab+'" SELECT '+cols+' FROM "main"."'+table+'"')
+        alt_table = table + '_alt'
+
+        try:
+            ret, ver = self.__create_table_request(table, alt_table)
+            self.cursor.execute(ret)
+        except Exception:
+            traceback.print_exc()
+
+        self.cursor.execute('SELECT * from "' + table + '"')
+        ret = self.cursor.fetchall()
+        req = 'INSERT INTO "' + alt_table + '"('
+        part1_Ok = False
+        blocks = []
+        if ret is not None:
+            for row in ret:
+                block = '('
+                for req_line in self.tables[table]:
+                    if req_line['name'] == 'table_version':
+                        continue
+                    if part1_Ok is False:
+                        if req_line['name'] in row or 'def' in req_line:
+                            req += ',"' + req_line['name'] + '"'
+                    if block != '(':
+                        block += ','
+                    if req_line['name'] in row:
+                        block += '"{}" '.format(row[req_line['name']])
+                    else:
+                        if 'def' in req_line:
+                            if req_line['def'] is None:
+                                block += 'NULL '
+                            else:
+                                block += '"{}" '.format(req_line['def'])
+                        else:
+                            block += 'NULL '
+                blocks.append(block + ')')
+                part1_Ok = True
+            req = req.replace("(,", "(")
+            req += ') VALUES'
+            reqf = req + ','.join(blocks)
+
+        print(reqf)
+        self.cursor.execute(reqf)
+
         self.cursor.execute("PRAGMA defer_foreign_keys = '1'")
-        self.cursor.execute('DROP TABLE "main"."'+table+'"')
-        self.cursor.execute('ALTER TABLE "main"."'+alt_tab+'" RENAME TO "'+table+'"')
+        self.cursor.execute('DROP TABLE "main"."' + table + '"')
+        self.cursor.execute('ALTER TABLE "main"."' + alt_table + '" RENAME TO "' + table + '"')
         self.connexion.commit()
 
     def __start(self):
-        ctb = self.__create_table_request('books')
-        ctf = self.__create_table_request('files')
-
+        if os.path.isdir(self.__directory) is False:
+            try: os.makedirs(self.__directory)
+            except Exception: traceback.print_exc()
         self.connexion = sqlite3.connect(self.__directory + os.sep + self.__database_filename)
         self.connexion.row_factory = dict_factory
         self.cursor = self.connexion.cursor()
 
-        self.cursor.execute('''PRAGMA table_xinfo('books')''')
-        ret = self.cursor.fetchall()
-        if len(ret) == 0:
-            self.cursor.execute(ctb)
-        else:
-            if self.__test_table('books', ret) is False:
-                self.__auto_refit_table('books', ret)
-
-        self.cursor.execute('''PRAGMA table_xinfo('files')''')
-        ret = self.cursor.fetchall()
-        if ret is None:
-            self.cursor.execute(ctf)
-        else:
-            if self.__test_table('files', ret) is False:
-                self.__auto_refit_table('files', ret)
+        for table in self.tables:
+            self.cursor.execute("PRAGMA table_xinfo('" + table + "')")
+            ret = self.cursor.fetchall()
+            req, ver = self.__create_table_request(table)
+            if len(ret) == 0:
+                self.cursor.execute(req)
+                if ver > 0:
+                    self.cursor.execute('INSERT INTO versions(name, version)  VALUES(?, ?)', (table, ver))
+            else:
+                if self.__test_table(table, ret) is False:
+                    self.__auto_refit_table(table)
+                    self.cursor.execute('UPDATE versions SET version = ? WHERE name = ?', (ver, table))
 
         self.connexion.commit()
 
@@ -247,14 +344,14 @@ class BDD:
             if guid is not None:
                 if isinstance(guid, str):
                     self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) "
-                                        "WHERE guid = '"+guid+"'")
+                                        "WHERE guid = '" + guid + "'")
                 elif isinstance(guid, list):
                     guil = ''
                     for gu in guid:
                         if guil != '':
                             guil += ','
                         guil += '\'' + gu + '\''
-                    query = "SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE guid IN ("+guil+")"
+                    query = "SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE guid IN (" + guil + ")"
                     print(query)
                     self.cursor.execute(query)
                 ret = self.cursor.fetchall()
@@ -266,13 +363,14 @@ class BDD:
                                         "WHERE " + tab[0] + " = ?", [tab[1]])
                     ret = self.cursor.fetchall()
                 elif tab[0] == "file":
-                    self.cursor.execute("SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE files.link = ?", [tab[1]])
+                    self.cursor.execute(
+                        "SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE files.link = ?", [tab[1]])
                     ret = self.cursor.fetchall()
                 elif re.search("^search:", search):
                     item = tab[1].lower()
                     self.cursor.execute(
                         "SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE books.title LIKE ? OR books.series LIKE ? OR books.authors LIKE ? OR books.tags LIKE ?",
-                        ['%'+item+'%', '%'+item+'%', '%'+item+'%', '%'+item+'%']
+                        ['%' + item + '%', '%' + item + '%', '%' + item + '%', '%' + item + '%']
                     )
                     ret = self.cursor.fetchall()
         if ret is not None:
@@ -298,6 +396,9 @@ class BDD:
                     'size': row['size'],
                     'format': row['format'],
                     'link': row['link'],
+                    'editors': row['editors'],
+                    'publication_date': row['publication_date'],
+                    'lang': row['lang'],
                     'import_date': row['file_import_date'],
                     'last_update_date': row['file_last_update_date'],
                     'last_read_date': row['file_last_read_date'],
@@ -308,7 +409,8 @@ class BDD:
         return return_list
 
     def insert_book(self, guid: str, title: str = None, series: str = None, authors: str = None,
-                    tags: str = None, size: str = None, file_format: str = None, link: str = None, cover: str = None):
+                    tags: str = None, size: str = None, file_format: str = None, link: str = None, cover: str = None,
+                    lang: str = None, editors: str = None, publication_date: int = 0):
         """
 
         :param guid:
@@ -320,6 +422,9 @@ class BDD:
         :param file_format:
         :param link:
         :param cover:
+        :param lang:
+        :param editors:
+        :param publication_date:
         :return:
         """
         if self.connexion is None:
@@ -327,22 +432,22 @@ class BDD:
         dt = time.time()
         if title is not None and title.strip() != '':
             self.cursor.execute(
-                    '''INSERT INTO books(
+                '''INSERT INTO books(
                     'guid','title','series','authors','tags','cover',
                     'import_date','last_update_date') 
                     VALUES(?, ?, ?, ?, ?, ?, ?, ?)''',
-                    (guid, title, series, authors, tags, cover, dt, dt)
-                )
+                (guid, title, series, authors, tags, cover, dt, dt)
+            )
         if link is not None:
             link = link.replace('/', os.sep)
             file_hash = hashFile(link)
             self.cursor.execute(
-                    '''INSERT INTO files(
+                '''INSERT INTO files(
                     'guid_file','book_id','size','format','link','file_import_date',
-                    'file_last_update_date','file_last_read_date','file_hash','bookmark') 
-                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                    (uid(), guid, size, file_format, link, dt, dt, dt, file_hash, None)
-                )
+                    'file_last_update_date','file_last_read_date','file_hash','bookmark','lang', 'editors', 'publication_date') 
+                    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                (uid(), guid, size, file_format, link, dt, dt, dt, file_hash, None, lang, editors, publication_date)
+            )
         self.connexion.commit()
 
     def update_book(self, guid: str, col: str, value: str, file_guid: str = None):
@@ -360,11 +465,11 @@ class BDD:
             dt = time.time()
             if file_guid is None:
                 self.cursor.execute(
-                    'UPDATE books SET `'+col+'` = ?, last_update_date = ? WHERE guid = ?', (value, dt, guid)
+                    'UPDATE books SET `' + col + '` = ?, last_update_date = ? WHERE guid = ?', (value, dt, guid)
                 )
             else:
                 self.cursor.execute(
-                    'UPDATE files SET `'+col+'` = ?, file_last_update_date = ? WHERE book_id = ? AND guid_file = ?',
+                    'UPDATE files SET `' + col + '` = ?, file_last_update_date = ? WHERE book_id = ? AND guid_file = ?',
                     (value, dt, guid, file_guid)
                 )
             self.connexion.commit()
@@ -392,7 +497,8 @@ class BDD:
                 self.cursor.execute('DELETE FROM books WHERE guid = \'{}\''.format(guid))
                 self.cursor.execute('DELETE FROM files WHERE book_id = \'{}\''.format(guid))
             elif guid is None and file_guid is not None:
-                self.cursor.execute('DELETE FROM files WHERE guid_file = \'{}\' OR link = \'{}\''.format(file_guid, file_guid))
+                self.cursor.execute(
+                    'DELETE FROM files WHERE guid_file = \'{}\' OR link = \'{}\''.format(file_guid, file_guid))
             else:
                 self.cursor.execute('DELETE FROM files WHERE book_id = ? AND guid_file = ?', (guid, file_guid))
             self.connexion.commit()

@@ -175,6 +175,7 @@ env_vars = {
                     "QMainWindow::separator { background: rgb(63, 63, 63); }",
                     "QMainWindow::separator:hover { background: rgb(120, 120, 120); }",
                     "QWidget{ background: rgb(63, 63, 63); color:white; }",
+                    "QLabel[bold]{ font-weight:bold; font-size:12px; }",
                     "QPushButton, QToolButton { border:#000000 1px solid; background-color: rgb(80, 80, 80); }",
                     "QPushButton:hover, QToolButton:hover { background-color: rgb(120, 120, 120); }",
                     "QPushButton:pressed, QToolButton:pressed { background-color: rgb(120, 120, 120); }",
@@ -211,6 +212,11 @@ env_vars = {
                     "#tab_metadata_import_filename_template_label{ margin:0px; }",
                     "#tab_metadata_import_filename_template_combo_box{ padding:5px; margin-bottom:5px; }",
                     "#tab_metadata_import_filename_separator_label{ padding-right:5px; }"
+                ],
+                "QDialogTextSizeAlt": [
+                    "QLabel{ font-size:12px; }",
+                    "QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QDateEdit{ font-size:12px; padding:5px; }",
+                    "QPushButton, QToolButton { font-size:12px; min-height:25px; height:25px; }"
                 ],
                 "QTabWidgetHorizontal": [
                     "QTabWidget::tab-bar { background-color:#333333; color:#AAAAAA; }",

@@ -3,10 +3,12 @@ import sys
 import traceback
 from PyQt5 import QtCore, QtGui, QtWidgets
 import PyQt5.uic
+from PyQt5 import QtCore
+from PyQt5 import QtGui
+from PyQt5 import QtWidgets
 from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from syntaxHighlight import *
 from common.books import *
 from common import bdd
 from common import lang
@@ -179,7 +181,6 @@ class ColorPicker(QtWidgets.QDialog):
                 button.setToolTip("%s" % paletteColors[i])
                 button.clicked.connect(self.__palette_set_color)
                 row = int(float(i / 16))
-                print(i, row)
                 self.gridLayout.addWidget(button, row, i - (row * 16))
             self.__set_color(QtGui.QColor(paletteColors[0]))
 
@@ -193,7 +194,7 @@ class ColorPicker(QtWidgets.QDialog):
         except Exception:
             traceback.print_exc()
 
-    def __invert_color(self, ColourToInvert: QtGui.QColor) -> QColor:
+    def __invert_color(self, ColourToInvert: QtGui.QColor) -> QtGui.QColor:
         RGBMAX = 255
         R = RGBMAX - ColourToInvert.red()
         G = RGBMAX - ColourToInvert.green()
@@ -255,6 +256,8 @@ class ColorPicker(QtWidgets.QDialog):
         self.RGB_HEXA_EDIT.setText(color.name())
 
         self.preview.setStyleSheet("background-color:%s;" % color.name())
+        self.preview.style().unpolish(self.preview)
+        self.preview.style().polish(self.preview)
 
     def __set_color_changed(self, color):
         self.__set_color(color)
@@ -262,9 +265,10 @@ class ColorPicker(QtWidgets.QDialog):
     def __color_clicked(self):
         self.__set_color(self.rgbPicker.currentColor)
 
-    def getColor(self, color=None):
+    def getColor(self, color: QtGui.QColor = None):
         if isinstance(color, QtGui.QColor):
-            self.set_color(color)
+            print('color=', (color.red(), color.green(), color.blue()))
+            self.__set_color(color)
         # return a color only if the dialog is accepted
         if self.exec_():
             color = QtGui.QColor(self.RGB_R_SPIN.value(), self.RGB_G_SPIN.value(), self.RGB_B_SPIN.value(), 255)

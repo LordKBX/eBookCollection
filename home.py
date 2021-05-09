@@ -313,6 +313,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.setStyleSheet(get_style_var(self.app_style, 'QMainWindow') + QDockStyle)
         self.header_block_contents2.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
         self.sorting_block_contents.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
+        self.info_block_contents.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
         # self.central_block_table = QTableWidget()
         self.central_block_table.horizontalHeader().setStyleSheet(get_style_var(self.app_style, 'QTableWidget'))
         self.central_block_table.setStyleSheet(get_style_var(self.app_style, 'QTableWidget'))

@@ -40,7 +40,7 @@ class HomeWindowSortingBlockTree:
         for author in authors:
             item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(1))
             item.setText(0, author)
-            item.setText(1, 'authors:'+author)
+            item.setText(1, 'authors:{}'.format(author))
         for serie in series:
             item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(2))
             item.setText(0, serie)
