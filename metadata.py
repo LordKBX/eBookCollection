@@ -1,4 +1,4 @@
-import os, sys, traceback, json, subprocess, base64, datetime
+import os, sys, traceback, json, subprocess, base64, datetime, datetime, copy
 import concurrent.futures
 import PyQt5.QtCore
 import PyQt5.QtGui
@@ -13,11 +13,11 @@ import color_picker
 
 class MetadataWindow:
     metadata_ui = None
-    metadata_file_index = 0
     metadata_book_index = 0
-    metadata_tmp_data = {}
+    metadata_tmp_data = []
+    metadata_start_data = []
 
-    def metadata_window_load(self) -> None:
+    def metadata_window_load(self) -> list:
         """
         load_metadata
 
@@ -31,10 +31,11 @@ class MetadataWindow:
         for i in range(selection[0], selection[1]+1):
             books_id.append(self.central_block_table.item(i, 0).data(99))
         print('books_id=', books_id)
-        self.metadata_tmp_data = self.BDD.get_books(books_id)
-        print(self.metadata_tmp_data)
+        self.metadata_start_data = self.BDD.get_books(books_id)
+        self.metadata_tmp_data = copy.deepcopy(self.metadata_start_data)
+        # print(self.metadata_tmp_data)
         if len(self.metadata_tmp_data) <= 0:
-            return
+            return []
         try:
             style = self.BDD.get_param('style')
             self.metadata_ui = QtWidgets.QDialog(self, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
@@ -156,24 +157,42 @@ class MetadataWindow:
                     # print(file['guid'], file['size'], file['format'], file['link'], file['lang'], file['editors'], file['publication_date'])
                     item = QtWidgets.QListWidgetItem()
                     item.setText(file['format'] + " " + file['lang'] + " " + file['size'])
-                    item.setData(90, file['guid'])
-                    item.setData(91, file['size'])
-                    item.setData(92, file['format'])
-                    item.setData(93, file['link'])
-                    item.setData(94, file['lang'])
-                    item.setData(95, file['editors'])
-                    item.setData(96, file['publication_date'])
                     self.metadata_ui.list_view_files.addItem(item)
                 self.metadata_ui.list_view_files.setCurrentRow(0)
 
+            self.metadata_ui.edit_book_id.textChanged.connect(lambda: self.metadata_window_update_tmp_data('edit_book_id'))
+            self.metadata_ui.edit_title.textChanged.connect(lambda: self.metadata_window_update_tmp_data('edit_title'))
+            self.metadata_ui.edit_authors.textChanged.connect(lambda: self.metadata_window_update_tmp_data('edit_authors'))
+            self.metadata_ui.edit_series.textChanged.connect(lambda: self.metadata_window_update_tmp_data('edit_series'))
+            self.metadata_ui.edit_tags.textChanged.connect(lambda: self.metadata_window_update_tmp_data('edit_tags'))
+            self.metadata_ui.text_edit_synopsis.textChanged.connect(lambda: self.metadata_window_update_tmp_data('text_edit_synopsis'))
+            self.metadata_ui.spin_volume.valueChanged.connect(lambda: self.metadata_window_update_tmp_data('spin_volume'))
+
+            self.metadata_ui.edit_editors.textChanged.connect(lambda: self.metadata_window_update_tmp_data('edit_editors'))
+            self.metadata_ui.edit_langs.textChanged.connect(lambda: self.metadata_window_update_tmp_data('edit_langs'))
+            self.metadata_ui.edit_plublish_date.dateTimeChanged.connect(lambda: self.metadata_window_update_tmp_data('edit_plublish_date'))
 
             ret = self.metadata_ui.exec_()
             if ret == 1:
                 print('OK')
+                bookno = -1
+                for book in self.metadata_tmp_data:
+                    bookno += 1
+                    for index in book:
+                        start_id = self.metadata_start_data[bookno]['guid']
+                        if index == 'files':
+                            ''
+                        else:
+                            if self.metadata_start_data[bookno][index] != book[index]:
+                                self.BDD.update_book(start_id, index, book[index])
+                return self.metadata_tmp_data
+            else:
+                return []
         except Exception:
             traceback.print_exc()
+            return []
 
-    def metadata_window_clear_layout(self, layout: QtWidgets.QLayout):
+    def metadata_window_clear_layout(self, layout: QtWidgets.QLayout) -> None:
         if layout is None:
             return
         r = []
@@ -199,7 +218,7 @@ class MetadataWindow:
                 layout.removeItem(child)
             del child
 
-    def metadata_window_cursor_layout(self, layout: QtWidgets.QLayout, cursor: QtGui.QCursor):
+    def metadata_window_cursor_layout(self, layout: QtWidgets.QLayout, cursor: QtGui.QCursor) -> None:
         try:
             if layout is None:
                 return
@@ -228,26 +247,27 @@ class MetadataWindow:
         except Exception:
             traceback.print_exc()
 
-    def metadata_window_find_guid(self):
+    def metadata_window_find_guid(self) -> str:
         print('metadata_window_find_guid')
+        return ''
 
-    def metadata_window_generate_guid(self):
+    def metadata_window_generate_guid(self) -> None:
         print('metadata_window_generate_guid')
         guid = uuid.uuid4().__str__()
         print(guid)
         self.metadata_ui.edit_book_id.setText(guid)
 
-    def metadata_window_unix_to_qdate(self, unix_time: int):
+    def metadata_window_unix_to_qdate(self, unix_time: int) -> QtCore.QDateTime:
         print('metadata_window_unix_to_qdate')
         process = QtCore.QDateTime()
         process.setTime_t(unix_time)
         return process.date()
 
-    def metadata_window_clean_series(self):
+    def metadata_window_clean_series(self) -> None:
         self.metadata_ui.edit_series.setText('')
         self.metadata_ui.spin_volume.setValue(0.0)
 
-    def metadata_window_synopsis_text_effect(self, effect: str):
+    def metadata_window_synopsis_text_effect(self, effect: str) -> None:
         try:
             print('metadata_window_synopsis_text_effect: ', effect)
             if self.metadata_ui is None:
@@ -359,25 +379,63 @@ class MetadataWindow:
         except Exception:
             traceback.print_exc()
 
-    def metadata_window_file_list_index_changed(self):
+    def metadata_window_file_list_index_changed(self) -> None:
         try:
             line = self.metadata_ui.list_view_files.currentRow()
-            item = self.metadata_ui.list_view_files.item(line)
-            print(item.data(90), item.data(91), item.data(92), item.data(93), item.data(94), item.data(95), item.data(96))
-            if item.data(95) is None:
+            file = self.metadata_tmp_data[0]['files'][line]
+
+            print(file['guid'], file['size'], file['format'], file['link'], file['lang'], file['editors'], file['publication_date'])
+            if file['editors'] is None:
                 self.metadata_ui.edit_editors.setText("")
             else:
-                self.metadata_ui.edit_editors.setText(item.data(95))
-            if item.data(94) is None:
+                self.metadata_ui.edit_editors.setText(file['editors'])
+            if file['lang'] is None:
                 self.metadata_ui.edit_langs.setText("")
             else:
-                self.metadata_ui.edit_langs.setText(item.data(94))
+                self.metadata_ui.edit_langs.setText(file['lang'])
             # publication_date
-            datetime.date.fromtimestamp(item.data(96))
-            self.metadata_ui.edit_plublish_date.setDate(datetime.date.fromtimestamp(item.data(96)))
-
+            self.metadata_ui.edit_plublish_date.setDate(datetime.date.fromtimestamp(file['publication_date']))
         except Exception:
             traceback.print_exc()
 
-    def metadata_window_update_tmp_data(self):
-        ""
+    def metadata_window_update_tmp_data(self, source: str) -> None:
+        try:
+            ar1 = ['edit_book_id', 'edit_title', 'edit_authors', 'edit_series', 'edit_tags', 'text_edit_synopsis', 'spin_volume']
+            rar1 = ['guid', 'title', 'authors', 'series', 'tags', 'synopsis', 'series_vol']
+
+            ar2 = ['edit_editors', 'edit_langs', 'edit_plublish_date']
+            rar2 = ['editors', 'lang', 'publication_date']
+
+            if len(self.metadata_tmp_data) > 1:
+                if source in ar1:
+                    obj = getattr(self.metadata_ui, ar1[ar1.index(source)])
+                    if 'spin' in source:
+                        start = float(obj.value())
+                        for i in range(0, len(self.metadata_tmp_data)):
+                            self.metadata_tmp_data[i][rar1[ar1.index(source)]] = start + i
+                    else:
+                        for i in range(0, len(self.metadata_tmp_data)):
+                            self.metadata_tmp_data[i][rar1[ar1.index(source)]] = obj.text()
+            else:
+                if source in ar1:
+                    obj = getattr(self.metadata_ui, ar1[ar1.index(source)])
+                    if 'spin' in source:
+                        self.metadata_tmp_data[0][rar1[ar1.index(source)]] = obj.value()
+                    else:
+                        self.metadata_tmp_data[0][rar1[ar1.index(source)]] = obj.text()
+                elif source in ar2:
+                    Fileline = self.metadata_ui.list_view_files.currentRow()
+                    file = self.metadata_tmp_data[0]['files'][Fileline]
+                    if 'date' in source:
+                        obj = QtWidgets.QDateEdit(getattr(self.metadata_ui, ar2[ar2.index(source)]))
+                        # self.metadata_ui.edit_plublish_date = QtWidgets.QDateEdit()
+                        self.metadata_tmp_data[0]['files'][Fileline][rar2[ar2.index(source)]] = \
+                            datetime.datetime.fromisoformat(obj.date().toPyDate().strftime('%Y-%m-%d %H:%M:%S'))\
+                                .replace(tzinfo=datetime.timezone.utc).timestamp()
+                    else:
+                        obj = QtWidgets.QLineEdit(getattr(self.metadata_ui, ar2[ar2.index(source)]))
+                        self.metadata_tmp_data[0]['files'][Fileline][rar2[ar2.index(source)]] = obj.text()
+
+            # print(self.metadata_tmp_data)
+        except Exception:
+            traceback.print_exc()

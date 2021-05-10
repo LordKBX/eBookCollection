@@ -67,5 +67,4 @@ def clean_string_for_url(path: str):
         .replace('*', '_')\
         .replace('<', '_')\
         .replace('>', '_')\
-        .replace('|', '_')\
-        .replace(' ', '_')
+        .replace('|', '_')  # .replace(' ', '_')

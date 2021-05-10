@@ -701,6 +701,113 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_sync">
+      <attribute name="title">
+       <string>Sync</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_14">
+       <item>
+        <widget class="QGroupBox" name="tab_sync_interface_group">
+         <property name="title">
+          <string>Listening interface</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_15">
+          <item>
+           <layout class="QFormLayout" name="tab_sync_interface_layout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="tab_sync_interface_ip_label">
+              <property name="text">
+               <string>IP</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="tab_sync_interface_ip_edit"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="tab_sync_interface_port_label">
+              <property name="text">
+               <string>Port</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="tab_sync_interface_port_edit"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="tab_sync_interface_protocol_label">
+              <property name="text">
+               <string>Protocol</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QComboBox" name="tab_sync_interface_protocol_combobox">
+              <item>
+               <property name="text">
+                <string>HTTPS</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>TCP LINK</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="tab_sync_identification">
+         <property name="title">
+          <string>Identification</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_17">
+          <item>
+           <layout class="QFormLayout" name="tab_sync_identification_layout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="tab_sync_identification_user_label">
+              <property name="text">
+               <string>User</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="tab_sync_identification_user_edit"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="tab_sync_identification_password_label">
+              <property name="text">
+               <string>Password</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="tab_sync_identification_password_edit"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="tab_sync_vertical_spacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_plugins">
       <attribute name="title">
        <string>Plugins</string>

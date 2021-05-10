@@ -255,6 +255,7 @@
 		"TabMetadataTitle": "Metadata",
 		"TabPluginsTitle": "Extensions",
 		"TabAboutTitle": "À propos",
+		"TabSyncTitle": "Synchro",
 
 		"LanguageGroupTitle": "Langue",
 		"LanguageAutomatic": "< Langue système >",
@@ -304,6 +305,15 @@
 		"DialogConfirmDeletePluginWindowTitle": "Dé-installation Plug-in",
 		"DialogConfirmDeletePluginWindowText": "Confirmez vous la Dé-installation du Plug-in ?",
 		"DialogConfirmDeletePluginBtnYes": "Oui",
-		"DialogConfirmDeletePluginBtnNo": "Non"
+		"DialogConfirmDeletePluginBtnNo": "Non",
+
+		"SyncInterfaceGroupTitle": "Interface",
+		"SyncInterfaceIP": "IP",
+		"SyncInterfacePort": "Port réseau",
+		"SyncInterfaceProtocol": "Protocole",
+
+		"SyncIdentificationGroupTitle": "Identification",
+		"SyncIdentificationUser": "Utilisateur",
+		"SyncIdentificationPassword": "Mot de passe"
 	}
 }

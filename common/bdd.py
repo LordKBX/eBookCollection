@@ -115,6 +115,14 @@ class BDD:
             ]
         }
     }
+    sync_protocols = ['HTTPS', 'TCP LINK']
+    param_defaults = {
+        'sync/ip': '0.0.0.0',
+        'sync/port': 33004,
+        'sync/protocol': sync_protocols[1],
+        'sync/user': 'admin',
+        'sync/password': 'BookOfTheYear'
+    }
 
     def __init__(self, directory: str = None):
         self.settings = PyQt5.QtCore.QSettings(app_editor, app_name)
@@ -224,6 +232,7 @@ class BDD:
         if os.path.isdir(self.__directory) is False:
             try: os.makedirs(self.__directory)
             except Exception: traceback.print_exc()
+        clean_dir(self.__directory)
         self.connexion = sqlite3.connect(self.__directory + os.sep + self.__database_filename)
         self.connexion.row_factory = dict_factory
         self.cursor = self.connexion.cursor()
@@ -280,7 +289,10 @@ class BDD:
         :param name: param value
         :return: string|None
         """
-        return self.settings.value(name, None, str)
+        if name in self.param_defaults:
+            return self.settings.value(name, self.param_defaults[name], str)
+        else:
+            return self.settings.value(name, None, str)
 
     def set_param(self, name: str, value: str):
         """
@@ -464,10 +476,13 @@ class BDD:
         try:
             dt = time.time()
             if file_guid is None:
+                print('UPDATE books SET `' + col + '` = ?, last_update_date = ? WHERE guid = ?', (value, dt, guid))
                 self.cursor.execute(
                     'UPDATE books SET `' + col + '` = ?, last_update_date = ? WHERE guid = ?', (value, dt, guid)
                 )
             else:
+                print('UPDATE files SET `' + col + '` = ?, file_last_update_date = ? WHERE book_id = ? AND guid_file = ?',
+                    (value, dt, guid, file_guid))
                 self.cursor.execute(
                     'UPDATE files SET `' + col + '` = ?, file_last_update_date = ? WHERE book_id = ? AND guid_file = ?',
                     (value, dt, guid, file_guid)

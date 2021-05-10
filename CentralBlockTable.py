@@ -250,16 +250,17 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                 index = 0
                 while index < len(book['files']):
                     old_path = book['files'][index]['link']
-                    new_path = self.BDD.get_param('library/directory').replace('{APP_DIR}', app_directory)
+                    new_path = self.BDD.get_param('library/directory')  # .replace('{APP_DIR}', app_directory)
                     if book['authors'] is not None:
                         if book['authors'].strip() != '':
-                            new_path += '/' + clean_string_for_url(book['authors'])
+                            new_path += os.sep + clean_string_for_url(book['authors'])
                     if book['series'] is not None:
                         if book['series'].strip() != '':
-                            new_path += '/' + clean_string_for_url(book['series'])
+                            new_path += os.sep + clean_string_for_url(book['series'])
                     if os.path.isdir(new_path) is False:
                         os.makedirs(new_path)
-                    new_path += '/' + book['title'] + '.' + book['files'][index]['format'].lower()
+                    new_path += os.sep + clean_string_for_url(book['title']) + '.' + book['files'][index]['format'].lower()
+                    print(old_path, new_path)
                     shutil.move(old_path, new_path)
                     book['files'][index]['link'] = new_path
                     self.BDD.update_book(guid_book, 'link', new_path, book['files'][index]['guid'])
@@ -269,7 +270,7 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
             self.set_info_panel(book)
 
             # Cleanup all empty folder in data folder
-            clean_dir('./data')
+            clean_dir(self.BDD.get_param('library/directory'))
         except Exception:
             traceback.print_exc()
 
@@ -286,7 +287,7 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
             book_infos = self.BDD.get_books(guid_book)[0]
             menu = PyQt5.QtWidgets.QMenu()
             action0 = PyQt5.QtWidgets.QAction(self.lang['Library/CentralBlockTableContextMenu/EditMetadata'], None)
-            action0.triggered.connect(self.metadata_window_load)
+            action0.triggered.connect(self.central_block_table_load_metadata_window)
             menu.addAction(action0)
             for file in book_infos['files']:
                 if file['format'] == 'EPUB':
@@ -335,6 +336,52 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                     menu.addAction(action2)
             menu.exec(PyQt5.QtGui.QCursor.pos())
 
+        except Exception:
+            traceback.print_exc()
+
+    def central_block_table_load_metadata_window(self):
+        try:
+            data = self.metadata_window_load()
+            max = len(self.metadata_tmp_data)
+            list_items = [
+                'title',
+                'authors',
+                'series',
+                'tags',
+                'import_date',
+                'last_update_date'
+            ]
+            list_items_locked = [
+                'import_date',
+                'last_update_date'
+            ]
+            if max > 0:
+                selection = self.central_block_table.selectedRanges()[0]
+                top = selection.topRow()
+                down = selection.bottomRow()
+                # self.central_block_table = QtWidgets.QTableWidget()
+                lines = self.central_block_table.rowCount()
+                cpt = -1
+                for id in range(0, lines):
+                    if id >= top and id <= down:
+                        cpt += 1
+                        col = -1
+                        for case in list_items:
+                            col += 1
+                            self.central_block_table.item(id, col).setData(99, data[cpt]['guid'])
+                            if case in list_items_locked:
+                                bdate = unixtime_to_string(
+                                    float(data[cpt][case]),
+                                    self.lang['Time']['template']['textual_date'],
+                                    self.lang['Time']['months_short']
+                                )
+                                self.central_block_table.item(id, col).setText(bdate)
+                                self.central_block_table.item(id, col).setToolTip(bdate)
+                            else:
+                                self.central_block_table.item(id, col).setText(data[cpt][case])
+                                self.central_block_table.item(id, col).setToolTip(data[cpt][case])
+
+                #self.central_block_table.setSelection(QtCore.QRect(0, top, 1, down - top), QtCore.QItemSelectionModel.Rows)
         except Exception:
             traceback.print_exc()
 

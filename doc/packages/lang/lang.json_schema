@@ -629,6 +629,9 @@
                 "TabAboutTitle": {
                     "type": "string"
                 },
+                "TabSyncTitle": {
+                    "type": "string"
+                },
                 "LanguageGroupTitle": {
                     "type": "string"
                 },
@@ -750,6 +753,27 @@
                     "type": "string"
                 },
                 "DialogConfirmDeletePluginBtnNo": {
+                    "type": "string"
+                },
+                "SyncInterfaceGroupTitle": {
+                    "type": "string"
+                },
+                "SyncInterfaceIP": {
+                    "type": "string"
+                },
+                "SyncInterfacePort": {
+                    "type": "string"
+                },
+                "SyncInterfaceProtocol": {
+                    "type": "string"
+                },
+                "SyncIdentificationGroupTitle": {
+                    "type": "string"
+                },
+                "SyncIdentificationUser": {
+                    "type": "string"
+                },
+                "SyncIdentificationPassword": {
                     "type": "string"
                 }
             }

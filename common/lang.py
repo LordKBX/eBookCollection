@@ -278,6 +278,7 @@ class Lang:
             "TabMetadataTitle": "Metadata",
             "TabPluginsTitle": "Plugins",
             "TabAboutTitle": "About",
+            "TabSyncTitle": "Sync",
 
             "LanguageGroupTitle": "Language",
             "LanguageAutomatic": "< System defined >",
@@ -327,7 +328,16 @@ class Lang:
             "DialogConfirmDeletePluginWindowTitle": "Uninstall Plug-in",
             "DialogConfirmDeletePluginWindowText": "Confirm Plug-in Uninstall ?",
             "DialogConfirmDeletePluginBtnYes": "Yes",
-            "DialogConfirmDeletePluginBtnNo": "No"
+            "DialogConfirmDeletePluginBtnNo": "No",
+
+            "SyncInterfaceGroupTitle": "Listening interface",
+            "SyncInterfaceIP": "IP",
+            "SyncInterfacePort": "Port",
+            "SyncInterfaceProtocol": "Protocol",
+
+            "SyncIdentificationGroupTitle": "Identification",
+            "SyncIdentificationUser": "User",
+            "SyncIdentificationPassword": "Password"
         }
     }
 
