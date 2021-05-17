@@ -21,6 +21,7 @@ import home
 from common.vars import *
 from common.bdd import *
 from common.lang import *
+import sync_server
 
 if __name__ == "__main__":
     app = PyQt5.QtWidgets.QApplication([])
@@ -28,6 +29,13 @@ if __name__ == "__main__":
 
     bdd = BDD()
     translation = Lang()
+    server = sync_server.Server(
+        bdd.get_param('sync/ip'),
+        int(float(bdd.get_param('sync/port'))),
+        bdd.get_param('sync/user'),
+        bdd.get_param('sync/password'),
+        bdd
+    )
 
     for icon_index in app_icons:
         icon_size = int(float(icon_index.replace('x', '')))

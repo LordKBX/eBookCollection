@@ -115,11 +115,9 @@ class BDD:
             ]
         }
     }
-    sync_protocols = ['HTTPS', 'TCP LINK']
     param_defaults = {
         'sync/ip': '0.0.0.0',
         'sync/port': 33004,
-        'sync/protocol': sync_protocols[1],
         'sync/user': 'admin',
         'sync/password': 'BookOfTheYear'
     }
@@ -336,12 +334,13 @@ class BDD:
                 ret.append(row['series'])
         return ret
 
-    def get_books(self, guid: str or List[str] = None, search: str = None):
+    def get_books(self, guid: str or List[str] = None, search: str = None, no_file_path: bool = False):
         """
         get registred book in database
 
         :param guid: guid or list of guid of the book(s)
         :param search: research patern
+        :param no_file_path: secify if file path must be send
         :return: list(dict)
         """
         if self.connexion is None:
@@ -371,8 +370,7 @@ class BDD:
                 tab = search.split(':')
                 if tab[0] == "authors" or tab[0] == "series":
                     print(tab[0])
-                    self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) "
-                                        "WHERE " + tab[0] + " = ?", [tab[1]])
+                    self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE " + tab[0] + " = ?", [tab[1]])
                     ret = self.cursor.fetchall()
                 elif tab[0] == "file":
                     self.cursor.execute(
@@ -403,20 +401,35 @@ class BDD:
                         'cover': row['cover'],
                         'files': []
                     })
-                return_list[len(return_list) - 1]['files'].append({
-                    'guid': row['guid_file'],
-                    'size': row['size'],
-                    'format': row['format'],
-                    'link': row['link'],
-                    'editors': row['editors'],
-                    'publication_date': row['publication_date'],
-                    'lang': row['lang'],
-                    'import_date': row['file_import_date'],
-                    'last_update_date': row['file_last_update_date'],
-                    'last_read_date': row['file_last_read_date'],
-                    'file_hash': row['file_hash'],
-                    'bookmark': row['bookmark']
-                })
+                if no_file_path is False:
+                    return_list[len(return_list) - 1]['files'].append({
+                        'guid': row['guid_file'],
+                        'size': row['size'],
+                        'format': row['format'],
+                        'link': row['link'],
+                        'editors': row['editors'],
+                        'publication_date': row['publication_date'],
+                        'lang': row['lang'],
+                        'import_date': row['file_import_date'],
+                        'last_update_date': row['file_last_update_date'],
+                        'last_read_date': row['file_last_read_date'],
+                        'file_hash': row['file_hash'],
+                        'bookmark': row['bookmark']
+                    })
+                else:
+                    return_list[len(return_list) - 1]['files'].append({
+                        'guid': row['guid_file'],
+                        'size': row['size'],
+                        'format': row['format'],
+                        'editors': row['editors'],
+                        'publication_date': row['publication_date'],
+                        'lang': row['lang'],
+                        'import_date': row['file_import_date'],
+                        'last_update_date': row['file_last_update_date'],
+                        'last_read_date': row['file_last_read_date'],
+                        'file_hash': row['file_hash'],
+                        'bookmark': row['bookmark']
+                    })
 
         return return_list
 

@@ -127,19 +127,16 @@ class SettingsWindow(QDialog):
         # tab sync
         sync_ip = self.BDD.get_param('sync/ip')
         sync_port = self.BDD.get_param('sync/port')
-        sync_protocol = self.BDD.get_param('sync/protocol')
         sync_user = self.BDD.get_param('sync/user')
         sync_password = self.BDD.get_param('sync/password')
 
         print('sync_ip = "{}"'.format(sync_ip))
         print('sync_port = "{}"'.format(sync_port))
-        print('sync_protocol = "{}"'.format(sync_protocol))
         print('sync_user = "{}"'.format(sync_user))
         print('sync_password = "{}"'.format(sync_password))
 
         self.tab_sync_interface_ip_edit.setText('{}'.format(sync_ip))
         self.tab_sync_interface_port_edit.setText('{}'.format(sync_port))
-        self.tab_sync_interface_protocol_combobox.setCurrentIndex(self.BDD.sync_protocols.index(sync_protocol))
         self.tab_sync_identification_user_edit.setText('{}'.format(sync_user))
         self.tab_sync_identification_password_edit.setText('{}'.format(sync_password))
 
@@ -181,7 +178,6 @@ class SettingsWindow(QDialog):
 
             self.BDD.set_param('sync/ip', self.tab_sync_interface_ip_edit.text())
             self.BDD.set_param('sync/port', self.tab_sync_interface_port_edit.text())
-            self.BDD.set_param('sync/protocol', self.tab_sync_interface_protocol_combobox.currentText())
             self.BDD.set_param('sync/user', self.tab_sync_identification_user_edit.text())
             self.BDD.set_param('sync/password', self.tab_sync_identification_password_edit.text())
 
@@ -399,7 +395,6 @@ class SettingsWindow(QDialog):
             self.tab_sync_interface_group.setTitle(self.lng['Settings/SyncInterfaceGroupTitle'])
             self.tab_sync_interface_ip_label.setText(self.lng['Settings/SyncInterfaceIP'])
             self.tab_sync_interface_port_label.setText(self.lng['Settings/SyncInterfacePort'])
-            self.tab_sync_interface_protocol_label.setText(self.lng['Settings/SyncInterfaceProtocol'])
 
             self.tab_sync_identification.setTitle(self.lng['Settings/SyncIdentificationGroupTitle'])
             self.tab_sync_identification_user_label.setText(self.lng['Settings/SyncIdentificationUser'])

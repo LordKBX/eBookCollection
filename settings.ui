@@ -722,7 +722,11 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="tab_sync_interface_ip_edit"/>
+             <widget class="QLineEdit" name="tab_sync_interface_ip_edit">
+              <property name="clearButtonEnabled">
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="tab_sync_interface_port_label">
@@ -733,27 +737,6 @@
             </item>
             <item row="1" column="1">
              <widget class="QLineEdit" name="tab_sync_interface_port_edit"/>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="tab_sync_interface_protocol_label">
-              <property name="text">
-               <string>Protocol</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QComboBox" name="tab_sync_interface_protocol_combobox">
-              <item>
-               <property name="text">
-                <string>HTTPS</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>TCP LINK</string>
-               </property>
-              </item>
-             </widget>
             </item>
            </layout>
           </item>
@@ -776,7 +759,11 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="tab_sync_identification_user_edit"/>
+             <widget class="QLineEdit" name="tab_sync_identification_user_edit">
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0">
              <widget class="QLabel" name="tab_sync_identification_password_label">
@@ -786,12 +773,49 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="tab_sync_identification_password_edit"/>
+             <widget class="QLineEdit" name="tab_sync_identification_password_edit">
+              <property name="clearButtonEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <layout class="QFormLayout" name="tab_sync_warn_layout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="tab_sync_warn_icon">
+           <property name="maximumSize">
+            <size>
+             <width>30</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="pixmap">
+            <pixmap>ressources/icons/tmp/dialog_warning.png</pixmap>
+           </property>
+           <property name="scaledContents">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="tab_sync_warn_text">
+           <property name="text">
+            <string>Any changes in this panel need app restart</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="tab_sync_vertical_spacer">
