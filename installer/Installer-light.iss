@@ -31,7 +31,7 @@ SetupIconFile=D:\CODES\Python\EbookCollection\ressources\icons\app_icon.ico
 Compression=lzma
 SolidCompression=yes    
 ;lowest or admin
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 OutputBaseFilename=setup_{#FileAppVersion}.{#FileAppBuild}_light
 
 [Languages]
@@ -49,7 +49,12 @@ Source: "D:\CODES\Python\EbookCollection\editor\*.bat"; DestDir: "{app}\editor";
 
 Source: "D:\CODES\Python\EbookCollection\reader\*.py"; DestDir: "{app}\reader"; Flags: ignoreversion
 Source: "D:\CODES\Python\EbookCollection\reader\*.ui"; DestDir: "{app}\reader"; Flags: ignoreversion
-Source: "D:\CODES\Python\EbookCollection\reader\*.bat"; DestDir: "{app}\reader"; Flags: ignoreversion
+Source: "D:\CODES\Python\EbookCollection\reader\*.bat"; DestDir: "{app}\reader"; Flags: ignoreversion   
+
+Source: "D:\CODES\Python\EbookCollection\Sync\*.py"; DestDir: "{app}\Sync"; Flags: ignoreversion    
+;Source: "D:\CODES\Python\EbookCollection\Sync\*.crt"; DestDir: "{app}\Sync"; Flags: ignoreversion
+Source: "D:\CODES\Python\EbookCollection\Sync\*.pem"; DestDir: "{app}\Sync"; Flags: ignoreversion
+Source: "D:\CODES\Python\EbookCollection\Sync\*.key"; DestDir: "{app}\Sync"; Flags: ignoreversion
 
 Source: "D:\CODES\Python\EbookCollection\common\*.py"; DestDir: "{app}\common"; Flags: ignoreversion
 

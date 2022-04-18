@@ -45,7 +45,8 @@ MinVersion=0,6.1
 [Languages]
 Name: "english"; MessagesFile: ".\Default.isl"
 Name: "french"; MessagesFile: "compiler:Languages\French.isl"
-#include ReadReg(HKEY_LOCAL_MACHINE,'Software\Sherlock Software\InnoTools\Downloader','ScriptPath','');
+   
+#include "C:\Program Files (x86)\Inno Download Plugin\idp.iss"
 
 [Files]
 ;Source: "D:\CODES\Python\EbookCollection\*.pyw"; DestDir: "{app}"; Flags: ignoreversion
@@ -122,18 +123,13 @@ procedure InitializeWizard();
 begin
   WizardForm.WelcomeLabel1.Visible := True;   
   WizardForm.WelcomeLabel2.Visible := True;
-  
-  itd_init;
 
   if not RegKeyExists(HKEY_LOCAL_MACHINE, 'SOFTWARE\\7-Zip') then
   begin
-    itd_addfile('http://sd-36502.dedibox.fr/eBookCollection/7zip.zip',expandconstant('{tmp}\eBookCollection-7zip.zip'));
+    idpAddFileSize('http://sd-36502.dedibox.fr/eBookCollection/7zip.zip',expandconstant('{tmp}\eBookCollection-7zip.zip'), 964490)
   end;
-  
-  
   //Start the download after the "Ready to install" screen is shown
-  itd_downloadafter(wpReady);
-
+  idpDownloadAfter(wpReady);
 end;   
      
 procedure CurStepChanged(CurStep: TSetupStep);
