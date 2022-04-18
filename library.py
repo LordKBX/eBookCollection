@@ -10,18 +10,15 @@
 #   $$$$$$$/ $$$$$$$/   $$$$$$/   $$$$$$/  $$/   $$/        $$$$$$/   $$$$$$/  $$/ $$/  $$$$$$$/  $$$$$$$/    $$$$/  $$/  $$$$$$/  $$/   $$/ 
 #                                                                                                                                            
 
-import os, sys
+import os
+
 if os.name == 'nt':
     import ctypes
 
-import PyQt5.QtCore
-import PyQt5.QtGui
-import PyQt5.QtWidgets
 import home
-from common.vars import *
 from common.bdd import *
 from common.lang import *
-import sync_server
+from Sync import server
 
 if __name__ == "__main__":
     app = PyQt5.QtWidgets.QApplication([])
@@ -29,7 +26,7 @@ if __name__ == "__main__":
 
     bdd = BDD()
     translation = Lang()
-    server = sync_server.Server(
+    server = server.Server(
         bdd.get_param('sync/ip'),
         int(float(bdd.get_param('sync/port'))),
         bdd.get_param('sync/user'),
@@ -48,4 +45,7 @@ if __name__ == "__main__":
 
     Home = home.HomeWindow(bdd, translation, sys.argv, env_vars)
     Home.show()
-    sys.exit(app.exec_())
+    ret = app.exec_()
+    server.Close()
+    print("The End")
+    sys.exit(ret)

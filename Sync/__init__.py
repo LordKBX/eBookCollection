@@ -2,6 +2,6 @@ import os
 import sys
 
 
-class common:
+class Sync:
     def __init__(self):
-        """ common """
+        """ Sync """

@@ -22,13 +22,14 @@ def is_in(objet: dict, indexes: list):
     return True
 
 
-def uid():
+def uid(cleaned: bool = False):
     """
     generate a GUID
 
     :return: str
     """
-    return uuid.uuid1().urn.replace('urn:uuid:', '')
+    if cleaned is True: return uuid.uuid1().urn.replace('urn:uuid:', '').replace('-', '')
+    else: return uuid.uuid1().urn.replace('urn:uuid:', '')
 
 
 def unixtime_to_string(value: float, template: str = '%Y-%m-%d %H:%M:%S', months: list = list(), is_utc: bool = True):
@@ -68,3 +69,12 @@ def clean_string_for_url(path: str):
         .replace('<', '_')\
         .replace('>', '_')\
         .replace('|', '_')  # .replace(' ', '_')
+
+
+def filename_cleaner(value):
+    import re
+    import unicodedata
+    value = value.encode('ascii', 'ignore').decode('ascii')
+    value = re.sub('[^\w\s-]', '', value).strip()
+    # value = re.sub('[-\s]+', '-', value)
+    return value

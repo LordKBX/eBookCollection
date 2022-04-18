@@ -231,7 +231,7 @@ class BDD:
             try: os.makedirs(self.__directory)
             except Exception: traceback.print_exc()
         clean_dir(self.__directory)
-        self.connexion = sqlite3.connect(self.__directory + os.sep + self.__database_filename)
+        self.connexion = sqlite3.connect(self.__directory + os.sep + self.__database_filename, check_same_thread=False)
         self.connexion.row_factory = dict_factory
         self.cursor = self.connexion.cursor()
 
@@ -270,6 +270,7 @@ class BDD:
         try:
             if os.path.isdir(new_folder) is False:
                 return
+            self.cursor.execute("UPDATE files SET link = REPLACE(link, '" + self.__directory + "', '" + new_folder + "')")
             if self.connexion is not None:
                 self.close()
             copyDir(self.__directory, new_folder)
@@ -379,7 +380,7 @@ class BDD:
                 elif re.search("^search:", search):
                     item = tab[1].lower()
                     self.cursor.execute(
-                        "SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE books.title LIKE ? OR books.series LIKE ? OR books.authors LIKE ? OR books.tags LIKE ?",
+                        "SELECT * FROM books JOIN files ON(files.book_id = books.guid) WHERE LOWER(books.title) LIKE ? OR LOWER(books.series) LIKE ? OR LOWER(books.authors) LIKE ? OR LOWER(books.tags) LIKE ?",
                         ['%' + item + '%', '%' + item + '%', '%' + item + '%', '%' + item + '%']
                     )
                     ret = self.cursor.fetchall()
