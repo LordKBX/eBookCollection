@@ -69,7 +69,8 @@
 		},
 
 		"Metadata": {
-			"WindowTitle": "Editing Metadata"
+			"WindowTitle": "Editing Metadata",
+            "CoverImport": "Import Book Cover"
 		}
 	},
 	"Generic": {

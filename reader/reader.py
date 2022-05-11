@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import traceback
 if os.name == 'nt':
@@ -102,25 +103,53 @@ class ReaderWindow(QtWidgets.QMainWindow):
 			elif appMode.value == QwwMode.EPUB.value:
 				if re.search('^chapter:', data) is not None:
 					td = data.split(':')
-					page_url = destDir + "/" + td[1]
+					tab_url = td[1].split('/')
+					page_url = destDir + os.path.sep + td[1].replace("/", os.path.sep)
 					page_url2 = 'file:///' + page_url.replace("\\", '/')
+					print("--------------------")
+					print("page_url =", page_url)
+					print("page_url2 =", page_url2)
 
-					# New
-					fdata =''
-					with open(page_url, 'rt', encoding='utf8') as pfile:
-						fdata = pfile.read()
-					last_slash = -1
-					try: last_slash = td[1].rindex('/')
-					except Exception: ""
-					file_dir = destDir.replace(os.sep, '/') + '/' + td[1][0:last_slash]
-					txe = fdata\
-						.replace('<head>', '<head><base href="file:///' + destDir.replace(os.sep, '/') + '">')\
-						.replace('="/', '="file:///' + destDir.replace(os.sep, '/') + '/')\
-						.replace('="../', '="file:///' + file_dir + '/../')
-					self.webView.page().currentFrame().setHtml(txe)
+					try:
+						# New
+						fdata = ''
+						with open(page_url, 'rt', encoding='utf8') as pfile:
+							fdata = pfile.read()
+						file_dir = destDir
+						if "/" in td[1]:
+							last_slash = -1
+							try: last_slash = td[1].rindex('/')
+							except Exception: ""
+							file_dir = destDir.replace(os.sep, '/') + '/' + td[1][0:last_slash]
+						last_slash = -1
+						try: last_slash = file_dir.rindex('/')
+						except Exception: ""
+						file_dir_parent = file_dir[0:last_slash]
+						txe = fdata\
+							.replace('<head>', '<head><base href="file:///' + file_dir.replace(os.sep, '/') + '/"/>')\
+							.replace('="/', '="file:///' + file_dir.replace(os.sep, '/') + '/').replace('  ', ' ')
+						txe = re.sub("(?i)<!--(.*)-->", "", txe)
+						txe = re.sub("(?i)<script(.*)>", "", txe)
+						txe = txe.replace('="../', '="file:///' + file_dir_parent + '/')
+						txe = txe.replace('<section', '<div><section')
+						txe = txe.replace('</section>', '</section></div>')
+						"""
+						tabre = re.findall(r'\bsrc="([a-zA-Z0-9\/\:\.]{1,500})"', txe)
+						print("tabre =", tabre)
+						if tabre is not None:
+							for line in tabre:
+								print(line)
+								if re.search(r'^(http|file)', line) is None:
+									txe = txe.replace(line, 'file:///' + file_dir + '/' + line)
+						"""
+						with open(page_url, "wb") as h:
+							h.write(txe.encode("utf-8"))
+						self.webView.setUrl(QtCore.QUrl(page_url2))
 
-					# OLD
-					# self.webView.setUrl(QtCore.QUrl(page_url2))
+					except Exception as er:
+						traceback.print_exc()
+						# OLD
+						self.webView.setUrl(QtCore.QUrl(page_url2))
 		except Exception:
 			traceback.print_exc()
 
@@ -289,7 +318,6 @@ if __name__ == "__main__":
 	if os.path.isdir(destDir) is not True: os.makedirs(destDir)
 	page = ''
 	infoData = ''
-	print(file.replace('./', app_directory))
 	file = file.replace('./', app_directory)
 
 	ui.set_info_text(file)

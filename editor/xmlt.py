@@ -37,7 +37,22 @@ def parse(text: str):
         print(error.getMessage())
         print(error.getException())
         print('{}:{}'.format(error.getLineNumber(), error.getColumnNumber()))
-        return [error.getLineNumber(), error.getColumnNumber()]
+        print('{}'.format(error.getMessage()))
+        list = text.split('\n')
+        cpt = 1
+        pos = 0
+        for line in list:
+            if cpt >= 1:
+                pos += 1
+            if cpt == error.getLineNumber():
+                pos += error.getColumnNumber()
+                break
+            else:
+                pos += len(line)
+            cpt += 1
+        if pos > 0:
+            pos -= 1
+        return [error.getLineNumber(), error.getColumnNumber(), pos]
     except:
         traceback.print_exc()
         return None

@@ -116,7 +116,8 @@ class Lang:
                 "Authors": "Authors:"
             },
             "Metadata": {
-                "WindowTitle": "Editing Metadata"
+                "WindowTitle": "Editing Metadata",
+                "CoverImport": "Import Book Cover"
             }
         },
         "Generic": {
@@ -420,7 +421,7 @@ class Lang:
 
         jssgenerator = JSONSchemaGenerator()
         encoder = json.encoder.JSONEncoder()
-        print(self.translations)
+        # print(self.translations)
         tab = encoder.encode(self.translations[self.default_language])
         jssgenerator.load(tab)
         schema = jssgenerator.generate()
@@ -434,7 +435,7 @@ class Lang:
         ext = "json"
         for dir in [directory, directory2]:
             try:
-                print(dir)
+                # print(dir)
                 for root, directories, files in os.walk(dir, topdown=False):
                     for name in files:
                         if re.search("\\.({})$".format(ext), name) is None:

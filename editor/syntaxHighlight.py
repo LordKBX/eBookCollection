@@ -1,6 +1,7 @@
 import sys, os
+
 from PyQt5.QtGui import *
-from PyQt5.Qsci import *
+from PyQt5.Qsci import QsciScintilla, QsciLexerXML
 
 
 class SimplePythonEditor(QsciScintilla):

@@ -435,7 +435,7 @@ class BDD:
         return return_list
 
     def insert_book(self, guid: str, title: str = None, series: str = None, authors: str = None,
-                    tags: str = None, size: str = None, file_format: str = None, link: str = None, cover: str = None,
+                    tags: str = None, size: str = None, file_format: str = None, link: str = None, cover: str = "",
                     lang: str = None, editors: str = None, publication_date: int = 0):
         """
 
@@ -456,6 +456,7 @@ class BDD:
         if self.connexion is None:
             self.__start()
         dt = time.time()
+        if cover is None: cover = ""
         if title is not None and title.strip() != '':
             self.cursor.execute(
                 '''INSERT INTO books(

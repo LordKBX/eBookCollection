@@ -27,7 +27,7 @@ mediatypes = {
 }
 
 
-def create_thumbnail(path: str, resize: bool = True):
+def create_thumbnail(path: str, resize: bool = True) -> str:
     img = Image.open(path).convert("RGB")
     img.load()
     if resize is True:
@@ -353,10 +353,12 @@ def get_epub_info(path: str, clean: bool = False) -> dict or None:
                 base = ''
                 i = 0
                 while i < len(tab) - 1:
-                    if i > 0: base += '/'
+                    if i > 0:
+                        base += '/'
                     base += tab[i]
-                    i+=1
+                    i += 1
                 base += '/'
+            print("BASE =", base)
             myfile = myzip.open(file2)
             metadata_file_content = myfile.read()
             mydoc = minidom.parseString(metadata_file_content)

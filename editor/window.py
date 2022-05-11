@@ -1,9 +1,14 @@
 from checkpoint import *
 from files import *
 from content_table_editor import *
+if os.name == 'nt':
+	import ctypes
+import PyQt5
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
+import PyQt5.uic
+from PyQt5.uic import *
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common.dialog import *
@@ -23,7 +28,16 @@ class EditorWindow(QtWidgets.QMainWindow):
 
     def __init__(self, parent: QtWidgets.QMainWindow, opened_file, lang, bdd):
         super(EditorWindow, self).__init__(parent)
-        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'editor.ui'.replace('/', os.sep), self)
+
+        baseDir = ""
+        if hasattr(sys, 'frozen'):
+            basis = sys.executable
+        else:
+            basis = sys.argv[0]
+        baseDir = os.path.split(basis)[0]
+        print("UI FILE =", baseDir + os.sep + 'editor.ui')
+
+        PyQt5.uic.loadUi(baseDir + os.sep + 'editor.ui', self)
         self.opened_file = opened_file
         self.tmpDir = app_user_directory + os.sep + 'editor' + os.sep + 'tmp'
         try:

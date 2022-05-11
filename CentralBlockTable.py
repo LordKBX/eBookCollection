@@ -245,25 +245,26 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
             col_type = new_item.data(100)
             book = self.BDD.get_books(guid_book)[0]
             book[col_type] = new_item.text()
-            self.BDD.update_book(guid_book, col_type, new_item.text())
+            self.BDD.update_book(guid_book, col_type, new_item.text().strip())
             if col_type in ['title', 'authors', 'series']:
                 index = 0
                 while index < len(book['files']):
-                    old_path = book['files'][index]['link']
-                    new_path = self.BDD.get_param('library/directory')  # .replace('{APP_DIR}', app_directory)
+                    old_path = book['files'][index]['link'].replace('/', os.sep)
+                    new_path = self.BDD.get_param('library/directory').replace('/', os.sep)  # .replace('{APP_DIR}', app_directory)
                     if book['authors'] is not None:
                         if book['authors'].strip() != '':
-                            new_path += os.sep + clean_string_for_url(book['authors'])
+                            new_path += os.sep + clean_string_for_url(book['authors']).strip()
                     if book['series'] is not None:
                         if book['series'].strip() != '':
-                            new_path += os.sep + clean_string_for_url(book['series'])
+                            new_path += os.sep + clean_string_for_url(book['series']).strip()
                     if os.path.isdir(new_path) is False:
                         os.makedirs(new_path)
-                    new_path += os.sep + clean_string_for_url(book['title']) + '.' + book['files'][index]['format'].lower()
-                    print(old_path, new_path)
-                    shutil.move(old_path, new_path)
-                    book['files'][index]['link'] = new_path
-                    self.BDD.update_book(guid_book, 'link', new_path, book['files'][index]['guid'])
+                    new_path += os.sep + clean_string_for_url(book['title']).strip() + '.' + book['files'][index]['format'].lower()
+                    if old_path != new_path:
+                        print(old_path, new_path)
+                        shutil.move(old_path, new_path)
+                        book['files'][index]['link'] = new_path
+                        self.BDD.update_book(guid_book, 'link', new_path, book['files'][index]['guid'])
                     index += 1
 
             self.sorting_block_tree_load_data()
@@ -368,7 +369,9 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                         col = -1
                         for case in list_items:
                             col += 1
-                            self.central_block_table.item(id, col).setData(99, data[cpt]['guid'])
+                            if self.central_block_table.item(id, col) is not None:
+                                print("error item at position line:{}, col:{}".format(id, col))
+                                self.central_block_table.item(id, col).setData(99, data[cpt]['guid'])
                             if case in list_items_locked:
                                 bdate = unixtime_to_string(
                                     float(data[cpt][case]),

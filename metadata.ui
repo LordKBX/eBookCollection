@@ -352,7 +352,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <item>
-            <widget class="QPushButton" name="pushButton_14">
+            <widget class="QPushButton" name="btnCoverDel">
              <property name="maximumSize">
               <size>
                <width>40</width>
@@ -365,7 +365,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_15">
+            <widget class="QPushButton" name="btnCoverDown">
              <property name="maximumSize">
               <size>
                <width>40</width>
@@ -378,7 +378,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_16">
+            <widget class="QPushButton" name="btnCoverImport">
              <property name="maximumSize">
               <size>
                <width>40</width>
@@ -391,7 +391,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pushButton_17">
+            <widget class="QPushButton" name="btnCoverGenerate">
              <property name="maximumSize">
               <size>
                <width>40</width>

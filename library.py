@@ -45,7 +45,11 @@ if __name__ == "__main__":
 
     Home = home.HomeWindow(bdd, translation, sys.argv, env_vars)
     Home.show()
-    ret = app.exec_()
-    server.Close()
+    ret = 0
+    try:
+        ret = app.exec_()
+        server.Close()
+    except Exception as err:
+        traceback.print_exc()
     print("The End")
     sys.exit(ret)

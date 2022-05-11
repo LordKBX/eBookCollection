@@ -3,9 +3,9 @@ import sys
 import PyQt5.QtWebKitWidgets
 import PyQt5.uic
 from PyQt5.uic import *
+from PyQt5.QtWidgets import *
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from syntaxHighlight import *
 from common.books import *
 from common import dialog, vars
 import xmlt
@@ -13,6 +13,8 @@ import css
 import link
 import img
 import color_picker
+from codeEditor import CodeEditor
+import syntaxHighlighter
 
 
 class UIClass(QtWidgets.QWidget):
@@ -32,6 +34,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
     BDD = None
     style = None
     destDir = ''
+    highlight = None
 
     def __init__(self, parent: any):
         QtWidgets.QTabWidget.__init__(self, parent)
@@ -57,7 +60,10 @@ class EditorTabManager(QtWidgets.QTabWidget):
                    'application/xhtml+xml', 'text/plain']
         if item.property('fileType') in type_ok:
             try:
-                txe = item.children().__getitem__(2).text()
+                # txe = item.children().__getitem__(2).text()
+                obj = item.children().__getitem__(2)
+                txe = obj.toPlainText()
+
                 txe = txe\
                     .replace('<head>', '<head><base href="file:///'+self.destDir.replace(os.sep, '/')+'/">')\
                     .replace('="/', '="file:///' + self.destDir.replace(os.sep, '/') + '/') \
@@ -74,20 +80,25 @@ class EditorTabManager(QtWidgets.QTabWidget):
         self.previewWebview.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
     def content_update(self):
-        if self.currentWidget().property('fileExt') in ['xhtml', 'html', 'css', 'xml', 'opf', 'ncx']:
-            old_txt = self.currentWidget().property('originalContent')
-            new_txt = self.currentWidget().children().__getitem__(2).text()
+        try:
+            if self.currentWidget().property('fileExt') in ['xhtml', 'html', 'css', 'xml', 'opf', 'ncx']:
+                old_txt = self.currentWidget().property('originalContent')
+                new_txt = self.currentWidget().children().__getitem__(2).toPlainText()
 
-            index = self.currentIndex()
-            if old_txt != new_txt:
-                icon = QtGui.QIcon()
-                image = QtGui.QPixmap()
-                image.load(vars.get_style_var(self.style, 'icons/edit'))
-                icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
-                self.setTabIcon(index, icon)
-            else:
-                self.setTabIcon(index, QtGui.QIcon())
-        self.draw_preview()
+                index = self.currentIndex()
+                if old_txt != new_txt:
+                    icon = QtGui.QIcon()
+                    image = QtGui.QPixmap()
+                    image.load(vars.get_style_var(self.style, 'icons/edit'))
+                    icon.addPixmap(image, QtGui.QIcon.Normal, QtGui.QIcon.Off)
+                    self.setTabIcon(index, icon)
+                else:
+                    self.setTabIcon(index, QtGui.QIcon())
+                if self.highlight is not None:
+                    self.highlight.rehighlightBlock(self.highlight.currentBlock())
+            self.draw_preview()
+        except Exception as err:
+            traceback.print_exc()
 
     def clear_layout(self, layout):
         if layout is not None:
@@ -215,20 +226,20 @@ class EditorTabManager(QtWidgets.QTabWidget):
                 vertical_layout.addWidget(block)
 
                 try:
-                    text_edit = None
+                    text_edit = CodeEditor()
+                    # text_edit = QPlainTextEdit()
+                    text_edit.setTabStopWidth(16)
                     if tab.property('fileExt') in ['xhtml', 'html']:
-                        text_edit = SimplePythonEditor(QsciLexerHTML(), tab, vars.get_style(self.style))
+                        self.highlight = syntaxHighlighter.SyntaxHighlighter(text_edit.document(), syntaxHighlighter.MODES.HTML)
                     elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
-                        text_edit = SimplePythonEditor(QsciLexerXML(), tab, vars.get_style(self.style))
+                        self.highlight = syntaxHighlighter.SyntaxHighlighter(text_edit.document(), syntaxHighlighter.MODES.XML)
                     elif tab.property('fileExt') in ['css']:
-                        text_edit = SimplePythonEditor(QsciLexerCSS(), tab)
-                    else:
-                        text_edit = SimplePythonEditor(None, tab, vars.get_style(self.style))
+                        self.highlight = syntaxHighlighter.SyntaxHighlighter(text_edit.document(), syntaxHighlighter.MODES.CSS)
 
-                    if text_edit.elexer is not None:
-                        text_edit.setObjectName("textEdit")
-
-                    text_edit.setText(data)
+                    print("fileExt", tab.property('fileExt'))
+                    # if text_edit.elexer is not None:
+                    #     text_edit.setObjectName("textEdit")
+                    text_edit.setPlainText(data)
                     text_edit.textChanged.connect(lambda: self.content_update())
 
                     vertical_layout.addWidget(text_edit)
@@ -248,11 +259,11 @@ class EditorTabManager(QtWidgets.QTabWidget):
 
             try:
                 block.btnSave.clicked.connect(self.save_file)
-                block.btnUndo.clicked.connect(lambda: text_edit.undo())
-                block.btnRedo.clicked.connect(lambda: text_edit.redo())
-                block.btnCut.clicked.connect(lambda: text_edit.cut())
-                block.btnCopy.clicked.connect(lambda: text_edit.copy())
-                block.btnPaste.clicked.connect(lambda: text_edit.paste())
+                block.btnUndo.clicked.connect(self.undo)
+                block.btnRedo.clicked.connect(self.redo)
+                block.btnCut.clicked.connect(self.cut)
+                block.btnCopy.clicked.connect(self.copy)
+                block.btnPaste.clicked.connect(self.paste)
                 block.btnDebug.clicked.connect(self.debug_text)
                 block.btnComment.clicked.connect(self.comment_text)
                 block.btnPrettify.clicked.connect(self.prettify_text)
@@ -332,7 +343,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
     def save_file(self, evt):
         try:
             item = self.currentWidget()
-            new_text = item.children().__getitem__(2).text()
+            new_text = item.children().__getitem__(2).toPlainText()
             old_text = item.property('originalContent')
             file_name = item.property('fileName')
             icon = item.property('fileIcon')
@@ -351,42 +362,68 @@ class EditorTabManager(QtWidgets.QTabWidget):
         except Exception:
             traceback.print_exc()
 
+    def undo(self):
+        item = self.currentWidget()
+        tx_edit = item.children().__getitem__(2)
+        tx_edit.setFocus()
+        tx_edit.undo()
+
+    def redo(self):
+        item = self.currentWidget()
+        tx_edit = item.children().__getitem__(2)
+        tx_edit.setFocus()
+        tx_edit.redo()
+
+    def cut(self):
+        item = self.currentWidget()
+        tx_edit = item.children().__getitem__(2)
+        tx_edit.setFocus()
+        tx_edit.cut()
+
+    def copy(self):
+        item = self.currentWidget()
+        tx_edit = item.children().__getitem__(2)
+        tx_edit.setFocus()
+        tx_edit.copy()
+
+    def paste(self):
+        item = self.currentWidget()
+        tx_edit = item.children().__getitem__(2)
+        tx_edit.setFocus()
+        tx_edit.paste()
+
     def duplication(self):  # duplication of current line or selected block
         try:
             item = self.currentWidget()
             tx_edit = item.children().__getitem__(2)
-            sel = tx_edit.getSelection()
-            if sel[0] == sel[2] and sel[1] == sel[3]:
-                # pos = tx_edit.getCursorPosition()
-                SimplePythonEditor.setSelection(sel[0], 0, sel[0]+1, 0)
-                selected_text = tx_edit.selectedText()
-                tx_edit.insertAt(selected_text, sel[0]+1, 0)
-            else:
-                selected_text = tx_edit.selectedText()
-                new_text = selected_text + selected_text
-                tx_edit.replaceSelectedText(new_text)
-                tx_edit.setSelection(sel[0], sel[1], sel[2], sel[3])
+            cursor = tx_edit.textCursor()
+
+            # Security
+            if cursor.hasSelection():
+                selected_text = tx_edit.textCursor().selection().toPlainText()
+                # We insert the new text, which will override the selected
+                # text
+                cursor.insertText(selected_text+selected_text)
+
+                # And set the new cursor
+                tx_edit.setTextCursor(cursor)
         except Exception:
             traceback.print_exc()
 
     def claim_back_color(self):
         color = self.claim_color()
-        text = self.currentWidget().children().__getitem__(2).selectedText()
+        text = self.currentWidget().children().__getitem__(2).textCursor().selection().toPlainText()
         if color is not None:
-            if re.search('<div', text) is not None:
-                self.block_paster_text('<div style="background-color:{}">'.format(color.name()), '</div>')
-            elif re.search('<p', text) is not None:
+            if re.search('<div', text) is not None or re.search('<p', text) is not None:
                 self.block_paster_text('<div style="background-color:{}">'.format(color.name()), '</div>')
             else:
                 self.block_paster_text('<span style="background-color:{}">'.format(color.name()), '</span>')
 
     def claim_text_color(self):
         color = self.claim_color()
-        text = self.currentWidget().children().__getitem__(2).selectedText()
+        text = self.currentWidget().children().__getitem__(2).textCursor().selection().toPlainText()
         if color is not None:
-            if re.search('<div', text) is not None:
-                self.block_paster_text('<div style="color:{}">'.format(color.name()), '</div>')
-            elif re.search('<p', text) is not None:
+            if re.search('<div', text) is not None or re.search('<p', text) is not None:
                 self.block_paster_text('<div style="color:{}">'.format(color.name()), '</div>')
             else:
                 self.block_paster_text('<span style="color:{}">'.format(color.name()), '</span>')
@@ -404,12 +441,16 @@ class EditorTabManager(QtWidgets.QTabWidget):
         try:
             item = self.currentWidget()
             tx_edit = item.children().__getitem__(2)
+            # tx_edit = QPlainTextEdit()
             if item.property('fileExt') in ['xhtml', 'html', 'xml', 'opf', 'ncx']:
-                ret = xmlt.parse(tx_edit.text())
+                ret = xmlt.parse(tx_edit.toPlainText())
                 if ret is not None:
                     dialog.WarnDialog('', 'Error found at line {}, collumn {}'.format(ret[0], ret[1]), self.parent())
-                    tx_edit.setSelection(ret[0]-1, 0, ret[0]-1, ret[1])
-                    # SimplePythonEditor.setFocus()
+                    cursor = tx_edit.textCursor()
+                    # cursor = QtGui.QTextCursor()
+                    cursor.setPosition(ret[2])
+                    tx_edit.setTextCursor(cursor)
+                    # tx_edit.setTextCursor(QtGui.QTextCursor(ret[0]-1, 0, ret[0]-1, ret[1])).setSelection(ret[0]-1, 0, ret[0]-1, ret[1])
                     tx_edit.setFocus()
             if item.property('fileExt') in ['css']:
                 {}
@@ -421,29 +462,24 @@ class EditorTabManager(QtWidgets.QTabWidget):
             item = self.currentWidget()
             tx_edit = item.children().__getitem__(2)
             if item.property('fileExt') in ['xhtml', 'html', 'xml', 'opf', 'ncx', 'css']:
-                selected_text = tx_edit.selectedText()
-                sel = tx_edit.getSelection()
-                if sel[0] == sel[2] and sel[1] == sel[3]:
-                    pos = tx_edit.getCursorPosition()
+                selected_text = tx_edit.textCursor().selection().toPlainText()
+                sel = tx_edit.textCursor()
+                if sel.hasSelection() is False:
                     if item.property('fileExt') in ['xhtml', 'html', 'xml', 'opf', 'ncx']:
-                        tx_edit.insertAt("<!-- Comment -->", pos[0], pos[1])
+                        self.block_paster_text("<!-- Comment -->", "")
                     elif item.property('fileExt') in ['css']:
-                        tx_edit.insertAt("/* Comment */", pos[0], pos[1])
+                        self.block_paster_text("/* Comment */", "")
                 else:
                     if item.property('fileExt') in ['xhtml', 'html', 'xml', 'opf', 'ncx']:
                         if selected_text.startswith('<!-- ') and selected_text.endswith(' -->'):
-                            tx_edit.replaceSelectedText(selected_text[5:][:-4])
-                            tx_edit.setSelection(sel[0], sel[1], sel[2], sel[3] - 4)
+                            self.replace_text(selected_text[5:][:-4])
                         else:
-                            tx_edit.replaceSelectedText('<!-- '+selected_text+' -->')
-                            tx_edit.setSelection(sel[0], sel[1], sel[2], sel[3] + 4)
+                            self.replace_text('<!-- '+selected_text+' -->')
                     if item.property('fileExt') in ['css']:
                         if selected_text.startswith('/* ') and selected_text.endswith(' */'):
-                            tx_edit.replaceSelectedText(selected_text[3:][:-3])
-                            tx_edit.setSelection(sel[0], sel[1], sel[2], sel[3]-3)
+                            self.replace_text(selected_text[3:][:-3])
                         else:
-                            tx_edit.replaceSelectedText('/* '+selected_text+' */')
-                            tx_edit.setSelection(sel[0], sel[1], sel[2], sel[3]+3)
+                            self.replace_text('/* '+selected_text+' */')
             else:
                 return
         except Exception:
@@ -453,19 +489,51 @@ class EditorTabManager(QtWidgets.QTabWidget):
         try:
             item = self.currentWidget()
             tx_edit = item.children().__getitem__(2)
-            selected_text = tx_edit.selectedText()
-            sel = tx_edit.getSelection()
-            if sel[0] == sel[2] and sel[1] == sel[3]:
-                pos = tx_edit.getCursorPosition()
-                tx_edit.insertAt(block_start + ' ' + block_end, pos[0], pos[1])
+            # tx_edit = QPlainTextEdit()
+            cursor = tx_edit.textCursor()
+
+            # Security
+            if cursor.hasSelection():
+                selected_text = cursor.selection().toPlainText()
+                start = cursor.position() - selected_text.__len__()
+                end_text = block_start + selected_text + block_end
+                # We insert the new text, which will override the selected
+                # text
+                cursor.insertText(end_text)
+                cursor.setPosition(start)
+                cursor.setPosition(start + len(end_text), QtGui.QTextCursor.KeepAnchor)
+
+                # And set the new cursor
+                tx_edit.setTextCursor(cursor)
             else:
-                max_len = len(block_start) + len(block_end)
-                if selected_text.startswith(block_start) and selected_text.endswith(block_end):
-                    tx_edit.replaceSelectedText(selected_text[len(block_start):][:len(block_end)*-1])
-                    tx_edit.setSelection(sel[0], sel[1], sel[2], sel[3] - max_len)
-                else:
-                    tx_edit.replaceSelectedText(block_start + selected_text + block_end)
-                    tx_edit.setSelection(sel[0], sel[1], sel[2], sel[3] + max_len)
+                start = cursor.position()
+                cursor.insertText(block_start + block_end)
+                cursor.setPosition(start + len(block_start))
+                tx_edit.setTextCursor(cursor)
+            tx_edit.setFocus()
+        except Exception:
+            traceback.print_exc()
+
+    def replace_text(self, new_text: str):
+        try:
+            item = self.currentWidget()
+            tx_edit = item.children().__getitem__(2)
+            # tx_edit = QPlainTextEdit()
+            cursor = tx_edit.textCursor()
+
+            # Security
+            if cursor.hasSelection():
+                start = cursor.position() - len(cursor.selection().toPlainText())
+                print("selection")
+                # We insert the new text, which will override the selected
+                # text
+                cursor.insertText(new_text)
+                cursor.setPosition(start)
+                cursor.setPosition(start + len(new_text), QtGui.QTextCursor.KeepAnchor)
+
+                # And set the new cursor
+                tx_edit.setTextCursor(cursor)
+            tx_edit.setFocus()
         except Exception:
             traceback.print_exc()
 
@@ -503,35 +571,44 @@ class EditorTabManager(QtWidgets.QTabWidget):
         try:
             item = self.currentWidget()
             tx_edit = item.children().__getitem__(2)
-            sel = pos = tx_edit.getSelection()
-            if sel[0] == sel[2] and sel[1] == sel[3]:
-                pos = tx_edit.getCursorPosition()
+            # tx_edit = QPlainTextEdit()
+            cursor = tx_edit.textCursor()
+            end = cursor.position()
+            start = end
+
             if item.property('fileExt') in ['xml', 'opf', 'ncx']:
-                ret = xmlt.prettify(tx_edit.text())
-                tx_edit.selectAll(True)
-                tx_edit.replaceSelectedText(ret)
+                ret = xmlt.prettify(tx_edit.toPlainText())
+                tx_edit.selectAll()
+                tx_edit.textCursor().insertText(ret)
             elif item.property('fileExt') in ['css']:
-                ret = css.prettifyCss(tx_edit.text())
-                tx_edit.selectAll(True)
-                tx_edit.replaceSelectedText(ret)
+                ret = css.prettifyCss(tx_edit.toPlainText())
+                tx_edit.selectAll()
+                tx_edit.textCursor().insertText(ret)
             else:
+                dialog.WarnDialog('', 'File type not treated', self.parent())
+                tx_edit.setFocus()
                 return
-            if sel[0] == sel[2] and sel[1] == sel[3]:
-                tx_edit.setCursorPosition(pos[0], pos[1])
+
+            if cursor.hasSelection():
+                start = end - len(cursor.selection().toPlainText())
+                cursor.setPosition(start)
+                cursor.setPosition(end, QtGui.QTextCursor.KeepAnchor)
             else:
-                tx_edit.setSelection(sel[0], sel[1], sel[2], sel[3])
+                cursor.setPosition(end)
+            tx_edit.setTextCursor(cursor)
+            tx_edit.setFocus()
         except Exception:
             traceback.print_exc()
 
     def link_poser(self):
+        print("link_poser")
         block_start = '<a '
         block_end = '</a>'
         try:
             item = self.currentWidget()
             window = link.LinkWindow(self, app_user_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
-            selected_text = tx_edit.selectedText()
-            sel = tx_edit.getSelection()
+            cursor = tx_edit.textCursor()
 
             tb1 = item.property('fileName').replace('/', os.sep).replace(
                 app_user_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep,
@@ -541,28 +618,34 @@ class EditorTabManager(QtWidgets.QTabWidget):
             for i in range(0, len(tb1) - 1):
                 adl += '../'
 
-            if sel[0] == sel[2] and sel[1] == sel[3]:
+            new_text = ""
+            if cursor.hasSelection() is False:
                 ret = window.openExec()
                 if ret is not None:
-                    pos = tx_edit.getCursorPosition()
                     new_text = '<a href="' + adl + ret['url'] + '">' + ret['text'] + '</a>'
-                    tx_edit.insertAt(new_text, pos[0], pos[1])
-                    tb = new_text.split('\n')
-                    tx_edit.setSelection(pos[0], pos[1], pos[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
+                    tx_edit.textCursor().insertText(new_text)
             else:
+                selected_text = cursor.selection().toPlainText()
                 # max_len = len(block_start) + len(block_end)
                 if selected_text.startswith(block_start) and selected_text.endswith(block_end):
-                    new_text = re.sub('<a(.*)>(.*)</a>', '%2', selected_text)
-                    tx_edit.replaceSelectedText(new_text)
-                    tb = new_text.split('\n')
-                    tx_edit.setSelection(sel[0], sel[1], sel[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
+                    rez = re.findall('<a(.*)>(.*)</a>', selected_text)
+                    new_text = rez[0][1]
+                    tx_edit.textCursor().insertText(new_text)
                 else:
-                    ret = window.openExec(selected_text)
+                    if selected_text.startswith("http") or selected_text.startswith("file://") or selected_text.__contains__("/"):
+                        ret = window.openExec(None, selected_text)
+                    else:
+                        ret = window.openExec(selected_text)
                     if ret is not None:
                         new_text = '<a href="' + adl + ret['url'] + '">' + ret['text'] + '</a>'
-                        tx_edit.replaceSelectedText(new_text)
-                        tb = new_text.split('\n')
-                        tx_edit.setSelection(sel[0], sel[1], sel[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
+                        tx_edit.textCursor().insertText(new_text)
+
+            end = cursor.position()
+            start = end - len(new_text)
+            cursor.setPosition(start)
+            cursor.setPosition(end, QtGui.QTextCursor.KeepAnchor)
+            tx_edit.setTextCursor(cursor)
+            tx_edit.setFocus()
         except Exception:
             traceback.print_exc()
 

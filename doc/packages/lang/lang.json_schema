@@ -190,6 +190,9 @@
                     "properties": {
                         "WindowTitle": {
                             "type": "string"
+                        },
+                        "CoverImport": {
+                            "type": "string"
                         }
                     }
                 }
