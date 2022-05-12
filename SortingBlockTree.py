@@ -30,21 +30,34 @@ class HomeWindowSortingBlockTree:
         self.sorting_block_search_edit.returnPressed.connect(self.sorting_block_tree_research)
 
     def sorting_block_tree_load_data(self):
-        # Clean sub-tree Authors ans Series
-        while self.sorting_block_tree.topLevelItem(1).childCount() > 0:
-            self.sorting_block_tree.topLevelItem(1).removeChild(self.sorting_block_tree.topLevelItem(1).child(0))
-        while self.sorting_block_tree.topLevelItem(2).childCount() > 0:
-            self.sorting_block_tree.topLevelItem(2).removeChild(self.sorting_block_tree.topLevelItem(2).child(0))
-        authors = self.BDD.get_authors()
-        series = self.BDD.get_series()
-        for author in authors:
-            item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(1))
-            item.setText(0, author)
-            item.setText(1, 'authors:{}'.format(author))
-        for serie in series:
-            item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(2))
-            item.setText(0, serie)
-            item.setText(1, 'series:{}'.format(serie))
+        try:
+            # Clean sub-tree Authors ans Series
+            while self.sorting_block_tree.topLevelItem(1).childCount() > 0:
+                self.sorting_block_tree.topLevelItem(1).removeChild(self.sorting_block_tree.topLevelItem(1).child(0))
+            while self.sorting_block_tree.topLevelItem(2).childCount() > 0:
+                self.sorting_block_tree.topLevelItem(2).removeChild(self.sorting_block_tree.topLevelItem(2).child(0))
+            while self.sorting_block_tree.topLevelItem(3).childCount() > 0:
+                self.sorting_block_tree.topLevelItem(3).removeChild(self.sorting_block_tree.topLevelItem(3).child(0))
+            authors = self.BDD.get_authors()
+            series = self.BDD.get_series()
+            tags = self.BDD.get_tags()
+            for author in authors:
+                item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(1))
+                item.setText(0, author)
+                item.setText(1, 'authors:{}'.format(author))
+                item.setToolTip(0, author)
+            for serie in series:
+                item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(2))
+                item.setText(0, serie)
+                item.setText(1, 'series:{}'.format(serie))
+                item.setToolTip(0, serie)
+            for tag in tags:
+                item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(3))
+                item.setText(0, tag)
+                item.setText(1, 'tags:{}'.format(tag))
+                item.setToolTip(0, tag)
+        except Exception:
+            traceback.print_exc()
 
     def sorting_block_tree_item_activated(self, item, column):
         try:
@@ -53,23 +66,26 @@ class HomeWindowSortingBlockTree:
             traceback.print_exc()
 
     def sorting_block_tree_set_filter(self, filter: str = None) -> None:
-        if filter is None or filter.strip() == '':
-            return
-        filter_tab = [filter]
-        if filter == 'all' or filter == '*':
-            self.sorting_block_tree_actual_filters.clear()
-            self.sorting_block_tree_actual_filters.append(LibrarySortingFilter('*', None))
-        else:
-            self.sorting_block_tree_del_filter('*', False)
-            filter_tab = filter.split(':')
-            found = False
-            for index in range(0, len(self.sorting_block_tree_actual_filters)):
-                if self.sorting_block_tree_actual_filters[index].type == filter_tab[0]:
-                    self.sorting_block_tree_actual_filters[index].data = filter_tab[1]
-                    found = True
-            if found is False:
-                self.sorting_block_tree_actual_filters.append(LibrarySortingFilter(filter_tab[0], filter_tab[1]))
-        self.sorting_block_tree_parse_filters()
+        try:
+            if filter is None or filter.strip() == '':
+                return
+            filter_tab = [filter]
+            if filter == 'all' or filter == '*':
+                self.sorting_block_tree_actual_filters.clear()
+                self.sorting_block_tree_actual_filters.append(LibrarySortingFilter('*', None))
+            else:
+                self.sorting_block_tree_del_filter('*', False)
+                filter_tab = filter.split(':', 1)
+                found = False
+                for index in range(0, len(self.sorting_block_tree_actual_filters)):
+                    if self.sorting_block_tree_actual_filters[index].type == filter_tab[0]:
+                        self.sorting_block_tree_actual_filters[index].data = filter_tab[1]
+                        found = True
+                if found is False:
+                    self.sorting_block_tree_actual_filters.append(LibrarySortingFilter(filter_tab[0], filter_tab[1]))
+            self.sorting_block_tree_parse_filters()
+        except Exception:
+            traceback.print_exc()
 
     def sorting_block_tree_del_filter(self, filter: str = None, filter_print: bool = True) -> bool:
         if filter is None or filter.strip() == '':
@@ -110,12 +126,16 @@ class HomeWindowSortingBlockTree:
                 alabel.setMaximumHeight(20)
                 alayout.addWidget(alabel)
                 self.sorting_block_search_zone.addLayout(alayout)
+                self.sorting_block_search_scroll_area.hide()
             else:
+                self.sorting_block_search_scroll_area.show()
                 for filter in self.sorting_block_tree_actual_filters:
                     alayout = QtWidgets.QHBoxLayout()
                     alabel = QtWidgets.QLabel()
-                    alabel.setText(filter.type + ':' + filter.data)
-                    alabel.setMaximumHeight(20)
+                    alabel.setText(filter.type + ' : ' + filter.data)
+                    alabel.setToolTip(filter.data)
+                    alabel.setWordWrap(True)
+                    # alabel.setMaximumHeight(20)
                     alayout.addWidget(alabel)
 
                     abutton = QtWidgets.QPushButton()
@@ -129,7 +149,7 @@ class HomeWindowSortingBlockTree:
                 if len(self.sorting_block_tree_actual_filters) < 2:
                     if filter.type == '*':
                         self.load_books(self.BDD.get_books())
-                    elif filter.type in ['authors', 'series', 'search']:
+                    elif filter.type in ['authors', 'series', 'tags', 'search']:
                         self.load_books(self.BDD.get_books(None, filter.type + ':' + filter.data))
                     else:
                         return
@@ -137,13 +157,36 @@ class HomeWindowSortingBlockTree:
                     books = self.BDD.get_books()
                     end_books = []
                     for book in books:
+                        cptYes = 0
+                        cptNo = 0
                         ok = True
                         for filter in self.sorting_block_tree_actual_filters:
                             if filter.type == 'authors':
-                                if book['authors'] != filter.data: ok = False
-                            if filter.type == 'series':
-                                if book['series'] != filter.data: ok = False
-                            if filter.type == 'search':
+                                if book['authors'] != filter.data:
+                                    ok = False
+                                    cptNo += 1
+                                else:
+                                    cptYes += 1
+                            elif filter.type == 'series':
+                                if book['series'] != filter.data:
+                                    ok = False
+                                    cptNo += 1
+                                else:
+                                    cptYes += 1
+                            elif filter.type == 'tags':
+                                filter.data = filter.data.lower()
+                                tags = book['tags'].lower()
+                                if tags == filter.data:
+                                    cptYes += 1
+                                elif ';'+filter.data+';' in tags:
+                                    cptYes += 1
+                                elif tags.startswith(filter.data+';'):
+                                    cptYes += 1
+                                elif tags.endswith(';'+filter.data):
+                                    cptYes += 1
+                                else:
+                                    cptNo += 1
+                            elif filter.type == 'search':
                                 fd = filter.data.lower()
                                 i = book['title'].lower()
                                 s = book['series'].lower()
@@ -151,7 +194,12 @@ class HomeWindowSortingBlockTree:
                                 t = book['tags'].lower()
                                 if fd not in i and fd not in s and fd not in a and fd not in t:
                                     ok = False
-                        if ok is True:
+                                    cptNo += 1
+                                else:
+                                    cptYes += 1
+                            else:
+                                cptNo += 1
+                        if cptYes > cptNo:
                             end_books.append(book)
                     self.load_books(end_books)
         except Exception:

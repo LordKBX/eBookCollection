@@ -64,16 +64,32 @@ class HomeWindowInfoPanel:
 
                 # info_block_synopsis
                 self.metadata_window_clear_layout(self.info_block_synopsis.layout())
-                la0 = QtWidgets.QLabel('Synopsis')
-                la0.setProperty('bold', True)
-                self.info_block_synopsis.layout().addWidget(la0)
 
-                spacer1 = QtWidgets.QSpacerItem(10, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
-                self.info_block_synopsis.layout().addItem(spacer1)
+                if book['synopsis'] is not None and book['synopsis'].strip() != "":
+                    la0 = QtWidgets.QLabel('Synopsis')
+                    la0.setProperty('bold', True)
+                    self.info_block_synopsis.layout().addWidget(la0)
 
-                la1 = QtWidgets.QLabel(book['synopsis'])
-                la1.setWordWrap(True)
-                self.info_block_synopsis.layout().addWidget(la1)
+                    spacer1 = QtWidgets.QSpacerItem(10, 5, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum)
+                    self.info_block_synopsis.layout().addItem(spacer1)
+
+                    la1 = QtWidgets.QLabel(book['synopsis'])
+                    la1.setWordWrap(True)
+                    la1.setMargin(5)
+
+                    scl = QtWidgets.QScrollArea()
+                    scl.setLayout(QtWidgets.QVBoxLayout())
+                    scl.setVerticalScrollBar(QtWidgets.QScrollBar(PyQt5.QtCore.Qt.Vertical))
+                    # scl.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustIgnored)
+                    scl.setVerticalScrollBarPolicy(PyQt5.QtCore.Qt.ScrollBarAsNeeded)
+                    scl.setHorizontalScrollBarPolicy(PyQt5.QtCore.Qt.ScrollBarAlwaysOff)
+                    scl.setWidgetResizable(True)
+                    scl.setWidget(la1)
+
+                    self.info_block_synopsis.layout().addWidget(scl)
+                else:
+                    spacer1 = QtWidgets.QSpacerItem(10, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
+                    self.info_block_synopsis.layout().addItem(spacer1)
 
                 formats = ''
                 sizes = ''
@@ -101,7 +117,7 @@ class HomeWindowInfoPanel:
                 traceback.print_exc()
             try:
                 icon = PyQt5.QtGui.QIcon()
-                tbimg = book['cover'].split(',')
+                tbimg = book['cover'].split(',', 1)
                 by = PyQt5.QtCore.QByteArray()
                 by.fromBase64(tbimg[1].encode('utf-8'))
                 image = PyQt5.QtGui.QPixmap()
@@ -116,8 +132,8 @@ class HomeWindowInfoPanel:
                 self.info_block_cover.setIcon(icon)
                 self.info_block_cover.setIconSize(PyQt5.QtCore.QSize(160, 160))
                 self.info_block_cover.setToolTip("<img src='{}'/>".format(book['cover']))
-            except Exception:
-                traceback.print_exc()
+            except Exception as err:
+                # traceback.print_exc()
                 icon = PyQt5.QtGui.QIcon()
                 icon.addPixmap(PyQt5.QtGui.QPixmap(self.app_directory + '/ressources/icons/white/book.png'), PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
                 self.info_block_cover.setIcon(icon)

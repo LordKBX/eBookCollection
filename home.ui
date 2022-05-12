@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>646</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>1024</width>
-    <height>480</height>
+    <height>700</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -32,13 +32,16 @@
    <bool>false</bool>
   </property>
   <property name="dockNestingEnabled">
-   <bool>true</bool>
+   <bool>false</bool>
+  </property>
+  <property name="dockOptions">
+   <set>QMainWindow::AnimatedDocks</set>
   </property>
   <property name="unifiedTitleAndToolBarOnMac">
    <bool>false</bool>
   </property>
   <widget class="QWidget" name="widget">
-   <layout class="QVBoxLayout" name="verticalLayout_3">
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
     <item>
      <layout class="QVBoxLayout" name="central_block">
       <item>
@@ -455,16 +458,22 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="sorting_block">
+  <widget class="DockWidget" name="sorting_block">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
-     <width>250</width>
-     <height>199</height>
+     <width>230</width>
+     <height>227</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>524287</width>
+     <width>600</width>
      <height>524287</height>
     </size>
    </property>
@@ -484,6 +493,12 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="sorting_block_contents">
+    <property name="maximumSize">
+     <size>
+      <width>600</width>
+      <height>16777215</height>
+     </size>
+    </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <property name="spacing">
       <number>2</number>
@@ -528,9 +543,6 @@
             <string>TextLabel</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="sorting_block_search_zone"/>
          </item>
          <item>
           <spacer name="horizontalSpacer_5">
@@ -580,7 +592,83 @@
         </layout>
        </item>
        <item>
+        <widget class="QScrollArea" name="sorting_block_search_scroll_area">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>100</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>40</height>
+          </size>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="sorting_block_search_scroll_area_contents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>254</width>
+            <height>38</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>140</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>100</height>
+           </size>
+          </property>
+          <layout class="QVBoxLayout" name="sorting_block_search_zone">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>3</number>
+           </property>
+           <property name="bottomMargin">
+            <number>3</number>
+           </property>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
         <widget class="QTreeWidget" name="sorting_block_tree">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>218</width>
@@ -589,7 +677,7 @@
          </property>
          <property name="maximumSize">
           <size>
-           <width>16777215</width>
+           <width>600</width>
            <height>16777215</height>
           </size>
          </property>
@@ -607,6 +695,9 @@
          </property>
          <property name="allColumnsShowFocus">
           <bool>false</bool>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
          <property name="headerHidden">
           <bool>true</bool>
@@ -651,6 +742,31 @@
            </property>
           </item>
          </item>
+         <item>
+          <property name="text">
+           <string>Tags</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Huge</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sword</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Depth</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Pit</string>
+           </property>
+          </item>
+         </item>
         </widget>
        </item>
       </layout>
@@ -658,7 +774,25 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="info_block">
+  <widget class="DockWidget" name="info_block">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>230</width>
+     <height>305</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>600</width>
+     <height>524287</height>
+    </size>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetClosable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -778,6 +912,12 @@
        </item>
        <item>
         <widget class="QLabel" name="info_block_title_value">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>120</width>
@@ -787,7 +927,7 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>16777215</height>
+           <height>45</height>
           </size>
          </property>
          <property name="text">
@@ -829,6 +969,12 @@
        </item>
        <item>
         <widget class="QLabel" name="info_block_serie_value">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>120</width>
@@ -838,7 +984,7 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>16777215</height>
+           <height>45</height>
           </size>
          </property>
          <property name="text">
@@ -880,6 +1026,12 @@
        </item>
        <item>
         <widget class="QLabel" name="info_block_authors_value">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>120</width>
@@ -889,7 +1041,7 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>16777215</height>
+           <height>45</height>
           </size>
          </property>
          <property name="text">
@@ -931,6 +1083,12 @@
        </item>
        <item>
         <widget class="QLabel" name="info_block_file_formats_value">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>120</width>
@@ -940,7 +1098,7 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>16777215</height>
+           <height>45</height>
           </size>
          </property>
          <property name="styleSheet">
@@ -985,6 +1143,12 @@
        </item>
        <item>
         <widget class="QLabel" name="info_block_size_value">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Ignored">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>120</width>
@@ -994,38 +1158,11 @@
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>16777215</height>
+           <height>45</height>
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">QWidget{
- background: rgba(63, 63, 63);
-color:white;
-}
-QDockWidget {
-    border: 0;
-margin:0;
-padding:0;
-}
-
-QDockWidget::title {
-    text-align: left; /* align the text to the left */
-    background: #333333;
-    padding-left: 5px;
-}
-
-QPushButton{
-	background:transparent;
-}
-QPushButton:hover{
-	background-color:rgb(120, 120, 120);
-}
-QPushButton:pressed{
-	background-color:rgb(120, 120, 120);
-}
-QPushButton:checked{
-	background-color:rgb(150, 150, 150);
-}</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>TextLabel</string>
@@ -1047,23 +1184,18 @@ QPushButton:checked{
        </property>
       </layout>
      </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
    </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DockWidget</class>
+   <extends>QDockWidget</extends>
+   <header>DockWidget</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

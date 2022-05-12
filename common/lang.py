@@ -63,6 +63,7 @@ class Lang:
             "SortingBlockTreeAll": "All",
             "SortingBlockTreeSeries": "Series",
             "SortingBlockTreeAuthors": "Authors",
+		    "SortingBlockTreeTags": "Tags",
             "SortingBlockSearchLabel": "Filter",
             "CentralBlockTableTitle": "Title",
             "CentralBlockTableAuthors": "Author",

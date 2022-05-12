@@ -18,6 +18,7 @@ from common.archive import *
 from common.vars import *
 import common.qt
 import common.dialog
+import editor.files
 
 
 class EditorWindow(QtWidgets.QMainWindow):
@@ -332,7 +333,7 @@ class EditorWindow(QtWidgets.QMainWindow):
 
     def load_file_managment(self):
         try:
-            wl = FilesWindow(self, self.tmpDir + os.sep + 'current')
+            wl = editor.files.FilesWindow(self, self.tmpDir + os.sep + 'current')
             ret = wl.open_exec()
             # print(ret)
             if ret is not None:
@@ -356,7 +357,7 @@ class EditorWindow(QtWidgets.QMainWindow):
                     # print(file)
                     if ret['new'][file]['type'] == 'new_file':
                         f = open(self.tmpDir + os.sep + 'current' + ret['new'][file]['innerPath'], 'w', encoding="utf8")
-                        f.write(' ')
+                        f.write('new file')
                         f.close()
                     elif ret['new'][file]['type'] == 'new_folder':
                         os.makedirs(self.tmpDir + os.sep + 'current' + ret['new'][file]['innerPath'])

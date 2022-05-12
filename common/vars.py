@@ -267,8 +267,8 @@ env_vars = {
                     "QTableWidget::item:hover { background-color: skyblue; }",
                     "QTableWidget::item:selected { background-color: #0094FF; color: black; }"
                 ],
-                "partialTreeViewItemColorNew": "#5972FF",
-                "partialTreeViewItemColorDel": "#FF324E",
+                "partialTreeViewItemColorNew": "#0021C6",
+                "partialTreeViewItemColorDel": "#D80020",
                 "partialTreeViewItemColorMod": "#EFC91C",
                 "defaultButton": [
                     "QPushButton, QToolButton { background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; min-height:35px; height:35px; width:100%; }",

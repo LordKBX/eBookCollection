@@ -48,6 +48,9 @@
                 "SortingBlockTreeAuthors": {
                     "type": "string"
                 },
+                "SortingBlockTreeTags": {
+                    "type": "string"
+                },
                 "SortingBlockSearchLabel": {
                     "type": "string"
                 },

@@ -281,17 +281,21 @@ class BDD:
         except Exception:
             traceback.print_exc()
 
-    def get_param(self, name: str):
+    def get_param(self, name: str, default: any = None) -> any:
         """
         Get setting value in database
 
         :param name: param value
+        :param default: default value
         :return: string|None
         """
         if name in self.param_defaults:
             return self.settings.value(name, self.param_defaults[name], str)
         else:
-            return self.settings.value(name, None, str)
+            if default is not None:
+                return self.settings.value(name, default, str)
+            else:
+                return self.settings.value(name, None, str)
 
     def set_param(self, name: str, value: str):
         """
@@ -335,6 +339,29 @@ class BDD:
                 ret.append(row['series'])
         return ret
 
+    def get_tags(self):
+        """
+        get Series in database
+
+        :return: list(str)
+        """
+        if self.connexion is None:
+            self.__start()
+        ret = []
+        self.cursor.execute('''SELECT LOWER(tags) AS ltags FROM books GROUP BY LOWER(tags) ORDER BY LOWER(tags) ASC''')
+        re = self.cursor.fetchall()
+        if re is not None:
+            for row in re:
+                ltags = row['ltags']
+                if ltags is None or ltags.strip() == "":
+                    continue
+
+                tab = ltags.strip().split(';')
+                for tag in tab:
+                    if tag not in ret:
+                        ret.append(tag)
+        return ret
+
     def get_books(self, guid: str or List[str] = None, search: str = None, no_file_path: bool = False):
         """
         get registred book in database
@@ -368,10 +395,17 @@ class BDD:
                     self.cursor.execute(query)
                 ret = self.cursor.fetchall()
             elif search is not None:
-                tab = search.split(':')
+                print("search =", search)
+                tab = search.split(':', 1)
                 if tab[0] == "authors" or tab[0] == "series":
                     print(tab[0])
                     self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE " + tab[0] + " = ?", [tab[1]])
+                    ret = self.cursor.fetchall()
+                elif tab[0] == "tags":
+                    print(tab[0])
+                    self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE LOWER(tags) LIKE ? OR LOWER(tags) LIKE ? OR LOWER(tags) LIKE ? OR LOWER(tags) LIKE ?",
+                        [tab[1], tab[1]+";%", "%;"+tab[1], "%;"+tab[1]+";%"]
+                    )
                     ret = self.cursor.fetchall()
                 elif tab[0] == "file":
                     self.cursor.execute(

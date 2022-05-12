@@ -1,9 +1,12 @@
 # This Python file uses the following encoding: utf-8
 import os, sys
+from typing import Iterable
+
 import PyQt5.QtCore
 import PyQt5.uic
 from PyQt5.uic import *
 
+import DockWidget
 from common.dialog import *
 from common.lang import *
 from common.books import *
@@ -20,7 +23,6 @@ import empty_book
 class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree, MetadataWindow):
     def __init__(self, database: bdd.BDD, translation: Lang, argv: list, env_vars: dict):
         super(HomeWindow, self).__init__()
-        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'home.ui', self)  # Load the .ui file
 
         # load vars and base objects
         self.app_directory = app_directory
@@ -32,13 +34,26 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.env_vars = self.vars = env_vars['vars']
         self.argv = argv
 
-        # load window size
+        # load memorised sizes
         size_tx = self.BDD.get_param('library/windowSize')
+        pos_tx = self.BDD.get_param('library/windowPos')
+        size1 = [150, 150]
+        size2 = [150, 150]
+        area1 = area2 = PyQt5.QtCore.Qt.LeftDockWidgetArea
+        try:
+            size1 = eval(self.BDD.get_param('library/BlockSize_info_block', '[150, 150]'))
+            size2 = eval(self.BDD.get_param('library/BlockSize_sorting_block', '[150, 150]'))
+            area1 = int(self.BDD.get_param('library/BlockArea_info_block', PyQt5.QtCore.Qt.LeftDockWidgetArea))
+            area2 = int(self.BDD.get_param('library/BlockArea_sorting_block', PyQt5.QtCore.Qt.LeftDockWidgetArea))
+        except Exception as error:
+            traceback.print_exc()
+        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'home.ui', self)  # Load the .ui file
+
+        # load window size
         if size_tx is not None and size_tx != '':
             size = eval(size_tx)
             self.resize(size[0], size[1])
         # load window position
-        pos_tx = self.BDD.get_param('library/windowPos')
         if pos_tx is not None and pos_tx != '':
             pos = eval(pos_tx)
             self.move(pos[0], pos[1])
@@ -90,8 +105,24 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.sorting_block_tree_init()
         self.sorting_block_tree_load_data()
         self.sorting_block_tree_set_filter('all')
+        # self.sorting_block_search_scroll_area = QtWidgets.QScrollArea()
+        # self.sorting_block_search_scroll_area_contents = QtWidgets.QWidget()
+
+        self.info_block.setBDD(self.BDD)
+        self.sorting_block.setBDD(self.BDD)
+        self.addDockWidget(area2, self.sorting_block, PyQt5.QtCore.Qt.Vertical)
+        self.addDockWidget(area1, self.info_block, PyQt5.QtCore.Qt.Vertical)
+        self.resizeDocks(
+            (self.sorting_block, self.info_block),
+            (size2[0], size1[0]),
+            PyQt5.QtCore.Qt.Horizontal
+        )
+        self.sorting_block.setMinimumHeight(size2[1])
+        self.info_block.setMinimumHeight(size1[1])
 
         self.show()  # Show the GUI
+        self.info_block.setMinimumHeight(150)
+        self.sorting_block.setMinimumHeight(150)
         try:
             if self.tools['archiver']['path'] is None:
                 WarnDialog(self.lang['Global/ArchiverErrorTitle'], self.lang['Global/ArchiverErrorText'])
@@ -182,8 +213,6 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                     insert_book(self.BDD, file_name_template, file_name_separator, file)
                 self.central_block_table.clearSelection()
                 self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)
-
-            print(ret)
         except Exception:
             traceback.print_exc()
 
@@ -193,7 +222,6 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
 
         :return: void
         """
-        print("Bouton Options clické")
         try:
             dialog = SettingsWindow(self, self.BDD)
             ret = dialog.open_exec()
@@ -218,7 +246,6 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         :return: void
         """
         try:
-            print("Bouton Delete book clické")
             if len(self.central_block_table.selectedItems()) > 0:
                 ret = WarnDialogConfirm(
                     self.lang['Library']['DialogConfirmDeleteBookWindowTitle'],
@@ -241,7 +268,6 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                                     traceback.print_exc()
 
                             self.BDD.delete_book(book_id)
-                            print("line n° {}".format(item.row()))
                     # Cleanup all empty folder in data folder
                     clean_dir('./data')
                     self.sorting_block_tree_set_filter(self.sorting_block_tree_actual_filter)
@@ -273,6 +299,8 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         self.sorting_block_tree.topLevelItem(1).setText(1, 'authors')
         self.sorting_block_tree.topLevelItem(2).setText(0, self.lang['Library']['SortingBlockTreeSeries'])
         self.sorting_block_tree.topLevelItem(2).setText(1, 'series')
+        self.sorting_block_tree.topLevelItem(3).setText(0, self.lang['Library']['SortingBlockTreeTags'])
+        self.sorting_block_tree.topLevelItem(3).setText(1, 'tags')
 
         self.sorting_block_search_label.setText(self.lang['Library']['SortingBlockSearchLabel'])
         # Panneau central

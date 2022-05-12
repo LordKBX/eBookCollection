@@ -146,10 +146,10 @@ class EditorTabManager(QtWidgets.QTabWidget):
                 'application/x-dtbncx+xml',
                 'application/xml',
                 'application/xhtml+xml',
-                'text/plain',
-                'image/jpeg', 'image/png', 'image/gif', 'image/bmp'
+                'text/plain', 'text/html'
             ]
-            if file_type == "application/octet-stream":
+            list_type_img = ['image/jpeg', 'image/png', 'image/gif', 'image/bmp']
+            if file_type in list_type_ok:
                 try:
                     file = open(path, "r", encoding="utf8")
                     data = file.read()
@@ -158,8 +158,10 @@ class EditorTabManager(QtWidgets.QTabWidget):
                     is_text = True
                 except Exception:
                     ""
+            print("file_type", file_type)
 
-            if file_type not in list_type_ok:
+            if file_type not in list_type_ok and file_type not in list_type_img:
+                dialog.WarnDialog('', 'File type not treated', self.parent())
                 return
 
             if data is None:
@@ -252,91 +254,91 @@ class EditorTabManager(QtWidgets.QTabWidget):
                 except Exception:
                     traceback.print_exc()
 
+                try:
+                    block.btnSave.clicked.connect(self.save_file)
+                    block.btnUndo.clicked.connect(self.undo)
+                    block.btnRedo.clicked.connect(self.redo)
+                    block.btnCut.clicked.connect(self.cut)
+                    block.btnCopy.clicked.connect(self.copy)
+                    block.btnPaste.clicked.connect(self.paste)
+                    block.btnDebug.clicked.connect(self.debug_text)
+                    block.btnComment.clicked.connect(self.comment_text)
+                    block.btnPrettify.clicked.connect(self.prettify_text)
+                    block.btnBold.clicked.connect(lambda: self.block_paster_text('<b>', '</b>'))
+                    block.btnItalic.clicked.connect(lambda: self.block_paster_text('<i>', '</i>'))
+                    block.btnUnderline.clicked.connect(lambda: self.block_paster_text('<u>', '</u>'))
+                    block.btnStrikethrough.clicked.connect(lambda: self.block_paster_text('<s>', '</s>'))
+                    block.btnSub.clicked.connect(lambda: self.block_paster_text('<sub>', '</sub>'))
+                    block.btnSup.clicked.connect(lambda: self.block_paster_text('<sup>', '</sup>'))
+                    block.btnTextColor.clicked.connect(self.claim_text_color)
+                    block.btnBackColor.clicked.connect(self.claim_back_color)
+                    block.btnAlignLeft.clicked.connect(lambda: self.block_paster_text('<div style="text-align:left;">', '</div>'))
+                    block.btnAlignCenter.clicked.connect(lambda: self.block_paster_text('<div style="text-align:center;">', '</div>'))
+                    block.btnAlignRight.clicked.connect(lambda: self.block_paster_text('<div style="text-align:right;">', '</div>'))
+                    block.btnAlignJustify.clicked.connect(lambda: self.block_paster_text('<div style="text-align:justify;">', '</div>'))
+                    block.btnList.clicked.connect(lambda: self.block_list('ul'))
+                    block.btnNumList.clicked.connect(lambda: self.block_list('ol'))
+                    block.btnLink.clicked.connect(self.link_poser)
+                    block.btnImg.clicked.connect(self.img_poser)
+                except Exception:
+                    traceback.print_exc()
+
+                block.btnSave.setToolTip(self.lang['Editor/EditPane/Save'])
+                block.btnUndo.setToolTip(self.lang['Editor/EditPane/Undo'])
+                block.btnRedo.setToolTip(self.lang['Editor/EditPane/Redo'])
+                block.btnCut.setToolTip(self.lang['Editor/EditPane/Cut'])
+                block.btnCopy.setToolTip(self.lang['Editor/EditPane/Copy'])
+                block.btnPaste.setToolTip(self.lang['Editor/EditPane/Paste'])
+                block.btnDebug.setToolTip(self.lang['Editor/EditPane/Debug'])
+                block.btnComment.setToolTip(self.lang['Editor/EditPane/Comment'])
+                block.btnPrettify.setToolTip(self.lang['Editor/EditPane/Prettify'])
+                block.btnBold.setToolTip(self.lang['Editor/EditPane/Bold'])
+                block.btnItalic.setToolTip(self.lang['Editor/EditPane/Italic'])
+                block.btnUnderline.setToolTip(self.lang['Editor/EditPane/Underline'])
+                block.btnStrikethrough.setToolTip(self.lang['Editor/EditPane/Strikethrough'])
+                block.btnSub.setToolTip(self.lang['Editor/EditPane/Sub'])
+                block.btnSup.setToolTip(self.lang['Editor/EditPane/Sup'])
+                block.btnTextColor.setToolTip(self.lang['Editor/EditPane/TextColor'])
+                block.btnBackColor.setToolTip(self.lang['Editor/EditPane/BackColor'])
+                block.btnAlignLeft.setToolTip(self.lang['Editor/EditPane/AlignLeft'])
+                block.btnAlignCenter.setToolTip(self.lang['Editor/EditPane/AlignCenter'])
+                block.btnAlignRight.setToolTip(self.lang['Editor/EditPane/AlignRight'])
+                block.btnAlignJustify.setToolTip(self.lang['Editor/EditPane/AlignJustify'])
+                block.btnList.setToolTip(self.lang['Editor/EditPane/List'])
+                block.btnNumList.setToolTip(self.lang['Editor/EditPane/NumericList'])
+                block.btnLink.setToolTip(self.lang['Editor/EditPane/Link'])
+                block.btnImg.setToolTip(self.lang['Editor/EditPane/Image'])
+
+                block.btnSave.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/save'))))
+                block.btnUndo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/undo'))))
+                block.btnRedo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/redo'))))
+                block.btnCut.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/cut'))))
+                block.btnCopy.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/copy'))))
+                block.btnPaste.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/paste'))))
+                block.btnDebug.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/debug'))))
+                block.btnComment.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/comment'))))
+                block.btnPrettify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/prettify'))))
+                block.btnBold.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/bold'))))
+                block.btnItalic.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/italic'))))
+                block.btnUnderline.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/underline'))))
+                block.btnStrikethrough.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/strike_through'))))
+                block.btnSub.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sub'))))
+                block.btnSup.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sup'))))
+                block.btnTextColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/text_color'))))
+                block.btnBackColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/back_color'))))
+                block.btnAlignLeft.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_left'))))
+                block.btnAlignCenter.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_center'))))
+                block.btnAlignRight.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_right'))))
+                block.btnAlignJustify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_justify'))))
+                block.btnList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list'))))
+                block.btnNumList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list_ordered'))))
+                block.btnLink.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/link'))))
+                block.btnImg.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/image'))))
+
             self.addTab(tab, QtGui.QIcon(QtGui.QPixmap(icon)), title)
             self.setTabsClosable(True)
             self.setCurrentIndex(self.count() - 1)
             self.setTabToolTip(self.count() - 1, path)
-
-            try:
-                block.btnSave.clicked.connect(self.save_file)
-                block.btnUndo.clicked.connect(self.undo)
-                block.btnRedo.clicked.connect(self.redo)
-                block.btnCut.clicked.connect(self.cut)
-                block.btnCopy.clicked.connect(self.copy)
-                block.btnPaste.clicked.connect(self.paste)
-                block.btnDebug.clicked.connect(self.debug_text)
-                block.btnComment.clicked.connect(self.comment_text)
-                block.btnPrettify.clicked.connect(self.prettify_text)
-                block.btnBold.clicked.connect(lambda: self.block_paster_text('<b>', '</b>'))
-                block.btnItalic.clicked.connect(lambda: self.block_paster_text('<i>', '</i>'))
-                block.btnUnderline.clicked.connect(lambda: self.block_paster_text('<u>', '</u>'))
-                block.btnStrikethrough.clicked.connect(lambda: self.block_paster_text('<s>', '</s>'))
-                block.btnSub.clicked.connect(lambda: self.block_paster_text('<sub>', '</sub>'))
-                block.btnSup.clicked.connect(lambda: self.block_paster_text('<sup>', '</sup>'))
-                block.btnTextColor.clicked.connect(self.claim_text_color)
-                block.btnBackColor.clicked.connect(self.claim_back_color)
-                block.btnAlignLeft.clicked.connect(lambda: self.block_paster_text('<div style="text-align:left;">', '</div>'))
-                block.btnAlignCenter.clicked.connect(lambda: self.block_paster_text('<div style="text-align:center;">', '</div>'))
-                block.btnAlignRight.clicked.connect(lambda: self.block_paster_text('<div style="text-align:right;">', '</div>'))
-                block.btnAlignJustify.clicked.connect(lambda: self.block_paster_text('<div style="text-align:justify;">', '</div>'))
-                block.btnList.clicked.connect(lambda: self.block_list('ul'))
-                block.btnNumList.clicked.connect(lambda: self.block_list('ol'))
-                block.btnLink.clicked.connect(self.link_poser)
-                block.btnImg.clicked.connect(self.img_poser)
-            except Exception:
-                traceback.print_exc()
-
-            block.btnSave.setToolTip(self.lang['Editor/EditPane/Save'])
-            block.btnUndo.setToolTip(self.lang['Editor/EditPane/Undo'])
-            block.btnRedo.setToolTip(self.lang['Editor/EditPane/Redo'])
-            block.btnCut.setToolTip(self.lang['Editor/EditPane/Cut'])
-            block.btnCopy.setToolTip(self.lang['Editor/EditPane/Copy'])
-            block.btnPaste.setToolTip(self.lang['Editor/EditPane/Paste'])
-            block.btnDebug.setToolTip(self.lang['Editor/EditPane/Debug'])
-            block.btnComment.setToolTip(self.lang['Editor/EditPane/Comment'])
-            block.btnPrettify.setToolTip(self.lang['Editor/EditPane/Prettify'])
-            block.btnBold.setToolTip(self.lang['Editor/EditPane/Bold'])
-            block.btnItalic.setToolTip(self.lang['Editor/EditPane/Italic'])
-            block.btnUnderline.setToolTip(self.lang['Editor/EditPane/Underline'])
-            block.btnStrikethrough.setToolTip(self.lang['Editor/EditPane/Strikethrough'])
-            block.btnSub.setToolTip(self.lang['Editor/EditPane/Sub'])
-            block.btnSup.setToolTip(self.lang['Editor/EditPane/Sup'])
-            block.btnTextColor.setToolTip(self.lang['Editor/EditPane/TextColor'])
-            block.btnBackColor.setToolTip(self.lang['Editor/EditPane/BackColor'])
-            block.btnAlignLeft.setToolTip(self.lang['Editor/EditPane/AlignLeft'])
-            block.btnAlignCenter.setToolTip(self.lang['Editor/EditPane/AlignCenter'])
-            block.btnAlignRight.setToolTip(self.lang['Editor/EditPane/AlignRight'])
-            block.btnAlignJustify.setToolTip(self.lang['Editor/EditPane/AlignJustify'])
-            block.btnList.setToolTip(self.lang['Editor/EditPane/List'])
-            block.btnNumList.setToolTip(self.lang['Editor/EditPane/NumericList'])
-            block.btnLink.setToolTip(self.lang['Editor/EditPane/Link'])
-            block.btnImg.setToolTip(self.lang['Editor/EditPane/Image'])
-
-            block.btnSave.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/save'))))
-            block.btnUndo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/undo'))))
-            block.btnRedo.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/redo'))))
-            block.btnCut.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/cut'))))
-            block.btnCopy.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/copy'))))
-            block.btnPaste.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/paste'))))
-            block.btnDebug.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/debug'))))
-            block.btnComment.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/comment'))))
-            block.btnPrettify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/prettify'))))
-            block.btnBold.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/bold'))))
-            block.btnItalic.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/italic'))))
-            block.btnUnderline.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/underline'))))
-            block.btnStrikethrough.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/strike_through'))))
-            block.btnSub.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sub'))))
-            block.btnSup.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/sup'))))
-            block.btnTextColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/text_color'))))
-            block.btnBackColor.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/back_color'))))
-            block.btnAlignLeft.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_left'))))
-            block.btnAlignCenter.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_center'))))
-            block.btnAlignRight.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_right'))))
-            block.btnAlignJustify.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/align_justify'))))
-            block.btnList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list'))))
-            block.btnNumList.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/list_ordered'))))
-            block.btnLink.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/link'))))
-            block.btnImg.setIcon(QtGui.QIcon(QtGui.QPixmap(vars.get_style_var(self.style, 'icons/image'))))
         except Exception:
             traceback.print_exc()
 
@@ -543,13 +545,16 @@ class EditorTabManager(QtWidgets.QTabWidget):
             block_end = '</'+list_type+'>'
             item = self.currentWidget()
             tx_edit = item.children().__getitem__(2)
-            selected_text = tx_edit.selectedText().replace('\t', '').replace('\r', '')
-            selected_text = re.sub('\n {2,}', '\n', selected_text)
-            sel = tx_edit.getSelection()
-            if sel[0] == sel[2] and sel[1] == sel[3]:
-                pos = tx_edit.getCursorPosition()
-                tx_edit.insertAt(block_start + '\n<li>ligne</li>\n' + block_end, pos[0], pos[1])
+            cursor = tx_edit.textCursor()
+
+            if cursor.hasSelection() is False:
+                cursor.insertText(block_start + '\n<li>ligne</li>\n' + block_end)
             else:
+                selected_text = cursor.selection().toPlainText()
+                start = cursor.position() - len(selected_text)
+                selected_text = selected_text.replace('\t', '').replace('\r', '').replace('  ', ' ')
+                selected_text = re.sub('\n{2,}', '\n', selected_text)
+                selected_text = re.sub('\n[ ]{1,}\n', '\n', selected_text)
                 # max = len(block_start) + len(block_end)
                 # new_text = ''
                 if selected_text.startswith(block_start) and selected_text.endswith(block_end):
@@ -560,10 +565,14 @@ class EditorTabManager(QtWidgets.QTabWidget):
                     tb = selected_text.split('\n')
                     for line in tb:
                         new_text += '\n    <li>' + line + '</li>'
-                    new_text += block_end
-                tx_edit.replaceSelectedText(new_text)
-                tbx = new_text.split('\n')
-                tx_edit.setSelection(sel[0], sel[1], sel[0] + len(tbx) - 1, len(tbx[len(tbx) - 1]))
+                    new_text += '\n' + block_end
+                new_text = re.sub('\n{2,}', '\n', new_text)
+                new_text = re.sub('\n[ ]{1,}\n', '\n', new_text)
+                cursor.insertText(new_text)
+                cursor.setPosition(start)
+                cursor.setPosition(start + len(new_text), QtGui.QTextCursor.KeepAnchor)
+                tx_edit.setTextCursor(cursor)
+            tx_edit.setFocus()
         except Exception:
             traceback.print_exc()
 
@@ -576,7 +585,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             end = cursor.position()
             start = end
 
-            if item.property('fileExt') in ['xml', 'opf', 'ncx']:
+            if item.property('fileExt') in ['xml', 'opf', 'ncx', 'xhtml', 'html']:  # 'xhtml', 'html'
                 ret = xmlt.prettify(tx_edit.toPlainText())
                 tx_edit.selectAll()
                 tx_edit.textCursor().insertText(ret)
@@ -654,10 +663,16 @@ class EditorTabManager(QtWidgets.QTabWidget):
             item = self.currentWidget()
             window = img.ImgWindow(self, app_user_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current')
             tx_edit = item.children().__getitem__(2)
-            selected_text = tx_edit.selectedText()
-            # sel = tx_edit.getSelection()
-            pos = tx_edit.getCursorPosition()
-            ret = window.openExec(selected_text, None)
+            cursor = tx_edit.textCursor()
+            selected_text = ""
+            if cursor.hasSelection():
+                selected_text = cursor.selection().toPlainText()
+            ret = None
+            if selected_text.startswith("http") or selected_text.startswith("file://") \
+                    or selected_text.startswith("/") or selected_text.startswith("./") or selected_text.startswith("../"):
+                ret = window.openExec(None, selected_text)
+            else:
+                ret = window.openExec(selected_text, None)
             if ret is not None:
                 tb1 = item.property('fileName').replace('/', os.sep).replace(
                     app_user_directory + os.sep + 'editor' + os.sep + 'tmp' + os.sep + 'current' + os.sep,
@@ -668,8 +683,12 @@ class EditorTabManager(QtWidgets.QTabWidget):
                     adl += '../'
                 new_text = '<img src="' + adl + ret['url'] + '" alt="' + ret['text'] \
                            + '" title="' + ret['text'] + '" />'
-                tx_edit.insertAt(new_text, pos[0], pos[1])
-                tb = new_text.split('\n')
-                tx_edit.setSelection(pos[0], pos[1], pos[0] + len(tb) - 1, len(tb[len(tb) - 1]) - 1)
+                cursor.insertText(new_text)
+                end = cursor.position()
+                start = end - len(new_text)
+                cursor.setPosition(start)
+                cursor.setPosition(end, QtGui.QTextCursor.KeepAnchor)
+                tx_edit.setTextCursor(cursor)
+                tx_edit.setFocus()
         except Exception:
             traceback.print_exc()

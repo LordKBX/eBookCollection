@@ -299,6 +299,7 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
         deflate(app_user_directory+os.sep+'tmp'+os.sep+'*', output)
         return output
     except Exception:
+        traceback.print_exc()
         return None
 
 

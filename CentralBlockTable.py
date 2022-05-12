@@ -93,12 +93,10 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         self.central_block_table.horizontalHeader().sectionResized.connect(self.central_block_table_get_column_width)
 
         sizes = []
-        print('header_size_policy')
         try:
             self.header_policy = self.BDD.get_param('library/headers_size_policy')
             if self.header_policy is None or self.header_policy == '':
                 self.header_policy = self.vars['library']['headers_size_policy']
-            print(self.header_policy)
             if self.header_policy in ['ResizeToContents', 'ResizeToContentsAndInteractive']:
                 self.central_block_table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
             if self.header_policy == 'Stretch':
@@ -110,7 +108,6 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                     sizes = json.loads(self.vars['library']['headers_size'])
                 else:
                     sizes = json.loads(tx)
-                print(sizes)
                 self.central_block_table.setColumnWidth(0, sizes[0])
                 self.central_block_table.setColumnWidth(1, sizes[1])
                 self.central_block_table.setColumnWidth(2, sizes[2])
@@ -133,7 +130,6 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                 sizes.append(self.central_block_table.columnWidth(i))
                 i += 1
             new_size = json.dumps(sizes)
-            print(new_size)
             self.BDD.set_param('library/headers_size', new_size)
             self.BDD.set_param('library/headers_size_policy', self.header_policy)
 
@@ -281,7 +277,6 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
             # self.central_block_table = QtWidgets.QTableWidget()
             selection = self.central_block_table.selectedRanges()[0]
             selection = [selection.topRow(), selection.bottomRow()]
-            print(selection)
             current_row = self.central_block_table.currentRow()
             current_column = self.central_block_table.currentColumn()
             guid_book = self.central_block_table.item(current_row, current_column).data(99)
@@ -371,7 +366,8 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                             col += 1
                             if self.central_block_table.item(id, col) is not None:
                                 print("error item at position line:{}, col:{}".format(id, col))
-                                self.central_block_table.item(id, col).setData(99, data[cpt]['guid'])
+                                self.central_block_table.item(id, col)\
+                                    .setData(99, data[cpt]['guid'])
                             if case in list_items_locked:
                                 bdate = unixtime_to_string(
                                     float(data[cpt][case]),
@@ -420,21 +416,24 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         :return: QTableWidgetItem
         """
         item = QtWidgets.QTableWidgetItem()
-        if alt is not None:
-            item = QTableAltItem()
-            item.setValue(alt)
-            item.setType(alt_type)
-            item.lock(locked)
-        if editable is True:
-            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEditable|QtCore.Qt.ItemIsEnabled)
-        else:
-            item.setFlags(QtCore.Qt.ItemIsSelectable|QtCore.Qt.ItemIsEnabled)
-        item.setTextAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignVCenter)
-        item.setData(98, uid())
-        item.setData(99, guid)
-        item.setData(100, book_type)
-        item.setText(value)
-        item.setToolTip(value)
+        try:
+            if alt is not None:
+                item = QTableAltItem()
+                item.setValue(alt)
+                item.setType(alt_type)
+                item.lock(locked)
+            if editable is True and alt is None:
+                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
+            else:
+                item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
+            item.setTextAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignVCenter)
+            item.setData(98, uid())
+            item.setData(99, guid)
+            item.setData(100, book_type)
+            item.setText(value)
+            item.setToolTip(value)
+        except Exception as err:
+            traceback.print_exc()
         return item
 
     def load_books(self, books: list) -> None:
@@ -447,8 +446,10 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         self.central_block_table_cases_uid_list.clear()
         try:
             self.central_block_table_lock = True
+            # self.central_block_table = QtWidgets.QTableWidget()
             self.central_block_table.clearSelection()
             self.central_block_table.clearContents()
+            self.central_block_table.setSortingEnabled(False)
         except Exception:
             traceback.print_exc()
         self.central_block_table_lock = False
@@ -505,8 +506,10 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
             self.set_info_panel(books[0])
         else:
             self.set_info_panel(None)
+        self.central_block_table.setSortingEnabled(True)
         self.central_block_table_sort_reset()
         self.central_block_table.setCurrentCell(0, 0)
+
 
 class QTableAltItem(QtWidgets.QTableWidgetItem):
     value = 0.0
