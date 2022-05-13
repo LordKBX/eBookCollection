@@ -5,16 +5,18 @@ import PyQt5.uic
 from PyQt5.uic import *
 from PyQt5.QtWidgets import *
 
+from editor import xmlt, css, link, img
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common.books import *
 from common import dialog, vars
-import xmlt
-import css
-import link
-import img
+import editor.xmlt
+import editor.css
+import editor.link
+import editor.img
 import color_picker
-from codeEditor import CodeEditor
-import syntaxHighlighter
+from editor.codeEditor import CodeEditor
+import editor.syntaxHighlighter
 
 
 class UIClass(QtWidgets.QWidget):
@@ -35,8 +37,17 @@ class EditorTabManager(QtWidgets.QTabWidget):
     style = None
     destDir = ''
     highlight = None
+    baseDir = ''
 
     def __init__(self, parent: any):
+
+        self.baseDir = ""
+        if hasattr(sys, 'frozen'):
+            basis = sys.executable
+        else:
+            basis = sys.argv[0]
+        self.baseDir = os.path.split(basis)[0]
+
         QtWidgets.QTabWidget.__init__(self, parent)
         self.setWindowTitle("Tab Dialog")
         self.previewWebview = None
@@ -196,7 +207,7 @@ class EditorTabManager(QtWidgets.QTabWidget):
             else:
                 block = UIClass()
                 super(UIClass, block).__init__()
-                PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
+                PyQt5.uic.loadUi(self.baseDir + os.sep + 'text_edit.ui'.replace('/', os.sep), block)  # Load the .ui file
                 block.setStyleSheet(common.vars.get_style_var(self.style, 'EditorEditPaneButtons'))
                 try:
                     block.setMaximumHeight(85)
@@ -232,11 +243,11 @@ class EditorTabManager(QtWidgets.QTabWidget):
                     # text_edit = QPlainTextEdit()
                     text_edit.setTabStopWidth(16)
                     if tab.property('fileExt') in ['xhtml', 'html']:
-                        self.highlight = syntaxHighlighter.SyntaxHighlighter(text_edit.document(), syntaxHighlighter.MODES.HTML)
+                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.HTML)
                     elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
-                        self.highlight = syntaxHighlighter.SyntaxHighlighter(text_edit.document(), syntaxHighlighter.MODES.XML)
+                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.XML)
                     elif tab.property('fileExt') in ['css']:
-                        self.highlight = syntaxHighlighter.SyntaxHighlighter(text_edit.document(), syntaxHighlighter.MODES.CSS)
+                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.CSS)
 
                     print("fileExt", tab.property('fileExt'))
                     # if text_edit.elexer is not None:

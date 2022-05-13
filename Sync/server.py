@@ -61,6 +61,7 @@ class Server(QtCore.QObject):
             traceback.print_exc()
 
     def Close(self):
+        self.httpd.shutdown()
         self.httpd.server_close()
 
 

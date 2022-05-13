@@ -550,7 +550,7 @@ QPushButton:checked{
   <customwidget>
    <class>EditorTabManager</class>
    <extends>QTabWidget</extends>
-   <header>editing_pane</header>
+   <header>editor.editing_pane</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

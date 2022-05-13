@@ -6,12 +6,12 @@ if os.name == 'nt':
 import PyQt5.QtGui
 import PyQt5.QtCore
 from PyQt5.uic import *
-from window import *
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 from common.dialog import *
 from common.archive import *
 from common import lang
+from editor.window import *
 
 if __name__ == "__main__":
 	lng = lang.Lang()

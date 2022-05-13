@@ -1,8 +1,6 @@
-from checkpoint import *
-from files import *
-from content_table_editor import *
+import os, sys
 if os.name == 'nt':
-	import ctypes
+    import ctypes
 import PyQt5
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -19,6 +17,10 @@ from common.vars import *
 import common.qt
 import common.dialog
 import editor.files
+from editor.content_table_editor import *
+from editor.checkpoint import *
+from editor.files import *
+from editor import editing_pane
 
 
 class EditorWindow(QtWidgets.QMainWindow):
@@ -164,12 +166,10 @@ class EditorWindow(QtWidgets.QMainWindow):
 
         for name in icon_names_list:
             icon_dir[name] = QtGui.QIcon()
+            icon_path = get_style_var(self.app_style, 'icons/'+name) .replace('{APP_DIR}', app_directory) .replace('/', os.sep)
+            print('icon '+name, icon_path)
             icon_dir[name].addPixmap(
-                QtGui.QPixmap(
-                    get_style_var(self.app_style, 'icons/'+name)
-                        .replace('{APP_DIR}', app_directory)
-                        .replace('/', os.sep)
-                ),
+                QtGui.QPixmap(icon_path),
                 QtGui.QIcon.Normal, QtGui.QIcon.Off
             )
 
