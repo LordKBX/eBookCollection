@@ -78,7 +78,10 @@ class EditorTabManager(QtWidgets.QTabWidget):
                 txe = txe\
                     .replace('<head>', '<head><base href="file:///'+self.destDir.replace(os.sep, '/')+'/">')\
                     .replace('="/', '="file:///' + self.destDir.replace(os.sep, '/') + '/') \
-                    .replace('="../', '="file:///' + file_dir.replace(os.sep, '/') + '../')
+                    .replace('="../', '="file:///' + file_dir.replace(os.sep, '/') + '../')\
+                    .replace('  ', ' ')\
+                    .replace(' =', '=')\
+                    .replace('href="#', 'href="'+item.property('fileShortName')+'#')
                 self.previewWebview.page().currentFrame().setHtml(txe)
                 if scroll is not None:
                     self.previewWebview.page().currentFrame().setScrollPosition(scroll)

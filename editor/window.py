@@ -1,10 +1,12 @@
-import os, sys
+import os
 if os.name == 'nt':
     import ctypes
+import sys
 import PyQt5
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
+from PyQt5 import QtWebKitWidgets
 import PyQt5.uic
 from PyQt5.uic import *
 
@@ -102,6 +104,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.webView.setHtml(self.default_page)
         self.webView.page().settings().setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(self.tmpcss))
         self.webView.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.webView.page().setLinkDelegationPolicy(QtWebKitWidgets.QWebPage.DelegateExternalLinks)
 
         filepath, ext = os.path.splitext(self.opened_file)
         mappdir = app_directory.replace(os.sep, '/') + '/data/'

@@ -1,3 +1,5 @@
+import re
+import traceback
 from enum import Enum
 
 from PyQt5 import QtCore, QtGui, QtWidgets
@@ -27,7 +29,7 @@ STYLES = {
     'defclass': format('black', 'bold'),
     'string': format('magenta'),
     'string2': format('darkMagenta'),
-    'comment': format('darkGreen', 'italic'),
+    'comment': format('lightGreen', 'italic'),
     'self': format('black', 'italic'),
     'numbers': format('orange'),
 }
@@ -50,10 +52,10 @@ class SyntaxHighlighter (QtGui.QSyntaxHighlighter):
         'class', 'href', 'src', 'rel', 'type', 'alt', 'id'
     ]
     keywordsCSS1 = [
-        '@annotation', '@bottom-center', '@character-variant', '@charset', '@counter-style', '@font-face', '@font-feature-values',
-        '@historical-forms', '@import', '@keyframes', '@layer', '@left-bottom', '@media', '@namespace', '@ornaments',
-        '@page', '@property', '@right-bottom', '@scroll-timeline', '@styleset', '@stylistic', '@supports', '@swash',
-        '@top-center', '@viewport',
+        '\\@annotation', '\\@bottom\\-center', '\\@character\\-variant', '\\@charset', '\\@counter\\-style', '\\@font\\-face', '\\@font\\-feature\\-values',
+        '\\@historical\\-forms', '\\@import', '\\@keyframes', '\\@layer', '\\@left\\-bottom', '\\@media', '\\@namespace', '\\@ornaments',
+        '\\@page', '\\@property', '\\@right\\-bottom', '\\@scroll\\-timeline', '\\@styleset', '\\@stylistic', '\\@supports', '\\@swash',
+        '\\@top\\-center', '\\@viewport',
         'h1', 'h2', 'h3', 'h4', 'h5', 'img',
         'img[ ]{0,5}\{', '[a-zA-Z0-9\_\-]{1,20}[ ]{0,5}\{',
     ]
@@ -139,35 +141,13 @@ class SyntaxHighlighter (QtGui.QSyntaxHighlighter):
         # Multi-line strings (expression, flag, style)
         self.tri_single = (QtCore.QRegExp("'''"), 1, STYLES['string2'])
         self.tri_double = (QtCore.QRegExp('"""'), 2, STYLES['string2'])
+        self.comment_block1 = (QtCore.QRegExp('/\\*'), 3, STYLES['comment'])
+        self.comment_block2 = (QtCore.QRegExp('\\*/'), 3, STYLES['comment'])
 
         rules = []
 
-        # Keyword, operator, and brace rules
-        if mode == MODES.HTML:
-            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsHTML]
-            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
-            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
-        elif mode == MODES.XML:
-            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsXML]
-            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
-            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
-        elif mode == MODES.CSS:
-            print("MODE CSS")
-            rules += [(r'\b%s\b' % w, 0, STYLES['brace']) for w in SyntaxHighlighter.keywordsCSS1]
-            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsCSS2]
-            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
-            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
-
         # All other rules
         rules += [
-            # 'self'
-            (r'\bself\b', 0, STYLES['self']),
-
-            # 'def' followed by an identifier
-            (r'\bdef\b\s*(\w+)', 1, STYLES['defclass']),
-            # 'class' followed by an identifier
-            (r'\bclass\b\s*(\w+)', 1, STYLES['defclass']),
-
             # Numeric literals
             (r'\b[0-9]{1,10}(%|px|em){0,1}', 0, STYLES['numbers']),
             (r'\b[0-9]{1,10}.{0,1}[0-9]{1,10}(%|px|em){0,1}', 0, STYLES['numbers']),
@@ -179,11 +159,27 @@ class SyntaxHighlighter (QtGui.QSyntaxHighlighter):
             # Double-quoted string, possibly containing escape sequences
             (r'"[^"\\]*(\\.[^"\\]*)*"', 0, STYLES['string']),
             # Single-quoted string, possibly containing escape sequences
-            (r"'[^'\\]*(\\.[^'\\]*)*'", 0, STYLES['string']),
-
-            # From '#' until a newline
-            (r'#[^\n]*', 0, STYLES['comment']),
+            (r"'[^'\\]*(\\.[^'\\]*)*'", 0, STYLES['string'])
         ]
+
+        # Keyword, operator, and brace rules
+        if mode == MODES.HTML:
+            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsHTML]
+            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
+            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
+            rules += [(r'<!--(.|\r|\n|\t){0,}-->', 0, STYLES['comment'])]
+        elif mode == MODES.XML:
+            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsXML]
+            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
+            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
+            rules += [(r'<!--(.|\r|\n|\t){0,}-->', 0, STYLES['comment'])]
+        elif mode == MODES.CSS:
+            print("MODE CSS")
+            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsCSS2]
+            rules += [(r'%s' % w, 0, STYLES['brace']) for w in SyntaxHighlighter.keywordsCSS1]
+            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
+            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
+            rules += [(r'//[^\n]*', 0, STYLES['comment']), (r'/\*', 0, STYLES['comment']), (r'/\*([^*]|(\*+([^*/])))*\*+/', 0, STYLES['comment'])]
 
         # Build a QRegExp for each pattern
         self.rules = [(QtCore.QRegExp(pat), index, fmt)
@@ -200,10 +196,14 @@ class SyntaxHighlighter (QtGui.QSyntaxHighlighter):
                 # if there is a string we check
                 # if there are some triple quotes within the string
                 # they will be ignored if they are matched again
-                if expression.pattern() in [r'"[^"\\]*(\\.[^"\\]*)*"', r"'[^'\\]*(\\.[^'\\]*)*'"]:
+                if expression.pattern() in [r'"[^"\\]*(\\.[^"\\]*)*"', r"'[^'\\]*(\\.[^'\\]*)*'", r'/\*']:
+                    # print(expression.pattern())
                     innerIndex = self.tri_single[0].indexIn(text, index + 1)
                     if innerIndex == -1:
                         innerIndex = self.tri_double[0].indexIn(text, index + 1)
+
+                    if innerIndex == -1:
+                        innerIndex = self.comment_block2[0].indexIn(text, index + 1)
 
                     if innerIndex != -1:
                         tripleQuoteIndexes = range(innerIndex, innerIndex + 3)

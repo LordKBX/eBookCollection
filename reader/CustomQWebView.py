@@ -20,6 +20,7 @@ class CustomQWebView(QtWebKitWidgets.QWebView):
 		self.ctrlOn = False
 		self.initialized = False
 		self.eventHandler = None
+		super().page().setLinkDelegationPolicy(QtWebKitWidgets.QWebPage.DelegateExternalLinks)
 
 	def setMode(self, mode: QwwMode):
 		self.mode = mode
