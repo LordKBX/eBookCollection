@@ -163,6 +163,7 @@ class EditorWindow(QtWidgets.QMainWindow):
         self.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
         self.dockTopContents.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
         self.voidLabel.setStyleSheet(get_style_var(self.app_style, 'EditorCentralLabel'))
+        self.treeContentTable.setStyleSheet(get_style_var(self.app_style, 'QListWidget'))
 
         icon_names_list = ['save', 'checkpoint_load', 'checkpoint_create', 'file_manager', 'content_table']
         icon_dir = {}
@@ -235,7 +236,7 @@ class EditorWindow(QtWidgets.QMainWindow):
             item.setData(0, 98, index)
             if isinstance(liste[index], dict):
                 item.setData(0, 99, ':dir:')
-                common.qt.setQTreeItemFolderIcon(item)
+                common.qt.setQTreeItemFolderIcon(item, self.app_style)
                 item = self.recur_file_table_insert(item, liste[index])
             else:
                 self.icon_file_item(item, liste[index])

@@ -106,7 +106,11 @@ class HomeWindowInfoPanel:
                     else:
                         link = 'file:///' + link.replace(os.sep, '/')
                     link = link.replace(' ', '%20')
-                    formats += '<a href="' + link + '" style="color: rgb(255, 255, 255);">' + file['format'] + '</a>'
+                    # HomeLinkColor
+                    self.style = self.BDD.get_param('style')
+
+                    formats += '<a href="' + link + '" style="color: '
+                    formats += get_style_var(self.style, 'HomeLinkColor')+';">' + file['format'] + '</a>'
                     sizes += file['size']
 
                 self.info_block_file_formats_value.setProperty('book_id', self.current_book)

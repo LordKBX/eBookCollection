@@ -9,9 +9,11 @@ from common.common import *
 from common.vars import *
 from common.dialog import *
 import color_picker
+import metadata_ui
+import tags
 
 
-class MetadataWindow:
+class MetadataWindow(metadata_ui.Ui_Dialog):
     metadata_ui = None
     metadata_book_index = 0
     metadata_tmp_data = []
@@ -38,8 +40,11 @@ class MetadataWindow:
             return []
         try:
             style = self.BDD.get_param('style')
-            self.metadata_ui = QtWidgets.QDialog(self, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
-            PyQt5.uic.loadUi(app_directory + os.sep + 'metadata.ui'.replace('/', os.sep), self.metadata_ui)
+
+            self.metadata_ui = metadata_ui.Ui_Dialog()
+            self.metadata_ui.parent = self
+            self.metadata_ui.setupUi(self.metadata_ui)
+
             uie = QtWidgets.QWidget()
             pa = app_directory + os.sep + 'text_edit.ui'
             if os.path.isfile(pa) is False:
@@ -74,13 +79,14 @@ class MetadataWindow:
                 self.metadata_ui.edit_book_id.setDisabled(True)
                 self.metadata_ui.btn_find_book_id.setDisabled(True)
                 self.metadata_ui.btn_generate_book_id.setDisabled(True)
+                self.metadata_ui.edit_title.setText('MULTIPLE BOOK')
+                self.metadata_ui.btn_del_title.setDisabled(True)
             else:
                 self.metadata_ui.edit_book_id.setText(self.metadata_tmp_data[0]['guid'])
                 self.metadata_ui.btn_find_book_id.clicked.connect(self.metadata_window_find_guid)
                 self.metadata_ui.btn_generate_book_id.clicked.connect(self.metadata_window_generate_guid)
-
-            self.metadata_ui.edit_title.setText(self.metadata_tmp_data[0]['title'])
-            self.metadata_ui.btn_del_title.clicked.connect(lambda: self.metadata_ui.edit_title.setText(''))
+                self.metadata_ui.edit_title.setText(self.metadata_tmp_data[0]['title'])
+                self.metadata_ui.btn_del_title.clicked.connect(lambda: self.metadata_ui.edit_title.setText(''))
 
             self.metadata_ui.edit_authors.setText(self.metadata_tmp_data[0]['authors'])
             self.metadata_ui.btn_del_authors.clicked.connect(lambda: self.metadata_ui.edit_authors.setText(''))
@@ -88,6 +94,9 @@ class MetadataWindow:
             self.metadata_ui.edit_series.setText(self.metadata_tmp_data[0]['series'])
             self.metadata_ui.spin_volume.setValue(float(self.metadata_tmp_data[0]['series_vol']))
             self.metadata_ui.btn_del_series.clicked.connect(self.metadata_window_clean_series)
+
+            self.metadata_ui.edit_tags.setText(self.metadata_tmp_data[0]['tags'].title())
+            self.metadata_ui.btn_tags.clicked.connect(lambda: self.metadata_window_edit_tags(self.metadata_ui.edit_tags))
 
             self.metadata_ui.btnCoverImport.clicked.connect(self.metadata_window_import_cover)
 
@@ -178,6 +187,9 @@ class MetadataWindow:
             if ret == 1:
                 print('OK')
                 bookno = -1
+                multi = False
+                if len(self.metadata_tmp_data) > 1:
+                    multi = True
                 for book in self.metadata_tmp_data:
                     bookno += 1
                     for index in book:
@@ -185,6 +197,9 @@ class MetadataWindow:
                         if index == 'files':
                             ''
                         else:
+                            if multi is True:
+                                if index in ["guid", "title", "import_date"]:
+                                    continue
                             if self.metadata_start_data[bookno][index] != book[index]:
                                 self.BDD.update_book(start_id, index, book[index])
                 return self.metadata_tmp_data
@@ -193,6 +208,26 @@ class MetadataWindow:
         except Exception:
             traceback.print_exc()
             return []
+
+    def metadata_window_edit_tags(self, source: object):
+        try:
+            text = ""
+            if isinstance(source, QtWidgets.QLineEdit):
+                text = source.text()
+            elif isinstance(source, QtWidgets.QTableWidgetItem):
+                text = source.text()
+            else:
+                return
+            tagsui = tags.TagsWindow(self.metadata_ui, text)
+            ret = tagsui.exec_()
+            if ret == 1:
+                print("OK")
+                tagsret = tagsui.tags
+                self.metadata_ui.edit_tags.setText(tagsret.title())
+            else:
+                print("Cancel")
+        except Exception:
+            traceback.print_exc()
 
     def metadata_window_clear_layout(self, layout: QtWidgets.QLayout) -> None:
         if layout is None:
@@ -251,6 +286,12 @@ class MetadataWindow:
 
     def metadata_window_find_guid(self) -> str:
         print('metadata_window_find_guid')
+        bguid = self.metadata_tmp_data[0]['guid']
+        title = self.metadata_tmp_data[0]['title']
+        series = self.metadata_tmp_data[0]['series']
+        link = self.metadata_tmp_data[0]['files'][0]['link']
+        editors = self.metadata_tmp_data[0]['files'][0]['editors']
+
         return ''
 
     def metadata_window_generate_guid(self) -> None:
@@ -447,7 +488,7 @@ class MetadataWindow:
             options = QtWidgets.QFileDialog.Options()
             # options |= PyQt5.QFileDialog.DontUseNativeDialog
             fname = QtWidgets.QFileDialog.getOpenFileName(
-                self, self.lang['Library/Metadata/CoverImport'], self.BDD.get_param('library/lastOpenDir'),
+                self.metadata_ui, self.lang['Library/Metadata/CoverImport'], self.BDD.get_param('library/lastOpenDir'),
                 "Image (*.bmp *.jpg *.jpeg *.png)",
                 options=options
             )
@@ -484,5 +525,3 @@ class MetadataWindow:
                 self.metadata_tmp_data[0]['cover'] = cover
         except Exception as err:
             traceback.print_exc()
-
-

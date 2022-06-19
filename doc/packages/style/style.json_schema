@@ -248,6 +248,20 @@
                 "type": "string"
             }
         },
+        "QComboBox": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
+        "QComboBoxAlt": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
+        },
         "QTabWidgetHorizontal": {
             "type": "array",
             "minItems": 0,
@@ -261,6 +275,9 @@
             "items": {
                 "type": "string"
             }
+        },
+        "sorting_block_search_area": {
+            "type": "string"
         },
         "fullTreeView": {
             "type": "array",
@@ -326,6 +343,9 @@
             "items": {
                 "type": "string"
             }
+        },
+        "HomeLinkColor": {
+            "type": "string"
         },
         "SettingsDialogBox": {
             "type": "string"
@@ -423,6 +443,13 @@
             "items": {
                 "type": "string"
             }
+        },
+        "TagsSearchBox": {
+            "type": "array",
+            "minItems": 0,
+            "items": {
+                "type": "string"
+            }
         }
     },
     "required": [
@@ -435,8 +462,11 @@
         "QMessageBoxBtnGreen",
         "QDialog",
         "QDialogTextSizeAlt",
+        "QComboBox",
+        "QComboBoxAlt",
         "QTabWidgetHorizontal",
         "QTabWidgetVertical",
+        "sorting_block_search_area",
         "fullTreeView",
         "partialTreeView",
         "QTableWidget",
@@ -448,6 +478,7 @@
         "fullAltButton",
         "invisibleButton",
         "displayButton",
+        "HomeLinkColor",
         "SettingsDialogBox",
         "SettingsQLineEditPrecise",
         "SettingsQLineEditGood",
@@ -470,7 +501,8 @@
         "EditorQsciXMLDefaultTagColor",
         "EditorColorPicker",
         "EditorColorPickerColorBtn",
-        "EditorColorPickerFullAltButton"
+        "EditorColorPickerFullAltButton",
+        "TagsSearchBox"
     ],
     "$id": "https://example.com/entry-schema",
     "$schema": "https://json-schema.org/draft/2020-12/schema"

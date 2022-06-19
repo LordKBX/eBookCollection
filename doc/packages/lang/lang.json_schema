@@ -198,6 +198,20 @@
                             "type": "string"
                         }
                     }
+                },
+                "Tags": {
+                    "type": "object",
+                    "properties": {
+                        "DialogNewTagTitle": {
+                            "type": "string"
+                        },
+                        "DialogNewTagText": {
+                            "type": "string"
+                        },
+                        "DialogNewTagPlaceholder": {
+                            "type": "string"
+                        }
+                    }
                 }
             }
         },
@@ -217,6 +231,9 @@
                     "type": "string"
                 },
                 "DialogBtnCancel": {
+                    "type": "string"
+                },
+                "DialogBtnNew": {
                     "type": "string"
                 }
             }

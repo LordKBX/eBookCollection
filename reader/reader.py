@@ -103,53 +103,57 @@ class ReaderWindow(QtWidgets.QMainWindow):
 			elif appMode.value == QwwMode.EPUB.value:
 				if re.search('^chapter:', data) is not None:
 					td = data.split(':')
+					td2 = td[1].split('#')
 					tab_url = td[1].split('/')
-					page_url = destDir + os.path.sep + td[1].replace("/", os.path.sep)
+					page_url = destDir + os.path.sep + td2[0].replace("/", os.path.sep)
 					page_url2 = 'file:///' + page_url.replace("\\", '/')
-					print("--------------------")
-					print("page_url =", page_url)
-					print("page_url2 =", page_url2)
-
-					try:
-						# New
-						fdata = ''
-						with open(page_url, 'rt', encoding='utf8') as pfile:
-							fdata = pfile.read()
-						file_dir = destDir
-						if "/" in td[1]:
+					page_url3 = page_url2
+					if len(td2) > 1:
+						page_url3 += '#'+td2[1]
+					tab_current_url = self.webView.url().__str__().replace("PyQt5.QtCore.QUrl('", "").replace("')", "").split('#')
+					if page_url2 == tab_current_url[0]:
+						self.webView.setUrl(QtCore.QUrl(page_url3))
+					else:
+						try:
+							# New
+							fdata = ''
+							with open(page_url, 'rt', encoding='utf8') as pfile:
+								fdata = pfile.read()
+							file_dir = destDir
+							if "/" in td[1]:
+								last_slash = -1
+								try: last_slash = td[1].rindex('/')
+								except Exception: ""
+								file_dir = destDir.replace(os.sep, '/') + '/' + td[1][0:last_slash]
 							last_slash = -1
-							try: last_slash = td[1].rindex('/')
+							try: last_slash = file_dir.rindex('/')
 							except Exception: ""
-							file_dir = destDir.replace(os.sep, '/') + '/' + td[1][0:last_slash]
-						last_slash = -1
-						try: last_slash = file_dir.rindex('/')
-						except Exception: ""
-						file_dir_parent = file_dir[0:last_slash]
-						txe = fdata\
-							.replace('<head>', '<head><base href="file:///' + file_dir.replace(os.sep, '/') + '/"/>')\
-							.replace('="/', '="file:///' + file_dir.replace(os.sep, '/') + '/').replace('  ', ' ')
-						txe = re.sub("(?i)<!--(.*)-->", "", txe)
-						txe = re.sub("(?i)<script(.*)>", "", txe)
-						txe = txe.replace('="../', '="file:///' + file_dir_parent + '/')
-						txe = txe.replace('<section', '<div><section')
-						txe = txe.replace('</section>', '</section></div>')
-						"""
-						tabre = re.findall(r'\bsrc="([a-zA-Z0-9\/\:\.]{1,500})"', txe)
-						print("tabre =", tabre)
-						if tabre is not None:
-							for line in tabre:
-								print(line)
-								if re.search(r'^(http|file)', line) is None:
-									txe = txe.replace(line, 'file:///' + file_dir + '/' + line)
-						"""
-						with open(page_url, "wb") as h:
-							h.write(txe.encode("utf-8"))
-						self.webView.setUrl(QtCore.QUrl(page_url2))
+							file_dir_parent = file_dir[0:last_slash]
+							txe = fdata\
+								.replace('<head>', '<head><base href="file:///' + file_dir.replace(os.sep, '/') + '/"/>')\
+								.replace('="/', '="file:///' + file_dir.replace(os.sep, '/') + '/').replace('  ', ' ')
+							txe = re.sub("(?i)<!--(.*)-->", "", txe)
+							txe = re.sub("(?i)<script(.*)>", "", txe)
+							txe = txe.replace('="../', '="file:///' + file_dir_parent + '/')
+							txe = txe.replace('<section', '<div><section')
+							txe = txe.replace('</section>', '</section></div>')
+							"""
+							tabre = re.findall(r'\bsrc="([a-zA-Z0-9\/\:\.]{1,500})"', txe)
+							print("tabre =", tabre)
+							if tabre is not None:
+								for line in tabre:
+									print(line)
+									if re.search(r'^(http|file)', line) is None:
+										txe = txe.replace(line, 'file:///' + file_dir + '/' + line)
+							"""
+							with open(page_url, "wb") as h:
+								h.write(txe.encode("utf-8"))
+							self.webView.setUrl(QtCore.QUrl(page_url3))
 
-					except Exception as er:
-						traceback.print_exc()
-						# OLD
-						self.webView.setUrl(QtCore.QUrl(page_url2))
+						except Exception as er:
+							traceback.print_exc()
+							# OLD
+							self.webView.setUrl(QtCore.QUrl(page_url3))
 		except Exception:
 			traceback.print_exc()
 
@@ -221,13 +225,17 @@ class ReaderWindow(QtWidgets.QMainWindow):
 			return False
 		data = self.BDD.get_books(search="file:" + file_path)
 		if len(data) > 0:
-			infoData = self.translation['Reader/InfoBlockText']\
-				.replace('{FILE}', file_path)\
-				.replace('{TITLE}', data[0]['title'])\
-				.replace('{SERIES}', data[0]['series'])\
-				.replace('{AUTHORS}', data[0]['authors'])\
-				.replace('{FORMAT}', data[0]['files'][0]['format'])\
-				.replace('{SIZE}', data[0]['files'][0]['size'])
+			infoData = self.translation['Reader/InfoBlockText']
+			infoData = infoData.replace('{FILE}', file_path)
+			infoData = infoData.replace('{TITLE}', data[0]['title'])
+			try: infoData = infoData.replace('{SERIES}', data[0]['series'])
+			except Exception: traceback.print_exc()
+			try: infoData = infoData.replace('{AUTHORS}', data[0]['authors'])
+			except Exception: traceback.print_exc()
+			try: infoData = infoData.replace('{FORMAT}', data[0]['files'][0]['format'])
+			except Exception: traceback.print_exc()
+			try: infoData = infoData.replace('{SIZE}', data[0]['files'][0]['size'])
+			except Exception: traceback.print_exc()
 			self.infoTextBrowser.setText(infoData)
 			return True
 		else:

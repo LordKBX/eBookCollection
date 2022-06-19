@@ -53,9 +53,9 @@ class HomeWindowSortingBlockTree:
                 item.setToolTip(0, serie)
             for tag in tags:
                 item = QtWidgets.QTreeWidgetItem(self.sorting_block_tree.topLevelItem(3))
-                item.setText(0, tag)
-                item.setText(1, 'tags:{}'.format(tag))
-                item.setToolTip(0, tag)
+                item.setText(0, tag.capitalize())
+                item.setText(1, 'tags:{}'.format(tag.capitalize()))
+                item.setToolTip(0, tag.capitalize())
         except Exception:
             traceback.print_exc()
 
@@ -82,7 +82,10 @@ class HomeWindowSortingBlockTree:
                         self.sorting_block_tree_actual_filters[index].data = filter_tab[1]
                         found = True
                 if found is False:
-                    self.sorting_block_tree_actual_filters.append(LibrarySortingFilter(filter_tab[0], filter_tab[1]))
+                    try:
+                        self.sorting_block_tree_actual_filters.append(LibrarySortingFilter(filter_tab[0], filter_tab[1]))
+                    except:
+                        traceback.print_exc()
             self.sorting_block_tree_parse_filters()
         except Exception:
             traceback.print_exc()
@@ -116,7 +119,7 @@ class HomeWindowSortingBlockTree:
                     if filter.type == '*':
                         all = True
                         break
-            self.clearLayout(self.sorting_block_search_zone)
+            self.clearLayout(self.sorting_block_search_area_contents)
             if all is True:
                 self.load_books(self.BDD.get_books())
 
@@ -125,10 +128,10 @@ class HomeWindowSortingBlockTree:
                 alabel.setText('*')
                 alabel.setMaximumHeight(20)
                 alayout.addWidget(alabel)
-                self.sorting_block_search_zone.addLayout(alayout)
-                self.sorting_block_search_scroll_area.hide()
+                self.sorting_block_search_area_contents.addLayout(alayout)
+                self.sorting_block_search_area.hide()
             else:
-                self.sorting_block_search_scroll_area.show()
+                self.sorting_block_search_area.show()
                 for filter in self.sorting_block_tree_actual_filters:
                     alayout = QtWidgets.QHBoxLayout()
                     alabel = QtWidgets.QLabel()
@@ -145,63 +148,63 @@ class HomeWindowSortingBlockTree:
                     abutton.setMaximumSize(20, 20)
                     abutton.clicked.connect(self.sorting_block_tree_del_filter_button)
                     alayout.addWidget(abutton)
-                    self.sorting_block_search_zone.addLayout(alayout)
-                if len(self.sorting_block_tree_actual_filters) < 2:
-                    if filter.type == '*':
-                        self.load_books(self.BDD.get_books())
-                    elif filter.type in ['authors', 'series', 'tags', 'search']:
-                        self.load_books(self.BDD.get_books(None, filter.type + ':' + filter.data))
-                    else:
-                        return
-                else:
-                    books = self.BDD.get_books()
-                    end_books = []
-                    for book in books:
-                        cptYes = 0
-                        cptNo = 0
-                        ok = True
-                        for filter in self.sorting_block_tree_actual_filters:
-                            if filter.type == 'authors':
-                                if book['authors'] != filter.data:
+                    self.sorting_block_search_area_contents.addLayout(alayout)
+
+                books = self.BDD.get_books()
+                end_books = []
+                for book in books:
+                    cptYes = 0
+                    cptNo = 0
+                    ok = True
+                    for filter in self.sorting_block_tree_actual_filters:
+                        if filter.type == 'authors':
+                            if book['authors'] != filter.data:
+                                ok = False
+                                cptNo += 1
+                            else:
+                                cptYes += 1
+                        elif filter.type == 'series':
+                            if filter.data == "[ ]":
+                                if book['series'] is None or book['series'].strip() == '':
+                                    cptYes += 1
+                                else:
                                     ok = False
                                     cptNo += 1
-                                else:
-                                    cptYes += 1
-                            elif filter.type == 'series':
+                            else:
                                 if book['series'] != filter.data:
                                     ok = False
                                     cptNo += 1
                                 else:
                                     cptYes += 1
-                            elif filter.type == 'tags':
-                                filter.data = filter.data.lower()
-                                tags = book['tags'].lower()
-                                if tags == filter.data:
-                                    cptYes += 1
-                                elif ';'+filter.data+';' in tags:
-                                    cptYes += 1
-                                elif tags.startswith(filter.data+';'):
-                                    cptYes += 1
-                                elif tags.endswith(';'+filter.data):
-                                    cptYes += 1
-                                else:
-                                    cptNo += 1
-                            elif filter.type == 'search':
-                                fd = filter.data.lower()
-                                i = book['title'].lower()
-                                s = book['series'].lower()
-                                a = book['authors'].lower()
-                                t = book['tags'].lower()
-                                if fd not in i and fd not in s and fd not in a and fd not in t:
-                                    ok = False
-                                    cptNo += 1
-                                else:
-                                    cptYes += 1
+                        elif filter.type == 'tags':
+                            filter.data = filter.data.lower()
+                            tags = book['tags'].lower()
+                            if tags == filter.data:
+                                cptYes += 1
+                            elif ';'+filter.data+';' in tags:
+                                cptYes += 1
+                            elif tags.startswith(filter.data+';'):
+                                cptYes += 1
+                            elif tags.endswith(';'+filter.data):
+                                cptYes += 1
                             else:
                                 cptNo += 1
-                        if cptYes > cptNo:
-                            end_books.append(book)
-                    self.load_books(end_books)
+                        elif filter.type == 'search':
+                            fd = filter.data.lower()
+                            i = book['title'].lower()
+                            s = book['series'].lower()
+                            a = book['authors'].lower()
+                            t = book['tags'].lower()
+                            if fd not in i and fd not in s and fd not in a and fd not in t:
+                                ok = False
+                                cptNo += 1
+                            else:
+                                cptYes += 1
+                        else:
+                            cptNo += 1
+                    if cptYes > cptNo:
+                        end_books.append(book)
+                self.load_books(end_books)
         except Exception:
             traceback.print_exc()
 

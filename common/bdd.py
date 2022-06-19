@@ -332,14 +332,15 @@ class BDD:
         if self.connexion is None:
             self.__start()
         ret = []
-        self.cursor.execute('''SELECT series FROM books GROUP BY series ORDER BY series ASC''')
+        ret.append('[ ]')
+        self.cursor.execute('''SELECT series FROM books WHERE series IS NOT NULL AND trim(series) != '' GROUP BY series ORDER BY series ASC''')
         re = self.cursor.fetchall()
         if re is not None:
             for row in re:
                 ret.append(row['series'])
         return ret
 
-    def get_tags(self):
+    def get_tags(self) -> list:
         """
         get Series in database
 
@@ -399,7 +400,10 @@ class BDD:
                 tab = search.split(':', 1)
                 if tab[0] == "authors" or tab[0] == "series":
                     print(tab[0])
-                    self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE " + tab[0] + " = ?", [tab[1]])
+                    if tab[0] == 'series' and tab[1] == "[ ]":
+                        self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE series is NULL OR trim(series) = ''")
+                    else:
+                        self.cursor.execute("SELECT * FROM books LEFT JOIN files ON(files.book_id = books.guid) WHERE " + tab[0] + " = ?", [tab[1]])
                     ret = self.cursor.fetchall()
                 elif tab[0] == "tags":
                     print(tab[0])

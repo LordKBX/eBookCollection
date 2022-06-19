@@ -63,7 +63,7 @@ def list_directory(directory_path: str, expected_extension: str = None):
         for name in files:
             full_path = os.path.join(root, name)
             if expected_extension is not None:
-                if re.search("\\.({})$".format(expected_extension), name) is None:
+                if re.search("\\.({})$".format(expected_extension), name.lower()) is None:
                     continue
             file_list.append(full_path)
         if expected_extension is None:
@@ -110,6 +110,22 @@ def __list_directory_tree_recursive(file: str, path: str, parent_file_tree: dict
         else:
             if os.path.isfile(file): parent_file_tree[sub_path] = file
             else: parent_file_tree[sub_path] = dict()
+
+
+def parse_filename(file_path: str) -> str:
+    if '../' in file_path:
+        tb = file_path.split('/')
+        index = tb.index('..')
+        while index > 0:
+            tbx = []
+            for i in range(0, len(tb)):
+                if i != index - 1 and i != index:
+                    tbx.append(tb[i])
+            tb = tbx
+            file_path = '/'.join(tbx)
+            try: index = tb.index('..')
+            except Exception: index = -1
+    return file_path
 
 
 def clean_dir(src_dir: str):

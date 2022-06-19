@@ -28,6 +28,7 @@ mediatypes = {
 
 
 def create_thumbnail(path: str, resize: bool = True) -> str:
+    print(path)
     img = Image.open(path).convert("RGB")
     img.load()
     if resize is True:
@@ -160,16 +161,23 @@ def create_epub(title: str, authors: str = None, series: str = None, volume_numb
         creation_uuid = uuid.uuid4().__str__()
 
         create_cover(title, authors, series, volume_number, app_user_directory+os.sep+'tmp'+os.sep+'cover.png', style)
-        os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'fonts')
-        os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'META-INF')
-        os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'texte')
+        try: os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'fonts')
+        except: ""
+        try: os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'META-INF')
+        except: ""
+        try: os.makedirs(app_user_directory+os.sep+'tmp'+os.sep+'texte')
+        except: ""
 
         font_dir = app_directory+os.sep+'ressources'+os.sep+'fonts'+os.sep+'Arimo'
         font_tmp_dir = app_user_directory+os.sep+'tmp'+os.sep+'fonts'
-        copyFile(font_dir+os.sep+'Bold.ttf', font_tmp_dir+os.sep+'Arimo-Bold.ttf')
-        copyFile(font_dir+os.sep+'Bold-Italic.ttf', font_tmp_dir+os.sep+'Arimo-Bold-Italic.ttf')
-        copyFile(font_dir+os.sep+'Italic.ttf', font_tmp_dir+os.sep+'Arimo-Italic.ttf')
-        copyFile(font_dir+os.sep+'Regular.ttf', font_tmp_dir+os.sep+'Arimo-Regular.ttf')
+        try: copyFile(font_dir+os.sep+'Bold.ttf', font_tmp_dir+os.sep+'Arimo-Bold.ttf')
+        except: ""
+        try: copyFile(font_dir+os.sep+'Bold-Italic.ttf', font_tmp_dir+os.sep+'Arimo-Bold-Italic.ttf')
+        except: ""
+        try: copyFile(font_dir+os.sep+'Italic.ttf', font_tmp_dir+os.sep+'Arimo-Italic.ttf')
+        except: ""
+        try: copyFile(font_dir+os.sep+'Regular.ttf', font_tmp_dir+os.sep+'Arimo-Regular.ttf')
+        except: ""
 
         with open(app_user_directory+os.sep+'tmp'+os.sep+'META-INF'+os.sep+'container.xml', 'w', encoding="utf8") as file:
             file.write('<?xml version="1.0"?>'
@@ -398,7 +406,7 @@ def get_epub_info(path: str, clean: bool = False) -> dict or None:
                         tmpdir = app_directory + '/tmp'  # create var for temporary file extraction
                         if os.path.isdir(tmpdir) is False:
                             os.makedirs(tmpdir)
-                        mfile = myzip.extract(base+itm.attributes['href'].value, tmpdir)
+                        mfile = myzip.extract(parse_filename(base+itm.attributes['href'].value), tmpdir)
                         ret['cover'] = create_thumbnail(mfile)
                         rmDir(tmpdir)
                         break
@@ -408,7 +416,7 @@ def get_epub_info(path: str, clean: bool = False) -> dict or None:
                         tmpdir = app_directory + '/tmp'  # create var for temporary file extraction
                         if os.path.isdir(tmpdir) is False:
                             os.makedirs(tmpdir)
-                        mfile = myzip.extract(base+itm.attributes['href'].value, tmpdir)
+                        mfile = myzip.extract(parse_filename(base+itm.attributes['href'].value), tmpdir)
                         ret['cover'] = create_thumbnail(mfile)
                         rmDir(tmpdir)
                         break
@@ -435,17 +443,22 @@ def parse_content_table(metadata_file_content: str, base: str, folder: str or zi
                 toc_file = itm.attributes['href'].value
         myfile = None
         if isinstance(folder, zipfile.ZipFile):
-            myfile = folder.open(base + toc_file)
+            myfile = folder.open(parse_filename(base + toc_file))
         elif isinstance(folder, str):
-            myfile = open(folder + os.sep + base + toc_file)
+            myfile = open(parse_filename(folder + os.sep + base + toc_file))
         mydoc = minidom.parseString(myfile.read())
         myfile.close()
         itemrefs = mydoc.getElementsByTagName('navPoint')
         for ref in itemrefs:
             id = ref.attributes['id'].value
+            name = ""
+            try:
+                name = ref.getElementsByTagName('text')[0].firstChild.data
+            except Exception:
+                traceback.print_exc()
             ret_list.append({
                 'id': ref.attributes['id'].value,
-                'name': ref.getElementsByTagName('text')[0].firstChild.data,
+                'name': name,
                 'src': base + ref.getElementsByTagName('content')[0].attributes['src'].value
             })
     else:
@@ -520,12 +533,15 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         if ext in ['.epub', '.epub2', '.epub3']:  # section for EPUB files
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
             infos = get_epub_info(file)
-            if infos['guid'] is not None: tmp_guid = infos['guid']
-            tmp_lang = infos['lang']
-            tmp_title = infos['title']
-            tmp_authors = infos['authors']
-            tmp_series = infos['series']
-            tmp_cover = infos['cover']
+            tmp_lang = 'en'
+            if infos is not None:
+                if is_in(infos, 'guid'):
+                    if infos['guid'] is not None: tmp_guid = infos['guid']
+                if is_in(infos, 'lang'): tmp_lang = infos['lang']
+                tmp_title = infos['title']
+                tmp_authors = infos['authors']
+                tmp_series = infos['series']
+                tmp_cover = infos['cover']
 
             if len(database.get_books(tmp_guid)) > 0:
                 tmp_guid = uid()
@@ -533,7 +549,13 @@ def insert_book(database: bdd.BDD, file_name_template: str, file_name_separator:
         elif ext in ['.cbz', '.cbr']:  # section for CBZ and CBR files
             tmp_guid = uid()  # assign random guid for CBZ and CBR books
             ret = inflate(file, tmpdir)
-            tmp_cover = create_thumbnail(list_directory(tmpdir)[0])  # get path of the first image into temp dir
+            list_files = list_directory(tmpdir, 'jpg|jpeg|png')
+            fcover = ''
+            for fi in list_files:
+                fcover = fi
+                break
+            print("fcover", fcover)
+            tmp_cover = create_thumbnail(fcover)  # get path of the first image into temp dir
 
         else:
             tmp_cover = create_thumbnail(create_cover(tmp_title, tmp_authors, tmp_series, style=None))

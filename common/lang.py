@@ -119,6 +119,11 @@ class Lang:
             "Metadata": {
                 "WindowTitle": "Editing Metadata",
                 "CoverImport": "Import Book Cover"
+            },
+            "Tags": {
+                "DialogNewTagTitle": "New Tag",
+                "DialogNewTagText": "Please write the new tag name",
+                "DialogNewTagPlaceholder": "New Tag"
             }
         },
         "Generic": {
@@ -126,7 +131,8 @@ class Lang:
             "DialogBtnSave": "Save",
             "DialogBtnYes": "Yes",
             "DialogBtnNo": "No",
-            "DialogBtnCancel": "Cancel"
+            "DialogBtnCancel": "Cancel",
+            "DialogBtnNew": "New"
         },
         "Reader": {
             "WindowTitle": "EbookCollection: Reader",

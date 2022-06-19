@@ -49,7 +49,8 @@ class ContentTableWindow(QDialog):
         lng = lang.Lang()
         lng.set_lang(self.BDD.get_param('lang'))
         self.lang = lng
-        self.setStyleSheet(get_style_var(self.style,'QDialog'))
+        self.setStyleSheet(get_style_var(self.style, 'QDialog'))
+        self.addindex_combobox.setStyleSheet(get_style_var(self.style, 'QComboBox'))
 
         self.setWindowTitle(lng['Editor']['ContentTableWindow']['WindowTitle'])
         self.list_label.setText(lng['Editor']['ContentTableWindow']['ListLabel'])

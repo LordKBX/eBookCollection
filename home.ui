@@ -399,7 +399,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="header_block_scroll_filler">
+         <spacer name="header_block_filler">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -592,73 +592,14 @@
         </layout>
        </item>
        <item>
-        <widget class="QScrollArea" name="sorting_block_search_scroll_area">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QGroupBox" name="sorting_block_search_area">
+         <property name="styleSheet">
+          <string notr="true"/>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>40</height>
-          </size>
-         </property>
-         <property name="widgetResizable">
+         <property name="flat">
           <bool>true</bool>
          </property>
-         <widget class="QWidget" name="sorting_block_search_scroll_area_contents">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>254</width>
-            <height>38</height>
-           </rect>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>140</width>
-            <height>20</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>100</height>
-           </size>
-          </property>
-          <layout class="QVBoxLayout" name="sorting_block_search_zone">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>3</number>
-           </property>
-           <property name="rightMargin">
-            <number>3</number>
-           </property>
-           <property name="bottomMargin">
-            <number>3</number>
-           </property>
-          </layout>
-         </widget>
+         <layout class="QVBoxLayout" name="sorting_block_search_area_contents"/>
         </widget>
        </item>
        <item>

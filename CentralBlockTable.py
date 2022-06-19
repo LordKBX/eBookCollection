@@ -9,6 +9,7 @@ from common.vars import *
 import SortingBlockTree
 import settings
 import InfoPanel
+import tags
 
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=50)
 executor_dir = ''
@@ -84,6 +85,7 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         Define Signal/Sloct connections for CentralBlockTable
         :return:
         """
+        # self.central_block_table = QtWidgets.QTableWidget()
         self.central_block_table.currentCellChanged.connect(self.central_block_table_new_selection)
         self.central_block_table.setContextMenuPolicy(PyQt5.QtCore.Qt.CustomContextMenu)
         self.central_block_table.customContextMenuRequested.connect(self.central_block_table_context_menu)
@@ -208,18 +210,31 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         # print("--------------------------------")
         # print("central_block_table_cell_double_clicked")
         item = self.central_block_table.item(current_row, current_column)
-        guid_book = item.data(99)
-        # print("Book GUID : {}".format(guid_book))
-        if self.currentBook != guid_book:
-            self.currentBook = guid_book
-        files = self.BDD.get_books(guid_book)[0]['files']
-        if files[0]['format'] in ['CBZ', 'CBR', 'EPUB']:
-            executor_dir = self.app_directory
-            executor_file = files[0]['link']
-            executor.submit(wait_on_reader)
+
+        if item.data(100) == "tags":
+            wtags = tags.TagsWindow(self, item.text())
+            ret = wtags.exec_()
+            if ret == 1:
+                print("OK")
+                tagsret = wtags.tags
+                dt = tagsret.replace(';', ' | ').capitalize().replace(' | ', ';')
+                self.central_block_table.item(current_row, current_column).setText(dt)
+                self.central_block_table.item(current_row, current_column).setToolTip(dt)
+            else:
+                print("Cancel")
         else:
-            executor_file = files[0]['link']
-            executor.submit(wait_on_open_ext)
+            guid_book = item.data(99)
+            # print("Book GUID : {}".format(guid_book))
+            if self.currentBook != guid_book:
+                self.currentBook = guid_book
+            files = self.BDD.get_books(guid_book)[0]['files']
+            if files[0]['format'] in ['CBZ', 'CBR', 'EPUB']:
+                executor_dir = self.app_directory
+                executor_file = files[0]['link']
+                executor.submit(wait_on_reader)
+            else:
+                executor_file = files[0]['link']
+                executor.submit(wait_on_open_ext)
 
     def central_block_table_item_changed(self, new_item):
         """
@@ -364,21 +379,22 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                         col = -1
                         for case in list_items:
                             col += 1
-                            if self.central_block_table.item(id, col) is not None:
-                                print("error item at position line:{}, col:{}".format(id, col))
-                                self.central_block_table.item(id, col)\
-                                    .setData(99, data[cpt]['guid'])
-                            if case in list_items_locked:
-                                bdate = unixtime_to_string(
-                                    float(data[cpt][case]),
-                                    self.lang['Time']['template']['textual_date'],
-                                    self.lang['Time']['months_short']
-                                )
-                                self.central_block_table.item(id, col).setText(bdate)
-                                self.central_block_table.item(id, col).setToolTip(bdate)
-                            else:
-                                self.central_block_table.item(id, col).setText(data[cpt][case])
-                                self.central_block_table.item(id, col).setToolTip(data[cpt][case])
+                            if cpt < len(data):
+                                if self.central_block_table.item(id, col) is not None:
+                                    print("error item at position line:{}, col:{}".format(id, col))
+                                    self.central_block_table.item(id, col)\
+                                        .setData(99, data[cpt]['guid'])
+                                if case in list_items_locked:
+                                    bdate = unixtime_to_string(
+                                        float(data[cpt][case]),
+                                        self.lang['Time']['template']['textual_date'],
+                                        self.lang['Time']['months_short']
+                                    )
+                                    self.central_block_table.item(id, col).setText(bdate)
+                                    self.central_block_table.item(id, col).setToolTip(bdate)
+                                else:
+                                    self.central_block_table.item(id, col).setText(data[cpt][case])
+                                    self.central_block_table.item(id, col).setToolTip(data[cpt][case])
 
                 #self.central_block_table.setSelection(QtCore.QRect(0, top, 1, down - top), QtCore.QItemSelectionModel.Rows)
         except Exception:
@@ -402,7 +418,7 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
 
     @staticmethod
     def new_book_table_item(guid: str, book_type: str, value: str, editable: bool = True, alt: any = None,
-                            alt_type: str = None, locked: bool = False):
+                            alt_type: str = None, locked: bool = False) -> QtWidgets.QTableWidgetItem:
         """
         Create item for the Central Block Table Widget
 
@@ -417,10 +433,11 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
         """
         item = QtWidgets.QTableWidgetItem()
         try:
-            if alt is not None:
+            if alt is not None or book_type == "tags":
                 item = QTableAltItem()
                 item.setValue(alt)
                 item.setType(alt_type)
+                item.setCaseType(book_type)
                 item.lock(locked)
             if editable is True and alt is None:
                 item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsEnabled)
@@ -474,13 +491,22 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
                 col = 0
                 for case in list_items:
                     if case not in list_items_locked:
-                        self.central_block_table.setItem(
-                            line, col,
-                            self.new_book_table_item(
-                                guid=book['guid'],  book_type=case, value=book[case],
-                                editable=True, alt=None, alt_type=None, locked=False
+                        if case == "tags":
+                            self.central_block_table.setItem(
+                                line, col,
+                                self.new_book_table_item(
+                                    guid=book['guid'], book_type=case, value=book[case],
+                                    editable=False, alt=None, alt_type=None, locked=False
+                                )
                             )
-                        )
+                        else:
+                            self.central_block_table.setItem(
+                                line, col,
+                                self.new_book_table_item(
+                                    guid=book['guid'],  book_type=case, value=book[case],
+                                    editable=True, alt=None, alt_type=None, locked=False
+                                )
+                            )
                     else:
                         self.central_block_table.setItem(
                             line, col,
@@ -514,13 +540,23 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
 class QTableAltItem(QtWidgets.QTableWidgetItem):
     value = 0.0
     var_type = 'float'
+    case_type = ''
     locked = False
+
+    def __init__(self):
+        super(QTableAltItem, self).__init__(None)
+
+    def isBeingEdited(self) -> bool:
+        return self.checkState() == QtWidgets.QAbstractItemView.EditingState
 
     def setValue(self, value):
         self.value = value
 
     def setType(self, stype: str):
         self.var_type = stype
+
+    def setCaseType(self, ctype: str):
+        self.case_type = ctype
 
     def lock(self, locked: bool):
         self.locked = locked

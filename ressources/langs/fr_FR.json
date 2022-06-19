@@ -79,7 +79,8 @@
 		"DialogBtnSave": "Enregistrer",
 		"DialogBtnYes": "Oui",
 		"DialogBtnNo": "Non",
-		"DialogBtnCancel": "Annuler"
+		"DialogBtnCancel": "Annuler",
+		"DialogBtnNew": "Nouveau"
 	},
 	"Reader": {
 		"WindowTitle": "EbookCollection: Lecteur Ebook",

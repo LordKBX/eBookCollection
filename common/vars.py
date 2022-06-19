@@ -188,8 +188,8 @@ env_vars = {
                     "    titlebar-normal-icon: url(\"../ressources/icons/white/content_table.png\") !important;",
                     "}",
                     "QDockWidget::close-button, QDockWidget::float-button { background-color: #333333 !important; min-height:20px; min-width:20px; height:20px; width:20px; cursor:pointer; }",
-                    "QDockWidget::close-button:hover, QDockWidget::float-button:hover { background-color: #666666 !important; }",
-                    "QDockWidget::close-button:pressed, QDockWidget::float-button:pressed { background-color: #444444 !important;  }",
+                    "QDockWidget::close-button:hover, QDockWidget::float-button:hover { background-color: #666666 !important; cursor:pointer; }",
+                    "QDockWidget::close-button:pressed, QDockWidget::float-button:pressed { background-color: #444444 !important; cursor:pointer;  }",
                     "QDockWidget::title { font: bold; text-align: left; background-color: #333333; padding: 0px; height:30px; }"
                 ],
                 "QMessageBox": [
@@ -202,6 +202,7 @@ env_vars = {
                 "QMessageBoxBtnRed": "QPushButton{ background-color: rgb(234, 86, 86); color: rgb(255, 255, 255); }",
                 "QMessageBoxBtnGreen": "QPushButton{ background-color: rgb(0, 153, 15); color: rgb(255, 255, 255); }",
                 "QDialog": [
+                    "*{ color:#FFFFFF; }",
                     "QDialog, QWidget{ background-color:#4B4B4B; }",
                     "QScrollArea{ background-color:#4B4B4B; }",
                     "QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
@@ -217,6 +218,12 @@ env_vars = {
                     "QLabel{ font-size:12px; }",
                     "QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QDateEdit{ font-size:12px; padding:5px; }",
                     "QPushButton, QToolButton { font-size:12px; min-height:25px; height:25px; }"
+                ],
+                "QComboBox": [
+                    "background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px;"
+                ],
+                "QComboBoxAlt": [
+                    "background-color:#333333; color:#777777; border:#999999 2px solid; font-size:12px; padding:5px;"
                 ],
                 "QTabWidgetHorizontal": [
                     "QTabWidget::tab-bar { background-color:#333333; color:#AAAAAA; }",
@@ -239,6 +246,7 @@ env_vars = {
                     "QTabBar::tab:hover{ background-color:#196DFF; color:#ffffff; }",
                     "QTabWidget::pane QTabBar{ /* border-bottom: 1px solid #999999; */ }"
                 ],
+                "sorting_block_search_area": "QGroupBox{ border: 1px solid rgb(255, 255, 255); }",
                 "fullTreeView": [
                     "QTreeView{ background-color:#888888; }",
                     "QHeaderView::section { background-color:#4B4B4B; color:#ffffff; }",
@@ -265,7 +273,7 @@ env_vars = {
                     "QTableWidget::item { padding: 0px; background-color: gray; color: black; }",
                     "QTableWidget::item:alternate { background-color: lightgray; }",
                     "QTableWidget::item:hover { background-color: skyblue; }",
-                    "QTableWidget::item:selected { background-color: #0094FF; color: black; }"
+                    "QTableWidget::item:selected { background-color: #0094FF; color: #FFFFFF; }"
                 ],
                 "partialTreeViewItemColorNew": "#0021C6",
                 "partialTreeViewItemColorDel": "#D80020",
@@ -299,6 +307,7 @@ env_vars = {
                     "QPushButton:pressed { background-color: rgb(80, 80, 80); }",
                     "QPushButton:checked { background-color: rgb(80, 80, 80); }"
                 ],
+                "HomeLinkColor": "rgb(255, 255, 255)",
                 "SettingsDialogBox": "QPushButton, QToolButton { min-height:20px; height:20px; width:100%; }",
                 "SettingsQLineEditPrecise": [
                     "QLineEdit{ ",
@@ -359,6 +368,11 @@ env_vars = {
                     "*:hover { background-color: rgb(120, 120, 120); }",
                     "*:pressed { background-color: rgb(120, 120, 120); }",
                     "*:checked { background-color: rgb(150, 150, 150); }"
+                ],
+
+                "TagsSearchBox": [
+                    "* { background-image: url('{APP_DIR}/ressources/icons/tmp/search_30.png') 0 0 0 0 stretch stretch; ",
+                    "background-position:top right; background-repeat: norepeat; }"
                 ]
             }
 
@@ -401,6 +415,7 @@ def load_styles():
 
         ext = "json"
         # env_vars['styles'].clear()
+        print(directory2)
         for folder in [directory, directory2]:
             for root, directories, files in os.walk(folder, topdown=False):
                 for name in files:

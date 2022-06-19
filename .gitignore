@@ -81,7 +81,6 @@ Thumbs.db
 /tools/7zip/*
 /tools/poppler/*
 /*.db
-*_ui.py
 /tools/*.txt
 /installer/python/*
 /test/*/*

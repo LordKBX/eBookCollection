@@ -142,7 +142,7 @@ class FilesWindow(QDialog):
             self.selected_folder = file_path
             print(file_path)
 
-    def get_item(self, itm=None):
+    def get_item(self, itm=None) -> QTreeWidgetItem:
         try:
             items = self.file_tree.selectedItems()
             if itm is not None: items = [itm]
@@ -296,7 +296,9 @@ class FilesWindow(QDialog):
             if file is not None:
                 if isinstance(item, QtWidgets.QTreeWidget):
                     return
-                ret1 = self.remove_from_dict(self.list_new, file, parent)
+                ret1 = False
+                try: ret1 = self.remove_from_dict(self.list_new, file, parent)
+                except Exception: traceback.print_exc()
                 if ret1 is not True:
                     if self.list_rename.get(file) is None:
                         prepath = ''
@@ -322,13 +324,18 @@ class FilesWindow(QDialog):
         except Exception:
             traceback.print_exc()
 
-    def remove_from_dict(self, tree: dict, path: str, parentItem: any):
+    def remove_from_dict(self, tree: dict, path: str, parent_item: QTreeWidget or QTreeWidgetItem):
         if tree.get(path) is not None:
             del tree[path]
-            if isinstance(parentItem, QTreeWidget) or parentItem is None:
-                tree.removeItemWidget(path)
+            if isinstance(parent_item, QTreeWidget) or parent_item is None:
+                for index in range(0, parent_item.topLevelItemCount()):
+                    item = parent_item.topLevelItem(index)
+                    if parent_item.topLevelItem(index).data(0, 99) == path:
+                        parent_item.takeTopLevelItem(index)
+                        break
             else:
-                parentItem.removeChild(path)
+                print("P2")
+                parent_item.removeChild(path)
             ld = list()
             for fi in tree:
                 if path in fi:
