@@ -120,54 +120,54 @@ env_vars = {
         'styles': {
             "Dark": {
                 "icons": {
-                    "align_center": "{APP_DIR}/ressources/icons/tmp/format-justify-center.png",
-                    "align_justify": "{APP_DIR}/ressources/icons/tmp/format-justify-fill.png",
-                    "align_left": "{APP_DIR}/ressources/icons/tmp/format-justify-left.png",
-                    "align_right": "{APP_DIR}/ressources/icons/tmp/format-justify-right.png",
-                    "back_color": "{APP_DIR}/ressources/icons/tmp/format-fill-color.png",
-                    "bold": "{APP_DIR}/ressources/icons/tmp/format-text-bold.png",
+                    "align_center": "{APP_DIR}/ressources/icons/white/format-justify-center.png",
+                    "align_justify": "{APP_DIR}/ressources/icons/white/format-justify-fill.png",
+                    "align_left": "{APP_DIR}/ressources/icons/white/format-justify-left.png",
+                    "align_right": "{APP_DIR}/ressources/icons/white/format-justify-right.png",
+                    "back_color": "{APP_DIR}/ressources/icons/white/format-fill-color.png",
+                    "bold": "{APP_DIR}/ressources/icons/white/format-text-bold.png",
                     "book_add": "{APP_DIR}/ressources/icons/white/book_add.png",
                     "book_del": "{APP_DIR}/ressources/icons/white/book_del.png",
                     "book_new": "{APP_DIR}/ressources/icons/white/book_new.png",
-                    "checkpoint_create": "{APP_DIR}/ressources/icons/tmp/bookmarks.png",
-                    "checkpoint_load": "{APP_DIR}/ressources/icons/tmp/catalog.png",
+                    "checkpoint_create": "{APP_DIR}/ressources/icons/white/bookmarks.png",
+                    "checkpoint_load": "{APP_DIR}/ressources/icons/white/catalog.png",
                     "close": "{APP_DIR}/ressources/icons/white/close.png",
                     "comment": "{APP_DIR}/ressources/icons/white/comment.png",
                     "content_table": "{APP_DIR}/ressources/icons/white/content_table.png",
-                    "copy": "{APP_DIR}/ressources/icons/tmp/edit-copy.png",
-                    "cut": "{APP_DIR}/ressources/icons/tmp/edit-cut.png",
-                    "debug": "{APP_DIR}/ressources/icons/tmp/debug.png",
+                    "copy": "{APP_DIR}/ressources/icons/white/edit-copy.png",
+                    "cut": "{APP_DIR}/ressources/icons/white/edit-cut.png",
+                    "debug": "{APP_DIR}/ressources/icons/white/debug.png",
                     "edit": "{APP_DIR}/ressources/icons/white/edit.png",
                     "file": "{APP_DIR}/ressources/icons/white/file.png",
-                    "file_manager": "{APP_DIR}/ressources/icons/tmp/tb_folder.png",
+                    "file_manager": "{APP_DIR}/ressources/icons/white/tb_folder.png",
                     "folder": "{APP_DIR}/ressources/icons/white/folder.png",
-                    "font": "{APP_DIR}/ressources/icons/tmp/font.png",
+                    "font": "{APP_DIR}/ressources/icons/white/font.png",
                     "full_screen": "{APP_DIR}/ressources/icons/white/full_screen.png",
-                    "image": "{APP_DIR}/ressources/icons/tmp/view-image.png",
+                    "image": "{APP_DIR}/ressources/icons/white/view-image.png",
                     "info": "{APP_DIR}/ressources/icons/white/info.png",
-                    "italic": "{APP_DIR}/ressources/icons/tmp/format-text-italic.png",
-                    "link": "{APP_DIR}/ressources/icons/tmp/insert-link.png",
-                    "list": "{APP_DIR}/ressources/icons/tmp/format-list-unordered.png",
-                    "list_ordered": "{APP_DIR}/ressources/icons/tmp/format-list-ordered.png",
+                    "italic": "{APP_DIR}/ressources/icons/white/format-text-italic.png",
+                    "link": "{APP_DIR}/ressources/icons/white/insert-link.png",
+                    "list": "{APP_DIR}/ressources/icons/white/format-list-unordered.png",
+                    "list_ordered": "{APP_DIR}/ressources/icons/white/format-list-ordered.png",
                     "lock": "{APP_DIR}/ressources/icons/white/lock.png",
                     "normal_screen": "{APP_DIR}/ressources/icons/white/normal_screen.png",
-                    "page": "{APP_DIR}/ressources/icons/tmp/view.png",
-                    "paste": "{APP_DIR}/ressources/icons/tmp/edit-paste.png",
-                    "prettify": "{APP_DIR}/ressources/icons/tmp/beautify.png",
-                    "redo": "{APP_DIR}/ressources/icons/tmp/edit-redo.png",
+                    "page": "{APP_DIR}/ressources/icons/white/view.png",
+                    "paste": "{APP_DIR}/ressources/icons/white/edit-paste.png",
+                    "prettify": "{APP_DIR}/ressources/icons/white/beautify.png",
+                    "redo": "{APP_DIR}/ressources/icons/white/edit-redo.png",
                     "save": "{APP_DIR}/ressources/icons/white/save.png",
-                    "search": "{APP_DIR}/ressources/icons/tmp/search.png",
+                    "search": "{APP_DIR}/ressources/icons/white/search.png",
                     "settings": "{APP_DIR}/ressources/icons/white/settings.png",
                     "sort_down": "{APP_DIR}/ressources/icons/white/sort_down.png",
                     "sort_up": "{APP_DIR}/ressources/icons/white/sort_up.png",
-                    "strike_through": "{APP_DIR}/ressources/icons/tmp/format-text-strikethrough.png",
-                    "style": "{APP_DIR}/ressources/icons/tmp/lookfeel.png",
-                    "sub": "{APP_DIR}/ressources/icons/tmp/format-text-subscript.png",
-                    "sup": "{APP_DIR}/ressources/icons/tmp/format-text-superscript.png",
-                    "text_color": "{APP_DIR}/ressources/icons/tmp/format-text-color.png",
-                    "underline": "{APP_DIR}/ressources/icons/tmp/format-text-underline.png",
-                    "undo": "{APP_DIR}/ressources/icons/tmp/edit-undo.png",
+                    "strike_through": "{APP_DIR}/ressources/icons/white/format-text-strikethrough.png",
+                    "sub": "{APP_DIR}/ressources/icons/white/format-text-subscript.png",
+                    "sup": "{APP_DIR}/ressources/icons/white/format-text-superscript.png",
+                    "text_color": "{APP_DIR}/ressources/icons/white/format-text-color.png",
+                    "underline": "{APP_DIR}/ressources/icons/white/format-text-underline.png",
+                    "undo": "{APP_DIR}/ressources/icons/white/edit-undo.png",
                     "unlock": "{APP_DIR}/ressources/icons/white/unlock.png",
+                    "warning": "{APP_DIR}/ressources/icons/white/dialog_warning.png",
                     "xml": "{APP_DIR}/ressources/icons/white/xml.png"
                 },
                 "QMainWindow": [
@@ -206,7 +206,8 @@ env_vars = {
                     "QDialog, QWidget{ background-color:#4B4B4B; }",
                     "QScrollArea{ background-color:#4B4B4B; }",
                     "QLabel{ color:#999999; font-size:15px; font-weight:bold; background: transparent; }",
-                    "QSpinBox, QDoubleSpinBox, QComboBox, QLineEdit, QDateEdit{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+                    "QSpinBox, QDoubleSpinBox, QLineEdit, QComboBox{ background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; padding:10px; }",
+                    "QLineEdit, QComboBox{ font-size:14px; padding:7.5px; }",
                     "QPushButton, QToolButton { background-color:#333333; color:#777777; border:#999999 2px solid; font-size:15px; min-height:35px; height:35px; width:100%;}",
                     "QPushButton:hover, QToolButton:hover { background-color:#555555; color:#ffffff; border:#ffffff 2px solid; }",
                     "QPushButton:pressed, QToolButton:pressed, QPushButton:checked, QToolButton:checked { background-color:#999999; color:#000000; border:#ffffff 2px solid; }",
@@ -314,7 +315,8 @@ env_vars = {
                     "border-color:rgb(99, 99, 99);",
                     "border-width: 1px;",
                     "border-style:solid;",
-                    "font-size:15px; padding:0px;",
+                    "font-size:14px;",
+                    "padding:5.5px !important;",
                     " }"
                 ],
                 "SettingsQLineEditGood": [
@@ -322,6 +324,8 @@ env_vars = {
                     "border-color:rgb(0, 153, 15);",
                     "border-width: 2px;",
                     "border-style:solid;",
+                    "font-size:14px;",
+                    "padding:5.5px !important;",
                     " }"
                 ],
                 "SettingsQLineEditBad": [
@@ -329,6 +333,8 @@ env_vars = {
                     "border-color:rgb(234, 86, 86);",
                     "border-width: 2px;",
                     "border-style:solid;",
+                    "font-size:14px;",
+                    "padding:5.5px !important;",
                     " }"
                 ],
                 "SettingsQComboBoxArrow": "QComboBox::down-arrow { image:none; width:0px; }",
@@ -341,17 +347,24 @@ env_vars = {
                     "QPushButton:pressed, QToolButton:pressed { background-color: rgb(120, 120, 120); }",
                     "QPushButton:checked, QToolButton:checked { background-color: rgb(150, 150, 150); }"
                 ],
-                "EditorQsciFont": "{APP_DIR}/ressources/fonts/Arimo/Regular.ttf",
-                "EditorQsciMarginsBackgroundColor": "#333333",
-                "EditorQsciMarginsForegroundColor": "#ffffff",
-                "EditorQsciMarkerBackgroundColor": "#ee1111",
-                "EditorQsciFoldMarginColor1": "#cccccc",
-                "EditorQsciFoldMarginColor2": "#333333",
-                "EditorQsciCaretLineBackgroundColor": "#BBBBBB",
-                "EditorQsciDefaultTextColor": "#ffffff",
-                "EditorQsciDefaultBackgroundColor": "#A6A6A6",
-                "EditorQsciXMLDefaultTextColor": "#ffffff",
-                "EditorQsciXMLDefaultTagColor": "#ffffff",
+
+                "EditorQsciDefault": {
+                    "EditorQsciFont": "{APP_DIR}/ressources/fonts/Arimo/Regular.ttf",
+                    "EditorQsciMarginsBackgroundColor": "#333333",
+                    "EditorQsciMarginsForegroundColor": "#ffffff",
+                    "EditorQsciCaretLineBackgroundColor": "#BBBBBB",
+                    "EditorQsciDefaultTextColor": "#ffffff",
+                },
+
+                "EditorQsciRulesColors": {
+                    "EditorQsciString1": "magenta",
+                    "EditorQsciString2": "darkMagenta",
+                    "EditorQsciKeyword": "yellow",
+                    "EditorQsciComment": "lightGreen",
+                    "EditorQsciOperator": "#FF6666",
+                    "EditorQsciNumbers": "orange",
+                    "EditorQsciBrace": "lightBlue"
+                    },
 
                 "EditorColorPicker": [
                     "QDialog{ background-color:#4B4B4B; }",
@@ -371,7 +384,7 @@ env_vars = {
                 ],
 
                 "TagsSearchBox": [
-                    "* { background-image: url('{APP_DIR}/ressources/icons/tmp/search_30.png') 0 0 0 0 stretch stretch; ",
+                    "* { background-image: url('{APP_DIR}/ressources/icons/white/search_30.png') 0 0 0 0 stretch stretch; ",
                     "background-position:top right; background-repeat: norepeat; }"
                 ]
             }
@@ -481,10 +494,14 @@ def get_style_var(style: str = None, path: str = None):
     path_tab = path.split('/')
     try:
         base = env_vars['styles'][style]
+        cptsub = 0
         for obj in path_tab:
+            cptsub += 1
             if obj in base:
                 if isinstance(base[obj], dict) is True:
-                    base = base[obj]
+                    if len(path_tab) == cptsub:
+                        return base[obj]
+                    else: base = base[obj]
                 else:
                     if isinstance(base[obj], list) is True:
                         return "".join(base[obj]).replace('{APP_DIR}', app_directory.replace(os.sep, '/'))

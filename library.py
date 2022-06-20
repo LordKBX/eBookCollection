@@ -44,11 +44,11 @@ if __name__ == "__main__":
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     Home = home.HomeWindow(bdd, translation, sys.argv, env_vars)
-    Home.show()
+    Home.exec_()
     ret = 0
     try:
-        ret = app.exec_()
         server.Close()
+        ret = app.exec_()
     except Exception as err:
         traceback.print_exc()
     print("The End")

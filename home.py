@@ -129,7 +129,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                 self.header_block_btn_settings_clicked()
             if "settings" in self.argv:
                 self.header_block_btn_settings_clicked()
-                sys.exit(0)
+                self.close()
         except Exception:
             traceback.print_exc()
 
@@ -231,9 +231,8 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
                     self.app_style = self.BDD.get_param('style')
                     self.set_localisation()
                     self.set_style()
-                if len(self.argv) > 1:
-                    if "settings" in self.argv:
-                        sys.exit(0)
+                if "settings" in self.argv:
+                    self.close()
             except Exception:
                 traceback.print_exc()
         except Exception:
@@ -339,6 +338,7 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
     def set_style(self):
         QDockStyle = get_style_var(self.app_style, 'QDockWidget').replace('../', './')
         self.setStyleSheet(get_style_var(self.app_style, 'QMainWindow') + QDockStyle)
+        self.header_block.setStyleSheet(QDockStyle)
         self.header_block_contents2.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
         self.sorting_block_contents.setStyleSheet(get_style_var(self.app_style, 'QMainWindow'))
         self.sorting_block_search_area.setStyleSheet(get_style_var(self.app_style, "sorting_block_search_area"))

@@ -8,6 +8,7 @@ import PyQt5.uic
 from PyQt5.uic import *
 import zipfile
 import jsonschema
+from datetime import datetime
 
 sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 import common.common
@@ -16,6 +17,8 @@ import common.books
 import common.dialog
 import common.archive
 from common.vars import *
+import settings_ui
+import settings_plugin_params_ui
 
 
 class SettingsWindow(QDialog):
@@ -23,8 +26,11 @@ class SettingsWindow(QDialog):
 
     def __init__(self, parent, bdd):
         super(SettingsWindow, self).__init__(parent, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+        self.dialog = settings_ui.Ui_dialog()
+        self.dialog.setupUi(self)
         self.BDD = bdd
-        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'settings.ui'.replace('/', os.sep), self)  # Load the .ui file
+
+        # PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'settings.ui'.replace('/', os.sep), self)  # Load the .ui file
 
         self.color_selectors = [
             'tab_metadata_default_cover_background_combo_box',
@@ -41,26 +47,26 @@ class SettingsWindow(QDialog):
         self.load_styles(self.app_style)
 
         if debug is False:
-            self.dialog_tabs.setCurrentIndex(0)
+            self.dialog.dialog_tabs.setCurrentIndex(0)
 
         #GLOBAL tab
-        self.tab_global_lang_combo_box.currentIndexChanged.connect(self.change_language)
-        self.tab_global_style_combo_box.currentIndexChanged.connect(self.change_style)
+        self.dialog.tab_global_lang_combo_box.currentIndexChanged.connect(self.change_language)
+        self.dialog.tab_global_style_combo_box.currentIndexChanged.connect(self.change_style)
 
-        self.tab_global_lang_btn.clicked.connect(self.import_lang)
-        self.tab_global_style_import_btn.clicked.connect(self.import_style)
+        self.dialog.tab_global_lang_btn.clicked.connect(self.import_lang)
+        self.dialog.tab_global_style_import_btn.clicked.connect(self.import_style)
 
-        self.tab_global_library_folder_btn.clicked.connect(self.change_library_folder)
-        self.tab_global_library_folder_line_edit.setText(self.BDD.get_param('library/directory'))
+        self.dialog.tab_global_library_folder_btn.clicked.connect(self.change_library_folder)
+        self.dialog.tab_global_library_folder_line_edit.setText(self.BDD.get_param('library/directory'))
 
         path = self.BDD.get_param('archiver_dir')
         if path is None or path == '':
             path = env_vars['tools']['archiver']['path']
         if path is None or path == '':
             path = '<UNKNOW>'
-        self.tab_global_archiver_folder_line_edit.setText(path)
-        self.tab_global_archiver_folder_test_btn.clicked.connect(self.test_archiver)
-        self.tab_global_archiver_folder_browse_btn.clicked.connect(self.change_archiver_folder)
+        self.dialog.tab_global_archiver_folder_line_edit.setText(path)
+        self.dialog.tab_global_archiver_folder_test_btn.clicked.connect(self.test_archiver)
+        self.dialog.tab_global_archiver_folder_browse_btn.clicked.connect(self.change_archiver_folder)
 
         # METADATA tab
         default_cover_background = self.BDD.get_param('defaultCover/background')
@@ -72,7 +78,7 @@ class SettingsWindow(QDialog):
 
         for selector in self.color_selectors:
             selector_type = selector.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
-            combo = eval('self.'+selector)
+            combo = eval('self.dialog.'+selector)
             # combo = QComboBox()
             model = combo.model()
             selected = 0
@@ -93,7 +99,7 @@ class SettingsWindow(QDialog):
 
         selected = 0
         nb = 0
-        model = self.tab_metadata_default_cover_pattern_combo_box.model()
+        model = self.dialog.tab_metadata_default_cover_pattern_combo_box.model()
         for pattern in env_vars['vars']['default_cover']['patterns']:
             entry = PyQt5.QtGui.QStandardItem(pattern)
             entry.setData(pattern, 99)
@@ -101,8 +107,8 @@ class SettingsWindow(QDialog):
             if pattern == default_cover_pattern:
                 selected = nb
             nb += 1
-        self.tab_metadata_default_cover_pattern_combo_box.setCurrentIndex(selected)
-        self.tab_metadata_default_cover_pattern_combo_box.currentIndexChanged.connect(self.cover_combo_changed)
+        self.dialog.tab_metadata_default_cover_pattern_combo_box.setCurrentIndex(selected)
+        self.dialog.tab_metadata_default_cover_pattern_combo_box.currentIndexChanged.connect(self.cover_combo_changed)
         self.cover_combo_changed()
 
         filename_template = self.BDD.get_param('import_file_template')
@@ -111,18 +117,18 @@ class SettingsWindow(QDialog):
             if index == 'default':
                 continue
             if filename_template == env_vars['vars']['import_file_template'][index]:
-                selected = self.tab_metadata_import_filename_template_combo_box.count()
-            self.tab_metadata_import_filename_template_combo_box.insertItem(
-                self.tab_metadata_import_filename_template_combo_box.count(),
+                selected = self.dialog.tab_metadata_import_filename_template_combo_box.count()
+            self.dialog.tab_metadata_import_filename_template_combo_box.insertItem(
+                self.dialog.tab_metadata_import_filename_template_combo_box.count(),
                 env_vars['vars']['import_file_template'][index]
             )
-        self.tab_metadata_import_filename_template_combo_box.setCurrentIndex(selected)
-        self.tab_metadata_import_filename_separator_line_edit.setText(self.BDD.get_param('import_file_separator'))
+        self.dialog.tab_metadata_import_filename_template_combo_box.setCurrentIndex(selected)
+        self.dialog.tab_metadata_import_filename_separator_line_edit.setText(self.BDD.get_param('import_file_separator'))
 
-        self.tab_plugins_import.clicked.connect(self.install_plugin)
+        self.dialog.tab_plugins_import.clicked.connect(self.install_plugin)
 
-        self.tab_about_btn_license.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE.txt'))
-        self.tab_about_btn_website.clicked.connect(lambda: os.system("start https://github.com/LordKBX/eBookCollection"))
+        self.dialog.tab_about_btn_license.clicked.connect(lambda: os.system("start " + app_directory + os.sep + 'LICENSE.txt'))
+        self.dialog.tab_about_btn_website.clicked.connect(lambda: os.system("start https://github.com/LordKBX/eBookCollection"))
 
         # tab sync
         sync_ip = self.BDD.get_param('sync/ip')
@@ -135,10 +141,10 @@ class SettingsWindow(QDialog):
         print('sync_user = "{}"'.format(sync_user))
         print('sync_password = "{}"'.format(sync_password))
 
-        self.tab_sync_interface_ip_edit.setText('{}'.format(sync_ip))
-        self.tab_sync_interface_port_edit.setText('{}'.format(sync_port))
-        self.tab_sync_identification_user_edit.setText('{}'.format(sync_user))
-        self.tab_sync_identification_password_edit.setText('{}'.format(sync_password))
+        self.dialog.tab_sync_interface_ip_edit.setText('{}'.format(sync_ip))
+        self.dialog.tab_sync_interface_port_edit.setText('{}'.format(sync_port))
+        self.dialog.tab_sync_identification_user_edit.setText('{}'.format(sync_user))
+        self.dialog.tab_sync_identification_password_edit.setText('{}'.format(sync_password))
 
         self.apply_style()
         self.apply_translation()
@@ -146,7 +152,7 @@ class SettingsWindow(QDialog):
     def open_exec(self):
         ret = self.exec_()  # Show the GUI
         if ret == 1:
-            new_folder = self.tab_global_library_folder_line_edit.text()
+            new_folder = self.dialog.tab_global_library_folder_line_edit.text()
             if self.BDD.get_param('library/directory') != new_folder:
                 self.BDD.migrate(new_folder)
 
@@ -162,24 +168,24 @@ class SettingsWindow(QDialog):
                 selector = id.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
                 self.BDD.set_param(
                     'defaultCover/'+selector,
-                    eval('self.'+id+'.currentData(99)')
+                    eval('self.dialog.'+id+'.currentData(99)')
                 )
 
-            template = self.tab_metadata_import_filename_template_combo_box.currentText()
+            template = self.dialog.tab_metadata_import_filename_template_combo_box.currentText()
             if self.BDD.get_param('import_file_template') != template:
                 self.BDD.set_param('import_file_template', template)
 
-            template_separator = self.tab_metadata_import_filename_separator_line_edit.text()
+            template_separator = self.dialog.tab_metadata_import_filename_separator_line_edit.text()
             if self.BDD.get_param('import_file_separator') != template_separator:
                 self.BDD.set_param('import_file_separator', template_separator)
 
             if self.test_archiver() is True:
-                self.BDD.set_param('archiver_dir', self.tab_global_archiver_folder_line_edit.text())
+                self.BDD.set_param('archiver_dir', self.dialog.tab_global_archiver_folder_line_edit.text())
 
-            self.BDD.set_param('sync/ip', self.tab_sync_interface_ip_edit.text())
-            self.BDD.set_param('sync/port', self.tab_sync_interface_port_edit.text())
-            self.BDD.set_param('sync/user', self.tab_sync_identification_user_edit.text())
-            self.BDD.set_param('sync/password', self.tab_sync_identification_password_edit.text())
+            self.BDD.set_param('sync/ip', self.dialog.tab_sync_interface_ip_edit.text())
+            self.BDD.set_param('sync/port', self.dialog.tab_sync_interface_port_edit.text())
+            self.BDD.set_param('sync/user', self.dialog.tab_sync_identification_user_edit.text())
+            self.BDD.set_param('sync/password', self.dialog.tab_sync_identification_password_edit.text())
 
             return 'ok'
         else:
@@ -253,8 +259,8 @@ class SettingsWindow(QDialog):
                             fd.close()
                             break
             load_styles()
-            self.tab_global_style_combo_box.addItem(style)
-            self.tab_global_style_combo_box.setItemData(self.tab_global_style_combo_box.count() - 1, style, 99)
+            self.dialog.tab_global_style_combo_box.addItem(style)
+            self.dialog.tab_global_style_combo_box.setItemData(self.dialog.tab_global_style_combo_box.count() - 1, style, 99)
         except Exception:
             traceback.print_exc()
 
@@ -271,134 +277,134 @@ class SettingsWindow(QDialog):
         preset = self.BDD.get_param("library_directory")
         folder = dlg.getExistingDirectory(self, "Choose Directory", preset)
         print(folder)
-        self.tab_global_library_folder_line_edit.setText(folder)
+        self.dialog.tab_global_library_folder_line_edit.setText(folder)
 
     def load_languages(self, selected_lang: str = None):
-        self.tab_global_lang_combo_box.clear()
-        self.tab_global_lang_combo_box.addItem(self.lng['Settings']['LanguageAutomatic'])
-        self.tab_global_lang_combo_box.setItemData(self.tab_global_lang_combo_box.count() - 1, 'auto', 99)
+        self.dialog.tab_global_lang_combo_box.clear()
+        self.dialog.tab_global_lang_combo_box.addItem(self.lng['Settings']['LanguageAutomatic'])
+        self.dialog.tab_global_lang_combo_box.setItemData(self.dialog.tab_global_lang_combo_box.count() - 1, 'auto', 99)
         languages = self.lng.get_langs()
         i = 1
         sel = 0
         for lg in languages:
-            self.tab_global_lang_combo_box.addItem(lg['name'])
-            self.tab_global_lang_combo_box.setItemData(self.tab_global_lang_combo_box.count() - 1,
+            self.dialog.tab_global_lang_combo_box.addItem(lg['name'])
+            self.dialog.tab_global_lang_combo_box.setItemData(self.dialog.tab_global_lang_combo_box.count() - 1,
                                                        lg['code'], 99)
             if selected_lang == lg['code']:
                 sel = i
             i += 1
-        self.tab_global_lang_combo_box.setCurrentIndex(sel)
+        self.dialog.tab_global_lang_combo_box.setCurrentIndex(sel)
 
     def load_styles(self, selected_style: str = None):
         try:
             load_styles()
             if selected_style is None:
                 selected_style = self.BDD.get_param('style')
-            while self.tab_global_style_combo_box.count() > 0:
-                self.tab_global_style_combo_box.removeItem(0)
+            while self.dialog.tab_global_style_combo_box.count() > 0:
+                self.dialog.tab_global_style_combo_box.removeItem(0)
             i = 0
             sel = 0
             for style in get_styles():
                 st = style
                 if self.lng['Settings/Style'+style] is not None:
                     st = self.lng['Settings/Style'+style]
-                self.tab_global_style_combo_box.addItem(st)
-                self.tab_global_style_combo_box.setItemData(self.tab_global_style_combo_box.count() - 1, style, 99)
+                self.dialog.tab_global_style_combo_box.addItem(st)
+                self.dialog.tab_global_style_combo_box.setItemData(self.dialog.tab_global_style_combo_box.count() - 1, style, 99)
                 if selected_style == style:
                     sel = i
                 i += 1
-            self.tab_global_style_combo_box.setCurrentIndex(sel)
+            self.dialog.tab_global_style_combo_box.setCurrentIndex(sel)
         except Exception:
             traceback.print_exc()
 
     def change_language(self):
-        index = self.tab_global_lang_combo_box.currentIndex()
-        selected_lang = self.tab_global_lang_combo_box.itemData(index, 99)
+        index = self.dialog.tab_global_lang_combo_box.currentIndex()
+        selected_lang = self.dialog.tab_global_lang_combo_box.itemData(index, 99)
         self.lng.set_lang(selected_lang)
         self.BDD.set_param('lang', selected_lang)
         self.apply_translation()
 
     def change_style(self):
-        index = self.tab_global_style_combo_box.currentIndex()
-        selected_style = self.tab_global_style_combo_box.itemData(index, 99)
+        index = self.dialog.tab_global_style_combo_box.currentIndex()
+        selected_style = self.dialog.tab_global_style_combo_box.itemData(index, 99)
         self.BDD.set_param('style', selected_style)
         self.apply_style(selected_style)
 
     def apply_translation(self):
         try:
             self.setWindowTitle(self.lng['Settings/WindowTitle'])
-            self.button_box.button(QDialogButtonBox.Ok).setText(self.lng.get('Generic/DialogBtnSave'))
-            self.button_box.button(QDialogButtonBox.Cancel).setText(self.lng.get('Generic/DialogBtnCancel'))
+            self.dialog.button_box.button(QDialogButtonBox.Ok).setText(self.lng.get('Generic/DialogBtnSave'))
+            self.dialog.button_box.button(QDialogButtonBox.Cancel).setText(self.lng.get('Generic/DialogBtnCancel'))
 
             # Tabs
-            self.dialog_tabs.setTabText(0, self.lng['Settings/TabGlobalTitle'])
-            self.dialog_tabs.setTabText(1, self.lng['Settings/TabMetadataTitle'])
-            self.dialog_tabs.setTabText(2, self.lng['Settings/TabSyncTitle'])
-            self.dialog_tabs.setTabText(3, self.lng['Settings/TabPluginsTitle'])
-            self.dialog_tabs.setTabText(4, self.lng['Settings/TabAboutTitle'])
+            self.dialog.dialog_tabs.setTabText(0, self.lng['Settings/TabGlobalTitle'])
+            self.dialog.dialog_tabs.setTabText(1, self.lng['Settings/TabMetadataTitle'])
+            self.dialog.dialog_tabs.setTabText(2, self.lng['Settings/TabSyncTitle'])
+            self.dialog.dialog_tabs.setTabText(3, self.lng['Settings/TabPluginsTitle'])
+            self.dialog.dialog_tabs.setTabText(4, self.lng['Settings/TabAboutTitle'])
 
             # tab_global
             #   lang group
-            self.tab_global_lang_group_box.setTitle(self.lng['Settings/LanguageGroupTitle'])
-            self.tab_global_lang_combo_box.setItemText(0, self.lng['Settings/LanguageAutomatic'])
-            self.tab_global_lang_btn.setText(self.lng['Settings/Import'])
+            self.dialog.tab_global_lang_group_box.setTitle(self.lng['Settings/LanguageGroupTitle'])
+            self.dialog.tab_global_lang_combo_box.setItemText(0, self.lng['Settings/LanguageAutomatic'])
+            self.dialog.tab_global_lang_btn.setText(self.lng['Settings/Import'])
 
             #   style group
-            self.tab_global_style_group_box.setTitle(self.lng['Settings/StyleGroupTitle'])
-            self.tab_global_style_import_btn.setText(self.lng['Settings/Import'])
-            for index in range(0, self.tab_global_style_combo_box.count()):
-                data = self.tab_global_style_combo_box.itemData(index, 99)
+            self.dialog.tab_global_style_group_box.setTitle(self.lng['Settings/StyleGroupTitle'])
+            self.dialog.tab_global_style_import_btn.setText(self.lng['Settings/Import'])
+            for index in range(0, self.dialog.tab_global_style_combo_box.count()):
+                data = self.dialog.tab_global_style_combo_box.itemData(index, 99)
                 st = data
                 if self.lng["Settings/Style" + data] is not None:
                     st = self.lng["Settings/Style" + data]
-                self.tab_global_style_combo_box.setItemText(index, st)
+                self.dialog.tab_global_style_combo_box.setItemText(index, st)
 
             #   Library group
-            self.tab_global_library_group_box.setTitle(self.lng['Settings/LibraryGroupTitle'])
-            self.tab_global_library_folder_label.setText(self.lng['Settings/LibraryFolder'])
-            self.tab_global_library_folder_btn.setText(self.lng['Settings/LibraryFolderBrowse'])
+            self.dialog.tab_global_library_group_box.setTitle(self.lng['Settings/LibraryGroupTitle'])
+            self.dialog.tab_global_library_folder_label.setText(self.lng['Settings/LibraryFolder'])
+            self.dialog.tab_global_library_folder_btn.setText(self.lng['Settings/LibraryFolderBrowse'])
 
             #   archiver group
             if os.name == 'nt':
-                self.tab_global_archiver_group_box.setTitle(self.lng['Settings/ArchiverGroupTitleNT'])
+                self.dialog.tab_global_archiver_group_box.setTitle(self.lng['Settings/ArchiverGroupTitleNT'])
             else:
-                self.tab_global_archiver_group_box.setTitle(self.lng['Settings/ArchiverGroupTitle'])
-            self.tab_global_archiver_folder_label.setText(self.lng['Settings/ArchiverFolder'])
-            self.tab_global_archiver_folder_test_btn.setText(self.lng['Settings/ArchiverFolderTest'])
-            self.tab_global_archiver_folder_browse_btn.setText(self.lng['Settings/ArchiverFolderBrowse'])
+                self.dialog.tab_global_archiver_group_box.setTitle(self.lng['Settings/ArchiverGroupTitle'])
+            self.dialog.tab_global_archiver_folder_label.setText(self.lng['Settings/ArchiverFolder'])
+            self.dialog.tab_global_archiver_folder_test_btn.setText(self.lng['Settings/ArchiverFolderTest'])
+            self.dialog.tab_global_archiver_folder_browse_btn.setText(self.lng['Settings/ArchiverFolderBrowse'])
 
             # tab_metadata
             #   Default Cover group
-            self.tab_metadata_default_cover_group_box.setTitle(self.lng['Settings/DefaultCoverGroupTitle'])
-            self.tab_metadata_default_cover_background_label.setText(self.lng['Settings/DefaultCoverBackground'])
-            self.tab_metadata_default_cover_pattern_label.setText(self.lng['Settings/DefaultCoverPattern'])
-            self.tab_metadata_default_cover_pattern_color_label.setText(self.lng['Settings/DefaultCoverPatternColor'])
-            self.tab_metadata_default_cover_title_label.setText(self.lng['Settings/DefaultCoverTitle'])
-            self.tab_metadata_default_cover_series_label.setText(self.lng['Settings/DefaultCoverSeries'])
-            self.tab_metadata_default_cover_authors_label.setText(self.lng['Settings/DefaultCoverAuthors'])
+            self.dialog.tab_metadata_default_cover_group_box.setTitle(self.lng['Settings/DefaultCoverGroupTitle'])
+            self.dialog.tab_metadata_default_cover_background_label.setText(self.lng['Settings/DefaultCoverBackground'])
+            self.dialog.tab_metadata_default_cover_pattern_label.setText(self.lng['Settings/DefaultCoverPattern'])
+            self.dialog.tab_metadata_default_cover_pattern_color_label.setText(self.lng['Settings/DefaultCoverPatternColor'])
+            self.dialog.tab_metadata_default_cover_title_label.setText(self.lng['Settings/DefaultCoverTitle'])
+            self.dialog.tab_metadata_default_cover_series_label.setText(self.lng['Settings/DefaultCoverSeries'])
+            self.dialog.tab_metadata_default_cover_authors_label.setText(self.lng['Settings/DefaultCoverAuthors'])
 
             #   eBook import
-            self.tab_metadata_import_group_box.setTitle(self.lng['Settings/eBookImportGroupTitle'])
-            self.tab_metadata_import_filename_template_label.setText(self.lng['Settings/eBookImportFilenameTpl'])
-            self.tab_metadata_import_filename_separator_label.setText(self.lng['Settings/eBookImportFilenameTplSeparator'])
+            self.dialog.tab_metadata_import_group_box.setTitle(self.lng['Settings/eBookImportGroupTitle'])
+            self.dialog.tab_metadata_import_filename_template_label.setText(self.lng['Settings/eBookImportFilenameTpl'])
+            self.dialog.tab_metadata_import_filename_separator_label.setText(self.lng['Settings/eBookImportFilenameTplSeparator'])
 
             # tab_plugins
-            self.tab_plugins_import.setText(self.lng['Settings/Import'])
+            self.dialog.tab_plugins_import.setText(self.lng['Settings/Import'])
 
             # tab_about
             #   About group
-            self.tab_about_btn_license.setText(self.lng['Settings/AboutBtnLicense'])
-            self.tab_about_btn_website.setText(self.lng['Settings/AboutBtnWebsite'])
-            self.tab_about_label.setText(self.lng['Settings/AboutLabel'])
+            self.dialog.tab_about_btn_license.setText(self.lng['Settings/AboutBtnLicense'])
+            self.dialog.tab_about_btn_website.setText(self.lng['Settings/AboutBtnWebsite'])
+            self.dialog.tab_about_label.setText(self.lng['Settings/AboutLabel'].replace('YYYY', '{}'.format(datetime.today().year)))
 
             # tab sync
-            self.tab_sync_interface_group.setTitle(self.lng['Settings/SyncInterfaceGroupTitle'])
-            self.tab_sync_interface_ip_label.setText(self.lng['Settings/SyncInterfaceIP'])
-            self.tab_sync_interface_port_label.setText(self.lng['Settings/SyncInterfacePort'])
+            self.dialog.tab_sync_interface_group.setTitle(self.lng['Settings/SyncInterfaceGroupTitle'])
+            self.dialog.tab_sync_interface_ip_label.setText(self.lng['Settings/SyncInterfaceIP'])
+            self.dialog.tab_sync_interface_port_label.setText(self.lng['Settings/SyncInterfacePort'])
 
-            self.tab_sync_identification.setTitle(self.lng['Settings/SyncIdentificationGroupTitle'])
-            self.tab_sync_identification_user_label.setText(self.lng['Settings/SyncIdentificationUser'])
-            self.tab_sync_identification_password_label.setText(self.lng['Settings/SyncIdentificationPassword'])
+            self.dialog.tab_sync_identification.setTitle(self.lng['Settings/SyncIdentificationGroupTitle'])
+            self.dialog.tab_sync_identification_user_label.setText(self.lng['Settings/SyncIdentificationUser'])
+            self.dialog.tab_sync_identification_password_label.setText(self.lng['Settings/SyncIdentificationPassword'])
 
             self.load_plugins_tab()
         except Exception:
@@ -410,26 +416,37 @@ class SettingsWindow(QDialog):
         cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
         self.setStyleSheet(get_style_var(style, 'QDialog') + get_style_var(style, 'SettingsDialogBox'))
 
-        cls = self.__dir__()
+        cls = self.dialog.__dir__()
         for var_name in cls:
-            obj = eval('self.'+var_name)
+            obj = eval('self.dialog.'+var_name)
             if isinstance(obj, (QPushButton, QComboBox)) and var_name not in ['tab_metadata_default_cover_preview']:
                 obj.setCursor(cursor)
             if isinstance(obj, QWidget):
                 obj.setStyleSheet(get_style_var(style, 'QTabWidgetVertical'))
         self.test_archiver()
 
-        self.button_box.button(QDialogButtonBox.Ok).setStyleSheet(get_style_var(style, 'fullAltButton'))
-        self.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
-        self.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(get_style_var(style, 'fullAltButton'))
-        self.button_box.button(QDialogButtonBox.Cancel).setCursor(cursor)
+        self.dialog.button_box.button(QDialogButtonBox.Ok).setStyleSheet(get_style_var(style, 'fullAltButton'))
+        self.dialog.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
+        self.dialog.button_box.button(QDialogButtonBox.Cancel).setStyleSheet(get_style_var(style, 'fullAltButton'))
+        self.dialog.button_box.button(QDialogButtonBox.Cancel).setCursor(cursor)
 
-        self.tab_global.setStyleSheet(get_style_var(style, 'QDialog'))
-        self.tab_metadata.setStyleSheet(get_style_var(style, 'QDialog'))
-        self.tab_plugins.setStyleSheet(get_style_var(style, 'QDialog'))
-        self.tab_about.setStyleSheet(get_style_var(style, 'QDialog'))
+        self.dialog.tab_global.setStyleSheet(get_style_var(style, 'QDialog'))
+        self.dialog.tab_metadata.setStyleSheet(get_style_var(style, 'QDialog'))
+        self.dialog.tab_plugins.setStyleSheet(get_style_var(style, 'QDialog'))
+        self.dialog.tab_about.setStyleSheet(get_style_var(style, 'QDialog'))
 
-        self.tab_metadata_import_filename_separator_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditPrecise'))
+        self.dialog.tab_global_lang_btn.setStyleSheet(get_style_var(style, 'defaultButton'))
+        self.dialog.tab_global_style_import_btn.setStyleSheet(get_style_var(style, 'defaultButton'))
+        self.dialog.tab_global_library_folder_btn.setStyleSheet(get_style_var(style, 'defaultButton'))
+        self.dialog.tab_global_archiver_folder_test_btn.setStyleSheet(get_style_var(style, 'defaultButton'))
+        self.dialog.tab_global_archiver_folder_browse_btn.setStyleSheet(get_style_var(style, 'defaultButton'))
+        self.dialog.tab_plugins_import.setStyleSheet(get_style_var(style, 'defaultButton'))
+        self.dialog.tab_about_btn_license.setStyleSheet(get_style_var(style, 'defaultButton'))
+        self.dialog.tab_about_btn_website.setStyleSheet(get_style_var(style, 'defaultButton'))
+
+        self.dialog.tab_sync_warn_icon.setWindowIcon(QtGui.QIcon(get_style_var(style, 'icons/warning')))
+
+        self.dialog.tab_metadata_import_filename_separator_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditPrecise'))
         self.cover_combo_changed()
 
     def cover_combo_changed(self):
@@ -444,19 +461,19 @@ class SettingsWindow(QDialog):
         style = self.BDD.get_param('style')
         for selector in self.color_selectors:
             selector_type = selector.replace('tab_metadata_default_cover_', '').replace('_combo_box', '')
-            combo = eval('self.'+selector)
+            combo = eval('self.dialog.'+selector)
             index = combo.currentIndex()
             color = combo.itemData(index, 99)
             vals[selector_type] = color
             combo.setStyleSheet(
-                "QComboBox:!editable {{ color: {}; }}".format(color) + get_style_var(self.app_style, 'SettingsQComboBoxArrow')
+                "QComboBox:!editable {{ color: {}; }}".format(color)
             )
 
-        vals['pattern'] = self.tab_metadata_default_cover_pattern_combo_box.currentData(99)
+        vals['pattern'] = self.dialog.tab_metadata_default_cover_pattern_combo_box.currentData(99)
         cover = common.books.create_cover("TITRE", "auteur", "La série", 2, style=vals)
         icon = PyQt5.QtGui.QIcon()
         icon.addPixmap(PyQt5.QtGui.QPixmap(cover, "png"))
-        self.tab_metadata_default_cover_preview.setIcon(icon)
+        self.dialog.tab_metadata_default_cover_preview.setIcon(icon)
 
         isize = icon.actualSize(PyQt5.QtCore.QSize(500, 500))
         image = PyQt5.QtGui.QImage(icon.pixmap(isize.width(), isize.height()).toImage())
@@ -465,26 +482,25 @@ class SettingsWindow(QDialog):
         image.save(buffer, "PNG")
         icon_base64 = byte_array.toBase64().data()
 
-        self.tab_metadata_default_cover_preview.setToolTip(
+        self.dialog.tab_metadata_default_cover_preview.setToolTip(
             '<img src="data:image/png;base64,{}" width="500"/>'.format(icon_base64.decode('UTF-8'))
         )
 
     def test_archiver(self):
         style = self.BDD.get_param('style')
-        path = self.tab_global_archiver_folder_line_edit.text()
+        path = self.dialog.tab_global_archiver_folder_line_edit.text()
         ret = False
         if os.path.isdir(path) is True:
             path += os.sep + env_vars['tools']['archiver'][os.name]['exe']
             if os.path.isfile(path) is True:
                 ret = True
         if ret is False:
-            self.tab_global_archiver_folder_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditBad'))
+            self.dialog.tab_global_archiver_folder_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditBad'))
         else:
-            self.tab_global_archiver_folder_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditGood'))
+            self.dialog.tab_global_archiver_folder_line_edit.setStyleSheet(get_style_var(style, 'SettingsQLineEditGood'))
         return ret
 
     def change_archiver_folder(self):
-        print("test")
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         options |= QFileDialog.Directory
@@ -495,9 +511,10 @@ class SettingsWindow(QDialog):
 
         preset = self.BDD.get_param("library_directory").replace('{APP_DIR}', app_directory)
         folder = dlg.getExistingDirectory(self, "Choose Directory", preset)
-        print(folder)
-        self.tab_global_archiver_folder_line_edit.setText(folder)
-        self.test_archiver()
+        print("folder=", folder)
+        if folder is not None and folder.strip() != "":
+            self.dialog.tab_global_archiver_folder_line_edit.setText(folder)
+            self.test_archiver()
 
     def load_plugins_tab(self):
         try:
@@ -505,8 +522,8 @@ class SettingsWindow(QDialog):
             cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
             plugs = list_plugins()
 
-            self.clear_layout(self.tab_plugins_list_zone)
-            self.tab_plugins_scroll_area1.repaint()
+            self.clear_layout(self.dialog.tab_plugins_list_zone)
+            self.dialog.tab_plugins_scroll_area1.repaint()
 
             for plug in plugs:
                 # plugin = plugs[plug]
@@ -561,8 +578,8 @@ class SettingsWindow(QDialog):
                 # l2.addStretch(1)
                 box.layout().addLayout(l2)
 
-                self.tab_plugins_list_zone.addWidget(box)
-            # self.tab_plugins_list_zone.addItem(QSpacerItem(10, 99999999, QSizePolicy.Maximum, QSizePolicy.Maximum))
+                self.dialog.tab_plugins_list_zone.addWidget(box)
+            # self.dialog.tab_plugins_list_zone.addItem(QSpacerItem(10, 99999999, QSizePolicy.Maximum, QSizePolicy.Maximum))
         except Exception:
             traceback.print_exc()
 
@@ -635,14 +652,15 @@ class SettingsWindow(QDialog):
             if plug is not None:
                 settings = plug['settings']
                 print(settings)
-                ui = QDialog(self, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+                dialog_ui = QtWidgets.QDialog()
+                ui = settings_plugin_params_ui.Ui_Dialog()
+                ui.setParent(self, QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint)
+                ui.setupUi(dialog_ui)
+
                 style = self.BDD.get_param('style')
-                PyQt5.uic.loadUi(
-                    os.path.dirname(os.path.realpath(__file__)) + os.sep + 'settings_plugin_params.ui'.replace('/', os.sep),
-                    ui
-                )
 
                 cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
+                dialog_ui.setStyleSheet(get_style_var(style, 'QDialog') + get_style_var(style, 'SettingsDialogBox'))
                 ui.setStyleSheet(get_style_var(style, 'QDialog') + get_style_var(style, 'SettingsDialogBox'))
                 ui.button_box.button(QDialogButtonBox.Ok).setStyleSheet(get_style_var(style, 'fullAltButton'))
                 ui.button_box.button(QDialogButtonBox.Ok).setCursor(cursor)
@@ -693,7 +711,7 @@ class SettingsWindow(QDialog):
                     ui.scrollArea.layout().addLayout(l1)
                 ui.scrollArea.layout().addStretch(1)
 
-                ret = ui.exec_()
+                ret = dialog_ui.exec_()
                 print(ret)
                 if ret == 1:
                     settings = QtCore.QSettings(app_editor, app_name)
@@ -707,6 +725,7 @@ class SettingsWindow(QDialog):
                             value = ui_params[param].value()
                         settings.setValue('plugins/' + plugin_name + '/' + param, value)
                         print(param, '=', value)
+                    load_plugins()
 
 
         except Exception:

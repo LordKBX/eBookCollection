@@ -409,7 +409,7 @@ class Ui_dialog(object):
         self.verticalLayout_2.addWidget(self.button_box)
 
         self.retranslateUi(dialog)
-        self.dialog_tabs.setCurrentIndex(2)
+        self.dialog_tabs.setCurrentIndex(0)
         self.button_box.accepted.connect(dialog.accept)
         self.button_box.rejected.connect(dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(dialog)
@@ -461,7 +461,7 @@ class Ui_dialog(object):
 "\n"
 "MIT License\n"
 "\n"
-"Copyright (c) 2020-2021 Boulain Kévin"))
+"Copyright (c) 2020-YYYY Boulain Kévin"))
         self.tab_about_btn_license.setText(_translate("dialog", "License"))
         self.tab_about_btn_website.setText(_translate("dialog", "Web Site"))
         self.dialog_tabs.setTabText(self.dialog_tabs.indexOf(self.tab_about), _translate("dialog", "About"))

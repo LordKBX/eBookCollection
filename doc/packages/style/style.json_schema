@@ -127,9 +127,6 @@
                 "strike_through": {
                     "type": "string"
                 },
-                "style": {
-                    "type": "string"
-                },
                 "sub": {
                     "type": "string"
                 },
@@ -146,6 +143,9 @@
                     "type": "string"
                 },
                 "unlock": {
+                    "type": "string"
+                },
+                "warning": {
                     "type": "string"
                 },
                 "xml": {
@@ -194,13 +194,13 @@
                 "sort_down",
                 "sort_up",
                 "strike_through",
-                "style",
                 "sub",
                 "sup",
                 "text_color",
                 "underline",
                 "undo",
                 "unlock",
+                "warning",
                 "xml"
             ]
         },
@@ -390,38 +390,51 @@
                 "type": "string"
             }
         },
-        "EditorQsciFont": {
-            "type": "string"
+        "EditorQsciDefault": {
+            "type": "object",
+            "properties": {
+                "EditorQsciFont": {
+                    "type": "string"
+                },
+                "EditorQsciMarginsBackgroundColor": {
+                    "type": "string"
+                },
+                "EditorQsciMarginsForegroundColor": {
+                    "type": "string"
+                },
+                "EditorQsciCaretLineBackgroundColor": {
+                    "type": "string"
+                },
+                "EditorQsciDefaultTextColor": {
+                    "type": "string"
+                }
+            }
         },
-        "EditorQsciMarginsBackgroundColor": {
-            "type": "string"
-        },
-        "EditorQsciMarginsForegroundColor": {
-            "type": "string"
-        },
-        "EditorQsciMarkerBackgroundColor": {
-            "type": "string"
-        },
-        "EditorQsciFoldMarginColor1": {
-            "type": "string"
-        },
-        "EditorQsciFoldMarginColor2": {
-            "type": "string"
-        },
-        "EditorQsciCaretLineBackgroundColor": {
-            "type": "string"
-        },
-        "EditorQsciDefaultTextColor": {
-            "type": "string"
-        },
-        "EditorQsciDefaultBackgroundColor": {
-            "type": "string"
-        },
-        "EditorQsciXMLDefaultTextColor": {
-            "type": "string"
-        },
-        "EditorQsciXMLDefaultTagColor": {
-            "type": "string"
+        "EditorQsciRulesColors": {
+            "type": "object",
+            "properties": {
+                "EditorQsciString1": {
+                    "type": "string"
+                },
+                "EditorQsciString2": {
+                    "type": "string"
+                },
+                "EditorQsciKeyword": {
+                    "type": "string"
+                },
+                "EditorQsciComment": {
+                    "type": "string"
+                },
+                "EditorQsciOperator": {
+                    "type": "string"
+                },
+                "EditorQsciNumbers": {
+                    "type": "string"
+                },
+                "EditorQsciBrace": {
+                    "type": "string"
+                }
+            }
         },
         "EditorColorPicker": {
             "type": "array",
@@ -488,17 +501,8 @@
         "EditorCentralLabel",
         "EditorFileDialogAdditional",
         "EditorEditPaneButtons",
-        "EditorQsciFont",
-        "EditorQsciMarginsBackgroundColor",
-        "EditorQsciMarginsForegroundColor",
-        "EditorQsciMarkerBackgroundColor",
-        "EditorQsciFoldMarginColor1",
-        "EditorQsciFoldMarginColor2",
-        "EditorQsciCaretLineBackgroundColor",
-        "EditorQsciDefaultTextColor",
-        "EditorQsciDefaultBackgroundColor",
-        "EditorQsciXMLDefaultTextColor",
-        "EditorQsciXMLDefaultTagColor",
+        "EditorQsciDefault",
+        "EditorQsciRulesColors",
         "EditorColorPicker",
         "EditorColorPickerColorBtn",
         "EditorColorPickerFullAltButton",

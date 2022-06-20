@@ -63,7 +63,10 @@ def prettify(text: str):
     text = re.sub('\n {2,}', '\n', text)
     text = text.replace('\n', '')
     text = re.sub(' {2,}', ' ', text)
-    xmlt = xml.dom.minidom.parseString(text)
-    uglyXml = xmlt.toprettyxml(indent="  ", newl="\n")
-    text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)
-    return text_re.sub('>\g<1></', uglyXml).replace('\r', '').replace('\n\n', '\n')
+    try:
+        xmlt = xml.dom.minidom.parseString(text)
+        uglyXml = xmlt.toprettyxml(indent="  ", newl="\n")
+        text_re = re.compile('>\n\s+([^<>\s].*?)\n\s+</', re.DOTALL)
+        return text_re.sub('>\g<1></', uglyXml).replace('\r', '').replace('\n\n', '\n')
+    except Exception:
+        return text

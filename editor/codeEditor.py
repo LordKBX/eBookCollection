@@ -16,9 +16,32 @@ class LineNumberArea(QWidget):
         self._code_editor.lineNumberAreaPaintEvent(event)
 
 
+def formatColor(color):
+    """Return a QColor with the given attributes.
+    """
+    _color = QColor()
+    _color.setNamedColor(color)
+    return _color
+
+
 class CodeEditor(QPlainTextEdit):
-    def __init__(self):
+    style = {
+        "EditorQsciFont": "{APP_DIR}/ressources/fonts/Arimo/Regular.ttf",
+        "EditorQsciMarginsBackgroundColor": "#333333",
+        "EditorQsciMarginsForegroundColor": "#ffffff",
+        "EditorQsciCaretLineBackgroundColor": "#BBBBBB",
+        "EditorQsciDefaultTextColor": "#ffffff"
+    }
+
+    def __init__(self, styleDict: dict = None):
         super().__init__()
+        if styleDict is not None:
+            for index in styleDict:
+                print(index)
+                if self.style.__contains__(index):
+                    self.style[index] = styleDict.get(index)
+                else:
+                    self.style[index] = styleDict.get(index)
         self.line_number_area = LineNumberArea(self)
 
         self.blockCountChanged[int].connect(self.update_line_number_area_width)
@@ -56,7 +79,7 @@ class CodeEditor(QPlainTextEdit):
         max = len(self.toPlainText().split('\n'))
         nb_length = len("{}".format(max))
         with QPainter(self.line_number_area) as painter:
-            painter.fillRect(event.rect(), Qt.lightGray)
+            painter.fillRect(event.rect(), formatColor(self.style['EditorQsciMarginsBackgroundColor']))
             block = self.firstVisibleBlock()
             block_number = block.blockNumber()
             offset = self.contentOffset()
@@ -66,7 +89,7 @@ class CodeEditor(QPlainTextEdit):
             while block.isValid() and top <= event.rect().bottom():
                 if block.isVisible() and bottom >= event.rect().top():
                     number = self.presentNumber(block_number + 1, nb_length)
-                    painter.setPen(Qt.black)
+                    painter.setPen(formatColor(self.style['EditorQsciMarginsForegroundColor']))
                     width = self.line_number_area.width()
                     height = self.fontMetrics().height()
                     painter.drawText(0, top, width, height, Qt.AlignHCenter, number)
@@ -95,7 +118,7 @@ class CodeEditor(QPlainTextEdit):
         if not self.isReadOnly():
             selection = QTextEdit.ExtraSelection()
 
-            line_color = QColor(95, 95, 95, 255)
+            line_color = formatColor(self.style['EditorQsciCaretLineBackgroundColor'])
             selection.format.setBackground(line_color)
 
             selection.format.setProperty(QTextFormat.FullWidthSelection, True)

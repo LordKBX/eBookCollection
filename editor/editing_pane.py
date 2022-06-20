@@ -242,15 +242,18 @@ class EditorTabManager(QtWidgets.QTabWidget):
                 vertical_layout.addWidget(block)
 
                 try:
-                    text_edit = CodeEditor()
+                    styleDictDefault = get_style_var(self.style, 'EditorQsciDefault')
+                    text_edit = CodeEditor(styleDictDefault)
                     # text_edit = QPlainTextEdit()
                     text_edit.setTabStopWidth(16)
+                    styleDictRules = get_style_var(self.style, 'EditorQsciRulesColors')
+                    print('styleDictRules =', styleDictRules)
                     if tab.property('fileExt') in ['xhtml', 'html']:
-                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.HTML)
+                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.HTML, styleDictRules)
                     elif tab.property('fileExt') in ['xml', 'opf', 'ncx']:
-                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.XML)
+                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.XML, styleDictRules)
                     elif tab.property('fileExt') in ['css']:
-                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.CSS)
+                        self.highlight = editor.syntaxHighlighter.SyntaxHighlighter(text_edit.document(), editor.syntaxHighlighter.MODES.CSS, styleDictRules)
 
                     print("fileExt", tab.property('fileExt'))
                     # if text_edit.elexer is not None:

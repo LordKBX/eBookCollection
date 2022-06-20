@@ -21,20 +21,6 @@ def format(color, style=''):
     return _format
 
 
-# Syntax styles that can be shared by all languages
-STYLES = {
-    'keyword': format('yellow'),
-    'operator': format('#FF6666'),
-    'brace': format('lightBlue'),
-    'defclass': format('black', 'bold'),
-    'string': format('magenta'),
-    'string2': format('darkMagenta'),
-    'comment': format('lightGreen', 'italic'),
-    'self': format('black', 'italic'),
-    'numbers': format('orange'),
-}
-
-
 class MODES(Enum):
     TEXT = 1
     XML = 2
@@ -134,67 +120,90 @@ class SyntaxHighlighter (QtGui.QSyntaxHighlighter):
     braces = [
         '\{', '\}', '\(', '\)', '\[', '\]', '\<[a-zA-Z0-9]{1,}', '\>', '\<\/[a-zA-Z0-9]{1,}', '\/\>', '\*[ ]{0,5}\{', '!\.[a-zA-Z0-9\_\-\.]{1,20}[ ]{0,5}\{',
     ]
+    
+    styles = {
+        "EditorQsciString1": "magenta",
+        "EditorQsciString2": "darkMagenta",
+        "EditorQsciKeyword": "yellow",
+        "EditorQsciComment": "lightGreen",
+        "EditorQsciOperator": "#FF6666",
+        "EditorQsciNumbers": "orange",
+        "EditorQsciBrace": "lightBlue"
+        }
 
-    def __init__(self, parent: QtGui.QTextDocument, mode: MODES) -> None:
+    def __init__(self, parent: QtGui.QTextDocument, mode: MODES, styleDict: dict = None) -> None:
         super().__init__(parent)
-
-        # Multi-line strings (expression, flag, style)
-        self.tri_single = (QtCore.QRegExp("'''"), 1, STYLES['string2'])
-        self.tri_double = (QtCore.QRegExp('"""'), 2, STYLES['string2'])
-        self.comment_block1 = (QtCore.QRegExp('/\\*'), 3, STYLES['comment'])
-        self.comment_block2 = (QtCore.QRegExp('\\*/'), 3, STYLES['comment'])
+        self.mode = mode
+        self.setRules(styleDict)
+    
+    def setRules(self, styleDict: dict = None) -> None:
+        if styleDict is not None:
+            for index in styleDict:
+                self.styles[index] = styleDict[index]
+        else:
+            styleDict = self.styles
+            
+        # Multi-line (expression, flag, style)
+        self.tri_single = (QtCore.QRegExp("'''"), 1, format(styleDict['EditorQsciString2']))
+        self.tri_double = (QtCore.QRegExp('"""'), 2, format(styleDict['EditorQsciString2']))
+        self.comment_block1 = (QtCore.QRegExp('/\\*'), 3, format(styleDict['EditorQsciComment'], 'italic'))
+        self.comment_block2 = (QtCore.QRegExp('\\*/'), 3, format(styleDict['EditorQsciComment'], 'italic'))
 
         rules = []
 
         # All other rules
         rules += [
             # Numeric literals
-            (r'\b[0-9]{1,10}(%|px|em){0,1}', 0, STYLES['numbers']),
-            (r'\b[0-9]{1,10}.{0,1}[0-9]{1,10}(%|px|em){0,1}', 0, STYLES['numbers']),
+            (r'\b[0-9]{1,10}(%|px|em){0,1}', 0, format(styleDict['EditorQsciNumbers'])),
+            (r'\b[0-9]{1,10}.{0,1}[0-9]{1,10}(%|px|em){0,1}', 0, format(styleDict['EditorQsciNumbers'])),
             # COLORS
-            (r'#[0-9A-Fa-f]{3,8}', 0, STYLES['numbers']),
-            (r'rgb[ ]{0,}\([0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}\)', 0, STYLES['numbers']),
-            (r'rgba[ ]{0,}\([0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}\)', 0, STYLES['numbers']),
+            (r'#[0-9A-Fa-f]{3,8}', 0, format(styleDict['EditorQsciNumbers'])),
+            (r'rgb[ ]{0,}\([0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}\)', 0, format(styleDict['EditorQsciNumbers'])),
+            (r'rgba[ ]{0,}\([0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}[ ]{0,}\,[ ]{0,}[0-9]{1,3}\)', 0, format(styleDict['EditorQsciNumbers'])),
 
-            # Double-quoted string, possibly containing escape sequences
-            (r'"[^"\\]*(\\.[^"\\]*)*"', 0, STYLES['string']),
-            # Single-quoted string, possibly containing escape sequences
-            (r"'[^'\\]*(\\.[^'\\]*)*'", 0, STYLES['string'])
+            # Double-quoted EditorQsciString1, possibly containing escape sequences
+            (r'"[^"\\]*(\\.[^"\\]*)*"', 0, format(styleDict['EditorQsciString1'])),
+            # Single-quoted EditorQsciString1, possibly containing escape sequences
+            (r"'[^'\\]*(\\.[^'\\]*)*'", 0, format(styleDict['EditorQsciString1']))
         ]
 
         # Keyword, operator, and brace rules
-        if mode == MODES.HTML:
-            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsHTML]
-            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
-            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
-            rules += [(r'<!--(.|\r|\n|\t){0,}-->', 0, STYLES['comment'])]
-        elif mode == MODES.XML:
-            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsXML]
-            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
-            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
-            rules += [(r'<!--(.|\r|\n|\t){0,}-->', 0, STYLES['comment'])]
-        elif mode == MODES.CSS:
+        if self.mode == MODES.HTML:
+            rules += [(r'\b%s\b' % w, 0, format(styleDict['EditorQsciKeyword'])) for w in SyntaxHighlighter.keywordsHTML]
+            rules += [(r'%s' % b, 0, format(styleDict['EditorQsciBrace'])) for b in SyntaxHighlighter.braces]
+            rules += [(r'%s' % o, 0, format(styleDict['EditorQsciOperator'])) for o in SyntaxHighlighter.operators]
+            rules += [(r'<!--(.|\r|\n|\t){0,}-->', 0, format(styleDict['EditorQsciComment'], 'italic'))]
+        elif self.mode == MODES.XML:
+            rules += [(r'\b%s\b' % w, 0, format(styleDict['EditorQsciKeyword'])) for w in SyntaxHighlighter.keywordsXML]
+            rules += [(r'%s' % b, 0, format(styleDict['EditorQsciBrace'])) for b in SyntaxHighlighter.braces]
+            rules += [(r'%s' % o, 0, format(styleDict['EditorQsciOperator'])) for o in SyntaxHighlighter.operators]
+            rules += [(r'<!--(.|\r|\n|\t){0,}-->', 0, format(styleDict['EditorQsciComment'], 'italic'))]
+        elif self.mode == MODES.CSS:
             print("MODE CSS")
-            rules += [(r'\b%s\b' % w, 0, STYLES['keyword']) for w in SyntaxHighlighter.keywordsCSS2]
-            rules += [(r'%s' % w, 0, STYLES['brace']) for w in SyntaxHighlighter.keywordsCSS1]
-            rules += [(r'%s' % o, 0, STYLES['operator']) for o in SyntaxHighlighter.operators]
-            rules += [(r'%s' % b, 0, STYLES['brace']) for b in SyntaxHighlighter.braces]
-            rules += [(r'//[^\n]*', 0, STYLES['comment']), (r'/\*', 0, STYLES['comment']), (r'/\*([^*]|(\*+([^*/])))*\*+/', 0, STYLES['comment'])]
+            rules += [(r'\b%s\b' % w, 0, format(styleDict['EditorQsciKeyword'])) for w in SyntaxHighlighter.keywordsCSS2]
+            rules += [(r'%s' % w, 0, format(styleDict['EditorQsciBrace'])) for w in SyntaxHighlighter.keywordsCSS1]
+            rules += [(r'%s' % o, 0, format(styleDict['EditorQsciOperator'])) for o in SyntaxHighlighter.operators]
+            rules += [(r'%s' % b, 0, format(styleDict['EditorQsciBrace'])) for b in SyntaxHighlighter.braces]
+            rules += [(r'//[^\n]*', 0, format(styleDict['EditorQsciComment'], 'italic')),
+                      (r'/\*', 0, format(styleDict['EditorQsciComment'], 'italic')),
+                      (r'/\*([^*]|(\*+([^*/])))*\*+/', 0, format(styleDict['EditorQsciComment'], 'italic'))
+                      ]
 
         # Build a QRegExp for each pattern
         self.rules = [(QtCore.QRegExp(pat), index, fmt)
             for (pat, index, fmt) in rules]
+        
 
     def highlightBlock(self, text):
         """Apply syntax highlighting to the given block of text.
         """
-        self.tripleQuoutesWithinStrings = []
+        self.tripleQuoutesWithinEditorQsciString1s = []
         # Do other syntax formatting
         for expression, nth, format in self.rules:
             index = expression.indexIn(text, 0)
             if index >= 0:
-                # if there is a string we check
-                # if there are some triple quotes within the string
+                # if there is a EditorQsciString1 we check
+                # if there are some triple quotes within the EditorQsciString1
                 # they will be ignored if they are matched again
                 if expression.pattern() in [r'"[^"\\]*(\\.[^"\\]*)*"', r"'[^'\\]*(\\.[^'\\]*)*'", r'/\*']:
                     # print(expression.pattern())
@@ -207,11 +216,11 @@ class SyntaxHighlighter (QtGui.QSyntaxHighlighter):
 
                     if innerIndex != -1:
                         tripleQuoteIndexes = range(innerIndex, innerIndex + 3)
-                        self.tripleQuoutesWithinStrings.extend(tripleQuoteIndexes)
+                        self.tripleQuoutesWithinEditorQsciString1s.extend(tripleQuoteIndexes)
 
             while index >= 0:
-                # skipping triple quotes within strings
-                if index in self.tripleQuoutesWithinStrings:
+                # skipping triple quotes within EditorQsciString1s
+                if index in self.tripleQuoutesWithinEditorQsciString1s:
                     index += 1
                     expression.indexIn(text, index)
                     continue
@@ -224,17 +233,17 @@ class SyntaxHighlighter (QtGui.QSyntaxHighlighter):
 
         self.setCurrentBlockState(0)
 
-        # Do multi-line strings
+        # Do multi-line EditorQsciString1s
         in_multiline = self.match_multiline(text, *self.tri_single)
         if not in_multiline:
             in_multiline = self.match_multiline(text, *self.tri_double)
 
     def match_multiline(self, text, delimiter, in_state, style):
-        """Do highlighting of multi-line strings. ``delimiter`` should be a
+        """Do highlighting of multi-line EditorQsciString1s. ``delimiter`` should be a
         ``QRegExp`` for triple-single-quotes or triple-double-quotes, and
         ``in_state`` should be a unique integer to represent the corresponding
-        state changes when inside those strings. Returns True if we're still
-        inside a multi-line string when this function is finished.
+        state changes when inside those EditorQsciString1s. Returns True if we're still
+        inside a multi-line EditorQsciString1 when this function is finished.
         """
         # If inside triple-single quotes, start at 0
         if self.previousBlockState() == in_state:
@@ -243,8 +252,8 @@ class SyntaxHighlighter (QtGui.QSyntaxHighlighter):
         # Otherwise, look for the delimiter on this line
         else:
             start = delimiter.indexIn(text)
-            # skipping triple quotes within strings
-            if start in self.tripleQuoutesWithinStrings:
+            # skipping triple quotes within string
+            if start in self.tripleQuoutesWithinEditorQsciString1s:
                 return False
             # Move past this match
             add = delimiter.matchedLength()

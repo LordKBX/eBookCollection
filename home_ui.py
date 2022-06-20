@@ -211,6 +211,8 @@ class Ui_home_window(object):
         self.horizontalLayout_2.addWidget(self.sorting_block_search_button)
         self.verticalLayout.addLayout(self.horizontalLayout_2)
         self.sorting_block_search_area = QtWidgets.QGroupBox(self.sorting_block_contents)
+        self.sorting_block_search_area.setStyleSheet("")
+        self.sorting_block_search_area.setFlat(True)
         self.sorting_block_search_area.setObjectName("sorting_block_search_area")
         self.sorting_block_search_area_contents = QtWidgets.QVBoxLayout(self.sorting_block_search_area)
         self.sorting_block_search_area_contents.setObjectName("sorting_block_search_area_contents")

@@ -323,7 +323,7 @@ class Lang:
             "eBookImportFilenameTpl": "File name parse template",
             "eBookImportFilenameTplSeparator": "File name parse separator",
 
-            "AboutLabel": "{APP_NAME}\n\n License MIT\n\n Copyright (c) 2020-2021 Boulain Kévin",
+            "AboutLabel": "{APP_NAME}\n\n License MIT\n\n Copyright (c) 2020-YYYY Boulain Kévin",
             "AboutBtnLicense": "License",
             "AboutBtnWebsite": "Web Site",
 

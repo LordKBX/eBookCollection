@@ -175,7 +175,7 @@ class FilesWindow(QDialog):
     def importer(self):
         try:
             options = QFileDialog.Options()
-            options |= QFileDialog.DontUseNativeDialog
+            #options |= QFileDialog.DontUseNativeDialog
             files, _ = QFileDialog.getOpenFileNames(
                 self,
                 self.lng['Editor']['FilesWindow']['ImportWindowTitle'],
