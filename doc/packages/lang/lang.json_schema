@@ -196,6 +196,15 @@
                         },
                         "CoverImport": {
                             "type": "string"
+                        },
+                        "CoverDownloadErrorTitle": {
+                            "type": "string"
+                        },
+                        "CoverDownloadErrorMessage1": {
+                            "type": "string"
+                        },
+                        "CoverDownloadErrorMessage2": {
+                            "type": "string"
                         }
                     }
                 },

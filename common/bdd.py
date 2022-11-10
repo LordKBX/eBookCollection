@@ -43,7 +43,7 @@ class BDD:
             {'name': 'series', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
             {'name': 'tags', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
             {'name': 'synopsis', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
-            {'name': 'cover', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+            {'name': 'cover', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
             {'name': 'import_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
             {'name': 'last_update_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
             {'name': 'series_vol', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'}
@@ -83,6 +83,19 @@ class BDD:
                 {'name': 'cover', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
                 {'name': 'import_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'},
                 {'name': 'last_update_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0'}
+            ],
+            2: [
+                {'name': 'table_version', 'type': 'CONTROL', 'ext': '2'},
+                {'name': 'guid', 'type': 'TEXT', 'ext': 'TEXT PRIMARY KEY NOT NULL'},
+                {'name': 'title', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'authors', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+                {'name': 'series', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+                {'name': 'tags', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+                {'name': 'synopsis', 'type': 'TEXT', 'ext': 'TEXT', 'def': ''},
+                {'name': 'cover', 'type': 'TEXT', 'ext': 'TEXT NOT NULL'},
+                {'name': 'import_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
+                {'name': 'last_update_date', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'},
+                {'name': 'series_vol', 'type': 'NUMERIC', 'ext': 'NUMERIC DEFAULT 0', 'def': '0'}
             ]
         },
         'files': {
@@ -359,8 +372,10 @@ class BDD:
 
                 tab = ltags.strip().split(';')
                 for tag in tab:
-                    if tag not in ret:
-                        ret.append(tag)
+                    clear_tag = tag.strip()
+                    if clear_tag not in ret:
+                        ret.append(clear_tag)
+        ret.sort()
         return ret
 
     def get_books(self, guid: str or List[str] = None, search: str = None, no_file_path: bool = False):

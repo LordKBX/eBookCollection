@@ -36,10 +36,14 @@ class TagsWindow(tags_ui.Ui_Dialog):
         try:
             self.parent = parent
             self.setupUi(self)
-            try: self.BDD = parent.parent.BDD
-            except Exception: self.BDD = parent.BDD
-            try: self.lang = parent.parent.lang
-            except Exception: self.lang = parent.lang
+            try:
+                self.BDD = parent.parent.BDD
+            except Exception:
+                self.BDD = parent.BDD
+            try:
+                self.lang = parent.parent.lang
+            except Exception:
+                self.lang = parent.lang
             self.BDD.get_param('style')
             self.setStyleSheet(get_style_var(self.style, 'QDialog') + " " + get_style_var(self.style, 'QDialogTextSizeAlt'))
             cursor = QtGui.QCursor(QtCore.Qt.PointingHandCursor)
@@ -51,14 +55,17 @@ class TagsWindow(tags_ui.Ui_Dialog):
 
             print("old tags", origin_value)
             old_tags = []
-            if origin_value is not None: old_tags = origin_value.strip().lower().split(";")
+            if origin_value is not None:
+                old_tags = origin_value.strip().replace('; ', ';').lower().split(";")
             self.tags = ";".join(old_tags)
             self.taglist = tags = self.BDD.get_tags()
             for tag in old_tags:
-                if tag not in tags: tags.append(tag)
+                if tag not in tags:
+                    tags.append(tag.lower())
             for tag in tags:
                 selected = False
-                if tag in old_tags: selected = True
+                if tag in old_tags:
+                    selected = True
                 self.new_case(tag, selected)
 
             self.searchbox.textChanged.connect(self.search)
@@ -87,11 +94,11 @@ class TagsWindow(tags_ui.Ui_Dialog):
             if text is None:
                 new_tag = True
                 text = common.dialog.InputDialog(
-                    self.self.lang.get('Library/Tags/DialogNewTagTitle'),
-                    self.self.lang.get('Library/Tags/DialogNewTagText'),
-                    self.self.lang.get('Generic/DialogBtnOk'),
-                    self.self.lang.get('Generic/DialogBtnSave'), self,
-                    self.self.lang.get('Library/Tags/DialogNewTagPlaceholder')
+                    self.lang.get('Library/Tags/DialogNewTagTitle'),
+                    self.lang.get('Library/Tags/DialogNewTagText'),
+                    self.lang.get('Generic/DialogBtnOk'),
+                    self.lang.get('Generic/DialogBtnSave'), self,
+                    self.lang.get('Library/Tags/DialogNewTagPlaceholder')
                 )
             if text is None or text.strip() == "":
                 return
@@ -112,9 +119,9 @@ class TagsWindow(tags_ui.Ui_Dialog):
             self.selection_process()
 
     def cellChangeEvent(self, row: int, column: int) -> None:
-        if self.manual_change is True:
-            self.manual_change = False
-            return
+        # if self.manual_change is True:
+        #     self.manual_change = False
+        #     return
         item = self.table.item(row, column)
         data = item.data(99)
         tags = self.tags.split(";")
@@ -162,3 +169,10 @@ class TagsWindow(tags_ui.Ui_Dialog):
         except Exception:
             traceback.print_exc()
         self.mutex.release()
+
+    def prettyTags(self):
+        tags = self.tags.split(";")
+        new_tags = []
+        for tag in tags:
+            new_tags.append(tag.title())
+        return "; ".join(new_tags).strip(';').strip(' ')

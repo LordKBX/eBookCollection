@@ -37,23 +37,18 @@ class Server(QtCore.QObject):
         self.ip = ip
         self.port = port
 
-        app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        print(app_directory+"\Sync\openssl.key")
-        self.httpd = HTTPServer((ip, port), MyRequestHandler)
-        try:
-            ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-            ssl_context.load_cert_chain(app_directory+'\\Sync\\fullchain.pem', app_directory+"\\Sync\\privkey.pem")
-            self.httpd.socket = ssl_context.wrap_socket(self.httpd.socket, server_side=True)
-
-            loop = asyncio.new_event_loop()
-            self.thread = Thread(target=self.Run, args=(loop, ip, port))
-            self.thread.start()
-        except:
-            traceback.print_exc()
-
-    def Run(self, loop, ip, port):
-        print("Ho!", ip, port)
+    def Run(self):
+        print("Ho!", self.ip, self.port)
+        loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
+        app_directory = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        print(app_directory + "\Sync\openssl.key")
+        self.httpd = HTTPServer((self.ip, self.port), MyRequestHandler)
+        print("HTTP server OK")
+        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        ssl_context.load_cert_chain(app_directory + '\\Sync\\fullchain.pem', app_directory + "\\Sync\\privkey.pem")
+        self.httpd.socket = ssl_context.wrap_socket(self.httpd.socket, server_side=True)
+        print("Wrap ssl on HTTP")
         self.httpd.parent = self
         try:
             self.httpd.serve_forever()
@@ -121,44 +116,52 @@ class MyRequestHandler(BaseHTTPRequestHandler):
         self.writeV2(msg, error_code, error_label, extra_headers)
 
     def writeV1(self, msg: str, error_code: int = 200, error_label: str = "OK", extra_headers: list = []):
-        self.server_version = self.server.parent.serverName
-        self.sys_version = ""
-        self.send_response(error_code, error_label)
-        self.send_header('Content-Type', "text/plain; charset=utf-8")
-        self.send_header('Access-Control-Allow-Origin', '*')
-        for header in extra_headers:
-            try:
-                self.send_header(header["name"], header["value"])
-            except:
-                traceback.print_exc()
-        self.end_headers()
-        self.wfile.write(msg.encode('UTF-8'))
+        try:
+            self.server_version = self.server.parent.serverName
+            self.sys_version = ""
+            self.send_response(error_code, error_label)
+            self.send_header('Content-Type', "text/plain; charset=utf-8")
+            self.send_header('Access-Control-Allow-Origin', '*')
+            for header in extra_headers:
+                try:
+                    self.send_header(header["name"], header["value"])
+                except:
+                    traceback.print_exc()
+            self.end_headers()
+            self.wfile.write(msg.encode('UTF-8'))
+        except Exception as e:
+            traceback.print_exc()
 
     def writeV2(self, msg: str, error_code: int = 200, error_label: str = "OK", extra_headers: list = []):
-        endMsg = msg.encode('UTF-8')
-        self.server_version = self.server.parent.serverName
-        self.sys_version = ""
-        self.send_response(error_code, error_label)
-        self.send_header('Connection', 'Keep-Alive')
-        self.send_header('Keep-Alive', 'timeout=5, max=500')
-        self.send_header('Content-Type', "text/plain; charset=utf-8")
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Content-Length', "{}".format(len(endMsg)))
-        for header in extra_headers:
-            try:
-                self.send_header(header["name"], header["value"])
-            except:
-                traceback.print_exc()
-        self.end_headers()
-        self.wfile.write(endMsg)
-        self.finish()
+        try:
+            endMsg = msg.encode('UTF-8')
+            self.server_version = self.server.parent.serverName
+            self.sys_version = ""
+            self.send_response(error_code, error_label)
+            self.send_header('Connection', 'Keep-Alive')
+            self.send_header('Keep-Alive', 'timeout=5, max=500')
+            self.send_header('Content-Type', "text/plain; charset=utf-8")
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Content-Length', "{}".format(len(endMsg)))
+            for header in extra_headers:
+                try:
+                    self.send_header(header["name"], header["value"])
+                except:
+                    traceback.print_exc()
+            self.end_headers()
+            self.wfile.write(endMsg)
+            self.finish()
+        except Exception as e:
+            traceback.print_exc()
 
     @staticmethod
     def error404():
+        print("- - - - - - - - - - - - - - - - - -")
         return {"Code": 1, "Label": "Function do not exist"}, 404, "Not Found"
 
     @staticmethod
     def error403():
+        print("- - - - - - - - - - - - - - - - - -")
         return {"Code": 6, "Label": "Function require valid session"}, 403, "Access Forbidden"
 
     def do_GET(self):
@@ -217,29 +220,33 @@ class MyRequestHandler(BaseHTTPRequestHandler):
                                 data, data_array["Error"]["Code"], data_array["Error"]["Label"] \
                                     = Sync.book.get_book_file(self, request_parts[2], request_parts[3])
                                 if data is not None:
+                                    if os.path.isfile(data["link"]) is False:
+                                        data_array["Data"] = None
+                                        data_array["Error"]["Code"] = 500
+                                        data_array["Error"]["Label"] = "File not found"
+                                    else:
+                                        self.server_version = self.server.parent.serverName
+                                        self.sys_version = ""
+                                        self.send_response(200)
+                                        self.send_header('Connection', 'Keep-Alive')
+                                        self.send_header('Keep-Alive', 'timeout=5, max=30000')
+                                        self.send_header('Content-Disposition', 'attachment; filename="' + data["name"] + '"')
+                                        self.send_header('Content-Type', 'application/octet-stream')
+                                        self.send_header('Access-Control-Allow-Origin', '*')
+                                        self.send_header('Content-Length', "{}".format(os.path.getsize(data["link"])))
+                                        self.end_headers()
 
-                                    self.server_version = self.server.parent.serverName
-                                    self.sys_version = ""
-                                    self.send_response(200)
-                                    self.send_header('Connection', 'Keep-Alive')
-                                    self.send_header('Keep-Alive', 'timeout=5, max=30000')
-                                    self.send_header('Content-Disposition', 'attachment; filename="' + data["name"] + '"')
-                                    self.send_header('Content-Type', 'application/octet-stream')
-                                    self.send_header('Access-Control-Allow-Origin', '*')
-                                    self.send_header('Content-Length', "{}".format(os.path.getsize(data["link"])))
-                                    self.end_headers()
-
-                                    file = open(data["link"], "rb")
-                                    debug = False
-                                    byte = file.read(1024)
-                                    self.wfile.write(byte)
-                                    while len(byte) > 0:
+                                        file = open(data["link"], "rb")
+                                        debug = False
                                         byte = file.read(1024)
                                         self.wfile.write(byte)
-                                    self.wfile.write(byte)
-                                    file.close()
-                                    self.finish()
-                                    return
+                                        while len(byte) > 0:
+                                            byte = file.read(1024)
+                                            self.wfile.write(byte)
+                                        self.wfile.write(byte)
+                                        file.close()
+                                        self.finish()
+                                        return
                             except Exception as err:
                                 traceback.print_exc()
                             return
@@ -353,3 +360,15 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 
         data = json.JSONEncoder().encode(data_array)
         self.write(data, http_error_code, http_error_label, headers_array)
+
+
+if __name__ == "__main__":
+    bdd = common.bdd.BDD()
+    server = Server(
+        "0.0.0.0",
+        33004,
+        "admin",
+        "BookOfTheYear",
+        bdd
+    )
+    server.Run()

@@ -3,10 +3,9 @@ import os, sys
 from typing import Iterable
 
 import PyQt5.QtCore
-import PyQt5.uic
-from PyQt5.uic import *
 
 import DockWidget
+import home_ui
 from common.dialog import *
 from common.lang import *
 from common.books import *
@@ -20,10 +19,12 @@ from metadata import *
 import empty_book
 
 
-class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree, MetadataWindow):
+class HomeWindow(home_ui.Ui_home_window, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeWindowSortingBlockTree, MetadataWindow):
     def __init__(self, database: bdd.BDD, translation: Lang, argv: list, env_vars: dict):
-        super(HomeWindow, self).__init__()
-
+        self.parent = None
+        super(HomeWindow, self).__init__(self.parent)
+        self.setupUi(self)
+        self.setWindowModality(QtCore.Qt.ApplicationModal)
         # load vars and base objects
         self.app_directory = app_directory
         self.currentBook = ''
@@ -47,7 +48,6 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
             area2 = int(self.BDD.get_param('library/BlockArea_sorting_block', PyQt5.QtCore.Qt.LeftDockWidgetArea))
         except Exception as error:
             traceback.print_exc()
-        PyQt5.uic.loadUi(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'home.ui', self)  # Load the .ui file
 
         # load window size
         if size_tx is not None and size_tx != '':
@@ -119,19 +119,6 @@ class HomeWindow(QMainWindow, HomeWindowCentralBlock, HomeWindowInfoPanel, HomeW
         )
         self.sorting_block.setMinimumHeight(size2[1])
         self.info_block.setMinimumHeight(size1[1])
-
-        self.show()  # Show the GUI
-        self.info_block.setMinimumHeight(150)
-        self.sorting_block.setMinimumHeight(150)
-        try:
-            if self.tools['archiver']['path'] is None:
-                WarnDialog(self.lang['Global/ArchiverErrorTitle'], self.lang['Global/ArchiverErrorText'])
-                self.header_block_btn_settings_clicked()
-            if "settings" in self.argv:
-                self.header_block_btn_settings_clicked()
-                self.close()
-        except Exception:
-            traceback.print_exc()
 
     def resizeEvent(self, a0: QtGui.QResizeEvent) -> None:
         size = self.size()

@@ -8,9 +8,11 @@
 #  $$$$$$$$/ $$ |__$$ |$$ \__$$ |$$ \__$$ |$$$$$$  \       $$ \__/  |$$ \__$$ |$$ |$$ |$$$$$$$$/ $$ \_____   $$ |/  |$$ |$$ \__$$ |$$ |  $$ |
 #  $$       |$$    $$/ $$    $$/ $$    $$/ $$ | $$  |      $$    $$/ $$    $$/ $$ |$$ |$$       |$$       |  $$  $$/ $$ |$$    $$/ $$ |  $$ |
 #   $$$$$$$/ $$$$$$$/   $$$$$$/   $$$$$$/  $$/   $$/        $$$$$$/   $$$$$$/  $$/ $$/  $$$$$$$/  $$$$$$$/    $$$$/  $$/  $$$$$$/  $$/   $$/ 
-#                                                                                                                                            
-
+#
+import asyncio
 import os
+import sys
+from threading import Thread
 
 if os.name == 'nt':
     import ctypes
@@ -18,21 +20,32 @@ if os.name == 'nt':
 import home
 from common.bdd import *
 from common.lang import *
-from Sync import server
+from common.dialog import *
+import Sync.server
+
+
+def myexcepthook(type, value, tb):
+    print("HAHA!")
+    print(value)
+
 
 if __name__ == "__main__":
+    sys.excepthook = myexcepthook
     app = PyQt5.QtWidgets.QApplication([])
     app_icon = PyQt5.QtGui.QIcon()
 
     bdd = BDD()
     translation = Lang()
-    server = server.Server(
+    srv = Sync.server.Server(
         bdd.get_param('sync/ip'),
         int(float(bdd.get_param('sync/port'))),
         bdd.get_param('sync/user'),
         bdd.get_param('sync/password'),
         bdd
     )
+    thread = Thread(target=srv.Run, args=())
+    thread.daemon = True
+    thread.start()
 
     for icon_index in app_icons:
         icon_size = int(float(icon_index.replace('x', '')))
@@ -44,11 +57,29 @@ if __name__ == "__main__":
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
 
     Home = home.HomeWindow(bdd, translation, sys.argv, env_vars)
-    Home.exec_()
+    # ret = Home.exec_()
+
+    try:
+        Home.show()  # Show the GUI
+        Home.info_block.setMinimumHeight(150)
+        Home.sorting_block.setMinimumHeight(150)
+
+        if Home.tools['archiver']['path'] is None:
+            WarnDialog(Home.lang['Global/ArchiverErrorTitle'], Home.lang['Global/ArchiverErrorText'])
+            Home.header_block_btn_settings_clicked()
+        if "settings" in Home.argv:
+            Home.header_block_btn_settings_clicked()
+            Home.close()
+        if "metadata" in Home.argv:
+            Home.metadata_window_load()
+            Home.close()
+    except Exception:
+        traceback.print_exc()
+
     ret = 0
     try:
-        server.Close()
         ret = app.exec_()
+        srv.Close()
     except Exception as err:
         traceback.print_exc()
     print("The End")

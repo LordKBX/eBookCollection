@@ -58,6 +58,24 @@ def InfoDialogConfirm(title: str, text: str, yes: str, no: str, parent: any = No
         return False
 
 
+def ErrorDialog(title: str, text: str, parent: any = None):
+    msg_box = QtWidgets.QMessageBox(parent)
+
+    language, style = __get_bases()
+    msg_box.setStyleSheet(get_style_var(style, 'QMessageBox'))
+
+    msg_box.setWindowTitle(title)
+    msg_box.setText(text)
+    msg_box.setStandardButtons(QtWidgets.QMessageBox.Ok)
+    msg_box.button(QtWidgets.QMessageBox.Ok).setText(language['Generic/DialogBtnOk'])
+    msg_box.button(QtWidgets.QMessageBox.Ok).setFocusPolicy(QtCore.Qt.NoFocus)
+    msg_box.button(QtWidgets.QMessageBox.Ok).setStyleSheet(get_style_var(style, 'QMessageBoxBtnGeneric'))
+    msg_box.button(QtWidgets.QMessageBox.Ok).setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+    # msg_box.setDefaultButton(QtWidgets.QMessageBox.Ok)
+    msg_box.setIcon(QtWidgets.QMessageBox.Critical)
+    ret = msg_box.exec()
+
+
 def WarnDialog(title: str, text: str, parent: any = None):
     msg_box = QtWidgets.QMessageBox(parent)
 

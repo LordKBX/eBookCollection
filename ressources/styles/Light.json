@@ -6,6 +6,7 @@
 		"align_right": "{APP_DIR}/ressources/icons/black/format-justify-right.png",
 		"back_color": "{APP_DIR}/ressources/icons/black/format-fill-color.png",
 		"bold": "{APP_DIR}/ressources/icons/black/format-text-bold.png",
+		"book": "{APP_DIR}/ressources/icons/black/book.png",
 		"book_add": "{APP_DIR}/ressources/icons/black/book_add.png",
 		"book_del": "{APP_DIR}/ressources/icons/black/book_del.png",
 		"book_new": "{APP_DIR}/ressources/icons/black/book_new.png",
@@ -293,7 +294,7 @@
 	],
 
 	"TagsSearchBox": [
-		"* { background-image: url('{APP_DIR}/ressources/icons/tmp/search_30.png') 0 0 0 0 stretch stretch; ",
+		"* { background-image: url('{APP_DIR}/ressources/icons/black/search_30.png') 0 0 0 0 stretch stretch; ",
 		"background-position:top right; background-repeat: norepeat; }"
 	]
 }

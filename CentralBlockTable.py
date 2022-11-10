@@ -216,10 +216,9 @@ class HomeWindowCentralBlock(InfoPanel.HomeWindowInfoPanel):
             ret = wtags.exec_()
             if ret == 1:
                 print("OK")
-                tagsret = wtags.tags
-                dt = tagsret.replace(';', ' | ').capitalize().replace(' | ', ';')
-                self.central_block_table.item(current_row, current_column).setText(dt)
-                self.central_block_table.item(current_row, current_column).setToolTip(dt)
+                tagsret = wtags.prettyTags()
+                self.central_block_table.item(current_row, current_column).setText(tagsret)
+                self.central_block_table.item(current_row, current_column).setToolTip(tagsret)
             else:
                 print("Cancel")
         else:

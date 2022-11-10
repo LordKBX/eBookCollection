@@ -10,8 +10,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_home_window(object):
-    def setupUi(self, home_window):
+class Ui_home_window(QtWidgets.QMainWindow):
+    def setupUi(self, home_window: QtWidgets.QMainWindow):
         home_window.setObjectName("home_window")
         home_window.resize(1024, 700)
         home_window.setMinimumSize(QtCore.QSize(1024, 700))
@@ -399,7 +399,7 @@ class Ui_home_window(object):
         self.retranslateUi(home_window)
         QtCore.QMetaObject.connectSlotsByName(home_window)
 
-    def retranslateUi(self, home_window):
+    def retranslateUi(self, home_window: QtWidgets.QMainWindow):
         _translate = QtCore.QCoreApplication.translate
         home_window.setWindowTitle(_translate("home_window", "HomeWindow"))
         self.central_block_table.setSortingEnabled(True)

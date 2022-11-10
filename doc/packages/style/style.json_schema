@@ -22,6 +22,9 @@
                 "bold": {
                     "type": "string"
                 },
+                "book": {
+                    "type": "string"
+                },
                 "book_add": {
                     "type": "string"
                 },
@@ -159,6 +162,7 @@
                 "align_right",
                 "back_color",
                 "bold",
+                "book",
                 "book_add",
                 "book_del",
                 "book_new",

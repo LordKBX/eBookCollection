@@ -1,16 +1,24 @@
-import os, sys, traceback, json, subprocess, base64, datetime, datetime, copy
+import os, sys, traceback, json, subprocess, base64, datetime, datetime, copy, re
 import concurrent.futures
+import urllib
+import tempfile
+import requests
 import PyQt5.QtCore
 import PyQt5.QtGui
 import PyQt5.QtWidgets
+from PyQt5 import QtWebKitWidgets
+from PyQt5 import QtWebKit
 
 from common.files import *
 from common.common import *
 from common.vars import *
+from common.books import *
 from common.dialog import *
 import color_picker
 import metadata_ui
 import tags
+import metadata_cover_download_ui
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0'
 
 
 class MetadataWindow(metadata_ui.Ui_Dialog):
@@ -18,6 +26,9 @@ class MetadataWindow(metadata_ui.Ui_Dialog):
     metadata_book_index = 0
     metadata_tmp_data = []
     metadata_start_data = []
+    metadata_cover_icon_size = PyQt5.QtCore.QSize(160, 160)
+    metadata_window_download_cover_dialog = None
+    metadata_window_download_cover_clipboard = None
 
     def metadata_window_load(self) -> list:
         """
@@ -95,10 +106,13 @@ class MetadataWindow(metadata_ui.Ui_Dialog):
             self.metadata_ui.spin_volume.setValue(float(self.metadata_tmp_data[0]['series_vol']))
             self.metadata_ui.btn_del_series.clicked.connect(self.metadata_window_clean_series)
 
-            self.metadata_ui.edit_tags.setText(self.metadata_tmp_data[0]['tags'].title())
+            self.metadata_ui.edit_tags.setText(self.metadata_tmp_data[0]['tags'])
             self.metadata_ui.btn_tags.clicked.connect(lambda: self.metadata_window_edit_tags(self.metadata_ui.edit_tags))
 
             self.metadata_ui.btnCoverImport.clicked.connect(self.metadata_window_import_cover)
+            self.metadata_ui.btnCoverDel.clicked.connect(self.metadata_window_delete_cover)
+            self.metadata_ui.btnCoverGenerate.clicked.connect(self.metadata_window_generate_cover)
+            self.metadata_ui.btnCoverDown.clicked.connect(self.metadata_window_download_cover)
 
             if len(self.metadata_tmp_data) > 1:
                 self.metadata_ui.edit_editors.setText('')
@@ -113,7 +127,6 @@ class MetadataWindow(metadata_ui.Ui_Dialog):
                 self.metadata_ui.text_edit_synopsis.setText("")
                 self.metadata_ui.text_edit_synopsis.setDisabled(True)
             else:
-                icon_size = PyQt5.QtCore.QSize(160, 160)
                 icon = PyQt5.QtGui.QIcon()
                 if self.metadata_tmp_data[0]['cover'] is not None and self.metadata_tmp_data[0]['cover'].strip() != '':
                     tbimg = self.metadata_tmp_data[0]['cover'].split(',')
@@ -124,18 +137,18 @@ class MetadataWindow(metadata_ui.Ui_Dialog):
                     icon.addPixmap(image, PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
                     self.metadata_ui.label_cover_view.setToolTip("<img src='{}'/>".format(self.metadata_tmp_data[0]['cover']))
                 else:
-                    icon.addPixmap(PyQt5.QtGui.QPixmap(self.app_directory + '/ressources/icons/white/book.png'),
+                    icon.addPixmap(PyQt5.QtGui.QPixmap(get_style_var(style, 'icons/book')),
                                    PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
                 # self.metadata_ui.label_cover_view = QtWidgets.QPushButton()
                 self.metadata_ui.label_cover_view.setStyleSheet(
                     '*{border:0;padding:0;margin:0;background:transparent;height:'
-                    + icon_size.height().__str__() + 'px; width: '
-                    + icon_size.width().__str__() + 'px;}'
+                    + self.metadata_cover_icon_size.height().__str__() + 'px; width: '
+                    + self.metadata_cover_icon_size.width().__str__() + 'px;}'
                 )
                 self.metadata_ui.label_cover_view.setIcon(icon)
-                self.metadata_ui.label_cover_view.setIconSize(icon_size)
-                self.metadata_ui.label_cover_view.setMinimumSize(icon_size)
-                self.metadata_ui.label_cover_view.setFixedSize(icon_size)
+                self.metadata_ui.label_cover_view.setIconSize(self.metadata_cover_icon_size)
+                self.metadata_ui.label_cover_view.setMinimumSize(self.metadata_cover_icon_size)
+                self.metadata_ui.label_cover_view.setFixedSize(self.metadata_cover_icon_size)
 
                 # self.metadata_ui.text_edit_synopsis = QtWidgets.QTextEdit()
                 self.metadata_ui.text_edit_synopsis.setAcceptRichText(True)
@@ -222,8 +235,8 @@ class MetadataWindow(metadata_ui.Ui_Dialog):
             ret = tagsui.exec_()
             if ret == 1:
                 print("OK")
-                tagsret = tagsui.tags
-                self.metadata_ui.edit_tags.setText(tagsret.title())
+                tagsret = tagsui.prettyTags()
+                self.metadata_ui.edit_tags.setText(tagsret)
             else:
                 print("Cancel")
         except Exception:
@@ -483,6 +496,71 @@ class MetadataWindow(metadata_ui.Ui_Dialog):
         except Exception:
             traceback.print_exc()
 
+    def metadata_window_delete_cover(self) -> None:
+        try:
+            self.metadata_tmp_data[0]['cover'] = None
+
+            icon = PyQt5.QtGui.QIcon()
+            icon.addPixmap(PyQt5.QtGui.QPixmap(get_style_var(self.BDD.get_param('style'), 'icons/book')),
+                           PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
+
+            self.metadata_ui.label_cover_view.setStyleSheet(
+                '*{border:0;padding:0;margin:0;background:transparent;height:'
+                + self.metadata_cover_icon_size.height().__str__() + 'px; width: '
+                + self.metadata_cover_icon_size.width().__str__() + 'px;}'
+            )
+            self.metadata_ui.label_cover_view.setIcon(icon)
+            self.metadata_ui.label_cover_view.setIconSize(self.metadata_cover_icon_size)
+            self.metadata_ui.label_cover_view.setMinimumSize(self.metadata_cover_icon_size)
+            self.metadata_ui.label_cover_view.setFixedSize(self.metadata_cover_icon_size)
+        except Exception as err:
+            traceback.print_exc()
+
+    def metadata_window_generate_cover(self) -> None:
+        try:
+            fd, tmp_file = tempfile.mkstemp()
+            style = {
+                "background": self.BDD.get_param('defaultCover/background', "#ffffff"),
+                "pattern": self.BDD.get_param('defaultCover/pattern', "01"),
+                "pattern_color": self.BDD.get_param('defaultCover/pattern_color', '#000000'),
+                "title": self.BDD.get_param('defaultCover/title', "#000000"),
+                "series": self.BDD.get_param('defaultCover/series', "#0000ff"),
+                "authors": self.BDD.get_param('defaultCover/authors', "#000000"),
+            }
+
+            create_cover(
+                self.metadata_tmp_data[0]['title'],
+                self.metadata_tmp_data[0]['authors'],
+                self.metadata_tmp_data[0]['series'],
+                self.metadata_tmp_data[0]['series_vol'],
+                tmp_file, style
+                )
+
+            icon = PyQt5.QtGui.QIcon()
+            cover = common.books.create_thumbnail(tmp_file)
+            if cover is not None and cover.strip() != '':
+                tbimg = cover.split(',')
+                image = PyQt5.QtGui.QPixmap()
+                image.loadFromData(base64.b64decode(tbimg[1]))
+                icon.addPixmap(image, PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
+                self.metadata_ui.label_cover_view.setToolTip("<img src='{}'/>".format(cover))
+            else: # book
+                icon.addPixmap(PyQt5.QtGui.QPixmap(get_style_var(self.BDD.get_param('style'), 'icons/book')), PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
+
+            self.metadata_tmp_data[0]['cover'] = cover
+
+            self.metadata_ui.label_cover_view.setStyleSheet(
+                '*{border:0;padding:0;margin:0;background:transparent;height:'
+                + self.metadata_cover_icon_size.height().__str__() + 'px; width: '
+                + self.metadata_cover_icon_size.width().__str__() + 'px;}'
+            )
+            self.metadata_ui.label_cover_view.setIcon(icon)
+            self.metadata_ui.label_cover_view.setIconSize(self.metadata_cover_icon_size)
+            self.metadata_ui.label_cover_view.setMinimumSize(self.metadata_cover_icon_size)
+            self.metadata_ui.label_cover_view.setFixedSize(self.metadata_cover_icon_size)
+        except Exception as err:
+            traceback.print_exc()
+
     def metadata_window_import_cover(self) -> None:
         try:
             options = QtWidgets.QFileDialog.Options()
@@ -499,29 +577,136 @@ class MetadataWindow(metadata_ui.Ui_Dialog):
                 self.BDD.set_param('library/lastOpenDir', selected_directory)
                 cover = common.books.create_thumbnail(fname[0])
 
-                icon_size = PyQt5.QtCore.QSize(160, 160)
                 icon = PyQt5.QtGui.QIcon()
                 if cover is not None and cover.strip() != '':
                     tbimg = cover.split(',')
-                    by = PyQt5.QtCore.QByteArray()
-                    by.fromBase64(tbimg[1].encode('utf-8'))
                     image = PyQt5.QtGui.QPixmap()
                     image.loadFromData(base64.b64decode(tbimg[1]))
                     icon.addPixmap(image, PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
                     self.metadata_ui.label_cover_view.setToolTip("<img src='{}'/>".format(cover))
-                else:
-                    icon.addPixmap(PyQt5.QtGui.QPixmap(self.app_directory + '/ressources/icons/white/book.png'), PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
+                else: # book
+                    icon.addPixmap(PyQt5.QtGui.QPixmap(get_style_var(self.BDD.get_param('style'), 'icons/book')), PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
                 # self.metadata_ui.label_cover_view = QtWidgets.QPushButton()
                 self.metadata_ui.label_cover_view.setStyleSheet(
                     '*{border:0;padding:0;margin:0;background:transparent;height:'
-                    + icon_size.height().__str__() + 'px; width: '
-                    + icon_size.width().__str__() + 'px;}'
+                    + self.metadata_cover_icon_size.height().__str__() + 'px; width: '
+                    + self.metadata_cover_icon_size.width().__str__() + 'px;}'
                 )
                 self.metadata_ui.label_cover_view.setIcon(icon)
-                self.metadata_ui.label_cover_view.setIconSize(icon_size)
-                self.metadata_ui.label_cover_view.setMinimumSize(icon_size)
-                self.metadata_ui.label_cover_view.setFixedSize(icon_size)
-                self.metadata_ui.label_cover_view = QtWidgets.QPushButton()
+                self.metadata_ui.label_cover_view.setIconSize(self.metadata_cover_icon_size)
+                self.metadata_ui.label_cover_view.setMinimumSize(self.metadata_cover_icon_size)
+                self.metadata_ui.label_cover_view.setFixedSize(self.metadata_cover_icon_size)
                 self.metadata_tmp_data[0]['cover'] = cover
         except Exception as err:
             traceback.print_exc()
+
+    def metadata_window_download_cover(self) -> None:
+        try:
+            search_string = self.metadata_tmp_data[0]['title']
+            if self.metadata_tmp_data[0]['series'] is not None and self.metadata_tmp_data[0]['series'] != '':
+                search_string += " " + self.metadata_tmp_data[0]['series']
+                search_string += " vol{}".format(self.metadata_tmp_data[0]['series_vol'])
+            if self.metadata_tmp_data[0]['authors'] is not None and self.metadata_tmp_data[0]['authors'] != '':
+                search_string += " " + self.metadata_tmp_data[0]['authors']
+            if self.metadata_window_download_cover_dialog is not None:
+                self.metadata_window_download_cover_dialog.close()
+                self.metadata_window_download_cover_dialog = None
+            else:
+                self.metadata_window_download_cover_dialog = metadata_cover_download_ui.Ui_Dialog()
+            down_ui = self.metadata_window_download_cover_dialog
+            down_ui.setupUi(down_ui)
+            down_ui.lineEdit.setText("")
+
+            url = "https://www.google.com/search?tbm=isch&q="+urllib.parse.quote(search_string, safe='')
+            ## from this tutorial
+            request = QtWebKit.QNetworkRequest()
+            request.setUrl(QtCore.QUrl(url))
+            request.setRawHeader("User-Agent", USER_AGENT)
+
+            down_ui.webView.page().userAgentForUrl = USER_AGENT
+            down_ui.webView.setUrl(QtCore.QUrl("https://www.google.com/search?tbm=isch&q="+urllib.parse.quote(search_string, safe='')))
+            if self.metadata_window_download_cover_clipboard is not None:
+                self.metadata_window_download_cover_clipboard.clear()
+                self.metadata_window_download_cover_clipboard = None
+            self.metadata_window_download_cover_clipboard = QtGui.QGuiApplication.clipboard()
+            self.metadata_window_download_cover_clipboard.changed.connect(self.metadata_window_download_cover_clipboard_update)
+
+            ret = down_ui.exec_()
+            if ret == 1:
+                print('OK')
+                return_url = down_ui.lineEdit.text()
+                print(return_url)
+                response = requests.get(return_url)
+                fd, tmp_file = tempfile.mkstemp()
+                with open(tmp_file, "wb") as ob:
+                    ob.write(response.content)
+
+                cover = common.books.create_thumbnail(tmp_file)
+
+                icon = PyQt5.QtGui.QIcon()
+                if cover is not None and cover.strip() != '':
+                    tbimg = cover.split(',')
+                    image = PyQt5.QtGui.QPixmap()
+                    image.loadFromData(base64.b64decode(tbimg[1]))
+                    icon.addPixmap(image, PyQt5.QtGui.QIcon.Normal, PyQt5.QtGui.QIcon.Off)
+                    self.metadata_ui.label_cover_view.setToolTip("<img src='{}'/>".format(cover))
+                    self.metadata_ui.label_cover_view.setStyleSheet(
+                        '*{border:0;padding:0;margin:0;background:transparent;height:'
+                        + self.metadata_cover_icon_size.height().__str__() + 'px; width: '
+                        + self.metadata_cover_icon_size.width().__str__() + 'px;}'
+                    )
+                    self.metadata_ui.label_cover_view.setIcon(icon)
+                    self.metadata_ui.label_cover_view.setIconSize(self.metadata_cover_icon_size)
+                    self.metadata_ui.label_cover_view.setMinimumSize(self.metadata_cover_icon_size)
+                    self.metadata_ui.label_cover_view.setFixedSize(self.metadata_cover_icon_size)
+                    self.metadata_tmp_data[0]['cover'] = cover
+                else:
+                    ErrorDialog(
+                        self.translation['Library/Metadata/CoverDownloadErrorTitle'],
+                        self.translation['Library/Metadata/CoverDownloadErrorMessage2'],
+                        self.metadata_ui)
+
+        except Exception as err:
+            traceback.print_exc()
+            ErrorDialog(
+                self.translation['Library/Metadata/CoverDownloadErrorTitle'],
+                self.translation['Library/Metadata/CoverDownloadErrorMessage1'],
+                self.metadata_ui)
+
+    def metadata_window_download_cover_clipboard_update(self, mode: QtGui.QClipboard.Mode):
+        excluding_starting_block_urls = ["https://www.google.com/url?esrc="]
+        excluding_regexp_block_urls = ["https://www.google.com/url?(.*)&url="]
+        self.metadata_window_download_cover_clipboard = QtGui.QGuiApplication.clipboard()
+        data = None
+        if mode == QtGui.QClipboard.FindBuffer: return
+        dtype = self.metadata_window_download_cover_clipboard.mimeData(mode)
+
+        if dtype.hasImage() is True: data = self.metadata_window_download_cover_clipboard.image(mode)
+        elif dtype.hasHtml() is True:
+            print("html")
+            data = self.metadata_window_download_cover_clipboard.text(mode)
+        elif dtype.hasUrls() is True:
+            print("url")
+            data = self.metadata_window_download_cover_clipboard.text(mode)
+        elif dtype.hasText() is True:
+            print("text")
+            data = self.metadata_window_download_cover_clipboard.text(mode)
+            tdata = self.metadata_window_download_cover_strip_html(data)
+            if (tdata is None or tdata == '') and 'data:image/' in data:
+                m = re.search('"data\:image\/(.*)"', data)
+                data = m.group(0).replace('"')
+            else: data = tdata
+            for stbu in excluding_starting_block_urls:
+                if data.startswith(stbu) is True:
+                    return
+
+        for rpl in excluding_regexp_block_urls:
+            data = re.sub(rpl, '', data)
+
+        print(data)
+        self.metadata_window_download_cover_dialog.lineEdit.setText(data)
+
+    def metadata_window_download_cover_strip_html(self, text: str):
+        doc = QtGui.QTextDocument()
+        doc.setHtml(text)
+        return doc.toPlainText().strip()

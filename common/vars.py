@@ -126,6 +126,7 @@ env_vars = {
                     "align_right": "{APP_DIR}/ressources/icons/white/format-justify-right.png",
                     "back_color": "{APP_DIR}/ressources/icons/white/format-fill-color.png",
                     "bold": "{APP_DIR}/ressources/icons/white/format-text-bold.png",
+                    "book": "{APP_DIR}/ressources/icons/white/book.png",
                     "book_add": "{APP_DIR}/ressources/icons/white/book_add.png",
                     "book_del": "{APP_DIR}/ressources/icons/white/book_del.png",
                     "book_new": "{APP_DIR}/ressources/icons/white/book_new.png",

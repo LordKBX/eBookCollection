@@ -118,7 +118,10 @@ class Lang:
             },
             "Metadata": {
                 "WindowTitle": "Editing Metadata",
-                "CoverImport": "Import Book Cover"
+                "CoverImport": "Import Book Cover",
+                "CoverDownloadErrorTitle": "Error",
+                "CoverDownloadErrorMessage1": "Processing error",
+                "CoverDownloadErrorMessage2": "Invalid file format"
             },
             "Tags": {
                 "DialogNewTagTitle": "New Tag",

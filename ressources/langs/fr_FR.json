@@ -70,8 +70,11 @@
 		},
 
 		"Metadata": {
-			"WindowTitle": "Editing Metadata",
-            "CoverImport": "Import Book Cover"
+			"WindowTitle": "Edition des Metadata",
+            "CoverImport": "Importer couverture",
+			"CoverDownloadErrorTitle": "Erreur",
+			"CoverDownloadErrorMessage1": "Erreur d'execution",
+			"CoverDownloadErrorMessage2": "Format de fichier invalide"
 		}
 	},
 	"Generic": {
